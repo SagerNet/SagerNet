@@ -1,0 +1,45 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.SagerNet" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:navigationBarColor">@color/color_primary_dark</item>
+        <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_navigation_close</item>
+        <item name="colorButtonNormal">@color/material_accent_200</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/dark_color_primary_dark</item>
+        <item name="colorAccent">@color/material_accent_200</item>
+
+        <item name="windowActionModeOverlay">true</item>
+
+        <!-- Remove ActionBar but keep styles and themes -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="Theme.SagerNet.ActionBar">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
+    <style name="Theme.SagerNet.Immersive">
+        <item name="android:navigationBarColor">#6000</item>
+    </style>
+
+    <style name="Theme.SagerNet.Immersive.Navigation">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+</resources>

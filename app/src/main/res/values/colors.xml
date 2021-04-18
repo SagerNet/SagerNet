@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="material_pink_100">#F8BBD0</color>
+    <color name="material_pink_300">#F06292</color>
+    <color name="material_pink_500">#E91E63</color>
+    <color name="material_pink_600">#D81B60</color>
+    <color name="material_pink_700">#C2185B</color>
+    <color name="material_pink_800">#AD1457</color>
+    <color name="material_pink_900">#880E4F</color>
+    <color name="material_pink_a700">#C51162</color>
+
+    <color name="material_primary_100">@color/material_pink_100</color>
+    <color name="material_primary_300">@color/material_pink_300</color>
+    <color name="material_primary_500">@color/material_pink_500</color>
+    <color name="material_primary_600">@color/material_pink_600</color>
+    <color name="material_primary_700">@color/material_pink_700</color>
+    <color name="material_primary_800">@color/material_pink_800</color>
+    <color name="material_primary_900">@color/material_pink_900</color>
+    <color name="material_accent_200">@color/material_pink_a700</color>
+
+    <color name="light_color_primary">@color/material_primary_500</color>
+    <color name="light_color_primary_dark">@color/material_primary_700</color>
+    <color name="light_color_primary_text">@color/material_primary_500</color>
+    <color name="dark_color_primary">@color/material_primary_800</color>
+    <color name="dark_color_primary_dark">@color/material_primary_900</color>
+    <color name="dark_color_primary_text">@color/material_primary_300</color>
+
+    <color name="color_primary">@color/light_color_primary</color>
+    <color name="color_primary_dark">@color/light_color_primary_dark</color>
+    <color name="color_primary_text">@color/light_color_primary_text</color>
+
+    <color name="background_selected">@color/material_primary_100</color>
+    <color name="background_stat">@color/material_primary_300</color>
+    <color name="material_amber_a700">#ffab00</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

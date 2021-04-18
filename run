@@ -1,0 +1,14 @@
+#!/bin/bash
+
+EXEC=""
+TARGET="bin"
+for e in $@; do
+  TARGET="$TARGET/$e"
+  shift
+  if [ -x "${TARGET}.sh" ]; then
+    EXEC="${TARGET}.sh"
+  fi
+done
+
+echo ">> $EXEC"
+exec "$EXEC" $@

@@ -1,0 +1,113 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "kotlin-kapt"
+    id "kotlin-parcelize"
+
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "io.nekohasekai.sagernet"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "0.1-SNAPSHOT"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild.ndkBuild {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            arguments "-j${Runtime.getRuntime().availableProcessors()}"
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
+    }
+
+    externalNativeBuild.ndkBuild.path "src/main/jni/Android.mk"
+
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+    }
+
+    packagingOptions {
+        exclude "/META-INF/*.version"
+        exclude "/META-INF/*.kotlin_module"
+        exclude "/META-INF/native-image/**"
+        exclude "/META-INF/INDEX.LIST"
+        exclude "DebugProbesKt.bin"
+        exclude "/kotlin/**"
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: "libs")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+
+    implementation "androidx.core:core-ktx:1.6.0-alpha02"
+    implementation "androidx.activity:activity-ktx:1.3.0-alpha06"
+    implementation "androidx.fragment:fragment-ktx:1.3.2"
+
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
+    implementation "androidx.preference:preference-ktx:1.1.1"
+    implementation "androidx.appcompat:appcompat:1.2.0"
+
+    implementation "com.google.android.material:material:1.3.0"
+    implementation "com.github.daniel-stoneuk:material-about-library:3.2.0-rc01"
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
+    implementation "cn.hutool:hutool-core:5.6.3"
+    implementation "cn.hutool:hutool-json:5.6.3"
+    implementation "com.google.code.gson:gson:2.8.6"
+    implementation "me.weishu:free_reflection:3.0.1"
+    implementation "com.github.zawadz88.materialpopupmenu:material-popup-menu:4.1.0"
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
+    implementation 'androidx.preference:preference:1.1.1'
+
+    def room_version = "2.2.6"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    def roomigrant_version = "0.3.4"
+    implementation "com.github.MatrixDev.Roomigrant:RoomigrantLib:$roomigrant_version"
+    kapt "com.github.MatrixDev.Roomigrant:RoomigrantCompiler:$roomigrant_version"
+
+    implementation "com.esotericsoftware:kryo:5.1.0"
+
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "androidx.room:room-testing:$room_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.2"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
+
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
+
+}

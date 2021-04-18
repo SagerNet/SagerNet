@@ -1,0 +1,693 @@
+package io.nekohasekai.sagernet.fmt.v2ray;
+
+import androidx.annotation.Nullable;
+
+import com.google.gson.InstanceCreator;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
+import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
+import io.nekohasekai.sagernet.fmt.gson.JsonOr;
+
+@SuppressWarnings({"SpellCheckingInspection", "unused", "RedundantSuppression"})
+public class V2rayConfig {
+
+    public LogObject log;
+
+    public static class LogObject {
+
+        public String access;
+        public String error;
+        public String loglevel;
+
+    }
+
+    public ApiObject api;
+
+    public static class ApiObject {
+
+        public String tag;
+        public List<String> services;
+
+    }
+
+    public DnsObject dns;
+
+    public static class DnsObject {
+
+        public Map<String, String> hosts;
+
+        public List<StringOrServerObject> servers;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public String clientIp;
+
+        }
+
+        public static class StringOrServerObject extends JsonOr<String, ServerObject> {
+            public StringOrServerObject() {
+                super(JsonToken.STRING, JsonToken.BEGIN_OBJECT);
+            }
+        }
+
+        public String clientIp;
+        public Boolean disableCache;
+        public String tag;
+        public List<String> domains;
+        public List<String> expectIPs;
+
+    }
+
+    public RoutingObject routing;
+
+    public static class RoutingObject {
+
+        public String domainStrategy;
+        public List<RuleObject> rules;
+
+        public static class RuleObject {
+
+            public String type;
+            public List<String> domain;
+            public List<String> ip;
+            public String port;
+            public String sourcePort;
+            public String network;
+            public List<String> source;
+            public List<String> user;
+            public List<String> inboundTag;
+            public List<String> protocol;
+            public String attrs;
+            public String outboundTag;
+            public String balancerTag;
+
+        }
+
+        public List<BalancerObject> balancers;
+
+        public static class BalancerObject {
+
+            public String tag;
+            public List<String> selector;
+
+        }
+
+    }
+
+    public PolicyObject policy;
+
+    public static class PolicyObject {
+
+        public Map<String, LevelPolicyObject> levels;
+
+        public static class LevelPolicyObject {
+
+            public Integer handshake;
+            public Integer connIdle;
+            public Integer uplinkOnly;
+            public Integer downlinkOnly;
+            public Boolean statsUserUplink;
+            public Boolean statsUserDownlink;
+            public Integer bufferSize;
+
+        }
+
+        public SystemPolicyObject system;
+
+        public static class SystemPolicyObject {
+
+            public Boolean statsInboundUplink;
+            public Boolean statsInboundDownlink;
+            public Boolean statsOutboundUplink;
+            public Boolean statsOutboundDownlink;
+
+        }
+
+    }
+
+    public List<InboundObject> inbounds;
+
+    public static class InboundObject implements InstanceCreator<InboundObject.LazyInboundConfigurationObject> {
+
+        public String listen;
+        public Integer port;
+        public String protocol;
+        public LazyInboundConfigurationObject settings;
+        public StreamSettingsObject streamSettings;
+        public String tag;
+        public SniffingObject sniffing;
+        public AllocateObject allocate;
+
+        public static class SniffingObject {
+
+            public Boolean enabled;
+            public List<String> destOverride;
+            public Boolean metadataOnly;
+
+        }
+
+        public static class AllocateObject {
+
+            public String strategy;
+            public Integer refresh;
+            public Integer concurrency;
+
+        }
+
+        @Override
+        public LazyInboundConfigurationObject createInstance(Type type) {
+            return new LazyInboundConfigurationObject();
+        }
+
+        public class LazyInboundConfigurationObject extends JsonLazyInterface<InboundConfigurationObject> {
+
+            public LazyInboundConfigurationObject() {
+            }
+
+            public LazyInboundConfigurationObject(InboundConfigurationObject value) {
+                super(value);
+            }
+
+            @Nullable
+            @Override
+            protected Class<? extends InboundConfigurationObject> getType() {
+                switch (protocol.toLowerCase()) {
+                    case "dokodemo-door":
+                        return DokodemoDoorInboundConfigurationObject.class;
+                    case "http":
+                        return HTTPInboundConfigurationObject.class;
+                    case "socks":
+                        return SocksInboundConfigurationObject.class;
+                    case "vmess":
+                        return VMessInboundConfigurationObject.class;
+                    case "vless":
+                        return VLESSInboundConfigurationObject.class;
+                    case "shadowsocks":
+                        return ShadowsocksInboundConfigurationObject.class;
+                    case "trojan":
+                        return TrojanInboundConfigurationObject.class;
+
+                }
+                return null;
+            }
+
+        }
+
+    }
+
+    public interface InboundConfigurationObject {
+    }
+
+    public static class DokodemoDoorInboundConfigurationObject implements InboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String network;
+        public Integer timeout;
+        public Boolean followRedirect;
+        public Integer userLevel;
+
+    }
+
+    public static class HTTPInboundConfigurationObject implements InboundConfigurationObject {
+
+        public Integer timeout;
+        public List<AccountObject> accounts;
+        public Boolean allowTransparent;
+        public Integer userLevel;
+
+        public static class AccountObject {
+
+            public String user;
+            public String pass;
+
+        }
+
+    }
+
+    public static class SocksInboundConfigurationObject implements InboundConfigurationObject {
+
+
+        public String auth;
+        public List<AccountObject> accounts;
+        public Boolean udp;
+        public String ip;
+        public Integer userLevel;
+
+        public static class AccountObject {
+
+            public String user;
+            public String pass;
+
+        }
+
+    }
+
+    public static class VMessInboundConfigurationObject implements InboundConfigurationObject {
+
+        public List<ClientObject> clients;
+        @SerializedName("default")
+        public DefaultObject defaultObject;
+        public DetourObject detour;
+        public Boolean disableInsecureEncryption;
+
+
+        public static class ClientObject {
+
+            public String id;
+            public Integer level;
+            public Integer alterId;
+            public String email;
+
+        }
+
+        public static class DefaultObject {
+
+            public Integer level;
+            public Integer alterId;
+
+        }
+
+        public static class DetourObject {
+
+            public String to;
+
+        }
+
+    }
+
+    public static class VLESSInboundConfigurationObject implements InboundConfigurationObject {
+
+        public List<ClientObject> clients;
+        public String decryption;
+        public List<FallbackObject> fallbacks;
+
+        public static class ClientObject {
+
+            public String id;
+            public Integer level;
+            public String email;
+
+        }
+
+        public static class FallbackObject {
+
+            public String alpn;
+            public String path;
+            public Integer dest;
+            public Integer xver;
+
+        }
+
+    }
+
+    public static class ShadowsocksInboundConfigurationObject implements InboundConfigurationObject {
+
+        public String email;
+        public String method;
+        public String password;
+        public Integer level;
+        public String network;
+
+    }
+
+    public static class TrojanInboundConfigurationObject implements InboundConfigurationObject {
+
+        public List<ClientObject> clients;
+        public List<FallbackObject> fallbacks;
+
+        public static class ClientObject {
+
+            public String password;
+            public String email;
+            public Integer level;
+
+        }
+
+        public static class FallbackObject {
+
+            public String alpn;
+            public String path;
+            public Integer dest;
+            public Integer xver;
+
+        }
+
+    }
+
+    public List<OutboundObject> outbounds;
+
+    public static class OutboundObject {
+
+        public String sendThrough;
+        public String protocol;
+        public LazyOutboundConfigurationObject settings;
+        public String tag;
+        public StreamSettingsObject streamSettings;
+        public ProxySettingsObject proxySettings;
+        public MuxObject mux;
+
+        public class LazyOutboundConfigurationObject extends JsonLazyInterface<OutboundConfigurationObject> {
+
+            public LazyOutboundConfigurationObject() {
+            }
+
+            public LazyOutboundConfigurationObject(OutboundConfigurationObject value) {
+                super(value);
+            }
+
+            @Nullable
+            @Override
+            protected Class<? extends OutboundConfigurationObject> getType() {
+                switch (protocol.toLowerCase()) {
+                    case "blackhole":
+                        return BlackholeOutboundConfigurationObject.class;
+                    case "dns":
+                        return DNSOutboundConfigurationObject.class;
+                    case "freedom":
+                        return FreedomOutboundConfigurationObject.class;
+                    case "http":
+                        return HTTPOutboundConfigurationObject.class;
+                    case "socks":
+                        return SocksOutboundConfigurationObject.class;
+                    case "vmess":
+                        return VMessOutboundConfigurationObject.class;
+                    case "shadowsocks":
+                        return ShadowsocksOutboundConfigurationObject.class;
+                    case "vless":
+                        return VLESSOutboundConfigurationObject.class;
+                    case "loopback":
+                        return LoopbackOutboundConfigurationObject.class;
+                }
+                return null;
+            }
+        }
+
+        public static class ProxySettingsObject {
+
+            public String tag;
+            public Boolean transportLayer;
+
+        }
+
+        public static class MuxObject {
+
+            public Boolean enabled;
+            public Integer concurrency;
+
+        }
+
+    }
+
+    public interface OutboundConfigurationObject {
+    }
+
+    public static class BlackholeOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public ResponseObject response;
+
+        public static class ResponseObject {
+            public String type;
+        }
+
+    }
+
+    public static class DNSOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String network;
+        public String address;
+        public Integer port;
+
+    }
+
+    public static class FreedomOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String domainStrategy;
+        public String redirect;
+        public Integer userLevel;
+
+
+    }
+
+    public static class HTTPOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public List<ServerObject> servers;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public List<HTTPInboundConfigurationObject.AccountObject> users;
+
+        }
+
+    }
+
+    public static class SocksOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public List<ServerObject> servers;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public List<UserObject> users;
+
+            public static class UserObject {
+
+                public String user;
+                public String pass;
+                public Integer level;
+
+            }
+
+        }
+
+    }
+
+    public static class VMessOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public List<ServerObject> vnext;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public UserObject users;
+
+            public static class UserObject {
+
+                public String id;
+                public String alterId;
+                public String security;
+                public Integer level;
+
+            }
+
+        }
+
+    }
+
+    public static class ShadowsocksOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public List<ServerObject> servers;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public String method;
+            public String password;
+            public Integer level;
+            public String email;
+
+        }
+
+    }
+
+    public static class VLESSOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public List<VMessOutboundConfigurationObject.ServerObject> vnext;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public UserObject users;
+
+            public static class UserObject {
+
+                public String id;
+                public String encryption;
+                public Integer level;
+
+            }
+
+        }
+
+    }
+
+    public static class LoopbackOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String inboundTag;
+
+    }
+
+    public TransportObject transport;
+
+    public static class TransportObject {
+
+        public TLSObject tlsSettings;
+        public TcpObject tcpSettings;
+        public KcpObject kcpSettings;
+        public WebSocketObject wsSettings;
+        public HttpObject httpSettings;
+        public QuicObject quicSettings;
+        public DomainSocketObject dsSettings;
+
+    }
+
+    public static class StreamSettingsObject {
+
+        public String network;
+        public String security;
+        public TLSObject tlsSettings;
+        public TcpObject tcpSettings;
+        public KcpObject kcpSettings;
+        public WebSocketObject wsSettings;
+        public HttpObject httpSettings;
+        public QuicObject quicSettings;
+        public DomainSocketObject dsSettings;
+        public SockoptObject sockopt;
+
+        public static class SockoptObject {
+
+            public Integer mark;
+            public Boolean tcpFastOpen;
+            public String tproxy;
+
+        }
+
+    }
+
+    public static class TLSObject {
+
+        public String serverName;
+        public Boolean allowInsecure;
+        public List<String> alpn;
+        public List<CertificateObject> certificates;
+        public Boolean disableSystemRoot;
+
+        public static class CertificateObject {
+
+            public String usage;
+            public String certificateFile;
+            public String keyFile;
+            public List<String> certificate;
+            public List<String> key;
+
+        }
+
+    }
+
+    public static class TcpObject {
+
+        public Boolean acceptProxyProtocol;
+        public HeaderObject header;
+
+        public static class HeaderObject {
+
+            public String type;
+
+            public HTTPRequestObject request;
+            public HTTPResponseObject response;
+
+            public static class HTTPRequestObject {
+
+                public String version;
+                public String method;
+                public List<String> path;
+                public Map<String, List<String>> headers;
+
+            }
+
+            public static class HTTPResponseObject {
+
+                public String version;
+                public String status;
+                public String reason;
+                public Map<String, List<String>> headers;
+
+            }
+
+        }
+
+    }
+
+
+    public static class KcpObject {
+
+        public Integer mtu;
+        public Integer tti;
+        public Integer uplinkCapacity;
+        public Integer downlinkCapacity;
+        public Boolean congestion;
+        public Integer readBufferSize;
+        public Integer writeBufferSize;
+        public HeaderObject header;
+        public String seed;
+
+        public static class HeaderObject {
+
+            public String type;
+
+        }
+
+    }
+
+    public static class WebSocketObject {
+
+        public Boolean acceptProxyProtocol;
+        public String path;
+        public Map<String, String> headers;
+
+    }
+
+    public static class HttpObject {
+
+        public List<String> host;
+        public String path;
+
+    }
+
+    public static class QuicObject {
+
+        public String security;
+        public String key;
+        public HeaderObject header;
+
+        public static class HeaderObject {
+
+            public String type;
+
+        }
+
+    }
+
+    public static class DomainSocketObject {
+
+        public String path;
+        @SerializedName("abstract")
+        public Boolean isAbstract;
+        public Boolean padding;
+
+    }
+
+}
