@@ -11,6 +11,7 @@ object Key {
     const val MODE_PROXY = 1
     const val MODE_TRANS = 2
 
+    const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
     const val PROFILE_NAME = "profileName"
     const val PROFILE_GROUP = "profileGroup"

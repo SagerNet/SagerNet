@@ -44,6 +44,14 @@ class ProxyEntity(
         }
     }
 
+    fun putBean(bean: AbstractBean) {
+        when (bean) {
+            is SOCKSBean -> socksBean = bean
+            is VMessBean -> vmessBean = bean
+            else -> error("Undefined type $type")
+        }
+    }
+
     fun requireVMess() = requireBean() as VMessBean
     fun requireSOCKS() = requireBean() as SOCKSBean
 

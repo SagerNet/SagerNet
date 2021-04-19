@@ -34,6 +34,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class StatsBar @JvmOverloads constructor(
@@ -81,17 +82,22 @@ class StatsBar @JvmOverloads constructor(
     fun changeState(state: BaseService.State) {
         val activity = context as MainActivity
         fun postWhenStarted(what: () -> Unit) = activity.lifecycleScope.launch(Dispatchers.Main) {
+            delay(100L)
             activity.whenStarted { what() }
         }
         if ((state == BaseService.State.Connected).also { hideOnScroll = it }) {
-            postWhenStarted { performShow() }
+            postWhenStarted {
+                performShow()
+            }
             /*  tester.status.observe(activity) {
                   it.retrieve(this::setStatus) { msg ->
                       activity.snackbar(msg).show()
                   }
               }*/
         } else {
-            postWhenStarted { performHide() }
+            postWhenStarted {
+                performHide()
+            }
             updateTraffic(0, 0, 0, 0)
             /* tester.status.removeObservers(activity)
              if (state != BaseService.State.Idle) tester.invalidate()*/

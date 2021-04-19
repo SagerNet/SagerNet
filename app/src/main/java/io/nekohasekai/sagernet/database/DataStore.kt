@@ -38,6 +38,8 @@ object DataStore {
     var proxyApps by configurationStore.int("proxyApps")
     var individual by configurationStore.string("individual")
 
+    // cache
+    var dirty by profileCacheStore.boolean(Key.PROFILE_DIRTY)
     var editingId by profileCacheStore.long(Key.PROFILE_ID)
     var editingGroup by profileCacheStore.long(Key.PROFILE_GROUP)
     var profileName by profileCacheStore.string(Key.PROFILE_NAME)

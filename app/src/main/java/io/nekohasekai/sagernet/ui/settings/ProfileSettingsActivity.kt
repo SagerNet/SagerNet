@@ -5,24 +5,32 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.core.view.ViewCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
+import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.EVENT_UPDATE_GROUP
+import io.nekohasekai.sagernet.ktx.EVENT_UPDATE_PROFILE
 import io.nekohasekai.sagernet.ktx.Empty
 import io.nekohasekai.sagernet.ktx.postNotification
 import io.nekohasekai.sagernet.utils.AlertDialogFragment
+import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
 
 @Suppress("UNCHECKED_CAST")
-abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity() {
+abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
+    OnPreferenceDataStoreChangeListener {
 
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
@@ -53,25 +61,31 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity() {
         const val EXTRA_GROUP_ID = "group"
     }
 
-    abstract fun createFragment(): Fragment
-    abstract fun init(bean: T?)
+    abstract val type: String
+    abstract fun createEntity(): T
+    abstract fun init()
+    abstract fun init(bean: T)
+    abstract fun T.serialize()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
+            setTitle(R.string.profile_config)
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
+        DataStore.profileCacheStore.registerChangeListener(this)
 
         if (savedInstanceState == null) {
             val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
+            DataStore.dirty = false
             DataStore.editingId = editingId
             if (editingId == 0L) {
                 val editingGroup = intent.getLongExtra(EXTRA_GROUP_ID, 0L)
                 DataStore.editingGroup = editingGroup
-                init(null)
+                init()
             } else {
                 val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
                 if (proxyEntity == null) {
@@ -82,13 +96,37 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity() {
                 init(proxyEntity.requireBean() as T)
             }
             supportFragmentManager.beginTransaction()
-                .replace(R.id.settings, createFragment())
+                .replace(R.id.settings,
+                    MyPreferenceFragmentCompat().apply { activity = this@ProfileSettingsActivity })
                 .commit()
         }
 
     }
 
-    private val child by lazy { supportFragmentManager.findFragmentById(R.id.settings) as MyPreferenceFragmentCompat<T, ProfileSettingsActivity<T>> }
+    fun saveAndExit() {
+
+        val editingId = DataStore.editingId
+        if (editingId == 0L) {
+            val editingGroup = DataStore.editingGroup
+            SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                groupId = editingGroup,
+                type = type
+            ).apply { putBean(createEntity().apply { serialize() }) })
+            postNotification(EVENT_UPDATE_GROUP, editingGroup)
+        } else {
+            val entity = SagerDatabase.proxyDao.getById(DataStore.editingId)
+            if (entity == null) {
+                finish()
+                return
+            }
+            SagerDatabase.proxyDao.updateProxy(entity.apply { (requireBean() as T).serialize() })
+            postNotification(EVENT_UPDATE_PROFILE, editingId)
+        }
+        finish()
+
+    }
+
+    private val child by lazy { supportFragmentManager.findFragmentById(R.id.settings) as MyPreferenceFragmentCompat }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.profile_config_menu, menu)
@@ -98,7 +136,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = child.onOptionsItemSelected(item)
 
     override fun onBackPressed() {
-        if (child.unsaved) UnsavedChangesDialogFragment().show(child, REQUEST_UNSAVED_CHANGES)
+        if (DataStore.dirty) UnsavedChangesDialogFragment().show(child, REQUEST_UNSAVED_CHANGES)
         else super.onBackPressed()
     }
 
@@ -107,15 +145,65 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity() {
         return true
     }
 
-    abstract class MyPreferenceFragmentCompat<T : AbstractBean, P : ProfileSettingsActivity<T>> :
-        PreferenceFragmentCompat() {
-        val activity get() = requireActivity() as P
-        var unsaved = false
+    override fun onDestroy() {
+        DataStore.profileCacheStore.unregisterChangeListener(this)
+        super.onDestroy()
+    }
+
+    override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
+        if (key != Key.PROFILE_DIRTY) {
+            DataStore.dirty = true
+        }
+    }
+
+    abstract fun PreferenceFragmentCompat.createPreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    )
+
+    class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
+
+        lateinit var activity: ProfileSettingsActivity<*>
+
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            preferenceManager.preferenceDataStore = DataStore.profileCacheStore
+            activity.apply {
+                createPreferences(savedInstanceState, rootKey)
+            }
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            ViewCompat.setOnApplyWindowInsetsListener(listView, ListListener)
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+            R.id.action_delete -> {
+                DeleteConfirmationDialogFragment().withArg(ProfileIdArg(DataStore.editingId,
+                    DataStore.editingGroup))
+                    .show(this)
+                true
+            }
+            R.id.action_apply -> {
+                activity.saveAndExit()
+                true
+            }
+            else -> false
+        }
+
     }
 
     object PasswordSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
-        override fun provideSummary(preference: EditTextPreference?) =
-            "\u2022".repeat(preference?.text?.length ?: 0)
+
+        override fun provideSummary(preference: EditTextPreference): CharSequence {
+            return if (preference.text.isNullOrBlank()) {
+                preference.context.getString(androidx.preference.R.string.not_set)
+            } else {
+                "\u2022".repeat(preference.text.length)
+            }
+
+        }
     }
 
 }

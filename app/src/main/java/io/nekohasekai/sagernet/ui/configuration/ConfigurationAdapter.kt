@@ -25,11 +25,11 @@ class ConfigurationAdapter(private val groupIdToQuery: Long) :
     var configurationList: List<ProxyEntity> = listOf()
 
     fun reloadList() {
-        runOnIoDispatcher {
+        runOnDefaultDispatcher {
             configurationList = SagerDatabase.proxyDao.getByGroup(groupIdToQuery)
             if (configurationList.isEmpty() &&
                 (SagerDatabase.groupDao.getById(groupIdToQuery)
-                    ?: return@runOnIoDispatcher).isDefault
+                    ?: return@runOnDefaultDispatcher).isDefault
             ) {
                 SagerDatabase.proxyDao.addProxy(ProxyEntity(
                     groupId = groupIdToQuery,

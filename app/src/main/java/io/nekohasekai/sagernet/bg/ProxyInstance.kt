@@ -31,7 +31,6 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     fun start() {
         v2rayPoint.runLoop(DataStore.preferIpv6)
-        println("Satrted")
     }
 
     fun stop() {

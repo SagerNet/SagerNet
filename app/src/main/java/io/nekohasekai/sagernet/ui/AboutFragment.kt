@@ -1,10 +1,15 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import io.nekohasekai.sagernet.R
 
-class AboutFragment : ToolbarFragment() {
+class AboutFragment : ToolbarFragment(R.layout.fragment_about) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        toolbar.setTitle(R.string.menu_about)
+    }
 
 }

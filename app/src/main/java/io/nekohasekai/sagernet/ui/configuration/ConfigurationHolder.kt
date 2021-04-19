@@ -33,8 +33,8 @@ class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view), Event
 
     override fun onEvent(eventId: Int, vararg args: Any) {
         if (args[0] != profileId) return
-        runOnIoDispatcher {
-            val profile = SagerDatabase.proxyDao.getById(profileId) ?: return@runOnIoDispatcher
+        runOnDefaultDispatcher {
+            val profile = SagerDatabase.proxyDao.getById(profileId) ?: return@runOnDefaultDispatcher
             onMainDispatcher {
                 bind(profile)
             }
@@ -45,7 +45,7 @@ class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view), Event
         profileId = proxyEntity.id
 
         view.setOnClickListener {
-            runOnIoDispatcher {
+            runOnDefaultDispatcher {
                 if (DataStore.selectedProxy != proxyEntity.id) {
                     DataStore.selectedProxy = proxyEntity.id
                     onMainDispatcher {
@@ -82,7 +82,7 @@ class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view), Event
             })
         }
 
-        runOnIoDispatcher {
+        runOnDefaultDispatcher {
             if (DataStore.selectedProxy == proxyEntity.id) {
                 onMainDispatcher {
                     selectedView.visibility = View.VISIBLE

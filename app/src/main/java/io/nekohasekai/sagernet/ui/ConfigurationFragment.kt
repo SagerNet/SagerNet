@@ -11,7 +11,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.dp2px
-import io.nekohasekai.sagernet.ktx.runOnIoDispatcher
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.configuration.GroupPagerAdapter
 
 class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
@@ -42,7 +42,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             }
         }.attach()
 
-        runOnIoDispatcher {
+        runOnDefaultDispatcher {
             adapter.reloadList {
                 tabLayout.isGone = it
                 toolbar.elevation = if (it) 0F else dp2px(4).toFloat()
