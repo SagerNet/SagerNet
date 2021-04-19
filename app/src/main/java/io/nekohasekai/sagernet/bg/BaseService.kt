@@ -15,6 +15,7 @@ import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.broadcastReceiver
 import io.nekohasekai.sagernet.ktx.readableMessage
 import kotlinx.coroutines.*
@@ -284,7 +285,7 @@ class BaseService {
                     preInit()
                     proxy.init(this@Interface)
                     data.processes = GuardedProcessPool {
-//                        Timber.w(it)
+                        Logs.w(it)
                         stopRunner(false, it.readableMessage)
                     }
                     startProcesses()
@@ -294,7 +295,7 @@ class BaseService {
                 } catch (_: UnknownHostException) {
                     stopRunner(false, getString(R.string.invalid_server))
                 } catch (exc: Throwable) {
-//                    if (exc is ExpectedException) Timber.d(exc) else Timber.w(exc)
+                    if (exc is ExpectedException) Logs.d(exc.readableMessage) else Logs.w(exc)
                     stopRunner(false,
                         "${getString(R.string.service_failed)}: ${exc.readableMessage}")
                 } finally {

@@ -2,6 +2,7 @@ package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
 import android.os.RemoteException
+import android.view.Menu
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -85,9 +86,13 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         changeState(BaseService.State.Idle) // reset everything to init state
 
         connection.connect(this, this)
-        DataStore.publicStore.registerChangeListener(this)
+        DataStore.configurationStore.registerChangeListener(this)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.profile_manager_menu, menu)
+        return true
+    }
 
     var state = BaseService.State.Idle
 
@@ -170,7 +175,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun onDestroy() {
         super.onDestroy()
-        DataStore.publicStore.unregisterChangeListener(this)
+        DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
     }
 

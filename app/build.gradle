@@ -51,6 +51,12 @@ android {
         coreLibraryDesugaringEnabled true
     }
 
+    lintOptions {
+        disable "MissingTranslation"
+        disable "ExtraTranslation"
+        disable "BlockedPrivateApi"
+    }
+
     packagingOptions {
         exclude "/META-INF/*.version"
         exclude "/META-INF/*.kotlin_module"
@@ -63,6 +69,20 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
+    splits {
+        abi {
+            enable true
+            universalApk false
+        }
+    }
+
 }
 
 dependencies {
@@ -90,7 +110,7 @@ dependencies {
     implementation "me.weishu:free_reflection:3.0.1"
     implementation "com.github.zawadz88.materialpopupmenu:material-popup-menu:4.1.0"
     implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")
 
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"

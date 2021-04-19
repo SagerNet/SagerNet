@@ -11,6 +11,16 @@ object Key {
     const val MODE_PROXY = 1
     const val MODE_TRANS = 2
 
+    const val PROFILE_ID = "profileId"
+    const val PROFILE_NAME = "profileName"
+    const val PROFILE_GROUP = "profileGroup"
+
+    const val SERVER_ADDRESS = "serverAddress"
+    const val SERVER_PORT = "serverPort"
+    const val SERVER_USERNAME = "serverUsername"
+    const val SERVER_PASSWORD = "serverPassword"
+    const val SERVER_UDP = "serverUdp"
+
 }
 
 object Action {

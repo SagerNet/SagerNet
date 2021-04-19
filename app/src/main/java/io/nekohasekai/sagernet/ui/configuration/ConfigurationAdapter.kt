@@ -7,11 +7,19 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.runOnIoDispatcher
+import io.nekohasekai.sagernet.ktx.*
 
 class ConfigurationAdapter(private val groupIdToQuery: Long) :
-    RecyclerView.Adapter<ConfigurationHolder>() {
+    RecyclerView.Adapter<ConfigurationHolder>(), EventListener {
+
+    init {
+        registerListener(EVENT_UPDATE_GROUP, this)
+    }
+
+    override fun onEvent(eventId: Int, vararg args: Any) {
+        if (args[0] != groupIdToQuery) return
+        reloadList()
+    }
 
     var configurationList: List<ProxyEntity> = listOf()
 

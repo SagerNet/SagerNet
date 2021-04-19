@@ -337,7 +337,6 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 localSocket.setFileDescriptorsForSend(arrayOf(fd))
                 localSocket.outputStream.write(42)
             }
-            System.out.println("FD Sended")
             return
         } catch (e: IOException) {
             if (tries > 5) throw e

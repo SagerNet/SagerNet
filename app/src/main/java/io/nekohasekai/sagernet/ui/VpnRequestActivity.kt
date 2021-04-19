@@ -16,6 +16,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerApp
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.broadcastReceiver
 
 class VpnRequestActivity : AppCompatActivity() {
@@ -62,7 +63,7 @@ class VpnRequestActivity : AppCompatActivity() {
                 SagerApp.startService()
                 false
             } else {
-//            Timber.e("Failed to start VpnService: $intent")
+                Logs.e(Z"Failed to start VpnService: $intent")
                 true
             }
     }

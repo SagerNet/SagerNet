@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.nekohasekai.sagernet">
 
     <permission
@@ -13,7 +14,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <uses-feature
         android:name="android.software.leanback"
@@ -28,12 +31,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SagerNet.Immersive">
         <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
-        <activity
-            android:name=".ui.entity.SocksSettingsActivity"
-            android:label="@string/title_activity_socks_settings" />
-        <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.SagerNet.Immersive.Navigation">
@@ -44,6 +41,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.VpnRequestActivity" />
+        <activity android:name=".ui.settings.SocksSettingsActivity" />
 
         <service
             android:name=".bg.ProxyService"

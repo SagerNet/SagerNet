@@ -25,9 +25,7 @@ public class KryoConverters {
         ByteBufferOutput buffer = KryosKt.byteBuffer(out);
         bean.serialize(buffer);
         IoUtil.flush(buffer);
-        IoUtil.flush(out);
         IoUtil.close(buffer);
-        IoUtil.close(out);
         return out.toByteArray();
     }
 
@@ -36,7 +34,6 @@ public class KryoConverters {
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
         bean.deserialize(buffer);
         IoUtil.close(buffer);
-        IoUtil.close(input);
         return bean;
     }
 

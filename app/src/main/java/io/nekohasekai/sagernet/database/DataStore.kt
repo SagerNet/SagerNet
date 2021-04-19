@@ -14,8 +14,8 @@ import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 
 object DataStore {
 
-    val publicStore = RoomPreferenceDataStore(PublicDatabase.kvPairDao)
-    val sagerStore = RoomPreferenceDataStore(SagerDatabase.kvPairDao)
+    val configurationStore = RoomPreferenceDataStore(PublicDatabase.kvPairDao)
+    val profileCacheStore = RoomPreferenceDataStore(SagerDatabase.profileCacheDao)
 
     fun init() {
         if (Build.VERSION.SDK_INT >= 24) {
@@ -26,16 +26,25 @@ object DataStore {
 
     }
 
-    var serviceMode by sagerStore.int(Key.SERVICE_MODE)
-    var selectedProxy by sagerStore.long("selected_proxy")
-    var allowAccess by sagerStore.boolean("allow_access")
-    var socks5Port by sagerStore.int("socks5_port") { 3389 }
-    var useHttp by sagerStore.boolean("use_http")
-    var httpPort by sagerStore.long("http_port")
-    var ipv6Route by sagerStore.boolean("ipv6_route")
-    var preferIpv6 by sagerStore.boolean("prefer_ipv6")
-    var meteredNetwork by sagerStore.boolean("metered_network")
-    var proxyApps by sagerStore.int("proxyApps")
-    var individual by sagerStore.string("individual")
+    var serviceMode by configurationStore.int(Key.SERVICE_MODE)
+    var selectedProxy by configurationStore.long("selected_proxy")
+    var allowAccess by configurationStore.boolean("allow_access")
+    var socks5Port by configurationStore.int("socks5_port") { 3389 }
+    var useHttp by configurationStore.boolean("use_http")
+    var httpPort by configurationStore.long("http_port")
+    var ipv6Route by configurationStore.boolean("ipv6_route")
+    var preferIpv6 by configurationStore.boolean("prefer_ipv6")
+    var meteredNetwork by configurationStore.boolean("metered_network")
+    var proxyApps by configurationStore.int("proxyApps")
+    var individual by configurationStore.string("individual")
+
+    var editingId by profileCacheStore.long(Key.PROFILE_ID)
+    var editingGroup by profileCacheStore.long(Key.PROFILE_GROUP)
+    var profileName by profileCacheStore.string(Key.PROFILE_NAME)
+    var serverAddress by profileCacheStore.string(Key.SERVER_ADDRESS)
+    var serverPort by profileCacheStore.string(Key.SERVER_PORT)
+    var serverUsername by profileCacheStore.string(Key.SERVER_USERNAME)
+    var serverPassword by profileCacheStore.string(Key.SERVER_PASSWORD)
+    var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
 
 }

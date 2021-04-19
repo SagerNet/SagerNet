@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:alphabeticShortcut="n"
+        android:icon="@drawable/ic_action_note_add"
+        android:title="@string/add_profile"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_scan_qr_code"
+                android:title="@string/add_profile_methods_scan_qr_code" />
+            <item android:title="@string/action_profile">
+                <menu>
+                    <item
+                        android:id="@+id/action_import_clipboard"
+                        android:alphabeticShortcut="v"
+                        android:title="@string/action_import" />
+                    <item
+                        android:id="@+id/action_manual_settings"
+                        android:alphabeticShortcut="n"
+                        android:title="@string/add_profile_methods_manual_settings"
+                        app:alphabeticModifiers="CTRL|SHIFT" />
+                </menu>
+            </item>
+            <item android:title="@string/action_group">
+                <menu>
+                    <item
+                        android:id="@+id/action_from_link"
+                        android:title="@string/action_from_link" />
+                </menu>
+            </item>
+        </menu>
+    </item>
+</menu>

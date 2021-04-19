@@ -38,10 +38,12 @@
 
     <!-- proxy category -->
     <string name="profile_name">Profile Name</string>
-    <string name="proxy">Server</string>
-    <string name="remote_port">Remote Port</string>
-    <string name="sitekey">Password</string>
-    <string name="enc_method">Encrypt Method</string>
+    <string name="server_address">Server</string>
+    <string name="server_port">Remote Port</string>
+    <string name="username_opt">Username (Optional)</string>
+    <string name="password_opt">Password (Optional)</string>
+    <string name="server_udp">UDP Route</string>
+    <string name="udp_summary">Redirect UDP traffic to remote</string>
 
     <!-- feature category -->
     <string name="ipv6">IPv6 Route</string>
@@ -96,13 +98,12 @@
     <!-- menu category -->
     <string name="profiles">Profiles</string>
     <string name="settings">Settings</string>
-    <string name="faq">FAQ</string>
-    <string name="faq_url">https://github.com/shadowsocks/shadowsocks-android/blob/master/.github/faq.md</string>
-    <string name="about">About</string>
-    <string name="about_title">Shadowsocks %s</string>
     <string name="edit">Edit</string>
     <string name="share">Share</string>
     <string name="add_profile">Add Profile</string>
+    <string name="action_profile">Profile</string>
+    <string name="action_group">Group</string>
+    <string name="action_from_link">From subscription</string>
     <string name="action_apply_all">Apply Settings to All Profiles</string>
     <string name="action_export_more">Export…</string>
     <string name="action_export_file">Export to file…</string>
@@ -183,6 +184,12 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="proxy_cat">Server Settings</string>
+    <string name="feature_cat">Feature Settings</string>
+    <string name="unsaved_changes_prompt">Changes not saved. Do you want to save?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="apply">Apply</string>
 
 </resources>

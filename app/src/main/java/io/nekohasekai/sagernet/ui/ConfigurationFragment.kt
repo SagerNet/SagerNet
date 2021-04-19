@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.github.zawadz88.materialpopupmenu.popupMenu
@@ -26,16 +27,18 @@ class ConfigurationFragment : Fragment() {
         return inflater.inflate(R.layout.group_list_main, container, false)
     }
 
+    lateinit var adapter: GroupPagerAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val groupPager = view.findViewById<ViewPager2>(R.id.group_pager)
         val tabLayout = view.findViewById<TabLayout>(R.id.group_tab)
-        val adapter = GroupPagerAdapter(this)
+        adapter = GroupPagerAdapter(this)
         groupPager.adapter = adapter
 
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             tab.text = adapter.groupList[position].name
                 .takeIf { !it.isNullOrBlank() } ?: getString(R.string.group_default)
-            tab.view.setOnLongClickListener {
+            tab.view.setOnLongClickListener { tabView ->
                 popupMenu {
                     dropDownVerticalOffset = 100
                     if (position == 0) {
@@ -66,19 +69,24 @@ class ConfigurationFragment : Fragment() {
                             callback = {
                                 runOnIoDispatcher {
                                     SagerDatabase.groupDao.delete(group)
-                                    adapter.reloadList()
+                                    adapter.reloadList {
+                                        tabLayout.isGone = it
+                                    }
                                 }
                             }
                         }
-                        //  }
                     }
-                }.show(requireContext(), it)
+                }.show(requireContext(), tabView)
 
                 true
             }
         }.attach()
 
-        adapter.reloadList()
+        runOnIoDispatcher {
+            adapter.reloadList {
+                tabLayout.isGone = it
+            }
+        }
 
     }
 

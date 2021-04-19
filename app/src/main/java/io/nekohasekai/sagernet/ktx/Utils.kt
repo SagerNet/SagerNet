@@ -8,15 +8,19 @@ import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.os.Build
+import android.os.Parcelable
 import android.system.Os
 import android.system.OsConstants
 import android.util.TypedValue
 import androidx.annotation.AttrRes
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.parcelize.Parcelize
 import java.io.FileDescriptor
 import java.net.HttpURLConnection
 import java.net.InetAddress
@@ -115,3 +119,12 @@ fun String?.parseNumericAddress(): InetAddress? = Os.inet_pton(OsConstants.AF_IN
         if (Build.VERSION.SDK_INT >= 29) it else parseNumericAddress.invoke(null,
             this) as InetAddress
     }
+
+
+@Parcelize
+class Empty : Parcelable
+
+@JvmOverloads
+fun DialogFragment.showAllowingStateLoss(fragmentManager: FragmentManager, tag: String? = null) {
+    if (!fragmentManager.isStateSaved) show(fragmentManager, tag)
+}

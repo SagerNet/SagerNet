@@ -5,7 +5,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.runOnIoDispatcher
 
 class GroupPagerAdapter(
     activity: Fragment,
@@ -13,16 +12,15 @@ class GroupPagerAdapter(
 
     var groupList: List<ProxyGroup> = listOf()
 
-    fun reloadList() {
-        runOnIoDispatcher {
+    suspend fun reloadList(hideTab: (hideTab: Boolean) -> Unit) {
+        groupList = SagerDatabase.groupDao.allGroups()
+        if (groupList.isEmpty()) {
+            SagerDatabase.groupDao.createGroup(ProxyGroup(isDefault = true))
             groupList = SagerDatabase.groupDao.allGroups()
-            if (groupList.isEmpty()) {
-                SagerDatabase.groupDao.createGroup(ProxyGroup(isDefault = true))
-                groupList = SagerDatabase.groupDao.allGroups()
-            }
-            onMainDispatcher {
-                notifyDataSetChanged()
-            }
+        }
+        onMainDispatcher {
+            notifyDataSetChanged()
+            hideTab(groupList.size == 1 && groupList[0].isDefault)
         }
     }
 

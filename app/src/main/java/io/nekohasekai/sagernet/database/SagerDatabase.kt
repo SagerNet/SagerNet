@@ -29,13 +29,13 @@ abstract class SagerDatabase : RoomDatabase() {
                 .build()
         }
 
-        val kvPairDao get() = instance.keyValuePairDao()
+        val profileCacheDao get() = instance.profileCacheDao()
         val groupDao get() = instance.groupDao()
         val proxyDao get() = instance.proxyDao()
 
     }
 
-    abstract fun keyValuePairDao(): KeyValuePair.Dao
+    abstract fun profileCacheDao(): KeyValuePair.Dao
     abstract fun groupDao(): ProxyGroup.Dao
     abstract fun proxyDao(): ProxyEntity.Dao
 

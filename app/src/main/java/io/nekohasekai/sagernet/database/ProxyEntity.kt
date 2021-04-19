@@ -32,7 +32,8 @@ class ProxyEntity(
     }
 
     fun displayName(): String {
-        return requireBean().name
+        return requireBean().name.takeIf { !it.isNullOrBlank() }
+            ?: "${requireBean().serverAddress}:${requireBean().serverPort}"
     }
 
     fun requireBean(): AbstractBean {
@@ -54,6 +55,9 @@ class ProxyEntity(
 
         @Query("SELECT * FROM proxy_entities WHERE id = :proxyId")
         fun getById(proxyId: Long): ProxyEntity?
+
+        @Query("DELETE FROM proxy_entities WHERE id = :proxyId")
+        fun deleteById(proxyId: Long): Int
 
         @Insert
         fun addProxy(proxy: ProxyEntity)
