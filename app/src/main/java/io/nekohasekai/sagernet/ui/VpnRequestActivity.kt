@@ -63,7 +63,7 @@ class VpnRequestActivity : AppCompatActivity() {
                 SagerApp.startService()
                 false
             } else {
-                Logs.e(Z"Failed to start VpnService: $intent")
+                Logs.e("Failed to start VpnService: $intent")
                 true
             }
     }

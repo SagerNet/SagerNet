@@ -15,6 +15,10 @@
     <string name="quick_toggle">Toggle</string>
     <string name="send_email">Send email</string>
 
+    <!-- tab -->
+
+    <string name="edit_tab">Edit group</string>
+
     <!-- misc -->
     <string name="service_mode">Service mode</string>
     <string name="service_mode_proxy">Proxy only</string>

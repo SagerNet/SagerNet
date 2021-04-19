@@ -315,7 +315,13 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             cmd += "--netif-ip6addr"
             cmd += PRIVATE_VLAN6_ROUTER
         }
-        //  cmd += "--enable-udprelay"
+        var enableUDP = false
+        when (profile.type) {
+            "soocks" -> enableUDP = profile.requireSOCKS().udp
+        }
+        if (enableUDP) {
+            cmd += "--enable-udprelay"
+        }
         data.processes!!.start(cmd, onRestartCallback = {
             try {
                 sendFd(conn.fileDescriptor)

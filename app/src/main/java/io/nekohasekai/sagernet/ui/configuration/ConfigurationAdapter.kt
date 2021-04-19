@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -40,6 +41,7 @@ class ConfigurationAdapter(private val groupIdToQuery: Long) :
                     }
                 ))
                 configurationList = SagerDatabase.proxyDao.getByGroup(groupIdToQuery)
+                DataStore.selectedProxy = configurationList[0].id
             }
             onMainDispatcher {
                 notifyDataSetChanged()

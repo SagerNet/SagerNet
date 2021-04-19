@@ -108,7 +108,6 @@ dependencies {
     implementation "cn.hutool:hutool-json:5.6.3"
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "me.weishu:free_reflection:3.0.1"
-    implementation "com.github.zawadz88.materialpopupmenu:material-popup-menu:4.1.0"
     implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")
 
