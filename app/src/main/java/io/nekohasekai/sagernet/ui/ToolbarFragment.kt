@@ -7,8 +7,13 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import io.nekohasekai.sagernet.R
 
-open class ToolbarFragment : Fragment() {
+open class ToolbarFragment : Fragment {
+
+    constructor() : super()
+    constructor(contentLayoutId: Int) : super(contentLayoutId)
+
     lateinit var toolbar: Toolbar
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

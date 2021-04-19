@@ -1,7 +1,8 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
-import android.view.*
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
@@ -13,16 +14,9 @@ import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.runOnIoDispatcher
 import io.nekohasekai.sagernet.ui.configuration.GroupPagerAdapter
 
-class ConfigurationFragment : ToolbarFragment(), Toolbar.OnMenuItemClickListener,
+class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
+    Toolbar.OnMenuItemClickListener,
     PopupMenu.OnMenuItemClickListener {
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.group_list_main, container, false)
-    }
 
     lateinit var adapter: GroupPagerAdapter
 
