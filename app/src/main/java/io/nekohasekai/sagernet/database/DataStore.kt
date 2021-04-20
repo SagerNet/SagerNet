@@ -2,7 +2,7 @@ package io.nekohasekai.sagernet.database
 
 import android.os.Build
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
 import io.nekohasekai.sagernet.ktx.boolean
@@ -19,7 +19,7 @@ object DataStore {
 
     fun init() {
         if (Build.VERSION.SDK_INT >= 24) {
-            SagerApp.deviceStorage.moveDatabaseFrom(SagerApp.application, Key.DB_PUBLIC)
+            SagerNet.deviceStorage.moveDatabaseFrom(SagerNet.application, Key.DB_PUBLIC)
         }
 
         System.setProperty(DEBUG_PROPERTY_NAME, DEBUG_PROPERTY_VALUE_ON)

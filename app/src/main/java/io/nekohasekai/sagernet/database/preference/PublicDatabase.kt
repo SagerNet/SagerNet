@@ -5,7 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import dev.matrix.roomigrant.GenerateRoomMigrations
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 abstract class PublicDatabase : RoomDatabase() {
     companion object {
         private val instance by lazy {
-            Room.databaseBuilder(SagerApp.deviceStorage, PublicDatabase::class.java, Key.DB_PUBLIC)
+            Room.databaseBuilder(SagerNet.deviceStorage, PublicDatabase::class.java, Key.DB_PUBLIC)
                 .addMigrations(*PublicDatabase_Migrations.build())
                 .allowMainThreadQueries()
                 .enableMultiInstanceInvalidation()

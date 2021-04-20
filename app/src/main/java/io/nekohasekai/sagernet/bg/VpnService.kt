@@ -10,7 +10,7 @@ import android.system.ErrnoException
 import android.system.Os
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.Subnet
@@ -242,7 +242,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     private suspend fun startVpn(): FileDescriptor {
         val profile = data.proxy!!.profile
         val builder = Builder()
-            .setConfigureIntent(SagerApp.configureIntent(this))
+            .setConfigureIntent(SagerNet.configureIntent(this))
             .setSession(profile.displayName())
             .setMtu(VPN_MTU)
             .addAddress(PRIVATE_VLAN4_CLIENT, 30)
@@ -309,7 +309,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 "--tunmtu",
                 VPN_MTU.toString(),
                 "--sock-path",
-                File(SagerApp.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
+                File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
                 "--loglevel", "debug")
         if (DataStore.ipv6Route) {
             cmd += "--netif-ip6addr"
@@ -334,7 +334,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
     private suspend fun sendFd(fd: FileDescriptor) {
         var tries = 0
-        val path = File(SagerApp.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath
+        val path = File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath
         while (true) try {
             delay(50L shl tries)
             LocalSocket().use { localSocket ->

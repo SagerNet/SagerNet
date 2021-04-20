@@ -16,14 +16,11 @@ import androidx.preference.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.ktx.EVENT_UPDATE_GROUP
-import io.nekohasekai.sagernet.ktx.EVENT_UPDATE_PROFILE
 import io.nekohasekai.sagernet.ktx.Empty
-import io.nekohasekai.sagernet.ktx.postNotification
 import io.nekohasekai.sagernet.utils.AlertDialogFragment
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
@@ -35,8 +32,12 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
             setTitle(R.string.unsaved_changes_prompt)
-            setPositiveButton(R.string.yes, listener)
-            setNegativeButton(R.string.no, listener)
+            setPositiveButton(R.string.yes) { _, _ ->
+                (requireActivity() as ProfileSettingsActivity<*>).saveAndExit()
+            }
+            setNegativeButton(R.string.no) { _, _ ->
+                requireActivity().finish()
+            }
             setNeutralButton(android.R.string.cancel, null)
         }
     }
@@ -47,8 +48,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
             setTitle(R.string.delete_confirm_prompt)
             setPositiveButton(R.string.yes) { _, _ ->
-                SagerDatabase.proxyDao.deleteById(arg.profileId)
-                postNotification(EVENT_UPDATE_GROUP, arg.groupId)
+                ProfileManager.deleteProfile(arg.groupId, arg.profileId)
                 requireActivity().finish()
             }
             setNegativeButton(R.string.no, null)
@@ -76,7 +76,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
-        DataStore.profileCacheStore.registerChangeListener(this)
 
         if (savedInstanceState == null) {
             val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
@@ -100,6 +99,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
                     MyPreferenceFragmentCompat().apply { activity = this@ProfileSettingsActivity })
                 .commit()
         }
+        DataStore.profileCacheStore.registerChangeListener(this)
 
     }
 
@@ -108,19 +108,14 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
         val editingId = DataStore.editingId
         if (editingId == 0L) {
             val editingGroup = DataStore.editingGroup
-            SagerDatabase.proxyDao.addProxy(ProxyEntity(
-                groupId = editingGroup,
-                type = type
-            ).apply { putBean(createEntity().apply { serialize() }) })
-            postNotification(EVENT_UPDATE_GROUP, editingGroup)
+            ProfileManager.createProfile(editingGroup, createEntity().apply { serialize() })
         } else {
             val entity = SagerDatabase.proxyDao.getById(DataStore.editingId)
             if (entity == null) {
                 finish()
                 return
             }
-            SagerDatabase.proxyDao.updateProxy(entity.apply { (requireBean() as T).serialize() })
-            postNotification(EVENT_UPDATE_PROFILE, editingId)
+            ProfileManager.updateProfile(entity.apply { (requireBean() as T).serialize() })
         }
         finish()
 

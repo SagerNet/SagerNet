@@ -1,9 +1,13 @@
 package io.nekohasekai.sagernet.database
 
+import android.content.Context
+import android.content.Intent
 import androidx.room.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+import io.nekohasekai.sagernet.ui.settings.ProfileSettingsActivity
+import io.nekohasekai.sagernet.ui.settings.SocksSettingsActivity
 
 @Entity(tableName = "proxy_entities", indices = [
     Index("groupId", name = "groupId")
@@ -12,7 +16,7 @@ class ProxyEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
     var groupId: Long,
-    var type: String,
+    var type: String = "",
     var userOrder: Long = 0L,
     var tx: Long = 0L,
     var rx: Long = 0L,
@@ -46,8 +50,14 @@ class ProxyEntity(
 
     fun putBean(bean: AbstractBean) {
         when (bean) {
-            is SOCKSBean -> socksBean = bean
-            is VMessBean -> vmessBean = bean
+            is SOCKSBean -> {
+                type = "socks"
+                socksBean = bean
+            }
+            is VMessBean -> {
+                type = "vmess"
+                vmessBean = bean
+            }
             else -> error("Undefined type $type")
         }
     }
@@ -55,11 +65,23 @@ class ProxyEntity(
     fun requireVMess() = requireBean() as VMessBean
     fun requireSOCKS() = requireBean() as SOCKSBean
 
+    fun settingIntent(ctx: Context): Intent {
+        return Intent(ctx, when (type) {
+            "socks" -> SocksSettingsActivity::class.java
+            else -> throw IllegalArgumentException()
+        }).apply {
+            putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)
+        }
+    }
+
     @androidx.room.Dao
     interface Dao {
 
         @Query("SELECT * FROM proxy_entities WHERE groupId = :groupId ORDER BY userOrder")
         fun getByGroup(groupId: Long): List<ProxyEntity>
+
+        @Query("SELECT  MAX(userOrder) + 1 FROM proxy_entities WHERE groupId = :groupId")
+        fun nextOrder(groupId: Long): Long?
 
         @Query("SELECT * FROM proxy_entities WHERE id = :proxyId")
         fun getById(proxyId: Long): ProxyEntity?
@@ -68,10 +90,13 @@ class ProxyEntity(
         fun deleteById(proxyId: Long): Int
 
         @Insert
-        fun addProxy(proxy: ProxyEntity)
+        fun addProxy(proxy: ProxyEntity): Long
 
         @Update
-        fun updateProxy(proxy: ProxyEntity)
+        fun updateProxy(vararg proxy: ProxyEntity)
+
+        @Query("DELETE FROM proxy_entities WHERE groupId = :groupId")
+        fun deleteAll(groupId: Long): Int
 
     }
 }

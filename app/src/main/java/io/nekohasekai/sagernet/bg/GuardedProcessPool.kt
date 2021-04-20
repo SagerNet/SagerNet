@@ -7,7 +7,7 @@ import android.system.Os
 import android.system.OsConstants
 import android.util.Log
 import androidx.annotation.MainThread
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.utils.Commandline
 import kotlinx.coroutines.*
@@ -34,7 +34,7 @@ class GuardedProcessPool(private val onFatal: suspend (IOException) -> Unit) : C
         }    // ignore
 
         fun start() {
-            process = ProcessBuilder(cmd).directory(SagerApp.deviceStorage.noBackupFilesDir).start()
+            process = ProcessBuilder(cmd).directory(SagerNet.deviceStorage.noBackupFilesDir).start()
         }
 
         suspend fun looper(onRestartCallback: (suspend () -> Unit)?) {

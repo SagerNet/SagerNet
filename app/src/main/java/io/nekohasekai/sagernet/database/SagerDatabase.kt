@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dev.matrix.roomigrant.GenerateRoomMigrations
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.preference.KeyValuePair
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.gson.GsonConverters
@@ -20,7 +20,7 @@ abstract class SagerDatabase : RoomDatabase() {
 
     companion object {
         private val instance by lazy {
-            Room.databaseBuilder(SagerApp.application, SagerDatabase::class.java, Key.DB_PROFILE)
+            Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
                 .addMigrations(*SagerDatabase_Migrations.build())
                 .allowMainThreadQueries()
                 .enableMultiInstanceInvalidation()

@@ -21,4 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 -repackageclasses ''
--keepattributes SourceFile,LineNumberTable
+-allowaccessmodification
+-printconfiguration
+-forceprocessing

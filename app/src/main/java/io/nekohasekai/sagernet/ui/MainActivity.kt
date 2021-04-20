@@ -20,7 +20,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
 
-        fab.setOnClickListener { if (state.canStop) SagerApp.stopService() else connect.launch(null) }
+        fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
         stats.setOnClickListener { if (state == BaseService.State.Connected) stats.testConnection() }
 
         ViewCompat.setOnApplyWindowInsetsListener(coordinator, ListHolderListener)

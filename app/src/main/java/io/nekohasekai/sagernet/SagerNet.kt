@@ -17,14 +17,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import me.weishu.reflection.Reflection
 
-class SagerApp : Application() {
+class SagerNet : Application() {
 
     companion object {
-        lateinit var application: SagerApp
+        lateinit var application: SagerNet
         val deviceStorage by lazy {
             if (Build.VERSION.SDK_INT < 24) application else DeviceStorageApp(application)
         }
@@ -69,6 +71,8 @@ class SagerApp : Application() {
 
         fun stopService() =
             application.sendBroadcast(Intent(Action.CLOSE).setPackage(application.packageName))
+
+
 
     }
 

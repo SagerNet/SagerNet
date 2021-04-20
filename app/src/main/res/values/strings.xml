@@ -106,6 +106,7 @@
     <string name="share">Share</string>
     <string name="add_profile">Add Profile</string>
     <string name="action_profile">Profile</string>
+    <string name="action_socks">Socks</string>
     <string name="action_group">Group</string>
     <string name="action_from_link">From subscription</string>
     <string name="action_apply_all">Apply Settings to All Profiles</string>

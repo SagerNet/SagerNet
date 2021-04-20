@@ -16,7 +16,7 @@ import com.github.shadowsocks.aidl.IShadowsocksServiceCallback
 import com.github.shadowsocks.aidl.TrafficStats
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerApp
+import io.nekohasekai.sagernet.SagerNet
 
 /**
  * User can customize visibility of notification since Android 8.
@@ -60,7 +60,7 @@ class ServiceNotification(
         .setColor(ContextCompat.getColor(service, R.color.material_primary_500))
         .setTicker(service.getString(R.string.forward_success))
         .setContentTitle(profileName)
-        .setContentIntent(SagerApp.configureIntent(service))
+        .setContentIntent(SagerNet.configureIntent(service))
         .setSmallIcon(R.drawable.ic_service_active)
         .setCategory(NotificationCompat.CATEGORY_SERVICE)
         .setPriority(if (visible) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_MIN)
