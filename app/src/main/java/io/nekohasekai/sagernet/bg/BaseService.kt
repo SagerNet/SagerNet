@@ -8,11 +8,11 @@ import android.os.Build
 import android.os.IBinder
 import android.os.RemoteCallbackList
 import android.os.RemoteException
+import io.nekohasekai.sagernet.Action
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.IShadowsocksService
 import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
-import io.nekohasekai.sagernet.Action
-import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
@@ -201,7 +201,7 @@ class BaseService {
         val isVpnService get() = false
 
         suspend fun startProcesses() {
-            GlobalScope.launch(Dispatchers.IO) { data.proxy!!.start() }
+            data.proxy!!.start()
         }
 
         fun startRunner() {
@@ -220,7 +220,7 @@ class BaseService {
 
         fun stopRunner(restart: Boolean = false, msg: String? = null) {
             if (data.state == State.Stopping) return
-            // channge the state
+            // channge the stated
             data.changeState(State.Stopping)
             GlobalScope.launch(Dispatchers.Main.immediate) {
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
@@ -237,6 +237,7 @@ class BaseService {
 
                     data.notification?.destroy()
                     data.notification = null
+                    data.proxy?.shutdown(this)
                     data.binder.trafficPersisted(listOfNotNull(data.proxy).map { it.profile.id })
                     data.proxy = null
                 }

@@ -286,7 +286,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
          }
     */
         builder.addDisallowedApplication("com.github.shadowsocks")
-//        builder.addDisallowedApplication(packageName)
+        builder.addDisallowedApplication(packageName)
 
         metered = when (profile.meteredNetwork) {
             0 -> DataStore.meteredNetwork
@@ -349,6 +349,5 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             tries += 1
         }
     }
-
 
 }

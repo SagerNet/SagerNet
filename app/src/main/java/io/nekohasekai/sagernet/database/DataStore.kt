@@ -37,7 +37,7 @@ object DataStore {
     var meteredNetwork by configurationStore.boolean("metered_network")
     var proxyApps by configurationStore.int("proxyApps")
     var individual by configurationStore.string("individual")
-    var alwaysUseLibev by configurationStore.boolean("alwaysUseLibev")
+    var forceShadowsocksRust = true//by configurationStore.boolean("forceShadowsocksRust")
 
     // cache
     var dirty by profileCacheStore.boolean(Key.PROFILE_DIRTY)

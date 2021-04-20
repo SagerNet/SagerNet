@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.room.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ui.settings.ProfileSettingsActivity
@@ -51,6 +52,15 @@ class ProxyEntity(
             "ss" -> ssBean ?: error("Null ss node")
             else -> error("Undefined type $type")
         }
+    }
+
+    fun useExternalShadowsocks(): Boolean {
+        if (type != "ss") return false
+        val bean = requireSS()
+        if (bean.plugin.isNotBlank()) return true
+        if (bean.method !in methodsV2fly) return true
+        if (DataStore.forceShadowsocksRust) return true
+        return false
     }
 
     fun putBean(bean: AbstractBean) {

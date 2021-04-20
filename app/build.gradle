@@ -3,9 +3,7 @@ plugins {
     id "kotlin-android"
     id "kotlin-kapt"
     id "kotlin-parcelize"
-
 }
-
 
 def keystorePwd = null
 def alias = null

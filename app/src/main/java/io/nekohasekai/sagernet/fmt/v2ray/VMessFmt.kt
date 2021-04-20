@@ -2,14 +2,16 @@ package io.nekohasekai.sagernet.fmt.v2ray
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
-import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig.*
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-fun buildV2rayConfig(bean: AbstractBean, listen: String, port: Int): V2rayConfig {
+fun buildV2rayConfig(proxy: ProxyEntity, listen: String, port: Int): V2rayConfig {
+
+    val bean = proxy.requireBean()
 
     return V2rayConfig().apply {
 
@@ -64,31 +66,43 @@ fun buildV2rayConfig(bean: AbstractBean, listen: String, port: Int): V2rayConfig
                                 SocksOutboundConfigurationObject.ServerObject().apply {
                                     address = bean.serverAddress
                                     this.port = bean.serverPort
-                                    users = if (bean.username.isNullOrBlank()) {
-                                        emptyList()
-                                    } else {
-                                        listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
-                                            .apply {
-                                                user = bean.username
-                                                pass = bean.password
-                                            })
+                                    if (!bean.username.isNullOrBlank()) {
+                                        users =
+                                            listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
+                                                .apply {
+                                                    user = bean.username
+                                                    pass = bean.password
+                                                })
                                     }
                                 }
                             )
                         })
                 } else if (bean is ShadowsocksBean) {
-                    protocol = "shadowsocks"
-                    settings = LazyOutboundConfigurationObject(
-                        ShadowsocksOutboundConfigurationObject().apply {
-                            servers = listOf(
-                                ShadowsocksOutboundConfigurationObject.ServerObject().apply {
-                                    address = bean.serverAddress
-                                    this.port = bean.serverPort
-                                    method = bean.method
-                                    password = bean.password
-                                }
-                            )
-                        })
+                    if (!proxy.useExternalShadowsocks()) {
+                        protocol = "shadowsocks"
+                        settings = LazyOutboundConfigurationObject(
+                            ShadowsocksOutboundConfigurationObject().apply {
+                                servers = listOf(
+                                    ShadowsocksOutboundConfigurationObject.ServerObject().apply {
+                                        address = bean.serverAddress
+                                        this.port = bean.serverPort
+                                        method = bean.method
+                                        password = bean.password
+                                    }
+                                )
+                            })
+                    } else {
+                        protocol = "socks"
+                        settings = LazyOutboundConfigurationObject(
+                            SocksOutboundConfigurationObject().apply {
+                                servers = listOf(
+                                    SocksOutboundConfigurationObject.ServerObject().apply {
+                                        address = "127.0.0.1"
+                                        this.port = port + 10
+                                    }
+                                )
+                            })
+                    }
                 }
             },
             OutboundObject().apply {
