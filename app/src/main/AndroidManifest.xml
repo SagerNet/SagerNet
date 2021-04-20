@@ -42,6 +42,7 @@
         </activity>
         <activity android:name=".ui.VpnRequestActivity" />
         <activity android:name=".ui.settings.SocksSettingsActivity" />
+        <activity android:name=".ui.settings.ShadowsocksSettingsActivity" />
 
         <service
             android:name=".bg.ProxyService"

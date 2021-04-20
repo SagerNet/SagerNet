@@ -12,8 +12,8 @@ import android.text.format.Formatter
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
-import com.github.shadowsocks.aidl.IShadowsocksServiceCallback
-import com.github.shadowsocks.aidl.TrafficStats
+import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
+import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -36,7 +36,7 @@ class ServiceNotification(
         object : IShadowsocksServiceCallback.Stub() {
             override fun stateChanged(state: Int, profileName: String?, msg: String?) {}   // ignore
             override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
-                if (profileId != 0L) return
+                if (profileId == 0L) return
                 builder.apply {
                     setContentText((service as Context).getString(R.string.traffic,
                         service.getString(R.string.speed,
@@ -93,7 +93,7 @@ class ServiceNotification(
     private fun updateCallback(screenOn: Boolean) {
         if (screenOn) {
             service.data.binder.registerCallback(callback)
-            service.data.binder.startListeningForBandwidth(callback, 1000)
+            service.data.binder.startListeningForBandwidth(callback, 3000)
             callbackRegistered = true
         } else if (callbackRegistered) {    // unregister callback to save battery
             service.data.binder.unregisterCallback(callback)

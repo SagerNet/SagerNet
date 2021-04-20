@@ -8,9 +8,9 @@ import android.os.Build
 import android.os.IBinder
 import android.os.RemoteCallbackList
 import android.os.RemoteException
-import com.github.shadowsocks.aidl.IShadowsocksService
-import com.github.shadowsocks.aidl.IShadowsocksServiceCallback
-import com.github.shadowsocks.aidl.TrafficStats
+import io.nekohasekai.sagernet.aidl.IShadowsocksService
+import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
+import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -102,17 +102,21 @@ class BaseService {
         private suspend fun loop() {
             var lastQueryTime = 0L
             while (true) {
-                delay(bandwidthListeners.values.minOrNull() ?: return)
+                val delayMs = bandwidthListeners.values.minOrNull()
+                delay(delayMs ?: return)
                 val queryTime = System.currentTimeMillis()
-                val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000.0
+                val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000L
                 val proxy = data?.proxy ?: continue
                 lastQueryTime = queryTime
                 val up = proxy.uplink
                 val down = proxy.downlink
                 if (up + down == 0L) continue
-                val stats = TrafficStats(up / sinceLastQueryInSeconds.toLong(),
-                    down / sinceLastQueryInSeconds.toLong(),
-                    up, down)
+                val stats = TrafficStats(
+                    up / sinceLastQueryInSeconds,
+                    down / sinceLastQueryInSeconds,
+                    proxy.uplinkTotal,
+                    proxy.downlinkTotal
+                )
                 if (data?.state == State.Connected && bandwidthListeners.isNotEmpty()) {
                     broadcast { item ->
                         if (bandwidthListeners.contains(item.asBinder())) {

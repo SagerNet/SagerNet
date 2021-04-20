@@ -1,5 +1,3 @@
-
-
 package io.nekohasekai.sagernet.widget
 
 import android.view.View

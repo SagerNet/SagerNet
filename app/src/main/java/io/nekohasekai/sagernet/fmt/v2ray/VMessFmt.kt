@@ -3,96 +3,120 @@ package io.nekohasekai.sagernet.fmt.v2ray
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.gson.gson
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig.*
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-fun buildV2rayConfig(bean: AbstractBean, listen: String, port: Int): String {
+fun buildV2rayConfig(bean: AbstractBean, listen: String, port: Int): V2rayConfig {
 
     return V2rayConfig().apply {
 
         dns = DnsObject().apply {
-
-            log = LogObject().apply {
-                loglevel = "debug"
-            }
-
             servers = listOf(
                 DnsObject.StringOrServerObject().apply {
-                    valueX = "https+local://doh.dns.sb/dns-query"
+                    valueX = "1.1.1.1"
                 }
             )
-
-            policy = PolicyObject().apply {
-                system = PolicyObject.SystemPolicyObject().apply {
-                    statsOutboundDownlink = true
-                    statsOutboundUplink = true
-                }
-            }
-
-            inbounds = listOf(
-                InboundObject().apply {
-                    tag = "in"
-                    this.listen = listen
-                    this.port = port
-                    protocol = "socks"
-                    settings = LazyInboundConfigurationObject(
-                        SocksInboundConfigurationObject().apply {
-                            auth = "noauth"
-                            udp = bean is SOCKSBean && bean.udp
-                            userLevel = 0
-                        })
-                }
-            )
-
-            outbounds = listOf(
-                OutboundObject().apply {
-                    tag = "out"
-                    if (bean is SOCKSBean) {
-                        protocol = "socks"
-                        settings = LazyOutboundConfigurationObject(
-                            SocksOutboundConfigurationObject().apply {
-                                servers = listOf(
-                                    SocksOutboundConfigurationObject.ServerObject().apply {
-                                        address = bean.serverAddress
-                                        this.port = bean.serverPort
-                                        users = if (bean.username.isNullOrBlank()) {
-                                            emptyList()
-                                        } else {
-                                            listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
-                                                .apply {
-                                                    user = bean.username
-                                                    pass = bean.password
-                                                    level = 0
-                                                })
-                                        }
-                                    }
-                                )
-                            })
-                    }
-                }
-            )
-
-            routing = RoutingObject().apply {
-                domainStrategy = "IPIfNonMatch"
-                rules = listOf(RoutingObject.RuleObject().apply {
-                    inboundTag = listOf(
-                        "in"
-                    )
-                    outboundTag = "out"
-                    type = "field"
-                })
-            }
-
         }
 
-    }.let { gson.toJson(it) }
+        log = LogObject().apply {
+            loglevel = "debug"
+        }
+
+        policy = PolicyObject().apply {
+            levels = mapOf("8" to PolicyObject.LevelPolicyObject().apply {
+                connIdle = 300
+                downlinkOnly = 1
+                handshake = 4
+                uplinkOnly = 1
+            })
+            system = PolicyObject.SystemPolicyObject().apply {
+                statsOutboundDownlink = true
+                statsOutboundUplink = true
+            }
+        }
+
+        inbounds = listOf(
+            InboundObject().apply {
+                tag = "in"
+                this.listen = listen
+                this.port = port
+                protocol = "socks"
+                settings = LazyInboundConfigurationObject(
+                    SocksInboundConfigurationObject().apply {
+                        auth = "noauth"
+                        udp = bean is SOCKSBean && bean.udp
+                        userLevel = 0
+                    })
+            }
+        )
+
+        outbounds = listOf(
+            OutboundObject().apply {
+                tag = "out"
+                if (bean is SOCKSBean) {
+                    protocol = "socks"
+                    settings = LazyOutboundConfigurationObject(
+                        SocksOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                SocksOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    this.port = bean.serverPort
+                                    users = if (bean.username.isNullOrBlank()) {
+                                        emptyList()
+                                    } else {
+                                        listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
+                                            .apply {
+                                                user = bean.username
+                                                pass = bean.password
+                                            })
+                                    }
+                                }
+                            )
+                        })
+                } else if (bean is ShadowsocksBean) {
+                    protocol = "shadowsocks"
+                    settings = LazyOutboundConfigurationObject(
+                        ShadowsocksOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                ShadowsocksOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    this.port = bean.serverPort
+                                    method = bean.method
+                                    password = bean.password
+                                }
+                            )
+                        })
+                }
+            },
+            OutboundObject().apply {
+                tag = "direct"
+                protocol = "freedom"
+            }
+        )
+
+        routing = RoutingObject().apply {
+            domainStrategy = "IPIfNonMatch"
+            rules = listOf(RoutingObject.RuleObject().apply {
+                inboundTag = listOf(
+                    "in"
+                )
+                outboundTag = "out"
+                type = "field"
+            })
+        }
+
+        stats = emptyMap()
+
+    }
 
 }
 
-fun parseVmessN(link: String): VMessBean {
+fun parseVmess(link: String): VMessBean {
+    if (link.contains("?") || link.startsWith("vmess1://")) return parseVmess1(link)
+
     val bean = VMessBean()
     val json = JSONObject(Base64.decodeStr(link.substringAfter("vmess://")))
 
@@ -148,7 +172,10 @@ fun parseVmessN(link: String): VMessBean {
 
 fun parseVmess1(link: String): VMessBean {
     val bean = VMessBean()
-    val lnk = link.replace("vmess1://", "https://").toHttpUrl()
+    val lnk = link
+        .replace("vmess://", "https://")
+        .replace("vmess1://", "https://")
+        .toHttpUrl()
     bean.serverAddress = lnk.host
     bean.serverPort = lnk.port
     bean.uuid = lnk.username

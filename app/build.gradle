@@ -143,6 +143,7 @@ dependencies {
     implementation "cn.hutool:hutool-core:5.6.3"
     implementation "cn.hutool:hutool-json:5.6.3"
     implementation "com.google.code.gson:gson:2.8.6"
+    implementation "com.google.zxing:core:3.4.1"
     implementation "me.weishu:free_reflection:3.0.1"
     implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")

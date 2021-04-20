@@ -46,8 +46,10 @@
     <string name="server_port">Remote Port</string>
     <string name="username_opt">Username (Optional)</string>
     <string name="password_opt">Password (Optional)</string>
+    <string name="password">Password</string>
     <string name="server_udp">UDP Route</string>
     <string name="udp_summary">Redirect UDP traffic to remote</string>
+    <string name="enc_method">Encrypt Method</string>
 
     <!-- feature category -->
     <string name="ipv6">IPv6 Route</string>
@@ -98,6 +100,7 @@
     <string name="profile_empty">Please select a profile</string>
     <string name="proxy_empty">Proxy/Password should not be empty</string>
     <string name="connect">Connect</string>
+    <string name="clipboard_empty">Clipboard is empty</string>
 
     <!-- menu category -->
     <string name="profiles">Profiles</string>
@@ -107,6 +110,7 @@
     <string name="add_profile">Add Profile</string>
     <string name="action_profile">Profile</string>
     <string name="action_socks">Socks</string>
+    <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_group">Group</string>
     <string name="action_from_link">From subscription</string>
     <string name="action_apply_all">Apply Settings to All Profiles</string>
@@ -121,6 +125,10 @@
     <string name="action_import_msg">Successfully import!</string>
     <string name="action_import_err">Failed to import.</string>
 
+    <!-- share -->
+    <string name="format_standard">Standard</string>
+    <string name="format_v2rayn">V2rayN</string>
+
     <!-- profile -->
     <string name="profile_config">Profile config</string>
     <string name="delete">Remove</string>
@@ -133,6 +141,10 @@
     <plurals name="removed">
         <item quantity="one">Removed</item>
         <item quantity="other">%d items removed</item>
+    </plurals>
+    <plurals name="added">
+        <item quantity="one">Added</item>
+        <item quantity="other">%d proxies added</item>
     </plurals>
     <string name="undo">Undo</string>
 
@@ -197,12 +209,6 @@
     <string name="no">No</string>
     <string name="apply">Apply</string>
 
-    <string name="about_text">The universal proxy toolchain for Android, written in Kotlin.
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</string>
+    <string name="about_text">The universal proxy toolchain for Android, written in Kotlin.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</string>
 
 </resources>

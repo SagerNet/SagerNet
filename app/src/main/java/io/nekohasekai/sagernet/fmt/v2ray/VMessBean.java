@@ -3,8 +3,11 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
+import org.jetbrains.annotations.NotNull;
+
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class VMessBean extends AbstractBean {
 
@@ -73,5 +76,11 @@ public class VMessBean extends AbstractBean {
         sni = input.readString();
         security = input.readString();
         alterId = input.readInt();
+    }
+
+    @NotNull
+    @Override
+    public VMessBean clone() {
+        return KryoConverters.vmessDeserialize(KryoConverters.serialize(this));
     }
 }

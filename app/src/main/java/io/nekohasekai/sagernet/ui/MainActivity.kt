@@ -14,8 +14,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceDataStore
-import com.github.shadowsocks.aidl.IShadowsocksService
-import com.github.shadowsocks.aidl.TrafficStats
+import io.nekohasekai.sagernet.aidl.IShadowsocksService
+import io.nekohasekai.sagernet.aidl.TrafficStats
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.Key

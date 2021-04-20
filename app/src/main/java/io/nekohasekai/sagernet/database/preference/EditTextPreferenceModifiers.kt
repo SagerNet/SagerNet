@@ -1,5 +1,3 @@
-
-
 package io.nekohasekai.sagernet.database.preference
 
 import android.graphics.Typeface

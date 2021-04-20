@@ -690,4 +690,6 @@ public class V2rayConfig {
 
     }
 
+    public Map<String, Object> stats;
+
 }

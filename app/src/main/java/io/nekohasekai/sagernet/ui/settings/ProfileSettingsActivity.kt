@@ -21,6 +21,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.AlertDialogFragment
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
@@ -33,7 +34,9 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
             setTitle(R.string.unsaved_changes_prompt)
             setPositiveButton(R.string.yes) { _, _ ->
-                (requireActivity() as ProfileSettingsActivity<*>).saveAndExit()
+                runOnDefaultDispatcher {
+                    (requireActivity() as ProfileSettingsActivity<*>).saveAndExit()
+                }
             }
             setNegativeButton(R.string.no) { _, _ ->
                 requireActivity().finish()
@@ -48,7 +51,9 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
             setTitle(R.string.delete_confirm_prompt)
             setPositiveButton(R.string.yes) { _, _ ->
-                ProfileManager.deleteProfile(arg.groupId, arg.profileId)
+                runOnDefaultDispatcher {
+                    ProfileManager.deleteProfile(arg.groupId, arg.profileId)
+                }
                 requireActivity().finish()
             }
             setNegativeButton(R.string.no, null)
@@ -103,7 +108,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
     }
 
-    fun saveAndExit() {
+    suspend fun saveAndExit() {
 
         val editingId = DataStore.editingId
         if (editingId == 0L) {
@@ -181,7 +186,9 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
                 true
             }
             R.id.action_apply -> {
-                activity.saveAndExit()
+                runOnDefaultDispatcher {
+                    activity.saveAndExit()
+                }
                 true
             }
             else -> false

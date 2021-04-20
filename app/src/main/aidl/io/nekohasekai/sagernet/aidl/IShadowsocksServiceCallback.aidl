@@ -1,6 +1,6 @@
-package com.github.shadowsocks.aidl;
+package io.nekohasekai.sagernet.aidl;
 
-import com.github.shadowsocks.aidl.TrafficStats;
+import io.nekohasekai.sagernet.aidl.TrafficStats;
 
 oneway interface IShadowsocksServiceCallback {
   void stateChanged(int state, String profileName, String msg);

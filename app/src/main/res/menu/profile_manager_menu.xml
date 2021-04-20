@@ -7,9 +7,9 @@
         android:title="@string/add_profile"
         app:showAsAction="always">
         <menu>
-            <item
+            <!--<item
                 android:id="@+id/action_scan_qr_code"
-                android:title="@string/add_profile_methods_scan_qr_code" />
+                android:title="@string/add_profile_methods_scan_qr_code" />-->
             <item
                 android:id="@+id/action_import_clipboard"
                 android:alphabeticShortcut="v"
@@ -22,6 +22,9 @@
                     <item
                         android:id="@+id/action_new_socks"
                         android:title="@string/action_socks" />
+                    <item
+                        android:id="@+id/action_new_ss"
+                        android:title="@string/action_shadowsocks" />
                 </menu>
             </item>
             <item android:title="@string/action_group">

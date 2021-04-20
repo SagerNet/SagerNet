@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e798091fbf9ed3facd2985f7560c4975",
+    "identityHash": "e79af9f87f9576914e22cab5489b7312",
     "entities": [
       {
         "tableName": "proxy_groups",
@@ -68,7 +68,7 @@
       },
       {
         "tableName": "proxy_entities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` TEXT NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `proxyApps` INTEGER NOT NULL, `individual` TEXT, `meteredNetwork` INTEGER NOT NULL, `vmessBean` BLOB, `socksBean` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` TEXT NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `proxyApps` INTEGER NOT NULL, `individual` TEXT, `meteredNetwork` INTEGER NOT NULL, `vmessBean` BLOB, `socksBean` BLOB, `ssBean` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -135,6 +135,12 @@
             "columnName": "socksBean",
             "affinity": "BLOB",
             "notNull": false
+          },
+          {
+            "fieldPath": "ssBean",
+            "columnName": "ssBean",
+            "affinity": "BLOB",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -191,7 +197,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e798091fbf9ed3facd2985f7560c4975')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e79af9f87f9576914e22cab5489b7312')"
     ]
   }
 }

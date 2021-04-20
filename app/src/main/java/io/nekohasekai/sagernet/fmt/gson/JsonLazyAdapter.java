@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
@@ -21,11 +22,19 @@ public class JsonLazyAdapter<T> extends TypeAdapter<JsonLazyInterface<T>> {
 
     @Override
     public void write(JsonWriter out, JsonLazyInterface<T> value) throws IOException {
-        gson.getAdapter(value.type.getValue()).write(out, value.getValue());
+        if (value == null) {
+            out.nullValue();
+        } else {
+            gson.getAdapter(value.type.getValue()).write(out, value.getValue());
+        }
     }
 
     @Override
     public JsonLazyInterface<T> read(JsonReader in) throws IOException {
+        if (in.peek() == JsonToken.NULL) {
+            in.nextNull();
+            return null;
+        }
         try {
             JsonLazyInterface<T> instance = clazz.newInstance();
             instance.gson = gson;

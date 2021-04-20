@@ -23,12 +23,20 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.fmt.socks.toUri
+import io.nekohasekai.sagernet.fmt.socks.toV2rayN
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.settings.ProfileSettingsActivity
+import io.nekohasekai.sagernet.ui.settings.ShadowsocksSettingsActivity
 import io.nekohasekai.sagernet.ui.settings.SocksSettingsActivity
+import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
     Toolbar.OnMenuItemClickListener,
@@ -60,11 +68,42 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         }.attach()
     }
 
+    val selectGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
+    fun snackbar(text: String) = (activity as MainActivity).snackbar(text)
+
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        val selectGroup = adapter.groupList[tabLayout.selectedTabPosition]
         when (item.itemId) {
+            R.id.action_import_clipboard -> {
+                val text = SagerNet.getClipboardText()
+                if (text.isBlank()) {
+                    snackbar(getString(R.string.clipboard_empty)).show()
+                } else runOnDefaultDispatcher {
+                    val proxies = parseProxies(text)
+                    if (proxies.isEmpty()) onMainDispatcher {
+                        snackbar(getString(R.string.action_import_err)).show()
+                    } else {
+                        val selectGroupId = selectGroup.id
+                        for (proxy in proxies) {
+                            ProfileManager.createProfile(selectGroupId, proxy)
+                        }
+                        onMainDispatcher {
+                            snackbar(requireContext().resources.getQuantityString(
+                                R.plurals.added,
+                                proxies.size,
+                                proxies.size
+                            )).show()
+                        }
+                    }
+                }
+            }
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java).apply {
+                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectGroup.id)
+                })
+            }
+            R.id.action_new_ss -> {
+                startActivity(Intent(requireActivity(),
+                    ShadowsocksSettingsActivity::class.java).apply {
                     putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectGroup.id)
                 })
             }
@@ -161,7 +200,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val index = viewHolder.adapterPosition
                     adapter.remove(index)
-                    undoManager.remove(index to (viewHolder as ConfigurationHolder).item)
+                    undoManager.remove(index to (viewHolder as ConfigurationHolder).entity)
                 }
 
                 override fun onMove(
@@ -251,8 +290,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             }
 
             fun commit(actions: List<Pair<Int, ProxyEntity>>) {
-                for ((_, item) in actions) {
-                    ProfileManager.deleteProfile(item.groupId, item.id)
+                val profiles = actions.map { it.second }
+                runOnDefaultDispatcher {
+                    for (entity in profiles) {
+                        ProfileManager.deleteProfile(entity.groupId, entity.id)
+                    }
                 }
             }
 
@@ -271,7 +313,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     val index = configurationList.indexOfFirst { it.id == profile.id }
                     if (index < 0) return@runOnDefaultDispatcher
                     configurationList[index] = ProfileManager.getProfile(profile.id)!!
-                    notifyItemChanged(index)
+                    onMainDispatcher {
+                        notifyItemChanged(index)
+                    }
                 }
             }
 
@@ -281,13 +325,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     val index = configurationList.indexOfFirst { it.id == profileId }
                     if (index < 0) return@runOnDefaultDispatcher
                     configurationList.removeAt(index)
-                    if (profileId == DataStore.selectedProxy) {
-                        if (configurationList.isNotEmpty()) {
-                            DataStore.selectedProxy = configurationList[0].id
-                        } else {
-                            DataStore.selectedProxy = 0
-                        }
-                    }
                     onMainDispatcher {
                         notifyItemRemoved(index)
                     }
@@ -312,13 +349,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 }
             }
 
-            fun refreshId(profileId: Long) {
-                runOnDefaultDispatcher {
-                    val index = configurationList.indexOfFirst { it.id == profileId }
-                    if (index < 0) return@runOnDefaultDispatcher
-                    onMainDispatcher {
-                        notifyItemChanged(index)
-                    }
+            suspend fun refreshId(profileId: Long) {
+                val index = configurationList.indexOfFirst { it.id == profileId }
+                if (index < 0) return
+                onMainDispatcher {
+                    notifyItemChanged(index)
                 }
             }
 
@@ -330,7 +365,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             undoManager.flush()
         }
 
-        inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
+            PopupMenu.OnMenuItemClickListener {
 
             val profileName: TextView = view.findViewById(R.id.profile_name)
             val profileType: TextView = view.findViewById(R.id.profile_type)
@@ -338,17 +374,19 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             val trafficText: TextView = view.findViewById(R.id.traffic_text)
             val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
             val editButton: ImageView = view.findViewById(R.id.edit)
-            lateinit var item: ProxyEntity
+            val shareButton: ImageView = view.findViewById(R.id.share)
+
+            lateinit var entity: ProxyEntity
 
             fun bind(proxyEntity: ProxyEntity) {
-                item = proxyEntity
+                entity = proxyEntity
                 view.setOnClickListener {
                     runOnDefaultDispatcher {
                         if (DataStore.selectedProxy != proxyEntity.id) {
                             val lastSelected = DataStore.selectedProxy
                             DataStore.selectedProxy = proxyEntity.id
+                            adapter.refreshId(lastSelected)
                             onMainDispatcher {
-                                adapter.refreshId(lastSelected)
                                 selectedView.visibility = View.VISIBLE
                             }
                         }
@@ -378,6 +416,13 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     it.context.startActivity(proxyEntity.settingIntent(it.context))
                 }
 
+                shareButton.setOnClickListener {
+                    val popup = PopupMenu(requireContext(), it)
+                    popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                    popup.setOnMenuItemClickListener(this)
+                    popup.show()
+                }
+
                 runOnDefaultDispatcher {
                     val selected = DataStore.selectedProxy == proxyEntity.id
                     onMainDispatcher {
@@ -388,6 +433,48 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
             }
 
+            fun showCode(link: String) {
+                QRCodeDialog(link).showAllowingStateLoss(parentFragmentManager)
+            }
+
+            fun export(link: String) {
+                val success = SagerNet.trySetPrimaryClip(link)
+                (activity as MainActivity)
+                    .snackbar()
+                    .setText(if (success) R.string.action_export_msg else R.string.action_export_err)
+                    .show()
+            }
+
+            override fun onMenuItemClick(item: MenuItem): Boolean {
+                try {
+                    when (entity.type) {
+                        "socks" -> {
+                            val bean = this.entity.requireSOCKS()
+                            when (item.itemId) {
+                                R.id.action_qr_code_standard -> {
+                                    showCode(bean.toUri())
+                                }
+                                R.id.action_qr_code_v2rayn -> {
+                                    showCode(bean.toV2rayN())
+
+                                }
+                                R.id.action_export_clipboard_standard -> {
+                                    export(bean.toUri())
+                                }
+                                R.id.action_export_clipboard_v2rayn -> {
+                                    export(bean.toV2rayN())
+                                }
+                            }
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    Logs.w(e)
+                    (activity as MainActivity).snackbar().setText(e.readableMessage).show()
+                    return true
+                }
+                return true
+            }
         }
 
     }

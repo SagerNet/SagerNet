@@ -1,4 +1,4 @@
-package io.nekohasekai.sagernet.fmt.socks;
+package io.nekohasekai.sagernet.fmt.shadowsocks;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
@@ -8,43 +8,41 @@ import org.jetbrains.annotations.NotNull;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class SOCKSBean extends AbstractBean {
+public class ShadowsocksBean extends AbstractBean {
 
-    public static SOCKSBean DEFAULT_BEAN = new SOCKSBean() {{
+    public static ShadowsocksBean DEFAULT_BEAN = new ShadowsocksBean() {{
         name = "";
         serverAddress = "127.0.0.1";
         serverPort = 1080;
-        username = "";
+        method = "aes-256-gcm";
         password = "";
-        udp = false;
     }};
 
-    public String username;
+    public String method;
     public String password;
-    public boolean udp;
+    public String plugin;
 
     @Override
     public void serialize(ByteBufferOutput output) {
         output.writeInt(0);
         super.serialize(output);
-        output.writeString(username);
+        output.writeString(method);
         output.writeString(password);
-        output.writeBoolean(udp);
+        output.writeString(plugin);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
         int version = input.readInt();
         super.deserialize(input);
-        username = input.readString();
+        method = input.readString();
         password = input.readString();
-        udp = input.readBoolean();
+        plugin = input.readString();
     }
 
     @NotNull
     @Override
-    public SOCKSBean clone() {
-        return KryoConverters.socksDeserialize(KryoConverters.serialize(this));
+    public ShadowsocksBean clone() {
+        return KryoConverters.shadowsocksDeserialize(KryoConverters.serialize(this));
     }
-
 }

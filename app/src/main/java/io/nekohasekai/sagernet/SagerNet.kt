@@ -17,8 +17,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.database.ProxyEntity
-import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import me.weishu.reflection.Reflection
@@ -48,6 +46,19 @@ class SagerNet : Application() {
                     DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
         }
 
+        fun getClipboardText(): String {
+            val clip = clipboard.primaryClip?.takeIf { it.itemCount > 0 } ?: return ""
+            return clip.getItemAt(0).text.toString()
+        }
+
+        fun trySetPrimaryClip(clip: String) = try {
+            clipboard.setPrimaryClip(ClipData.newPlainText(null, clip))
+            true
+        } catch (e: RuntimeException) {
+            false
+        }
+
+
         fun updateNotificationChannels() {
             if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
                 notification.createNotificationChannels(listOf(
@@ -72,8 +83,6 @@ class SagerNet : Application() {
         fun stopService() =
             application.sendBroadcast(Intent(Action.CLOSE).setPackage(application.packageName))
 
-
-
     }
 
     override fun attachBaseContext(base: Context) {
@@ -91,13 +100,6 @@ class SagerNet : Application() {
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,
         if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
         else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES)!!
-
-    fun trySetPrimaryClip(clip: String) = try {
-        clipboard.setPrimaryClip(ClipData.newPlainText(null, clip))
-        true
-    } catch (e: RuntimeException) {
-        false
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)

@@ -16,6 +16,9 @@ import androidx.annotation.AttrRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
+import cn.hutool.core.net.URLDecoder
+import cn.hutool.core.net.URLEncoder
+import cn.hutool.core.util.CharsetUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -40,7 +43,8 @@ inline fun <T> Iterable<T>.forEachTry(action: (T) -> Unit) {
     }
 }
 
-val Throwable.readableMessage get() = localizedMessage ?: javaClass.name
+val Throwable.readableMessage
+    get() = localizedMessage.takeIf { !it.isNullOrBlank() } ?: javaClass.simpleName
 
 /**
  * https://android.googlesource.com/platform/prebuilts/runtime/+/94fec32/appcompat/hiddenapi-light-greylist.txt#9466
@@ -127,4 +131,13 @@ class Empty : Parcelable
 @JvmOverloads
 fun DialogFragment.showAllowingStateLoss(fragmentManager: FragmentManager, tag: String? = null) {
     if (!fragmentManager.isStateSaved) show(fragmentManager, tag)
+}
+
+
+fun String.urlSafe(): String {
+    return URLEncoder.createDefault().encode(this, CharsetUtil.CHARSET_UTF_8)
+}
+
+fun String.unUrlSafe(): String {
+    return URLDecoder.decode(this, CharsetUtil.CHARSET_UTF_8)
 }

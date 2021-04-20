@@ -2,8 +2,9 @@ package io.nekohasekai.sagernet.database
 
 import android.database.sqlite.SQLiteCantOpenDatabaseException
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.sql.SQLException
@@ -12,16 +13,19 @@ import java.util.*
 object ProfileManager {
 
     private val listeners = LinkedList<WeakReference<Listener>>()
-    private fun iterator(what: Listener.() -> Unit) {
-        synchronized(listeners) {
-            val iterator = listeners.iterator()
-            while (iterator.hasNext()) {
-                val listener = iterator.next().get()
-                if (listener == null) {
-                    iterator.remove()
-                    continue
+
+    private suspend fun iterator(what: Listener.() -> Unit) {
+        onMainDispatcher {
+            synchronized(listeners) {
+                val iterator = listeners.iterator()
+                while (iterator.hasNext()) {
+                    val listener = iterator.next().get()
+                    if (listener == null) {
+                        iterator.remove()
+                        continue
+                    }
+                    what(listener)
                 }
-                what(listener)
             }
         }
     }
@@ -40,7 +44,7 @@ object ProfileManager {
         fun reloadProfiles(groupId: Long)
     }
 
-    fun createProfile(groupId: Long, bean: AbstractBean): ProxyEntity {
+    suspend fun createProfile(groupId: Long, bean: AbstractBean): ProxyEntity {
         val profile = ProxyEntity(groupId = groupId).apply {
             id = 0
             putBean(bean)
@@ -51,29 +55,43 @@ object ProfileManager {
         return profile
     }
 
-    fun updateProfile(profile: ProxyEntity) {
+    suspend fun updateProfile(profile: ProxyEntity) {
         SagerDatabase.proxyDao.updateProxy(profile)
+        iterator { onUpdated(profile) }
     }
 
-    fun deleteProfile(groupId: Long, profileId: Long) {
+    suspend fun deleteProfile(groupId: Long, profileId: Long) {
         check(SagerDatabase.proxyDao.deleteById(profileId) > 0)
+        if (DataStore.selectedProxy == profileId) {
+            DataStore.selectedProxy = 0L
+        }
         iterator { onRemoved(groupId, profileId) }
-        rearrange(groupId)
+        if (SagerDatabase.proxyDao.countByGroup(groupId) == 0L) {
+            val group = SagerDatabase.groupDao.getById(groupId) ?: return
+            if (group.isDefault) {
+                val created = createProfile(groupId, SOCKSBean.DEFAULT_BEAN.clone().apply {
+                    name = "Local tunnel"
+                })
+                if (DataStore.selectedProxy == 0L) {
+                    DataStore.selectedProxy = created.id
+                }
+            }
+        } else {
+            rearrange(groupId)
+        }
     }
 
-    fun clear(groupId: Long) {
+    suspend fun clear(groupId: Long) {
         SagerDatabase.proxyDao.deleteAll(groupId)
         iterator { onCleared(groupId) }
     }
 
     fun rearrange(groupId: Long) {
-        runOnDefaultDispatcher {
-            val entities = SagerDatabase.proxyDao.getByGroup(groupId)
-            for (index in entities.indices) {
-                entities[index].userOrder = (index + 1).toLong()
-            }
-            SagerDatabase.proxyDao.updateProxy(* entities.toTypedArray())
+        val entities = SagerDatabase.proxyDao.getByGroup(groupId)
+        for (index in entities.indices) {
+            entities[index].userOrder = (index + 1).toLong()
         }
+        SagerDatabase.proxyDao.updateProxy(* entities.toTypedArray())
     }
 
     fun getProfile(profileId: Long): ProxyEntity? {

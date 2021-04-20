@@ -13,6 +13,5 @@
             android:icon="@drawable/ic_baseline_info_24"
             android:title="@string/menu_about" />
     </group>
-
-
+    
 </menu>

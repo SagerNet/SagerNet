@@ -8,43 +8,41 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 
-class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
+class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
 
-    override val type = "socks"
-    override fun createEntity() = SOCKSBean()
+    override val type = "ss"
+    override fun createEntity() = ShadowsocksBean()
 
     override fun init() {
-        init(SOCKSBean.DEFAULT_BEAN)
+        init(ShadowsocksBean.DEFAULT_BEAN)
     }
 
-    override fun init(bean: SOCKSBean) {
+    override fun init(bean: ShadowsocksBean) {
         DataStore.profileName = bean.name
         DataStore.serverAddress = bean.serverAddress
         DataStore.serverPort = "${bean.serverPort}"
-        DataStore.serverUsername = bean.username
+        DataStore.serverMethod = bean.method
         DataStore.serverPassword = bean.password
-        DataStore.serverUdp = bean.udp
     }
 
-    override fun SOCKSBean.serialize() {
+    override fun ShadowsocksBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
         serverPort =
             DataStore.serverPort
                 .takeIf { !it.isNullOrBlank() && NumberUtil.isInteger(it) }?.toInt()
                 ?: 1080
-        username = DataStore.serverUsername
+        method = DataStore.serverMethod
         password = DataStore.serverPassword
-        udp = DataStore.serverUdp
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.socks_preferences)
+        addPreferencesFromResource(R.xml.shadowsocks_preferences)
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }

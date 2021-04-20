@@ -1,12 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <string-array name="enc_method_entry" translatable="false">
+        <item>NONE</item>
+        <item>RC4-MD5</item>
+        <item>AES-128-CFB</item>
+        <item>AES-192-CFB</item>
+        <item>AES-256-CFB</item>
+        <item>AES-128-CTR</item>
+        <item>AES-192-CTR</item>
+        <item>AES-256-CTR</item>
+        <item>BF-CFB</item>
+        <item>CAMELLIA-128-CFB</item>
+        <item>CAMELLIA-192-CFB</item>
+        <item>CAMELLIA-256-CFB</item>
+        <item>CHACHA20-IETF</item>
+        <item>AES-128-GCM</item>
+        <item>AES-256-GCM</item>
+        <item>CHACHA20-IETF-POLY1305</item>
+        <item>XCHACHA20-IETF-POLY1305</item>
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="enc_method_value" translatable="false">
+        <item>none</item>
+        <item>rc4-md5</item>
+        <item>aes-128-cfb</item>
+        <item>aes-192-cfb</item>
+        <item>aes-256-cfb</item>
+        <item>aes-128-ctr</item>
+        <item>aes-192-ctr</item>
+        <item>aes-256-ctr</item>
+        <item>bf-cfb</item>
+        <item>camellia-128-cfb</item>
+        <item>camellia-192-cfb</item>
+        <item>camellia-256-cfb</item>
+        <item>chacha20-ietf</item>
+        <item>aes-128-gcm</item>
+        <item>aes-256-gcm</item>
+        <item>chacha20-ietf-poly1305</item>
+        <item>xchacha20-ietf-poly1305</item>
     </string-array>
 </resources>

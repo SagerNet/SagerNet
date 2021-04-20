@@ -1,6 +1,6 @@
-package com.github.shadowsocks.aidl;
+package io.nekohasekai.sagernet.aidl;
 
-import com.github.shadowsocks.aidl.IShadowsocksServiceCallback;
+import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback;
 
 interface IShadowsocksService {
   int getState();

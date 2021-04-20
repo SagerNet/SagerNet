@@ -37,6 +37,7 @@ object DataStore {
     var meteredNetwork by configurationStore.boolean("metered_network")
     var proxyApps by configurationStore.int("proxyApps")
     var individual by configurationStore.string("individual")
+    var alwaysUseLibev by configurationStore.boolean("alwaysUseLibev")
 
     // cache
     var dirty by profileCacheStore.boolean(Key.PROFILE_DIRTY)
@@ -48,5 +49,6 @@ object DataStore {
     var serverUsername by profileCacheStore.string(Key.SERVER_USERNAME)
     var serverPassword by profileCacheStore.string(Key.SERVER_PASSWORD)
     var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
+    var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
 
 }
