@@ -1,19 +1,50 @@
 package io.nekohasekai.sagernet.ui.settings
 
+import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
+import androidx.activity.result.component1
+import androidx.activity.result.component2
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenCreated
 import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import cn.hutool.core.util.NumberUtil
+import com.github.shadowsocks.plugin.*
+import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
+import com.github.shadowsocks.plugin.fragment.showAllowingStateLoss
+import com.github.shadowsocks.preference.PluginConfigurationDialogFragment
+import com.github.shadowsocks.preference.PluginPreference
+import com.github.shadowsocks.preference.PluginPreferenceDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.ktx.Empty
+import io.nekohasekai.sagernet.ktx.listenForPackageChanges
+import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
+class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
+    Preference.OnPreferenceChangeListener {
 
     override val type = "ss"
     override fun createEntity() = ShadowsocksBean()
+
+    private lateinit var plugin: PluginPreference
+    private lateinit var pluginConfigure: EditTextPreference
+    private lateinit var pluginConfiguration: PluginConfiguration
+    private lateinit var receiver: BroadcastReceiver
 
     override fun init() {
         init(ShadowsocksBean.DEFAULT_BEAN)
@@ -25,6 +56,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
         DataStore.serverPort = "${bean.serverPort}"
         DataStore.serverMethod = bean.method
         DataStore.serverPassword = bean.password
+        DataStore.serverPlugin = bean.plugin
     }
 
     override fun ShadowsocksBean.serialize() {
@@ -36,7 +68,20 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
                 ?: 1080
         method = DataStore.serverMethod
         password = DataStore.serverPassword
+        plugin = DataStore.serverPlugin
+
     }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        receiver = listenForPackageChanges(false) {
+            lifecycleScope.launch(Dispatchers.Main) {   // wait until changes were flushed
+                whenCreated { initPlugins() }
+            }
+        }
+    }
+
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -49,6 +94,111 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
+
+        plugin = findPreference(Key.SERVER_PLUGIN)!!
+        pluginConfigure = findPreference(Key.SERVER_PLUGIN_CONFIGURE)!!
+        pluginConfigure.setOnBindEditTextListener(EditTextPreferenceModifiers.Monospace)
+        pluginConfigure.onPreferenceChangeListener = this@ShadowsocksSettingsActivity
+        pluginConfiguration = PluginConfiguration(DataStore.serverPlugin ?: "")
+        initPlugins()
+    }
+
+    override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
+        setFragmentResultListener(PluginPreferenceDialogFragment::class.java.name) { _, bundle ->
+            val selected = plugin.plugins.lookup.getValue(
+                bundle.getString(PluginPreferenceDialogFragment.KEY_SELECTED_ID)!!)
+            val override = pluginConfiguration.pluginsOptions.keys.firstOrNull {
+                plugin.plugins.lookup[it] == selected
+            }
+            pluginConfiguration =
+                PluginConfiguration(pluginConfiguration.pluginsOptions, override ?: selected.id)
+            DataStore.serverPlugin = pluginConfiguration.toString()
+            DataStore.dirty = true
+            plugin.value = pluginConfiguration.selected
+            pluginConfigure.isEnabled = selected !is NoPlugin
+            pluginConfigure.text = pluginConfiguration.getOptions().toString()
+            if (!selected.trusted) {
+                Snackbar.make(requireView(), R.string.plugin_untrusted, Snackbar.LENGTH_LONG).show()
+            }
+        }
+        AlertDialogFragment.setResultListener<Empty>(this,
+            UnsavedChangesDialogFragment::class.java.simpleName) { which, _ ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    runOnDefaultDispatcher {
+                        saveAndExit()
+                    }
+                }
+                DialogInterface.BUTTON_NEGATIVE -> requireActivity().finish()
+            }
+        }
+    }
+
+    private fun initPlugins() {
+        plugin.value = pluginConfiguration.selected
+        plugin.init()
+        pluginConfigure.isEnabled = plugin.selectedEntry?.let { it is NoPlugin } == false
+        pluginConfigure.text = pluginConfiguration.getOptions().toString()
+    }
+
+    private fun showPluginEditor() {
+        PluginConfigurationDialogFragment().apply {
+            setArg(Key.SERVER_PLUGIN_CONFIGURE, pluginConfiguration.selected)
+            setTargetFragment(child, 0)
+        }.showAllowingStateLoss(supportFragmentManager, Key.SERVER_PLUGIN_CONFIGURE)
+    }
+
+    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean = try {
+        val selected = pluginConfiguration.selected
+        pluginConfiguration = PluginConfiguration(pluginConfiguration.pluginsOptions +
+                (pluginConfiguration.selected to PluginOptions(selected, newValue as? String?)),
+            selected)
+        DataStore.serverPlugin = pluginConfiguration.toString()
+        DataStore.dirty = true
+        true
+    } catch (exc: RuntimeException) {
+        Snackbar.make(child.requireView(), exc.readableMessage, Snackbar.LENGTH_LONG).show()
+        false
+    }
+
+    private val configurePlugin =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    val options = data?.getStringExtra(PluginContract.EXTRA_OPTIONS)
+                    pluginConfigure.text = options
+                    onPreferenceChange(null, options)
+                }
+                PluginContract.RESULT_FALLBACK -> showPluginEditor()
+            }
+        }
+
+    override fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
+        when (preference.key) {
+            Key.SERVER_PLUGIN -> PluginPreferenceDialogFragment().apply {
+                setArg(Key.SERVER_PLUGIN)
+                setTargetFragment(child, 0)
+            }.showAllowingStateLoss(supportFragmentManager, Key.SERVER_PLUGIN)
+            Key.SERVER_PLUGIN_CONFIGURE -> {
+                val intent = PluginManager.buildIntent(plugin.selectedEntry!!.id,
+                    PluginContract.ACTION_CONFIGURE)
+                if (intent.resolveActivity(packageManager) == null) showPluginEditor() else {
+                    configurePlugin.launch(intent
+                        .putExtra(PluginContract.EXTRA_OPTIONS,
+                            pluginConfiguration.getOptions().toString()))
+                }
+            }
+            else -> return false
+        }
+        return true
+    }
+
+    val pluginHelp = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            (resultCode, data) ->
+        if (resultCode == Activity.RESULT_OK) AlertDialog.Builder(this)
+            .setTitle("?")
+            .setMessage(data?.getCharSequenceExtra(PluginContract.EXTRA_HELP_MESSAGE))
+            .show()
     }
 
 }

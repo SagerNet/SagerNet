@@ -33,8 +33,12 @@ class ProxyInstance(val profile: ProxyEntity) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
             service else null), false)
-        v2rayPoint.domainName =
-            profile.requireBean().serverAddress + ":" + profile.requireBean().serverPort
+        if (profile.useExternalShadowsocks()) {
+            v2rayPoint.domainName = "127.0.0.1:${DataStore.socks5Port + 10}"
+        } else {
+            v2rayPoint.domainName =
+                profile.requireBean().serverAddress + ":" + profile.requireBean().serverPort
+        }
         config = buildV2rayConfig(profile, bind, DataStore.socks5Port)
         v2rayPoint.configureFileContent = gson.toJson(config).also {
             Logs.d(it)
@@ -64,7 +68,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                 val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
                 PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                     proxyConfig["plugin"] = path
-                    proxyConfig["plugin_args"] = opts.toString()
+                    proxyConfig["plugin-opts"] = opts.toString()
                 }
             }
 

@@ -16,6 +16,7 @@ public class ShadowsocksBean extends AbstractBean {
         serverPort = 1080;
         method = "aes-256-gcm";
         password = "";
+        plugin = "";
     }};
 
     public String method;

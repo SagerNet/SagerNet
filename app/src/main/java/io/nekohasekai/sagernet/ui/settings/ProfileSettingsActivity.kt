@@ -126,7 +126,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
     }
 
-    private val child by lazy { supportFragmentManager.findFragmentById(R.id.settings) as MyPreferenceFragmentCompat }
+    val child by lazy { supportFragmentManager.findFragmentById(R.id.settings) as MyPreferenceFragmentCompat }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.profile_config_menu, menu)
@@ -161,6 +161,13 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
         rootKey: String?,
     )
 
+    open fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
+    }
+
+    open fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
+        return false
+    }
+
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
         lateinit var activity: ProfileSettingsActivity<*>
@@ -176,6 +183,10 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             super.onViewCreated(view, savedInstanceState)
 
             ViewCompat.setOnApplyWindowInsetsListener(listView, ListListener)
+
+            activity.apply {
+                viewCreated(view, savedInstanceState)
+            }
         }
 
         override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -192,6 +203,13 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
                 true
             }
             else -> false
+        }
+
+        override fun onDisplayPreferenceDialog(preference: Preference) {
+            activity.apply {
+                if (displayPreferenceDialog(preference)) return
+            }
+            super.onDisplayPreferenceDialog(preference)
         }
 
     }

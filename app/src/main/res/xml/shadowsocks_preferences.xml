@@ -32,5 +32,21 @@
             app:title="@string/password" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="@string/plugin">
+
+        <com.github.shadowsocks.preference.PluginPreference
+            app:key="serverPlugin"
+            app:persistent="false"
+            app:title="@string/plugin"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            app:key="serverPluginConfigure"
+            app:icon="@drawable/ic_action_settings"
+            app:persistent="false"
+            app:title="@string/plugin_configure"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

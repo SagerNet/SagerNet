@@ -285,6 +285,9 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
          }
     */
+
+        builder.addDnsServer("1.1.1.1")
+
         builder.addDisallowedApplication("com.github.shadowsocks")
         builder.addDisallowedApplication(packageName)
 

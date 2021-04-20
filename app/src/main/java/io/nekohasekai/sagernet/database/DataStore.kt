@@ -37,7 +37,7 @@ object DataStore {
     var meteredNetwork by configurationStore.boolean("metered_network")
     var proxyApps by configurationStore.int("proxyApps")
     var individual by configurationStore.string("individual")
-    var forceShadowsocksRust = true//by configurationStore.boolean("forceShadowsocksRust")
+    var forceShadowsocksRust = true// by configurationStore.boolean("forceShadowsocksRust")
 
     // cache
     var dirty by profileCacheStore.boolean(Key.PROFILE_DIRTY)
@@ -50,5 +50,7 @@ object DataStore {
     var serverPassword by profileCacheStore.string(Key.SERVER_PASSWORD)
     var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
     var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
+    var serverPlugin by profileCacheStore.string(Key.SERVER_PLUGIN)
+    var serverPluginConfigure by profileCacheStore.string(Key.SERVER_PLUGIN_CONFIGURE)
 
 }
