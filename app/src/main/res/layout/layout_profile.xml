@@ -55,7 +55,6 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textStyle="bold"
-                        android:autoLink="web"
                         tools:text="@string/profile_name" />
                 </LinearLayout>
 

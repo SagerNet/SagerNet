@@ -18,9 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
@@ -46,6 +44,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
@@ -65,6 +64,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         tabLayout = view.findViewById(R.id.group_tab)
         adapter = GroupPagerAdapter()
         groupPager.adapter = adapter
+        groupPager.offscreenPageLimit = 2
 
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             tab.text = adapter.groupList[position].name
@@ -218,8 +218,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
                     override fun onResponse(call: Call, response: Response) {
                         if (!response.isSuccessful) {
+                            val body = response.body?.string()
                             runOnMainDispatcher {
-                                alert("HTTP ${response.code}").show()
+                                alert("HTTP ${response.code} ${body ?: ""}".trim()).show()
                                 dismiss()
                             }
                             return
@@ -341,6 +342,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             if (!::proxyGroup.isInitialized) return
 
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            /*} else {
+                layoutManager = StaggeredGridLayoutManager( 2, LinearLayout.VERTICAL)
+            }*/
             configurationListView =
                 view.findViewById<RecyclerView>(R.id.configuration_list).also {
                     it.layoutManager = when (proxyGroup.layout) {
@@ -349,6 +353,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 }
             adapter = ConfigurationAdapter()
             configurationListView.adapter = adapter
+
             undoManager =
                 UndoSnackbarManager(activity as MainActivity, adapter::undo, adapter::commit)
 
@@ -399,7 +404,21 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
             ProfileManager.Listener {
 
-            var configurationList: MutableList<ProxyEntity> = mutableListOf()
+            var configurationIdList: MutableList<Long> = mutableListOf()
+            val configurationList = HashMap<Long, ProxyEntity>()
+
+            private fun getItem(profileId: Long): ProxyEntity {
+                var profile = configurationList[profileId]
+                if (profile == null) {
+                    profile = ProfileManager.getProfile(profileId)
+                    if (profile != null) {
+                        configurationList[profileId] = profile
+                    }
+                }
+                return profile!!
+            }
+
+            private fun getItemAt(index: Int) = getItem(configurationIdList[index])
 
             init {
                 reloadProfiles(proxyGroup.id)
@@ -417,34 +436,34 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             }
 
             override fun getItemId(position: Int): Long {
-                return configurationList[position].id
+                return configurationIdList[position]
             }
 
             override fun onBindViewHolder(holder: ConfigurationHolder, position: Int) {
-                holder.bind(configurationList[position])
+                holder.bind(getItemAt(position))
             }
 
             override fun getItemCount(): Int {
-                return configurationList.size
+                return configurationIdList.size
             }
 
             private val updated = HashSet<ProxyEntity>()
 
             fun move(from: Int, to: Int) {
-                val first = configurationList[from]
+                val first = getItemAt(from)
                 var previousOrder = first.userOrder
                 val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1,
                     to + 1 downTo from)
                 for (i in range) {
-                    val next = configurationList[i + step]
+                    val next = getItemAt(i + step)
                     val order = next.userOrder
                     next.userOrder = previousOrder
                     previousOrder = order
-                    configurationList[i] = next
+                    configurationIdList[i] = next.id
                     updated.add(next)
                 }
                 first.userOrder = previousOrder
-                configurationList[to] = first
+                configurationIdList[to] = first.id
                 updated.add(first)
                 notifyItemMoved(from, to)
             }
@@ -455,13 +474,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             }
 
             fun remove(pos: Int) {
-                configurationList.removeAt(pos)
+                configurationIdList.removeAt(pos)
                 notifyItemRemoved(pos)
             }
 
             fun undo(actions: List<Pair<Int, ProxyEntity>>) {
                 for ((index, item) in actions) {
-                    configurationList.add(index, item)
+                    configurationList[item.id] = item
+                    configurationIdList.add(index, item.id)
                     notifyItemInserted(index)
                 }
             }
@@ -479,7 +499,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 if (profile.groupId != proxyGroup.id) return
                 undoManager.flush()
                 val pos = itemCount
-                configurationList.add(profile)
+                configurationList[profile.id] = profile
+                configurationIdList.add(profile.id)
                 notifyItemInserted(pos)
             }
 
@@ -487,15 +508,17 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 if (profile.groupId != proxyGroup.id) return
                 undoManager.flush()
                 runOnDefaultDispatcher {
-                    val index = configurationList.indexOfFirst { it.id == profile.id }
+                    val index = configurationIdList.indexOf(profile.id)
                     if (index < 0) return@runOnDefaultDispatcher
-                    configurationList[index] = profile
+                    configurationList[profile.id] = profile
                     val holder = layoutManager.findViewByPosition(index)
                         ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
-                    onMainDispatcher {
-                        if (holder != null) {
+                    if (holder != null) {
+                        onMainDispatcher {
                             holder.bind(profile)
-                        } else {
+                        }
+                    } else {
+                        configurationListView.post {
                             notifyItemChanged(index)
                         }
                     }
@@ -505,10 +528,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             override fun onRemoved(groupId: Long, profileId: Long) {
                 if (groupId != proxyGroup.id) return
                 runOnDefaultDispatcher {
-                    val index = configurationList.indexOfFirst { it.id == profileId }
+                    val index = configurationIdList.indexOf(profileId)
                     if (index < 0) return@runOnDefaultDispatcher
-                    configurationList.removeAt(index)
-                    onMainDispatcher {
+                    configurationIdList.removeAt(index)
+                    configurationList.remove(profileId)
+                    configurationListView.post {
                         notifyItemRemoved(index)
                     }
                 }
@@ -518,26 +542,25 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             override fun onCleared(groupId: Long) {
                 if (groupId != proxyGroup.id) return
                 configurationList.clear()
+                configurationList.clear()
                 notifyDataSetChanged()
             }
 
             override fun reloadProfiles(groupId: Long) {
                 if (groupId != proxyGroup.id) return
+
                 runOnDefaultDispatcher {
-                    configurationList.clear()
-                    configurationList.addAll(SagerDatabase.proxyDao.getByGroup(proxyGroup.id))
-                    if (configurationList.isEmpty() && proxyGroup.isDefault) {
-                        ProfileManager.createProfile(groupId,
-                            SOCKSBean.DEFAULT_BEAN.clone().apply {
-                                name = "Local tunnel"
-                            })
+                    configurationIdList.clear()
+                    configurationIdList.addAll(SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id))
+
+                    onMainDispatcher {
+                        notifyDataSetChanged()
                     }
 
                     if (selected) {
-
+                        selected = false
                         val selectedProxy = DataStore.selectedProxy
-                        val selectedProfileIndex =
-                            configurationList.indexOfFirst { it.id == selectedProxy }
+                        val selectedProfileIndex = configurationIdList.indexOf(selectedProxy)
 
                         configurationListView.post {
                             layoutManager.scrollToPosition(selectedProfileIndex)
@@ -545,17 +568,24 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
                     }
 
-                    onMainDispatcher {
-                        notifyDataSetChanged()
+                    for (proxyEntity in SagerDatabase.proxyDao.getByGroup(proxyGroup.id)) {
+                        configurationList[proxyEntity.id] = proxyEntity
+                    }
+
+                    if (configurationIdList.isEmpty() && proxyGroup.isDefault) {
+                        ProfileManager.createProfile(groupId,
+                            SOCKSBean.DEFAULT_BEAN.clone().apply {
+                                name = "Local tunnel"
+                            })
                     }
 
                 }
             }
 
             suspend fun refreshId(profileId: Long) {
-                val index = configurationList.indexOfFirst { it.id == profileId }
+                val index = configurationIdList.indexOf(profileId)
                 if (index < 0) return
-                onMainDispatcher {
+                configurationListView.post {
                     notifyItemChanged(index)
                 }
             }
@@ -584,6 +614,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
             fun bind(proxyEntity: ProxyEntity) {
                 entity = proxyEntity
+
                 view.setOnClickListener {
                     runOnDefaultDispatcher {
                         if (DataStore.selectedProxy != proxyEntity.id) {
@@ -599,6 +630,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
                 profileName.text = proxyEntity.displayName()
                 profileType.text = proxyEntity.displayType()
+
                 var rx = proxyEntity.rx
                 var tx = proxyEntity.tx
 
@@ -615,25 +647,25 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                         Formatter.formatFileSize(view.context, tx),
                         Formatter.formatFileSize(view.context, rx))
                 }
+              //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
-                profileAddress.text = ""
-
-                /*if (proxyEntity.requireBean().name.isNullOrBlank()) {
-                    profileAddress.isGone = true
-                } else {
-                    profileAddress.isGone = false
-                    val bean = proxyEntity.requireBean()
-                    @SuppressLint("SetTextI18n")
-                    profileAddress.text = "${bean.serverAddress}:${bean.serverPort}"
-                }*/
-
-                editButton.setOnClickListener {
-                    it.context.startActivity(proxyEntity.settingIntent(it.context))
+                editButton.isGone = proxyGroup.isSubscription
+                if (!proxyGroup.isSubscription) {
+                    editButton.setOnClickListener {
+                        it.context.startActivity(proxyEntity.settingIntent(it.context))
+                    }
                 }
 
                 shareButton.setOnClickListener {
                     val popup = PopupMenu(requireContext(), it)
-                    popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                    when (proxyEntity.type) {
+                        "socks" -> {
+                            popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                        }
+                        "ss" -> {
+                            popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                        }
+                    }
                     popup.setOnMenuItemClickListener(this)
                     popup.show()
                 }
@@ -643,7 +675,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     onMainDispatcher {
                         selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
                     }
-
                 }
 
             }

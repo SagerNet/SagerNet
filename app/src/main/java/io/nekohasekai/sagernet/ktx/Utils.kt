@@ -1,3 +1,5 @@
+@file:SuppressLint("SoonBlockedPrivateApi")
+
 package io.nekohasekai.sagernet.ktx
 
 import android.annotation.SuppressLint
@@ -112,7 +114,7 @@ fun Preference.remove() = parent!!.removePreference(this)
  * Bug in Android 9.0 and lower: https://issuetracker.google.com/issues/123456213
  */
 
-private val parseNumericAddress by lazy @SuppressLint("SoonBlockedPrivateApi") {
+private val parseNumericAddress by lazy {
     InetAddress::class.java.getDeclaredMethod("parseNumericAddress", String::class.java).apply {
         isAccessible = true
     }
