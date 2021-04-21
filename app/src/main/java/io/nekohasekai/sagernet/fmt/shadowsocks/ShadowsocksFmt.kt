@@ -2,6 +2,8 @@ package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
 import com.github.shadowsocks.plugin.PluginOptions
+import io.nekohasekai.sagernet.ktx.urlSafe
+import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONObject
 
@@ -92,6 +94,38 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         }
 
     }
+
+}
+
+fun ShadowsocksBean.toUri(): String {
+
+    val builder = HttpUrl.Builder()
+        .scheme("https")
+        .username(Base64.encodeUrlSafe("$method:$password"))
+        .host(serverAddress)
+        .port(serverPort)
+
+    if (plugin.isNotBlank()) {
+        builder.addQueryParameter("plugin", plugin)
+    }
+
+    if (name.isNotBlank()) {
+        builder.fragment(name)
+    }
+
+    return builder.toString().replace("https://", "ss://")
+
+}
+
+fun ShadowsocksBean.toV2rayN(): String {
+
+    var url = "$method:$password@$serverAddress:$serverPort"
+    url = "ss://" + Base64.encodeUrlSafe(url)
+    if (name.isNotBlank()) {
+        url += "#" + name.urlSafe()
+    }
+
+    return url
 
 }
 

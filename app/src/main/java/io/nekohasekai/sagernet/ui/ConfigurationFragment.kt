@@ -29,6 +29,8 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
+import io.nekohasekai.sagernet.fmt.shadowsocks.toV2rayN
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.socks.toV2rayN
@@ -79,8 +81,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         }.attach()
 
         toolbar.setOnClickListener {
-            (childFragmentManager.findFragmentByTag("f" + adapter.groupList[0].id) as? GroupFragment)?.layoutManager?.scrollToPosition(
-                0)
+            (childFragmentManager.findFragmentByTag("f" + selectGroup.id) as? GroupFragment)
+                ?.layoutManager?.scrollToPosition(0)
         }
     }
 
@@ -203,6 +205,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     it.setText(R.string.fetching_subscription)
                 }
             })
+            setCancelable(false)
             OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)
@@ -647,7 +650,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                         Formatter.formatFileSize(view.context, tx),
                         Formatter.formatFileSize(view.context, rx))
                 }
-              //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
+                //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
                 editButton.isGone = proxyGroup.isSubscription
                 if (!proxyGroup.isSubscription) {
@@ -663,7 +666,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                             popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
                         }
                         "ss" -> {
-                            popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                            popup.menuInflater.inflate(R.menu.shadowsocks_share_menu, popup.menu)
                         }
                     }
                     popup.setOnMenuItemClickListener(this)
@@ -693,27 +696,36 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
             override fun onMenuItemClick(item: MenuItem): Boolean {
                 try {
-                    when (entity.type) {
-                        "socks" -> {
-                            val bean = this.entity.requireSOCKS()
-                            when (item.itemId) {
-                                R.id.action_qr_code_standard -> {
-                                    showCode(bean.toUri())
-                                }
-                                R.id.action_qr_code_v2rayn -> {
-                                    showCode(bean.toV2rayN())
+                    when (item.itemId) {
+                        // socks
+                        R.id.action_qr_code_standard -> {
+                            showCode(entity.requireSOCKS().toUri())
+                        }
+                        R.id.action_qr_code_v2rayn -> {
+                            showCode(entity.requireSOCKS().toV2rayN())
+                        }
+                        R.id.action_export_clipboard_standard -> {
+                            export(entity.requireSOCKS().toUri())
+                        }
+                        R.id.action_export_clipboard_v2rayn -> {
+                            export(entity.requireSOCKS().toV2rayN())
+                        }
 
-                                }
-                                R.id.action_export_clipboard_standard -> {
-                                    export(bean.toUri())
-                                }
-                                R.id.action_export_clipboard_v2rayn -> {
-                                    export(bean.toV2rayN())
-                                }
-                            }
+                        // shadowsocks
+
+                        R.id.action_ss_qr_code_standard -> {
+                            showCode(entity.requireSS().toUri())
+                        }
+                        R.id.action_ss_qr_code_v2rayn -> {
+                            showCode(entity.requireSS().toV2rayN())
+                        }
+                        R.id.action_ss_export_clipboard_standard -> {
+                            export(entity.requireSS().toUri())
+                        }
+                        R.id.action_ss_export_clipboard_v2rayn -> {
+                            export(entity.requireSS().toV2rayN())
                         }
                     }
-
                 } catch (e: Exception) {
                     Logs.w(e)
                     (activity as MainActivity).snackbar().setText(e.readableMessage).show()

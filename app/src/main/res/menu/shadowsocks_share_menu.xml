@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/format_standard">
+        <menu>
+            <item
+                android:id="@+id/action_ss_qr_code_standard"
+                android:title="@string/share_qr_nfc" />
+            <item
+                android:id="@+id/action_ss_export_clipboard_standard"
+                android:title="@string/action_export" />
+        </menu>
+    </item>
+    <item android:title="@string/format_v2rayn">
+        <menu>
+            <item
+                android:id="@+id/action_ss_qr_code_v2rayn"
+                android:title="@string/share_qr_nfc" />
+            <item
+                android:id="@+id/action_ss_export_clipboard_v2rayn"
+                android:title="@string/action_export" />
+        </menu>
+    </item>
+
+</menu>
