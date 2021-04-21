@@ -27,6 +27,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
@@ -262,20 +263,22 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
 
+                val selectedGroup = ProfileManager.getProfile(DataStore.selectedProxy)?.groupId
+                    ?: selectedGroupIndex
+                if (selectedGroup != 0L) {
+                    val selectedIndex = groupList.indexOfFirst { it.id == selectedGroup }
+                    selectedGroupIndex = selectedIndex
+
+                    onMainDispatcher {
+                        groupPager.setCurrentItem(selectedIndex, false)
+                    }
+                }
+
                 onMainDispatcher {
                     notifyDataSetChanged()
                     val hideTab = groupList.size == 1 && groupList[0].isDefault
                     tabLayout.isGone = hideTab
                     toolbar.elevation = if (hideTab) 0F else dp2px(4).toFloat()
-                }
-
-                val selectedGroup =
-                    SagerDatabase.proxyDao.getById(DataStore.selectedProxy)?.id
-                        ?: selectedGroupIndex
-                if (selectedGroup != 0L) {
-                    val selectedIndex = groupList.indexOfFirst { it.id == selectGroup.id }
-                    selectedGroupIndex = selectedIndex
-                    tabLayout.post { tabLayout.getTabAt(selectedIndex)?.select() }
                 }
             }
         }
@@ -509,20 +512,28 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
             override fun onUpdated(profile: ProxyEntity) {
                 if (profile.groupId != proxyGroup.id) return
-                undoManager.flush()
                 runOnDefaultDispatcher {
                     val index = configurationIdList.indexOf(profile.id)
                     if (index < 0) return@runOnDefaultDispatcher
+                    undoManager.flush()
                     configurationList[profile.id] = profile
-                    val holder = layoutManager.findViewByPosition(index)
-                        ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
-                    if (holder != null) {
-                        onMainDispatcher {
-                            holder.bind(profile)
-                        }
-                    } else {
-                        configurationListView.post {
-                            notifyItemChanged(index)
+                    configurationListView.post {
+                        notifyItemChanged(index)
+                    }
+                }
+            }
+
+            override fun onUpdated(profileId: Long, trafficStats: TrafficStats) {
+                runOnDefaultDispatcher {
+                    val index = configurationIdList.indexOf(profileId)
+                    if (index != -1) {
+                        val holder = layoutManager.findViewByPosition(index)
+                            ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
+                        if (holder != null) {
+                            holder.entity.stats = trafficStats
+                            onMainDispatcher {
+                                holder.bind(holder.entity)
+                            }
                         }
                     }
                 }
@@ -556,10 +567,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     configurationIdList.clear()
                     configurationIdList.addAll(SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id))
 
-                    onMainDispatcher {
-                        notifyDataSetChanged()
-                    }
-
                     if (selected) {
                         selected = false
                         val selectedProxy = DataStore.selectedProxy
@@ -571,6 +578,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
                     }
 
+                    onMainDispatcher {
+                        notifyDataSetChanged()
+                    }
                     for (proxyEntity in SagerDatabase.proxyDao.getByGroup(proxyGroup.id)) {
                         configurationList[proxyEntity.id] = proxyEntity
                     }
@@ -623,9 +633,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                         if (DataStore.selectedProxy != proxyEntity.id) {
                             val lastSelected = DataStore.selectedProxy
                             DataStore.selectedProxy = proxyEntity.id
-                            adapter.refreshId(lastSelected)
+                            ProfileManager.postUpdate(lastSelected)
                             onMainDispatcher {
                                 selectedView.visibility = View.VISIBLE
+                                if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
                             }
                         }
                     }

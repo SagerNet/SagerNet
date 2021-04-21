@@ -189,12 +189,14 @@ class BaseService {
             if (intent.action == Action.SERVICE) data.binder else null
 
         fun forceLoad() {
-            stopRunner(false, (this as Context).getString(R.string.profile_empty))
+            if (DataStore.selectedProxy == 0L) {
+                stopRunner(false, (this as Context).getString(R.string.profile_empty))
+            }
             val s = data.state
             when {
                 s == State.Stopped -> startRunner()
                 s.canStop -> stopRunner(true)
-                //else -> Timber.w("Illegal state $s when invoking use")
+                else -> Logs.w("Illegal state $s when invoking use")
             }
         }
 

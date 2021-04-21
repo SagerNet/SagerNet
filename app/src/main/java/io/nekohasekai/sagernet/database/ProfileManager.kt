@@ -73,6 +73,7 @@ object ProfileManager {
 
     interface Listener {
         fun onAdd(profile: ProxyEntity)
+        fun onUpdated(profileId: Long, trafficStats: TrafficStats)
         fun onUpdated(profile: ProxyEntity)
         fun onRemoved(groupId: Long, profileId: Long)
         fun onCleared(groupId: Long)
@@ -147,14 +148,15 @@ object ProfileManager {
     }
 
     suspend fun postUpdate(profileId: Long) {
-        val profile = getProfile(profileId) ?: return
+        postUpdate(getProfile(profileId) ?: return)
+    }
+
+    suspend fun postUpdate(profile: ProxyEntity) {
         iterator { onUpdated(profile) }
     }
 
     suspend fun postTrafficUpdated(profileId: Long, stats: TrafficStats) {
-        val profile = getProfile(profileId) ?: return
-        profile.stats = stats
-        iterator { onUpdated(profile) }
+        iterator { onUpdated(profileId,stats) }
     }
 
     suspend fun createGroup(response: Response) {
