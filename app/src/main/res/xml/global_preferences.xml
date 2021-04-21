@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:defaultValue="vpn"
+        app:entries="@array/service_modes"
+        app:entryValues="@array/service_mode_values"
+        app:icon="@drawable/ic_device_developer_mode"
+        app:key="serviceMode"
+        app:title="@string/service_mode"
+        app:useSimpleSummaryProvider="true" />
+
+    <PreferenceCategory app:title="@string/cag_route">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="bypass-lan-china"
+            app:entries="@array/route_entry"
+            app:entryValues="@array/route_value"
+            app:icon="@drawable/ic_maps_directions"
+            app:key="routeMode"
+            app:title="@string/route_list"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_image_looks_6"
+            app:key="ipv6Route"
+            app:summary="@string/ipv6_summary"
+            app:title="@string/ipv6"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:key="preferIpv6"
+            app:summary="@string/ipv6_prefer_summary"
+            app:title="@string/ipv6_prefer" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_nat_24"
+            app:key="allowAccess"
+            app:summary="@string/allow_access_sum"
+            app:title="@string/allow_access" />
+    </PreferenceCategory>
+
+    <!-- <SwitchPreference
+         app:icon="@drawable/ic_communication_phonelink_ring"
+         app:key="isAutoConnect"
+         app:summary="@string/auto_connect_summary"
+         app:title="@string/auto_connect" />
+
+     <SwitchPreference
+         app:icon="@drawable/ic_action_lock"
+         app:key="directBootAware"
+         app:summary="@string/direct_boot_aware_summary"
+         app:title="@string/direct_boot_aware" />-->
+
+    <!--<EditTextPreference
+        app:icon="@drawable/ic_maps_directions_boat"
+        app:key="portProxy"
+        app:title="@string/port_proxy"
+        app:useSimpleSummaryProvider="true" />-->
+
+    <PreferenceCategory app:title="@string/cag_dns">
+        <EditTextPreference
+            app:defaultValue="1.1.1.1"
+            app:icon="@drawable/ic_action_dns"
+            app:key="remoteDns"
+            app:title="@string/remote_dns"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:key="enableLocalDns"
+            app:title="@string/local_dns" />
+        <EditTextPreference
+            app:defaultValue="5450"
+            app:key="portLocalDns"
+            app:title="@string/port_local_dns"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="223.5.5.5"
+            app:key="domesticDns"
+            app:title="@string/domestic_dns"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <!--  <EditTextPreference
+          app:isPreferenceVisible="false"
+          app:key="portTransproxy"
+          app:title="@string/port_transproxy"
+          app:useSimpleSummaryProvider="true" />-->
+
+
+</PreferenceScreen>

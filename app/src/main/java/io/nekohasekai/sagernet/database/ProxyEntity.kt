@@ -9,9 +9,9 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ui.settings.ProfileSettingsActivity
-import io.nekohasekai.sagernet.ui.settings.ShadowsocksSettingsActivity
-import io.nekohasekai.sagernet.ui.settings.SocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ProfileSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 
 @Entity(tableName = "proxy_entities", indices = [
     Index("groupId", name = "groupId")

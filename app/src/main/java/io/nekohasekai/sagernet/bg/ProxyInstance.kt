@@ -27,19 +27,17 @@ class ProxyInstance(val profile: ProxyEntity) {
     lateinit var config: V2rayConfig
     lateinit var base: BaseService.Interface
 
-    val bind get() = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
-
     fun init(service: BaseService.Interface) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
             service else null), false)
         if (profile.useExternalShadowsocks()) {
-            v2rayPoint.domainName = "127.0.0.1:${DataStore.socks5Port + 10}"
+            v2rayPoint.domainName = "127.0.0.1:${DataStore.socksPort + 10}"
         } else {
             v2rayPoint.domainName =
                 profile.requireBean().serverAddress + ":" + profile.requireBean().serverPort
         }
-        config = buildV2rayConfig(profile, bind, DataStore.socks5Port)
+        config = buildV2rayConfig(profile)
         v2rayPoint.configureFileContent = gson.toJson(config).also {
             Logs.d(it)
         }
@@ -50,7 +48,7 @@ class ProxyInstance(val profile: ProxyEntity) {
     fun start() {
         if (profile.useExternalShadowsocks()) {
             val bean = profile.requireSS()
-            val port = DataStore.socks5Port + 10
+            val port = DataStore.socksPort + 10
 
             val proxyConfig = JSONObject().also {
                 it["server"] = bean.serverAddress
@@ -151,16 +149,8 @@ class ProxyInstance(val profile: ProxyEntity) {
             return 0L
         }
 
-        override fun prepare(): Long {
-            return 0L
-        }
-
         override fun protect(l: Long): Boolean {
             return (service ?: return true).protect(l.toInt())
-        }
-
-        override fun setup(p0: String?): Long {
-            return 0
         }
 
         override fun shutdown(): Long {

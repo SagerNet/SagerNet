@@ -1,4 +1,4 @@
-package io.nekohasekai.sagernet.ui.settings
+package io.nekohasekai.sagernet.ui.profile
 
 import android.app.Activity
 import android.content.BroadcastReceiver

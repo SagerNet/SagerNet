@@ -28,6 +28,12 @@
     <string name="port_proxy">SOCKS5 proxy port</string>
     <string name="port_local_dns">Local DNS port</string>
     <string name="port_transproxy">Transproxy port</string>
+    <string name="allow_access">Allow connections from the LAN</string>
+    <string name="allow_access_sum">Bind inbound servers to 0.0.0.0</string>
+    <string name="cag_dns">DNS Settings</string>
+    <string name="local_dns">Enable local DNS</string>
+    <string name="domestic_dns">Domestic DNS</string>
+    <string name="cag_route">Route Settings</string>
 
     <string name="remote_dns">Remote DNS</string>
     <string name="traffic">%1$s↑\t%2$s↓</string>
@@ -54,6 +60,9 @@
     <!-- feature category -->
     <string name="ipv6">IPv6 Route</string>
     <string name="ipv6_summary">Redirect IPv6 traffic to remote</string>
+    <string name="ipv6_prefer">Prefer IPv6</string>
+    <string name="ipv6_prefer_summary">Prefer IPv6 address and routes</string>
+
     <string name="metered">Metered Hint</string>
     <string name="metered_summary">Hint system to treat VPN as metered</string>
     <string name="route_list">Route</string>
@@ -209,6 +218,6 @@
     <string name="no">No</string>
     <string name="apply">Apply</string>
 
-    <string name="about_text">The universal proxy toolchain for Android, written in Kotlin.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</string>
+    <string name="about_text">The universal proxy toolchain for Android, written in Kotlin.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</string>
 
 </resources>

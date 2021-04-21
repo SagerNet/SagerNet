@@ -18,6 +18,14 @@ fun PreferenceDataStore.int(
     defaultValue: () -> Int = { 0 },
 ) = PreferenceProxy(name, defaultValue, ::getInt, ::putInt)
 
+fun PreferenceDataStore.stringToInt(
+    name: String,
+    defaultValue: () -> Int = { 0 },
+) = PreferenceProxy(name,
+    defaultValue,
+    { key, default -> getString(key, "$default")?.toInt() },
+    { key, value -> putString(key, "$value") })
+
 fun PreferenceDataStore.long(
     name: String,
     defaultValue: () -> Long = { 0L },
@@ -26,11 +34,11 @@ fun PreferenceDataStore.long(
 class PreferenceProxy<T>(
     val name: String,
     val defaultValue: () -> T,
-    val getter: (String, T) -> T,
+    val getter: (String, T) -> T?,
     val setter: (String, value: T) -> Unit,
 ) {
 
     operator fun setValue(thisObj: Any?, property: KProperty<*>, value: T) = setter(name, value)
-    operator fun getValue(thisObj: Any?, property: KProperty<*>) = getter(name, defaultValue())
+    operator fun getValue(thisObj: Any?, property: KProperty<*>) = getter(name, defaultValue())!!
 
 }

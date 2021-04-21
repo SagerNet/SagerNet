@@ -48,6 +48,9 @@ public class V2rayConfig {
             public String address;
             public Integer port;
             public String clientIp;
+            public Boolean skipFallback;
+            public List<String> domains;
+            public List<String> expectIPs;
 
         }
 

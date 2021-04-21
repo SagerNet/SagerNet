@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets
 class QRCodeDialog() : DialogFragment() {
 
     companion object {
-        private const val KEY_URL = "com.github.shadowsocks.QRCodeDialog.KEY_URL"
+        private const val KEY_URL = "io.nekohasekai.sagernet.QRCodeDialog.KEY_URL"
         private val iso88591 = StandardCharsets.ISO_8859_1.newEncoder()
     }
 

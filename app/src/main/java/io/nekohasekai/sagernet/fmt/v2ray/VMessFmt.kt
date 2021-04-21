@@ -2,6 +2,8 @@ package io.nekohasekai.sagernet.fmt.v2ray
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.RouteMode
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -9,18 +11,48 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig.*
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-fun buildV2rayConfig(proxy: ProxyEntity, listen: String, port: Int): V2rayConfig {
+const val TAG_SOCKS = "in"
+const val TAG_AGENT = "out"
+const val TAG_DIRECT = "bypass"
+const val TAG_DNS_IN = "dns-in"
+const val TAG_DNS_OUT = "dns-out"
+
+fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
+
+    val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
+    val remoteDns = DataStore.remoteDNS.split(",")
+    val domesticDns = DataStore.domesticDns.split(',')
 
     val bean = proxy.requireBean()
 
     return V2rayConfig().apply {
 
         dns = DnsObject().apply {
-            servers = listOf(
-                DnsObject.StringOrServerObject().apply {
-                    valueX = "1.1.1.1"
-                }
+            hosts = mapOf(
+                "domain:googleapis.cn" to "googleapis.com"
             )
+            servers = mutableListOf()
+
+            servers.addAll(remoteDns.map {
+                DnsObject.StringOrServerObject().apply {
+                    valueX = it
+                }
+            })
+
+            if (DataStore.enableLocalDNS) {
+                when (DataStore.routeMode) {
+                    RouteMode.BYPASS_LAN, RouteMode.BYPASS_LAN_CHINA -> {
+                        servers.add(DnsObject.StringOrServerObject().apply {
+                            valueY = DnsObject.ServerObject().apply {
+                                address = domesticDns.first()
+                                port = 53
+                                domains = listOf("geosite:cn")
+                                expectIPs = listOf("geoip:cn")
+                            }
+                        })
+                    }
+                }
+            }
         }
 
         log = LogObject().apply {
@@ -40,22 +72,24 @@ fun buildV2rayConfig(proxy: ProxyEntity, listen: String, port: Int): V2rayConfig
             }
         }
 
-        inbounds = listOf(
+        inbounds = mutableListOf()
+        inbounds.add(
             InboundObject().apply {
-                tag = "in"
-                this.listen = listen
-                this.port = port
+                tag = TAG_SOCKS
+                listen = bind
+                port = DataStore.socksPort
                 protocol = "socks"
                 settings = LazyInboundConfigurationObject(
                     SocksInboundConfigurationObject().apply {
                         auth = "noauth"
-                        udp = bean is SOCKSBean && bean.udp
+                        udp = true
                         userLevel = 0
                     })
             }
         )
 
-        outbounds = listOf(
+        outbounds = mutableListOf()
+        outbounds.add(
             OutboundObject().apply {
                 tag = "out"
                 if (bean is SOCKSBean) {
@@ -65,7 +99,7 @@ fun buildV2rayConfig(proxy: ProxyEntity, listen: String, port: Int): V2rayConfig
                             servers = listOf(
                                 SocksOutboundConfigurationObject.ServerObject().apply {
                                     address = bean.serverAddress
-                                    this.port = bean.serverPort
+                                    port = bean.serverPort
                                     if (!bean.username.isNullOrBlank()) {
                                         users =
                                             listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
@@ -83,12 +117,13 @@ fun buildV2rayConfig(proxy: ProxyEntity, listen: String, port: Int): V2rayConfig
                         settings = LazyOutboundConfigurationObject(
                             ShadowsocksOutboundConfigurationObject().apply {
                                 servers = listOf(
-                                    ShadowsocksOutboundConfigurationObject.ServerObject().apply {
-                                        address = bean.serverAddress
-                                        this.port = bean.serverPort
-                                        method = bean.method
-                                        password = bean.password
-                                    }
+                                    ShadowsocksOutboundConfigurationObject.ServerObject()
+                                        .apply {
+                                            address = bean.serverAddress
+                                            port = bean.serverPort
+                                            method = bean.method
+                                            password = bean.password
+                                        }
                                 )
                             })
                     } else {
@@ -98,26 +133,122 @@ fun buildV2rayConfig(proxy: ProxyEntity, listen: String, port: Int): V2rayConfig
                                 servers = listOf(
                                     SocksOutboundConfigurationObject.ServerObject().apply {
                                         address = "127.0.0.1"
-                                        this.port = port + 10
+                                        port = DataStore.socksPort + 10
                                     }
                                 )
                             })
                     }
                 }
-            },
+            }
+        )
+        outbounds.add(
             OutboundObject().apply {
-                tag = "direct"
+                tag = TAG_DIRECT
                 protocol = "freedom"
             }
         )
 
         routing = RoutingObject().apply {
             domainStrategy = "IPIfNonMatch"
-            rules = listOf(RoutingObject.RuleObject().apply {
-                inboundTag = listOf(
-                    "in"
-                )
-                outboundTag = "out"
+
+            rules = mutableListOf()
+
+            rules.add(RoutingObject.RuleObject().apply {
+                type = "field"
+                outboundTag = TAG_AGENT
+                domain = listOf("domain:googleapis.cn")
+            })
+
+            when (DataStore.routeMode) {
+                RouteMode.BYPASS_LAN -> {
+                    rules.add(RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_DIRECT
+                        ip = listOf("geoip:private")
+                    })
+                }
+                RouteMode.BYPASS_CHINA -> {
+                    rules.add(RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_DIRECT
+                        ip = listOf("geoip:cn")
+                    })
+                    rules.add(RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_DIRECT
+                        domain = listOf("geosite:cn")
+                    })
+                }
+                RouteMode.BYPASS_LAN_CHINA -> {
+                    rules.add(RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_DIRECT
+                        ip = listOf("geoip:private")
+                    })
+                    rules.add(RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_DIRECT
+                        ip = listOf("geoip:cn")
+                    })
+                    rules.add(RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_DIRECT
+                        domain = listOf("geosite:cn")
+                    })
+                }
+            }
+
+            rules.add(RoutingObject.RuleObject().apply {
+                inboundTag = listOf(TAG_SOCKS)
+                outboundTag = TAG_AGENT
+                type = "field"
+            })
+        }
+
+        if (DataStore.enableLocalDNS) {
+            inbounds.add(
+                InboundObject().apply {
+                    tag = TAG_DNS_IN
+                    listen = "127.0.0.1"
+                    port = DataStore.localDNSPort
+                    protocol = "dokodemo-door"
+                    settings = LazyInboundConfigurationObject(
+                        DokodemoDoorInboundConfigurationObject().apply {
+                            address = if (remoteDns.first().startsWith("https")) {
+                                "1.1.1.1"
+                            } else {
+                                remoteDns.first()
+                            }
+                            network = "tcp,udp"
+                            port = 53
+                        })
+                }
+            )
+            outbounds.add(
+                OutboundObject().apply {
+                    protocol = "dns"
+                    tag = TAG_DNS_OUT
+                }
+            )
+            if (!domesticDns.first().startsWith("https")) {
+                routing.rules.add(0, RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = TAG_DIRECT
+                    ip = listOf(domesticDns.first())
+                    port = "53"
+                })
+            }
+            if (!remoteDns.first().startsWith("https")) {
+                routing.rules.add(0, RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = TAG_AGENT
+                    ip = arrayListOf(remoteDns.first())
+                    port = "53"
+                })
+            }
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                inboundTag = listOf(TAG_DNS_IN)
+                outboundTag = TAG_DNS_OUT
                 type = "field"
             })
         }
@@ -205,7 +336,8 @@ fun parseVmess1(link: String): VMessBean {
                 }
             }
             "kcp.uplinkcapacity" -> bean.kcpUpLinkCapacity = lnk.queryParameter(it)!!.toInt()
-            "kcp.downlinkcapacity" -> bean.kcpDownLinkCapacity = lnk.queryParameter(it)!!.toInt()
+            "kcp.downlinkcapacity" -> bean.kcpDownLinkCapacity =
+                lnk.queryParameter(it)!!.toInt()
             "header" -> bean.header = lnk.queryParameter(it)
             "mux" -> bean.mux = lnk.queryParameter(it)!!.toInt()
             // custom

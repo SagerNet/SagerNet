@@ -26,12 +26,13 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.socks.toV2rayN
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.ui.settings.ProfileSettingsActivity
-import io.nekohasekai.sagernet.ui.settings.ShadowsocksSettingsActivity
-import io.nekohasekai.sagernet.ui.settings.SocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ProfileSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import java.util.*
@@ -343,6 +344,16 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 runOnDefaultDispatcher {
                     configurationList.clear()
                     configurationList.addAll(SagerDatabase.proxyDao.getByGroup(proxyGroup.id))
+                    if (configurationList.isEmpty() && proxyGroup.isDefault) {
+                        configurationList.add(ProfileManager.createProfile(groupId,
+                            SOCKSBean.DEFAULT_BEAN.clone().apply {
+                                name = "Local tunnel"
+                            }))
+                        if (DataStore.selectedProxy == 0L) {
+                            DataStore.selectedProxy = configurationList[0].id
+                        }
+                    }
+
                     onMainDispatcher {
                         notifyDataSetChanged()
                     }
@@ -362,6 +373,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         override fun onDestroyView() {
             super.onDestroyView()
 
+            if (!::undoManager.isInitialized) return
             undoManager.flush()
         }
 

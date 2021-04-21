@@ -41,8 +41,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.VpnRequestActivity" />
-        <activity android:name=".ui.settings.SocksSettingsActivity" />
-        <activity android:name=".ui.settings.ShadowsocksSettingsActivity" />
+        <activity android:name=".ui.profile.SocksSettingsActivity" />
+        <activity android:name=".ui.profile.ShadowsocksSettingsActivity" />
 
         <service
             android:name=".bg.ProxyService"

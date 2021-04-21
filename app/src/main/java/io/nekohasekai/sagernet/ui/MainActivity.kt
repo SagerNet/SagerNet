@@ -33,6 +33,10 @@ import io.nekohasekai.sagernet.widget.StatsBar
 class MainActivity : AppCompatActivity(), SagerConnection.Callback,
     OnPreferenceDataStoreChangeListener {
 
+    companion object {
+        var stateListener: ((BaseService.State) -> Unit)? = null
+    }
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var fab: ServiceButton
     lateinit var stats: StatsBar
@@ -86,6 +90,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
         this.state = state
+        stateListener?.invoke(state)
     }
 
     fun snackbar(text: CharSequence = ""): Snackbar {

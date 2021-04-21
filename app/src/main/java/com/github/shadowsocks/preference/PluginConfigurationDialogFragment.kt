@@ -28,9 +28,7 @@ import androidx.preference.EditTextPreferenceDialogFragmentCompat
 import androidx.preference.PreferenceDialogFragmentCompat
 import com.github.shadowsocks.plugin.PluginContract
 import com.github.shadowsocks.plugin.PluginManager
-import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.ui.settings.ProfileSettingsActivity
-import io.nekohasekai.sagernet.ui.settings.ShadowsocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
 
 class PluginConfigurationDialogFragment : EditTextPreferenceDialogFragmentCompat() {
     companion object {

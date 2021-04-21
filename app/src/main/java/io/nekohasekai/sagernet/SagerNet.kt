@@ -15,11 +15,16 @@ import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
+import kotlinx.coroutines.DEBUG_PROPERTY_NAME
+import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
+import libv2ray.Libv2ray
 import me.weishu.reflection.Reflection
+import java.io.File
 
 class SagerNet : Application() {
 
@@ -93,8 +98,16 @@ class SagerNet : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        System.setProperty(DEBUG_PROPERTY_NAME, DEBUG_PROPERTY_VALUE_ON)
+
         DataStore.init()
         updateNotificationChannels()
+
+        Seq.setContext(applicationContext)
+        Libv2ray.setAssetsPath(
+            File(application.filesDir, "geofile").absolutePath,
+            "geofile/"
+        )
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,

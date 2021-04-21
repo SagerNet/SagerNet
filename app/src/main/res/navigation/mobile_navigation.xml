@@ -12,6 +12,12 @@
         tools:layout="@layout/group_list_main" />
 
     <fragment
+        android:id="@+id/nav_settings"
+        android:name="io.nekohasekai.sagernet.ui.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/settings_activity" />
+
+    <fragment
         android:id="@+id/nav_about"
         android:name="io.nekohasekai.sagernet.ui.AboutFragment"
         android:label="@string/menu_about" />
