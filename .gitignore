@@ -14,4 +14,4 @@ build/
 .cxx
 local.properties
 /app/libs/
-/app/src/main/assets/*.dat
+/app/src/main/assets/*

@@ -1,7 +1,9 @@
 package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
+import com.github.shadowsocks.plugin.PluginOptions
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.json.JSONObject
 
 val methodsV2fly = arrayOf(
     "none",
@@ -91,4 +93,21 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
     }
 
+}
+
+fun parseShadowsocks(ssObj: JSONObject): ShadowsocksBean {
+    var pluginStr = ""
+    val pId = ssObj.optString("plugin")
+    if (!pId.isNullOrBlank()) {
+        val plugin = PluginOptions(pId, ssObj.optString("plugin_opts"))
+        pluginStr = plugin.toString(false)
+    }
+    return ShadowsocksBean().apply {
+        serverAddress = ssObj.getString("server")
+        serverPort = ssObj.getInt("server_port")
+        password = ssObj.getString("password")
+        method = ssObj.getString("method")
+        plugin = pluginStr
+        name = ssObj.optString("remarks", "")
+    }
 }

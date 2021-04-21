@@ -214,4 +214,11 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         }
     }
 
+    override fun onRevoke() = stopRunner()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        data.binder.close()
+    }
+
 }

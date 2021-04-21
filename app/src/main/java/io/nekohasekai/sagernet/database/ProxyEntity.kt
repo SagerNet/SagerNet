@@ -3,6 +3,7 @@ package io.nekohasekai.sagernet.database
 import android.content.Context
 import android.content.Intent
 import androidx.room.*
+import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
@@ -31,6 +32,9 @@ class ProxyEntity(
     var socksBean: SOCKSBean? = null,
     var ssBean: ShadowsocksBean? = null,
 ) {
+
+    @Transient
+    var stats: TrafficStats? = null
 
     fun displayType(): String {
         return when (type) {

@@ -22,5 +22,5 @@
 
 -repackageclasses ''
 -allowaccessmodification
--printconfiguration
--forceprocessing
+-keep class io.nekohasekai.sagernet.** { *;}
+-keep class com.github.shadowsocks.** { *;}

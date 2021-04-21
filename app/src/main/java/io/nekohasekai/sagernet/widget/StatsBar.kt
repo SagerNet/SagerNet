@@ -1,5 +1,6 @@
 package io.nekohasekai.sagernet.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.Formatter
 import android.util.AttributeSet
@@ -89,12 +90,13 @@ class StatsBar @JvmOverloads constructor(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun updateTraffic(txRate: Long, rxRate: Long, txTotal: Long, rxTotal: Long) {
-        txText.text = "▲ ${Formatter.formatFileSize(context, txTotal)} |  ${
+        txText.text = "▲  ${
             context.getString(R.string.speed,
                 Formatter.formatFileSize(context, txRate))
         }"
-        rxText.text = "▼ ${Formatter.formatFileSize(context, rxTotal)} |  ${
+        rxText.text = "▼  ${
             context.getString(R.string.speed,
                 Formatter.formatFileSize(context, rxRate))
         }"

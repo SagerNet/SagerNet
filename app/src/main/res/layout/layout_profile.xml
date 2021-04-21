@@ -20,9 +20,9 @@
             android:layout_width="4dp"
             android:layout_height="match_parent"
             android:background="?colorPrimary"
+            android:orientation="horizontal"
             android:visibility="invisible"
-            tools:visibility="visible"
-            android:orientation="horizontal" />
+            tools:visibility="visible" />
 
         <LinearLayout
 
@@ -37,20 +37,28 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/profile_name"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="12dp"
                     android:layout_weight="1"
-                    android:ellipsize="end"
                     android:gravity="center_vertical"
-                    android:maxLines="2"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textStyle="bold"
-                    tools:text="@string/profile_name" />
+                    android:paddingLeft="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/profile_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textStyle="bold"
+                        android:autoLink="web"
+                        tools:text="@string/profile_name" />
+                </LinearLayout>
+
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/subscription"
@@ -110,7 +118,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_weight="1"
-                    android:text="@string/profile_address"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="?android:attr/textColorSecondary" />
 

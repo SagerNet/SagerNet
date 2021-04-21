@@ -139,6 +139,7 @@ class ProxyInstance(val profile: ProxyEntity) {
     }
 
     fun shutdown(coroutineScope: CoroutineScope) {
+        persistStats()
         cacheFiles.removeAll { it.delete(); true }
     }
 

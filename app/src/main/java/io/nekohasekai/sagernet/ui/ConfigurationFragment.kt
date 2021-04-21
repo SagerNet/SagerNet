@@ -1,16 +1,19 @@
 package io.nekohasekai.sagernet.ui
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
@@ -20,8 +23,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
@@ -35,6 +40,10 @@ import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
+import kotlinx.parcelize.Parcelize
+import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -45,13 +54,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
+    lateinit var groupPager: ViewPager2
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar.inflateMenu(R.menu.profile_manager_menu)
         toolbar.setOnMenuItemClickListener(this)
 
-        val groupPager = view.findViewById<ViewPager2>(R.id.group_pager)
+        groupPager = view.findViewById(R.id.group_pager)
         tabLayout = view.findViewById(R.id.group_tab)
         adapter = GroupPagerAdapter()
         groupPager.adapter = adapter
@@ -67,6 +77,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 true
             }
         }.attach()
+
+        toolbar.setOnClickListener {
+            (childFragmentManager.findFragmentByTag("f" + adapter.groupList[0].id) as? GroupFragment)?.layoutManager?.scrollToPosition(
+                0)
+        }
     }
 
     val selectGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
@@ -108,26 +123,155 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectGroup.id)
                 })
             }
+            R.id.action_from_link -> {
+                AlertDialogFragment.setResultListener<SubDialogFragment, SubEditResult>(this) { _, ret ->
+                    val result =
+                        ret?.takeIf { !it.link.isNullOrEmpty() } ?: return@setResultListener
+                    SubAddDialog().apply { arg(result);key() }.show(parentFragmentManager, null)
+                }
+                SubDialogFragment().apply { key() }.show(parentFragmentManager, null)
+            }
         }
         return true
     }
 
-    inner class GroupPagerAdapter : FragmentStateAdapter(this) {
+    @Parcelize
+    data class SubEditResult(val link: String?) : Parcelable
+    class SubDialogFragment : AlertDialogFragment<Empty, SubEditResult>(),
+        TextWatcher, AdapterView.OnItemSelectedListener {
+        private lateinit var editText: EditText
+        private lateinit var inputLayout: TextInputLayout
+        private val positive by lazy { (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE) }
 
+        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
+            val activity = requireActivity()
+
+            @SuppressLint("InflateParams")
+            val view = activity.layoutInflater.inflate(R.layout.dialog_subscription, null)
+            editText = view.findViewById(R.id.content)
+            inputLayout = view.findViewById(R.id.content_layout)
+            editText.addTextChangedListener(this@SubDialogFragment)
+            setTitle(R.string.add_subscription)
+            setPositiveButton(android.R.string.ok, listener)
+            setNegativeButton(android.R.string.cancel, null)
+            setView(view)
+        }
+
+        override fun onStart() {
+            super.onStart()
+            validate()
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        override fun afterTextChanged(s: Editable) = validate(value = s)
+        override fun onNothingSelected(parent: AdapterView<*>?) = check(false)
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) =
+            validate()
+
+        private fun validate(value: Editable = editText.text) {
+            var message = ""
+            positive.isEnabled = if (value.isBlank()) false else try {
+                val url = value.toString().toHttpUrl()
+                if ("http".equals(url.scheme, true)) message =
+                    getString(R.string.cleartext_http_warning)
+                true
+            } catch (e: Exception) {
+                message = e.readableMessage
+                false
+            }
+            inputLayout.isErrorEnabled = true
+            inputLayout.error = message
+        }
+
+        override fun ret(which: Int) = when (which) {
+            DialogInterface.BUTTON_POSITIVE -> SubEditResult(editText.text.toString())
+            DialogInterface.BUTTON_NEUTRAL -> SubEditResult(null)
+            else -> null
+        }
+
+        override fun onClick(dialog: DialogInterface?, which: Int) {
+            if (which != DialogInterface.BUTTON_NEGATIVE) super.onClick(dialog, which)
+        }
+    }
+
+    class SubAddDialog : AlertDialogFragment<SubEditResult, Empty>() {
+
+        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
+            setView(layoutInflater.inflate(R.layout.layout_loading, null).apply {
+                findViewById<TextView>(R.id.loadingText)?.also {
+                    it.setText(R.string.fetching_subscription)
+                }
+            })
+            OkHttpClient.Builder()
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .build()
+                .newCall(Request.Builder().url(arg.link!!).build())
+                .enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        runOnMainDispatcher {
+                            alert(e.readableMessage).show()
+                            dismiss()
+                        }
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        if (!response.isSuccessful) {
+                            runOnMainDispatcher {
+                                alert("HTTP ${response.code}").show()
+                                dismiss()
+                            }
+                            return
+                        }
+                        runOnDefaultDispatcher {
+                            runCatching {
+                                ProfileManager.createGroup(response)
+                            }.onFailure {
+                                onMainDispatcher {
+                                    alert(it.readableMessage).show()
+                                }
+                            }
+                            onMainDispatcher {
+                                dismiss()
+                            }
+                        }
+
+                    }
+                })
+        }
+
+    }
+
+    inner class GroupPagerAdapter : FragmentStateAdapter(this), ProfileManager.GroupListener {
+
+        var selectedGroupIndex = 0
         var groupList: ArrayList<ProxyGroup> = ArrayList()
 
         init {
+            ProfileManager.addListener(this)
+
             runOnDefaultDispatcher {
                 groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 if (groupList.isEmpty()) {
                     SagerDatabase.groupDao.createGroup(ProxyGroup(isDefault = true))
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
+
                 onMainDispatcher {
                     notifyDataSetChanged()
                     val hideTab = groupList.size == 1 && groupList[0].isDefault
                     tabLayout.isGone = hideTab
                     toolbar.elevation = if (hideTab) 0F else dp2px(4).toFloat()
+                }
+
+                val selectedGroup =
+                    SagerDatabase.proxyDao.getById(DataStore.selectedProxy)?.id
+                        ?: selectedGroupIndex
+                if (selectedGroup != 0L) {
+                    val selectedIndex = groupList.indexOfFirst { it.id == selectGroup.id }
+                    selectedGroupIndex = selectedIndex
+                    tabLayout.post { tabLayout.getTabAt(selectedIndex)?.select() }
                 }
             }
         }
@@ -139,6 +283,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         override fun createFragment(position: Int): Fragment {
             return GroupFragment().apply {
                 proxyGroup = groupList[position]
+                if (position == selectedGroupIndex) {
+                    selected = true
+                }
             }
         }
 
@@ -150,11 +297,27 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             return groupList.any { it.id == itemId }
         }
 
+        override fun onAdd(group: ProxyGroup) {
+            if (groupList.all { it.isDefault }) tabLayout.post {
+                tabLayout.visibility = View.VISIBLE
+            }
+
+            groupList.add(group)
+            notifyItemInserted(groupList.size - 1)
+            tabLayout.post { tabLayout.getTabAt(groupList.size - 1)?.select() }
+        }
+
+        override fun onAddFinish(size: Int) {
+            snackbar(requireContext().resources.getQuantityString(
+                R.plurals.added, size, size
+            )).show()
+        }
     }
 
     class GroupFragment : Fragment() {
 
         lateinit var proxyGroup: ProxyGroup
+        var selected = false
 
         override fun onCreateView(
             inflater: LayoutInflater,
@@ -171,57 +334,67 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         private fun isProfileEditable(id: Long) =
             (activity as MainActivity).state == BaseService.State.Stopped || id != DataStore.selectedProxy
 
+        lateinit var layoutManager: RecyclerView.LayoutManager
+        lateinit var configurationListView: RecyclerView
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             if (!::proxyGroup.isInitialized) return
 
-            val configurationList = view.findViewById<RecyclerView>(R.id.configuration_list).apply {
-                layoutManager = when (proxyGroup.layout) {
-                    else -> LinearLayoutManager(view.context)
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            configurationListView =
+                view.findViewById<RecyclerView>(R.id.configuration_list).also {
+                    it.layoutManager = when (proxyGroup.layout) {
+                        else -> layoutManager
+                    }
                 }
-            }
             adapter = ConfigurationAdapter()
-            configurationList.adapter = adapter
+            configurationListView.adapter = adapter
             undoManager =
                 UndoSnackbarManager(activity as MainActivity, adapter::undo, adapter::commit)
-            ItemTouchHelper(object :
-                ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                    ItemTouchHelper.START) {
-                override fun getSwipeDirs(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                ) = if (isProfileEditable((viewHolder).itemId)) {
-                    super.getSwipeDirs(recyclerView, viewHolder)
-                } else 0
 
-                override fun getDragDirs(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                ) = if (isEnabled) super.getDragDirs(recyclerView, viewHolder) else 0
+            if (!proxyGroup.isSubscription) {
 
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val index = viewHolder.adapterPosition
-                    adapter.remove(index)
-                    undoManager.remove(index to (viewHolder as ConfigurationHolder).entity)
-                }
+                ItemTouchHelper(object :
+                    ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                        ItemTouchHelper.START) {
+                    override fun getSwipeDirs(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                    ) = if (isProfileEditable((viewHolder).itemId)) {
+                        super.getSwipeDirs(recyclerView, viewHolder)
+                    } else 0
 
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder,
-                ): Boolean {
-                    adapter.move(viewHolder.adapterPosition, target.adapterPosition)
-                    return true
-                }
+                    override fun getDragDirs(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                    ) = if (isEnabled) super.getDragDirs(recyclerView, viewHolder) else 0
 
-                override fun clearView(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                ) {
-                    super.clearView(recyclerView, viewHolder)
-                    adapter.commitMove()
-                }
-            }).attachToRecyclerView(configurationList)
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        val index = viewHolder.adapterPosition
+                        adapter.remove(index)
+                        undoManager.remove(index to (viewHolder as ConfigurationHolder).entity)
+                    }
+
+                    override fun onMove(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder,
+                    ): Boolean {
+                        adapter.move(viewHolder.adapterPosition, target.adapterPosition)
+                        return true
+                    }
+
+                    override fun clearView(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                    ) {
+                        super.clearView(recyclerView, viewHolder)
+                        adapter.commitMove()
+                    }
+                }).attachToRecyclerView(configurationListView)
+
+            }
+
         }
-
 
         inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
             ProfileManager.Listener {
@@ -233,7 +406,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 ProfileManager.addListener(this)
             }
 
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConfigurationHolder {
+            override fun onCreateViewHolder(
+                parent: ViewGroup,
+                viewType: Int,
+            ): ConfigurationHolder {
                 return ConfigurationHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.layout_profile, parent, false)
@@ -313,9 +489,15 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                 runOnDefaultDispatcher {
                     val index = configurationList.indexOfFirst { it.id == profile.id }
                     if (index < 0) return@runOnDefaultDispatcher
-                    configurationList[index] = ProfileManager.getProfile(profile.id)!!
+                    configurationList[index] = profile
+                    val holder = layoutManager.findViewByPosition(index)
+                        ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
                     onMainDispatcher {
-                        notifyItemChanged(index)
+                        if (holder != null) {
+                            holder.bind(profile)
+                        } else {
+                            notifyItemChanged(index)
+                        }
                     }
                 }
             }
@@ -345,18 +527,28 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     configurationList.clear()
                     configurationList.addAll(SagerDatabase.proxyDao.getByGroup(proxyGroup.id))
                     if (configurationList.isEmpty() && proxyGroup.isDefault) {
-                        configurationList.add(ProfileManager.createProfile(groupId,
+                        ProfileManager.createProfile(groupId,
                             SOCKSBean.DEFAULT_BEAN.clone().apply {
                                 name = "Local tunnel"
-                            }))
-                        if (DataStore.selectedProxy == 0L) {
-                            DataStore.selectedProxy = configurationList[0].id
+                            })
+                    }
+
+                    if (selected) {
+
+                        val selectedProxy = DataStore.selectedProxy
+                        val selectedProfileIndex =
+                            configurationList.indexOfFirst { it.id == selectedProxy }
+
+                        configurationListView.post {
+                            layoutManager.scrollToPosition(selectedProfileIndex)
                         }
+
                     }
 
                     onMainDispatcher {
                         notifyDataSetChanged()
                     }
+
                 }
             }
 
@@ -407,22 +599,33 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
                 profileName.text = proxyEntity.displayName()
                 profileType.text = proxyEntity.displayType()
-                val showTraffic = proxyEntity.rx + proxyEntity.tx != 0L
+                var rx = proxyEntity.rx
+                var tx = proxyEntity.tx
+
+                val stats = proxyEntity.stats
+                if (stats != null) {
+                    rx += stats.rxTotal
+                    tx += stats.txTotal
+                }
+
+                val showTraffic = rx + tx != 0L
                 trafficText.isGone = !showTraffic
                 if (showTraffic) {
                     trafficText.text = view.context.getString(R.string.traffic,
-                        Formatter.formatFileSize(view.context, proxyEntity.rx),
-                        Formatter.formatFileSize(view.context, proxyEntity.tx))
+                        Formatter.formatFileSize(view.context, tx),
+                        Formatter.formatFileSize(view.context, rx))
                 }
 
-                if (proxyEntity.requireBean().name.isNullOrBlank()) {
+                profileAddress.text = ""
+
+                /*if (proxyEntity.requireBean().name.isNullOrBlank()) {
                     profileAddress.isGone = true
                 } else {
                     profileAddress.isGone = false
                     val bean = proxyEntity.requireBean()
                     @SuppressLint("SetTextI18n")
                     profileAddress.text = "${bean.serverAddress}:${bean.serverPort}"
-                }
+                }*/
 
                 editButton.setOnClickListener {
                     it.context.startActivity(proxyEntity.settingIntent(it.context))
@@ -490,6 +693,5 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         }
 
     }
-
 
 }

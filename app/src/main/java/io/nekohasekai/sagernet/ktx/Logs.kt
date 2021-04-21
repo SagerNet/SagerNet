@@ -12,27 +12,27 @@ object Logs {
     }
 
     fun v(message: String) {
-        if (BuildConfig.DEBUG) {
+        //  if (BuildConfig.DEBUG) {
             Log.v(mkTag(), message)
-        }
+//        }
     }
 
     fun v(message: String, exception: Throwable) {
-        if (BuildConfig.DEBUG) {
+        //  if (BuildConfig.DEBUG) {
             Log.v(mkTag(), message, exception)
-        }
+//        }
     }
 
     fun d(message: String) {
-        if (BuildConfig.DEBUG) {
+        //  if (BuildConfig.DEBUG) {
             Log.d(mkTag(), message)
-        }
+//        }
     }
 
     fun d(message: String, exception: Throwable) {
-        if (BuildConfig.DEBUG) {
+        //  if (BuildConfig.DEBUG) {
             Log.d(mkTag(), message, exception)
-        }
+//        }
     }
 
     fun i(message: String) {

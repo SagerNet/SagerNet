@@ -13,6 +13,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
+import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -22,7 +23,6 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.utils.AlertDialogFragment
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
 
@@ -136,8 +136,8 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
     override fun onOptionsItemSelected(item: MenuItem) = child.onOptionsItemSelected(item)
 
     override fun onBackPressed() {
-        if (DataStore.dirty) UnsavedChangesDialogFragment().show(child, REQUEST_UNSAVED_CHANGES)
-        else super.onBackPressed()
+        if (DataStore.dirty) UnsavedChangesDialogFragment().apply { key() }
+            .show(supportFragmentManager, null) else super.onBackPressed()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -191,9 +191,11 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
         override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
             R.id.action_delete -> {
-                DeleteConfirmationDialogFragment().withArg(ProfileIdArg(DataStore.editingId,
-                    DataStore.editingGroup))
-                    .show(this)
+                DeleteConfirmationDialogFragment().apply {
+                    arg(ProfileIdArg(DataStore.editingId,
+                        DataStore.editingGroup))
+                    key()
+                }.show(parentFragmentManager, null)
                 true
             }
             R.id.action_apply -> {

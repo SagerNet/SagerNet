@@ -14,17 +14,19 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceDataStore
-import io.nekohasekai.sagernet.aidl.IShadowsocksService
-import io.nekohasekai.sagernet.aidl.TrafficStats
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.aidl.IShadowsocksService
+import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ServiceButton
 import io.nekohasekai.sagernet.widget.StatsBar
@@ -121,15 +123,17 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
     }
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
-        if (profileId == 0L) this@MainActivity.stats.updateTraffic(
+        if (profileId != 0L) this@MainActivity.stats.updateTraffic(
             stats.txRate, stats.rxRate, stats.txTotal, stats.rxTotal)
-        if (state != BaseService.State.Stopping) {
-            (supportFragmentManager.findFragmentById(R.id.nav_configuration) as? ConfigurationFragment)
-//                ?.onTrafficUpdated(profileId, stats)
+        runOnDefaultDispatcher {
+            ProfileManager.postTrafficUpdated(profileId, stats)
         }
     }
 
     override fun trafficPersisted(profileId: Long) {
+        runOnDefaultDispatcher {
+            ProfileManager.postUpdate(profileId)
+        }
 //        ProfilesFragment.instance?.onTrafficPersisted(profileId)
     }
 

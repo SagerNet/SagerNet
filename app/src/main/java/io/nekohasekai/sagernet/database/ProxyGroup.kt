@@ -29,7 +29,7 @@ class ProxyGroup(
         fun delete(group: ProxyGroup)
 
         @Insert
-        fun createGroup(group: ProxyGroup)
+        fun createGroup(group: ProxyGroup): Long
 
     }
 
