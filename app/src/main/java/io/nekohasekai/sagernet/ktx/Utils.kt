@@ -18,6 +18,9 @@ import androidx.annotation.AttrRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.core.net.URLDecoder
 import cn.hutool.core.net.URLEncoder
 import cn.hutool.core.util.CharsetUtil
@@ -142,4 +145,15 @@ fun String.urlSafe(): String {
 
 fun String.unUrlSafe(): String {
     return URLDecoder.decode(this, CharsetUtil.CHARSET_UTF_8)
+}
+
+fun Context.scrollTo(lm: RecyclerView.LayoutManager,index: Int) {
+    lm.startSmoothScroll(object : LinearSmoothScroller(this) {
+        init {
+            targetPosition = index
+        }
+        override fun getVerticalSnapPreference(): Int {
+            return SNAP_TO_START
+        }
+    })
 }

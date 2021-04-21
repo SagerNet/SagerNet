@@ -30,7 +30,7 @@ public class KryoConverters {
         return out.toByteArray();
     }
 
-    private static <T extends AbstractBean> T deserialize(T bean, byte[] bytes) {
+    public static <T extends AbstractBean> T deserialize(T bean, byte[] bytes) {
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
         bean.deserialize(buffer);

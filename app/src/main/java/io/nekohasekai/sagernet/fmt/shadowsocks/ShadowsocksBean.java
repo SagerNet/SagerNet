@@ -44,6 +44,6 @@ public class ShadowsocksBean extends AbstractBean {
     @NotNull
     @Override
     public ShadowsocksBean clone() {
-        return KryoConverters.shadowsocksDeserialize(KryoConverters.serialize(this));
+        return KryoConverters.deserialize(new ShadowsocksBean(), KryoConverters.serialize(this));
     }
 }

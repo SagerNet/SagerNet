@@ -81,6 +81,6 @@ public class VMessBean extends AbstractBean {
     @NotNull
     @Override
     public VMessBean clone() {
-        return KryoConverters.vmessDeserialize(KryoConverters.serialize(this));
+        return KryoConverters.deserialize(new VMessBean(), KryoConverters.serialize(this));
     }
 }

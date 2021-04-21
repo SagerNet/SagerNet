@@ -44,7 +44,7 @@ public class SOCKSBean extends AbstractBean {
     @NotNull
     @Override
     public SOCKSBean clone() {
-        return KryoConverters.socksDeserialize(KryoConverters.serialize(this));
+        return KryoConverters.deserialize(new SOCKSBean(), KryoConverters.serialize(this));
     }
 
 }

@@ -50,6 +50,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
+
 class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
     Toolbar.OnMenuItemClickListener,
     PopupMenu.OnMenuItemClickListener {
@@ -82,8 +83,28 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         }.attach()
 
         toolbar.setOnClickListener {
-            (childFragmentManager.findFragmentByTag("f" + selectGroup.id) as? GroupFragment)
-                ?.layoutManager?.scrollToPosition(0)
+            val fragment =
+                (childFragmentManager.findFragmentByTag("f" + selectGroup.id) as GroupFragment?)
+
+            if (fragment != null) {
+                if (fragment.selected) {
+                    val selectedProxy = DataStore.selectedProxy
+                    val selectedProfileIndex =
+                        fragment.adapter.configurationIdList.indexOf(selectedProxy)
+
+                    val first =
+                        (fragment.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    val last =
+                        (fragment.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+
+                    if (selectedProfileIndex !in first..last) {
+                        requireContext().scrollTo(fragment.layoutManager, selectedProfileIndex)
+                        return@setOnClickListener
+                    }
+                }
+
+                requireContext().scrollTo(fragment.layoutManager, 0)
+            }
         }
     }
 
@@ -325,6 +346,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
         lateinit var proxyGroup: ProxyGroup
         var selected = false
+        var scrolled = false
 
         override fun onCreateView(
             inflater: LayoutInflater,
@@ -567,22 +589,16 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                     configurationIdList.clear()
                     configurationIdList.addAll(SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id))
 
-                    if (selected) {
-                        selected = false
-                        val selectedProxy = DataStore.selectedProxy
-                        val selectedProfileIndex = configurationIdList.indexOf(selectedProxy)
-
-                        configurationListView.post {
-                            layoutManager.scrollToPosition(selectedProfileIndex)
-                        }
-
-                    }
-
                     onMainDispatcher {
                         notifyDataSetChanged()
                     }
-                    for (proxyEntity in SagerDatabase.proxyDao.getByGroup(proxyGroup.id)) {
-                        configurationList[proxyEntity.id] = proxyEntity
+                    if (selected) {
+                        val selectedProxy = DataStore.selectedProxy
+                        val selectedProfileIndex = configurationIdList.indexOf(selectedProxy)
+
+                        onMainDispatcher {
+                            requireContext().scrollTo(layoutManager, selectedProfileIndex)
+                        }
                     }
 
                     if (configurationIdList.isEmpty() && proxyGroup.isDefault) {
@@ -590,6 +606,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
                             SOCKSBean.DEFAULT_BEAN.clone().apply {
                                 name = "Local tunnel"
                             })
+                    }
+
+
+                    for (proxyEntity in SagerDatabase.proxyDao.getByGroup(proxyGroup.id)) {
+                        configurationList[proxyEntity.id] = proxyEntity
                     }
 
                 }

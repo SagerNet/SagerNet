@@ -23,7 +23,6 @@ import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
-import me.weishu.reflection.Reflection
 import java.io.File
 
 class SagerNet : Application() {
@@ -93,7 +92,6 @@ class SagerNet : Application() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         application = this
-        Reflection.unseal(base)
     }
 
     override fun onCreate() {
