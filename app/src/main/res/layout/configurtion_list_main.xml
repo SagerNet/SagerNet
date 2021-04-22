@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/configuration_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dp"
-    android:scrollbarStyle="outsideOverlay"
-    android:scrollbars="vertical"
+    app:fastScrollAutoHide="true"
+    app:fastScrollThumbInactiveColor="?colorPrimary"
+    app:fastScrollThumbColor="?colorPrimary"
+    app:fastScrollTrackColor="?colorOnPrimarySurface"
     tools:listitem="@layout/layout_profile" />

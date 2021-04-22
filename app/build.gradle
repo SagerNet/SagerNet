@@ -145,6 +145,10 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
     implementation "com.takisoft.preferencex:preferencex-simplemenu:1.1.0"
     implementation "org.yaml:snakeyaml:1.28"
+    implementation ("com.simplecityapps:recyclerview-fastscroll:2.0.1") {
+        exclude group: "androidx.recyclerview"
+        exclude group: "androidx.appcompat"
+    }
 
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"
