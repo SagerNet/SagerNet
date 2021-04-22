@@ -41,7 +41,7 @@
 
     <PreferenceCategory app:title="@string/cag_route">
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="bypass-lan-china"
+            app:defaultValue="bypaass-lan"
             app:entries="@array/route_entry"
             app:entryValues="@array/route_value"
             app:icon="@drawable/ic_maps_directions"
@@ -49,6 +49,7 @@
             app:title="@string/route_list"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_image_looks_6"
             app:key="ipv6Route"
             app:summary="@string/ipv6_summary"

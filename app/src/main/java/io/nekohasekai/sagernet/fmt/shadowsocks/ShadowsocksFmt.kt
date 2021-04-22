@@ -114,7 +114,7 @@ fun ShadowsocksBean.toUri(): String {
     }
 
     if (name.isNotBlank()) {
-        builder.fragment(name)
+        builder.encodedFragment(name.urlSafe())
     }
 
     return builder.toString().replace("https://", "ss://")

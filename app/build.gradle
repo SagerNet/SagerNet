@@ -150,24 +150,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
     implementation "com.takisoft.preferencex:preferencex-simplemenu:1.1.0"
     implementation "org.yaml:snakeyaml:1.28"
-
-
-    implementation ("androidx.camera:camera-camera2:$cameraxVersion") {
-        exclude group: "com.google.guava", module: "listenablefuture"
-    }
-    implementation ("androidx.camera:camera-lifecycle:$cameraxVersion") {
-        exclude group: "com.google.guava", module: "listenablefuture"
-    }
-    implementation ("androidx.camera:camera-view:1.0.0-alpha23") {
-        exclude group: "com.google.guava", module: "listenablefuture"
-    }
-
-    implementation "androidx.work:work-runtime-ktx:$workVersion"
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
-
-    implementation "com.google.mlkit:barcode-scanning:16.1.1"
-    implementation "com.google.zxing:core:3.4.1"
 
     implementation("com.simplecityapps:recyclerview-fastscroll:2.0.1") {
         exclude group: "androidx.recyclerview"
@@ -176,7 +160,8 @@ dependencies {
     implementation ("org.smali:dexlib2:2.5.2") {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    implementation("com.google.guava:guava:30.1.1-android")
+    implementation "com.google.guava:guava:30.1.1-android"
+    implementation "com.journeyapps:zxing-android-embedded:4.2.0"
 
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"

@@ -309,8 +309,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
 
-                val selectedGroup = ProfileManager.getProfile(DataStore.selectedProxy)?.groupId
-                    ?: selectedGroupIndex
+                val selectedGroup = DataStore.selectedGroup
                 if (selectedGroup != 0L) {
                     val selectedIndex = groupList.indexOfFirst { it.id == selectedGroup }
                     selectedGroupIndex = selectedIndex
@@ -453,6 +452,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
             }
 
+        }
+
+        override fun onStart() {
+            super.onStart()
+
+            runOnDefaultDispatcher {
+                DataStore.selectedGroup = proxyGroup.id
+            }
         }
 
         inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
@@ -615,7 +622,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     configurationIdList.clear()
                     configurationIdList.addAll(SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id))
 
-                    if (selected) {
+                    if (selected && !scrolled) {
+                        scrolled = true
                         val selectedProxy = DataStore.selectedProxy
                         val selectedProfileIndex = configurationIdList.indexOf(selectedProxy)
 

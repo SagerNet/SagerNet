@@ -21,119 +21,61 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.ShortcutManager
-import android.net.Uri
+import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.content.getSystemService
-import androidx.lifecycle.lifecycleScope
-import androidx.work.await
-import com.google.mlkit.vision.barcode.Barcode
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.common.InputImage
+import androidx.core.view.isGone
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
+import com.google.zxing.NotFoundException
+import com.google.zxing.RGBLuminanceSource
+import com.google.zxing.common.GlobalHistogramBinarizer
+import com.google.zxing.qrcode.QRCodeReader
+import com.journeyapps.barcodescanner.*
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
-import kotlinx.coroutines.*
 
-class ScannerActivity : AppCompatActivity(), ImageAnalysis.Analyzer {
-    private val scanner = BarcodeScanning.getClient(BarcodeScannerOptions.Builder().apply {
-        setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-    }.build())
-    private val imageAnalysis by lazy {
-        ImageAnalysis.Builder().apply {
-            setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            setBackgroundExecutor(Dispatchers.Default.asExecutor())
-        }.build().also { it.setAnalyzer(Dispatchers.Main.immediate.asExecutor(), this) }
-    }
 
-    @ExperimentalGetImage
-    override fun analyze(image: ImageProxy) {
-        val mediaImage = image.image ?: return
-        lifecycleScope.launchWhenCreated {
-            val result = try {
-                process() {
-                    InputImage.fromMediaImage(mediaImage,
-                        image.imageInfo.rotationDegrees)
-                }.also {
-                    if (it) imageAnalysis.clearAnalyzer()
-                }
-            } catch (_: CancellationException) {
-                return@launchWhenCreated
-            } catch (e: Exception) {
-                return@launchWhenCreated Logs.w(e)
-            } finally {
-                image.close()
-            }
-            if (result) onSupportNavigateUp()
-        }
-    }
+class ScannerActivity : AppCompatActivity(), BarcodeCallback {
+
+    lateinit var toolbar: MaterialToolbar
+    lateinit var capture: CaptureManager
+    lateinit var barcodeScanner: DecoratedBarcodeView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= 25) getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
         setContentView(R.layout.layout_scanner)
         ListHolderListener.setup(this)
-        setSupportActionBar(findViewById(R.id.toolbar))
+
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        lifecycle.addObserver(scanner)
-        requestCamera.launch(Manifest.permission.CAMERA)
-    }
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_navigation_close)
 
-    private val requestCamera =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted) lifecycleScope.launchWhenCreated {
-                val cameraProvider = ProcessCameraProvider.getInstance(this@ScannerActivity).await()
-                val selector = if (cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)) {
-                    CameraSelector.DEFAULT_BACK_CAMERA
-                } else CameraSelector.DEFAULT_FRONT_CAMERA
-                val preview = Preview.Builder().build()
-                preview.setSurfaceProvider(findViewById<PreviewView>(R.id.barcode).surfaceProvider)
-                try {
-                    cameraProvider.bindToLifecycle(this@ScannerActivity,
-                        selector,
-                        preview,
-                        imageAnalysis)
-                } catch (e: IllegalArgumentException) {
-                    Logs.w(e)
-                    startImport()
-                }
-            } else permissionMissing()
+        barcodeScanner = findViewById(R.id.barcode_scanner)
+        barcodeScanner.statusView.isGone = true
+        barcodeScanner.viewFinder.isGone = true
+        barcodeScanner.barcodeView.setDecoderFactory {
+            MixedDecoder(QRCodeReader())
         }
 
-    private suspend inline fun process(crossinline image: () -> InputImage): Boolean {
-        val barcode = withContext(Dispatchers.Default) { scanner.process(image()).await() }
-        val results = parseProxies(barcode.mapNotNull { it.rawValue }.joinToString("\n"))
-        if (results.isNotEmpty()) {
-            val currentGroupId = SagerNet.currentProfile?.groupId ?: 0
-
-            for (result in results) {
-                ProfileManager.createProfile(currentGroupId, result)
-            }
-
-            return true
-        }
-
-        return false
-    }
-
-    private fun permissionMissing() {
-        Toast.makeText(this, R.string.add_profile_scanner_permission_required, Toast.LENGTH_SHORT)
-            .show()
-        startImport()
+        capture = CaptureManager(this, barcodeScanner)
+        barcodeScanner.decodeSingle(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -141,12 +83,76 @@ class ScannerActivity : AppCompatActivity(), ImageAnalysis.Analyzer {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_import_clipboard -> {
-            startImport(true)
-            true
+    val importCodeFile = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) {
+        runOnDefaultDispatcher {
+            try {
+                it.forEachTry { uri ->
+                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver,
+                            uri)) { decoder, _, _ ->
+                            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                            decoder.isMutableRequired = true
+                        }
+                    } else {
+                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    }
+                    val intArray = IntArray(bitmap.width * bitmap.height)
+                    bitmap.getPixels(intArray,
+                        0,
+                        bitmap.width,
+                        0,
+                        0, bitmap.width, bitmap.height)
+
+                    val source = RGBLuminanceSource(bitmap.width, bitmap.height, intArray)
+                    val qrReader = QRCodeReader()
+                    try {
+                        val result = try {
+                            qrReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source)),
+                                mapOf(
+                                    DecodeHintType.TRY_HARDER to true
+                                ))
+                        } catch (e: NotFoundException) {
+                            qrReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
+                                mapOf(
+                                    DecodeHintType.TRY_HARDER to true
+                                ))
+                        }
+
+                        val results = parseProxies(result.text ?: "")
+
+                        if (results.isNotEmpty()) {
+                            onMainDispatcher {
+                                finish()
+                            }
+                            val currentGroupId = DataStore.selectedGroup
+                            for (profile in results) {
+                                ProfileManager.createProfile(currentGroupId, profile)
+                            }
+                        } else {
+                            Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    } catch (e: Throwable) {
+                        Logs.w(e)
+                        onMainDispatcher {
+                            Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Logs.w(e)
+
+                onMainDispatcher {
+                    Toast.makeText(app, e.readableMessage, Toast.LENGTH_LONG).show()
+                }
+            }
         }
-        else -> false
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        importCodeFile.launch("image/*")
+        return true
     }
 
     /**
@@ -155,38 +161,55 @@ class ScannerActivity : AppCompatActivity(), ImageAnalysis.Analyzer {
     override fun shouldUpRecreateTask(targetIntent: Intent?) =
         super.shouldUpRecreateTask(targetIntent) || isTaskRoot
 
-    private var finished = false
-    override fun onSupportNavigateUp(): Boolean {
-        if (finished) return false
-        finished = true
-        return super.onSupportNavigateUp()
+    override fun onResume() {
+        super.onResume()
+        capture.onResume()
     }
 
-    private fun startImport(manual: Boolean = false) =
-        (if (manual) import else importFinish).launch("image/*")
+    override fun onPause() {
+        super.onPause()
+        capture.onPause()
+    }
 
-    private val import =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { importOrFinish(it) }
-    private val importFinish =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) {
-            importOrFinish(it, true)
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        capture.onDestroy()
+    }
 
-    private fun importOrFinish(dataUris: List<Uri>, finish: Boolean = false) {
-        if (dataUris.isNotEmpty()) GlobalScope.launch(Dispatchers.Main.immediate) {
-            onSupportNavigateUp()
-            val feature = SagerNet.currentProfile
-            try {
-                var success = false
-                dataUris.forEachTry { uri ->
-                    if (process { InputImage.fromFilePath(app, uri) }) success = true
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        capture.onSaveInstanceState(outState)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        capture.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return barcodeScanner.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
+    }
+
+    override fun barcodeResult(result: BarcodeResult) {
+        finish()
+        val text = result.result.text
+        runOnDefaultDispatcher {
+            val results = parseProxies(text)
+            if (results.isNotEmpty()) {
+                val currentGroupId = DataStore.selectedGroup
+
+                for (profile in results) {
+                    ProfileManager.createProfile(currentGroupId, profile)
                 }
-                Toast.makeText(app,
-                    if (success) R.string.action_import_msg else R.string.action_import_err,
-                    Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Toast.makeText(app, e.readableMessage, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                    .show()
             }
-        } else if (finish) onSupportNavigateUp()
+        }
     }
+
 }

@@ -51,6 +51,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     }
 
     var selectedProxy by configurationStore.long(Key.PROFILE_ID)
+    var selectedGroup by configurationStore.long(Key.PROFILE_GROUP) {
+        SagerNet.currentProfile?.groupId ?: 0L
+    }
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
     var routeMode by configurationStore.string(Key.ROUTE_MODE) { RouteMode.ALL }
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
@@ -85,7 +88,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         configurationStore.putString(key, "$value")
     }
 
-    var ipv6Route by configurationStore.boolean(Key.IPV6_ROUTE)
+    var ipv6Route by configurationStore.boolean(Key.IPV6_ROUTE) { true }
     var preferIpv6 by configurationStore.boolean(Key.PREFER_IPV6)
     var meteredNetwork by configurationStore.boolean(Key.METERED_NETWORK)
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
