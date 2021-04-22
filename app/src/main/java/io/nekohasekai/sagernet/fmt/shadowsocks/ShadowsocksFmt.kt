@@ -59,6 +59,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             }
 
         }
+
         val methodAndPswd = Base64.decodeStr(link.username)
 
         return ShadowsocksBean().apply {

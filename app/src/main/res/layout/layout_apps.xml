@@ -132,12 +132,18 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:visibility="gone"
+        app:fastScrollAutoHide="true"
+        app:fastScrollThumbInactiveColor="?colorPrimary"
+        app:fastScrollThumbColor="?colorPrimary"
+        app:fastScrollTrackColor="?colorOnPrimarySurface"
+        app:fastScrollPopupBgColor="?colorOnPrimarySurface"
+        app:fastScrollPopupTextColor="?colorPrimary"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/layout_apps_item" />
 

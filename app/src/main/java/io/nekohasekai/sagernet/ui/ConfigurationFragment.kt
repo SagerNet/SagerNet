@@ -79,6 +79,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
     lateinit var groupPager: ViewPager2
+    val selectedGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,22 +91,36 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         adapter = GroupPagerAdapter()
         groupPager.adapter = adapter
         groupPager.offscreenPageLimit = 2
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                runOnDefaultDispatcher {
+                    DataStore.selectedGroup = selectedGroup.id
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+            }
+        })
 
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             tab.text = adapter.groupList[position].name
                 .takeIf { !it.isNullOrBlank() } ?: getString(R.string.group_default)
-           /* tab.view.setOnLongClickListener { tabView ->
-                val popup = PopupMenu(requireContext(), tabView)
-                popup.menuInflater.inflate(R.menu.tab_edit_menu, popup.menu)
-                popup.setOnMenuItemClickListener(this)
-                popup.show()
-                true
-            }*/
+            /* tab.view.setOnLongClickListener { tabView ->
+                 val popup = PopupMenu(requireContext(), tabView)
+                 popup.menuInflater.inflate(R.menu.tab_edit_menu, popup.menu)
+                 popup.setOnMenuItemClickListener(this)
+                 popup.show()
+                 true
+             }*/
         }.attach()
 
         toolbar.setOnClickListener {
+
             val fragment =
-                (childFragmentManager.findFragmentByTag("f" + selectGroup.id) as GroupFragment?)
+                (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
 
             if (fragment != null) {
                 if (fragment.selected) {
@@ -129,7 +144,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         }
     }
 
-    val selectGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
     fun snackbar(text: String) = (activity as MainActivity).snackbar(text)
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
@@ -147,7 +161,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     if (proxies.isEmpty()) onMainDispatcher {
                         snackbar(getString(R.string.action_import_err)).show()
                     } else {
-                        val selectGroupId = selectGroup.id
+                        val selectGroupId = selectedGroup.id
                         for (proxy in proxies) {
                             ProfileManager.createProfile(selectGroupId, proxy)
                         }
@@ -163,13 +177,13 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             }
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java).apply {
-                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectGroup.id)
+                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectedGroup.id)
                 })
             }
             R.id.action_new_ss -> {
                 startActivity(Intent(requireActivity(),
                     ShadowsocksSettingsActivity::class.java).apply {
-                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectGroup.id)
+                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectedGroup.id)
                 })
             }
             R.id.action_from_link -> {
@@ -452,14 +466,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
             }
 
-        }
-
-        override fun onStart() {
-            super.onStart()
-
-            runOnDefaultDispatcher {
-                DataStore.selectedGroup = proxyGroup.id
-            }
         }
 
         inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),

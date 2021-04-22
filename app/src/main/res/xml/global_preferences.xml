@@ -41,7 +41,7 @@
 
     <PreferenceCategory app:title="@string/cag_route">
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="bypaass-lan"
+            app:defaultValue="bypass-lan"
             app:entries="@array/route_entry"
             app:entryValues="@array/route_value"
             app:icon="@drawable/ic_maps_directions"
