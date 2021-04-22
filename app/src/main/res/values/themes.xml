@@ -22,14 +22,6 @@
         <item name="windowNoTitle">false</item>
     </style>
 
-    <style name="Theme.SagerNet.Immersive">
-        <item name="android:navigationBarColor">#6000</item>
-    </style>
-
-    <style name="Theme.SagerNet.Immersive.Navigation">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
     <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowFrame">@null</item>

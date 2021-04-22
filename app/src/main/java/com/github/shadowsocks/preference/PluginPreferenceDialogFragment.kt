@@ -99,7 +99,7 @@ class PluginPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
             RecyclerView.Adapter<IconListViewHolder>() {
         override fun getItemCount(): Int = preference.plugins.size
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = IconListViewHolder(dialog,
-                LayoutInflater.from(parent.context).inflate(R.layout.icon_list_item_2, parent, false))
+                LayoutInflater.from(parent.context).inflate(R.layout.layout_icon_list_item_2, parent, false))
         override fun onBindViewHolder(holder: IconListViewHolder, position: Int) {
             if (selected < 0) holder.bind(preference.plugins[position]) else when (position) {
                 0 -> holder.bind(preference.selectedEntry!!, true)

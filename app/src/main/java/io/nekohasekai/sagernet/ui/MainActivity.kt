@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.layout_main)
 
         coordinator = findViewById(R.id.coordinator)
         fab = findViewById(R.id.fab)

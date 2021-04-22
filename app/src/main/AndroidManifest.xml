@@ -18,7 +18,8 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -26,10 +27,12 @@
         android:name="android.software.leanback"
         android:required="false" />
 
-    <uses-feature android:name="android.hardware.touchscreen"
-        android:required="false"/>
-    <uses-feature android:name="android.hardware.camera"
-        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name="io.nekohasekai.sagernet.SagerNet"
@@ -43,15 +46,15 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SagerNet.Immersive">
+        android:theme="@style/Theme.SagerNet">
         <meta-data
-            android:name="android.webkit.WebView.EnableSafeBrowsing"
-            android:value="true" />
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SagerNet.Immersive.Navigation">
+            android:theme="@style/Theme.SagerNet">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,11 +70,20 @@
         <activity android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.AppManagerActivity"
+            android:excludeFromRecents="true"
             android:label="@string/proxied_apps"
-            android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/Theme.SagerNet.Immersive"
             android:launchMode="singleTask"
-            android:excludeFromRecents="true"/>
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/Theme.SagerNet" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.ScannerActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/add_profile_methods_scan_qr_code"
+            android:launchMode="singleTask"
+            android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity"
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.SagerNet" />
+
 
         <service
             android:name="io.nekohasekai.sagernet.bg.ProxyService"
@@ -92,12 +104,13 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="io.nekohasekai.sagernet.BootReceiver"
-            android:process=":bg"
+        <receiver
+            android:name="io.nekohasekai.sagernet.BootReceiver"
             android:directBootAware="true"
-            android:enabled="false">
+            android:enabled="false"
+            android:process=":bg">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
@@ -106,6 +119,7 @@
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />
+
     </application>
 
 </manifest>

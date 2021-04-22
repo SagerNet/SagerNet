@@ -72,7 +72,7 @@ import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 
-class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
+class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
     Toolbar.OnMenuItemClickListener,
     PopupMenu.OnMenuItemClickListener {
 
@@ -82,7 +82,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.inflateMenu(R.menu.profile_manager_menu)
+        toolbar.inflateMenu(R.menu.add_profile_menu)
         toolbar.setOnMenuItemClickListener(this)
 
         groupPager = view.findViewById(R.id.group_pager)
@@ -94,13 +94,13 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             tab.text = adapter.groupList[position].name
                 .takeIf { !it.isNullOrBlank() } ?: getString(R.string.group_default)
-            tab.view.setOnLongClickListener { tabView ->
+           /* tab.view.setOnLongClickListener { tabView ->
                 val popup = PopupMenu(requireContext(), tabView)
                 popup.menuInflater.inflate(R.menu.tab_edit_menu, popup.menu)
                 popup.setOnMenuItemClickListener(this)
                 popup.show()
                 true
-            }
+            }*/
         }.attach()
 
         toolbar.setOnClickListener {
@@ -134,6 +134,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_scan_qr_code -> {
+                startActivity(Intent(context, ScannerActivity::class.java))
+                true
+            }
             R.id.action_import_clipboard -> {
                 val text = SagerNet.getClipboardText()
                 if (text.isBlank()) {
@@ -192,7 +196,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             val activity = requireActivity()
 
             @SuppressLint("InflateParams")
-            val view = activity.layoutInflater.inflate(R.layout.dialog_subscription, null)
+            val view = activity.layoutInflater.inflate(R.layout.layout_add_subscription, null)
             editText = view.findViewById(R.id.content)
             inputLayout = view.findViewById(R.id.content_layout)
             editText.addTextChangedListener(this@SubDialogFragment)
@@ -374,7 +378,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.group_list_main),
             container: ViewGroup?,
             savedInstanceState: Bundle?,
         ): View? {
-            return inflater.inflate(R.layout.configurtion_list_main, container, false)
+            return inflater.inflate(R.layout.layout_profile_list, container, false)
         }
 
         lateinit var undoManager: UndoSnackbarManager<ProxyEntity>

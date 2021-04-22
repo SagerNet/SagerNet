@@ -39,6 +39,7 @@ import androidx.core.content.getSystemService
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
@@ -70,6 +71,8 @@ class SagerNet : Application() {
             Build.VERSION.SDK_INT >= 24 && application.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus ==
                     DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
         }
+
+        val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
 
         fun getClipboardText(): String {
             val clip = clipboard.primaryClip?.takeIf { it.itemCount > 0 } ?: return ""

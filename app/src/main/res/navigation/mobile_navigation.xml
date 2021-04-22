@@ -9,13 +9,13 @@
         android:id="@+id/nav_configuration"
         android:name="io.nekohasekai.sagernet.ui.ConfigurationFragment"
         android:label="@string/menu_configuration"
-        tools:layout="@layout/group_list_main" />
+        tools:layout="@layout/layout_group_list" />
 
     <fragment
         android:id="@+id/nav_settings"
         android:name="io.nekohasekai.sagernet.ui.SettingsFragment"
         android:label="@string/settings"
-        tools:layout="@layout/settings_activity" />
+        tools:layout="@layout/layout_settings_activity" />
 
     <fragment
         android:id="@+id/nav_about"
