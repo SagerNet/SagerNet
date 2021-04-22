@@ -1,3 +1,24 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2021 by nekohasekai <sekai@neko.services>                    *
+ * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
+ * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ *  (at your option) any later version.                                       *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
+ *                                                                            *
+ ******************************************************************************/
+
 @file:SuppressLint("SoonBlockedPrivateApi")
 
 package io.nekohasekai.sagernet.ktx
@@ -147,18 +168,23 @@ fun String.unUrlSafe(): String {
     return URLDecoder.decode(this, CharsetUtil.CHARSET_UTF_8)
 }
 
-fun Context.scrollTo(lm: RecyclerView.LayoutManager, index: Int) {
-    try {
-        lm.startSmoothScroll(object : LinearSmoothScroller(this) {
-            init {
-                targetPosition = index
-            }
+fun RecyclerView.scrollTo( index: Int) {
+    post {
+        scrollToPosition(index)
+    }
+    post {
+        try {
+            layoutManager?.startSmoothScroll(object : LinearSmoothScroller(context) {
+                init {
+                    targetPosition = index
+                }
 
-            override fun getVerticalSnapPreference(): Int {
-                return SNAP_TO_START
-            }
-        })
-    } catch (ignored: IllegalArgumentException) {
+                override fun getVerticalSnapPreference(): Int {
+                    return SNAP_TO_START
+                }
+            })
+        } catch (ignored: IllegalArgumentException) {
+        }
     }
 }
 

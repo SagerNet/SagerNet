@@ -1,3 +1,24 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2021 by nekohasekai <sekai@neko.services>                    *
+ * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
+ * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ *  (at your option) any later version.                                       *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
+ *                                                                            *
+ ******************************************************************************/
+
 package io.nekohasekai.sagernet.widget
 
 import android.annotation.SuppressLint
@@ -6,6 +27,7 @@ import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.widget.TooltipCompat
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +36,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.ui.MainActivity
+import io.nekohasekai.sagernet.utils.HttpsTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,6 +49,7 @@ class StatsBar @JvmOverloads constructor(
     private lateinit var statusText: TextView
     private lateinit var txText: TextView
     private lateinit var rxText: TextView
+    private val tester by (context as MainActivity).viewModels<HttpsTest>()
     private lateinit var behavior: Behavior
     override fun getBehavior(): Behavior {
         if (!this::behavior.isInitialized) behavior = object : Behavior() {
@@ -70,18 +94,18 @@ class StatsBar @JvmOverloads constructor(
             postWhenStarted {
                 performShow()
             }
-            /*  tester.status.observe(activity) {
-                  it.retrieve(this::setStatus) { msg ->
-                      activity.snackbar(msg).show()
-                  }
-              }*/
+            tester.status.observe(activity) {
+                it.retrieve(::setStatus) { msg ->
+                    activity.snackbar(msg).show()
+                }
+            }
         } else {
             postWhenStarted {
                 performHide()
             }
-            updateTraffic(0, 0, 0, 0)
-            /* tester.status.removeObservers(activity)
-             if (state != BaseService.State.Idle) tester.invalidate()*/
+            updateTraffic(0, 0)
+            tester.status.removeObservers(activity)
+            if (state != BaseService.State.Idle) tester.invalidate()
             setStatus(context.getText(when (state) {
                 BaseService.State.Connecting -> R.string.connecting
                 BaseService.State.Stopping -> R.string.stopping
@@ -91,7 +115,7 @@ class StatsBar @JvmOverloads constructor(
     }
 
     @SuppressLint("SetTextI18n")
-    fun updateTraffic(txRate: Long, rxRate: Long, txTotal: Long, rxTotal: Long) {
+    fun updateTraffic(txRate: Long, rxRate: Long) {
         txText.text = "▲  ${
             context.getString(R.string.speed,
                 Formatter.formatFileSize(context, txRate))
@@ -102,8 +126,6 @@ class StatsBar @JvmOverloads constructor(
         }"
     }
 
-    fun testConnection() {
-
-    }
+    fun testConnection() = tester.testConnection()
 
 }

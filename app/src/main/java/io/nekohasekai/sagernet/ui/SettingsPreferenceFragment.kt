@@ -1,3 +1,24 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2021 by nekohasekai <sekai@neko.services>                    *
+ * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
+ * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ *  (at your option) any later version.                                       *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
+ *                                                                            *
+ ******************************************************************************/
+
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
@@ -64,32 +85,34 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
             val listener: (BaseService.State) -> Unit = {
                 val stopped = it == BaseService.State.Stopped
-                persistAcrossReboot.isEnabled = stopped
-                directBootAware.isEnabled = stopped
-                serviceMode.isEnabled = stopped
-                portSocks5.isEnabled = stopped
+                listView.post {
+                    persistAcrossReboot.isEnabled = stopped
+                    directBootAware.isEnabled = stopped
+                    serviceMode.isEnabled = stopped
+                    portSocks5.isEnabled = stopped
 
-                isProxyApps.isEnabled = currServiceMode == Key.MODE_VPN && stopped
-                metedNetwork.isEnabled = currServiceMode == Key.MODE_VPN && stopped
+                    isProxyApps.isEnabled = currServiceMode == Key.MODE_VPN && stopped
+                    metedNetwork.isEnabled = currServiceMode == Key.MODE_VPN && stopped
 
-                routeMode.isEnabled = stopped
-                allowAccess.isEnabled = stopped
-                remoteDns.isEnabled = stopped
-                portLocalDns.isEnabled = stopped
-                domesticDns.isEnabled = stopped
-                ipv6Route.isEnabled = stopped
-                preferIpv6.isEnabled = stopped
+                    routeMode.isEnabled = stopped
+                    allowAccess.isEnabled = stopped
+                    remoteDns.isEnabled = stopped
+                    portLocalDns.isEnabled = stopped
+                    domesticDns.isEnabled = stopped
+                    ipv6Route.isEnabled = stopped
+                    preferIpv6.isEnabled = stopped
+                }
 
                 runOnDefaultDispatcher {
                     when (DataStore.routeMode) {
                         RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> {
-                            onMainDispatcher {
+                            listView.post {
                                 enableLocalDns.isChecked = true
                                 enableLocalDns.isEnabled = false
                             }
                         }
                         else -> {
-                            onMainDispatcher {
+                            listView.post {
                                 enableLocalDns.isEnabled = stopped
                             }
                         }
@@ -102,12 +125,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             routeMode.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     when (newValue) {
-                        RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> {
+                        RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> listView.post {
                             enableLocalDns.isChecked = true
                             enableLocalDns.isEnabled = false
                             DataStore.enableLocalDNS = true
                         }
-                        else -> {
+                        else -> listView.post {
                             enableLocalDns.isEnabled = true
                         }
                     }
@@ -115,7 +138,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 }
             serviceMode.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
-                    isProxyApps.isEnabled = newValue == Key.MODE_VPN
+                    listView.post {
+                        isProxyApps.isEnabled = newValue == Key.MODE_VPN
+                    }
                     true
                 }
         }
