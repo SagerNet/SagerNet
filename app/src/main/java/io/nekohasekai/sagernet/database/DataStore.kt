@@ -72,11 +72,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         set(value) {
             saveLocalPort(Key.LOCAL_DNS_PORT, value)
         }
+    var httpPort: Int
+        get() = getLocalPort(Key.HTTP_PORT, 9080)
+        set(value) = saveLocalPort(Key.HTTP_PORT, value)
 
     fun initGlobal() {
         persistAcrossReboot
         if (configurationStore.getString(Key.SOCKS_PORT) == null) socksPort = socksPort
         if (configurationStore.getString(Key.LOCAL_DNS_PORT) == null) localDNSPort = localDNSPort
+        if (configurationStore.getString(Key.HTTP_PORT) == null) httpPort = httpPort
     }
 
 
@@ -94,7 +98,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
     var bypass by configurationStore.boolean(Key.BYPASS_MODE)
     var individual by configurationStore.string("individual")
-    var forceShadowsocksRust by configurationStore.boolean("forceShadowsocksRust")
+    var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
+    var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
@@ -113,7 +118,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
     var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
     var serverPlugin by profileCacheStore.string(Key.SERVER_PLUGIN)
-    var serverPluginConfigure by profileCacheStore.string(Key.SERVER_PLUGIN_CONFIGURE)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {

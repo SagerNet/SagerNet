@@ -26,6 +26,7 @@
     <string name="service_mode_transproxy">Transproxy</string>
     <string name="share_over_lan">Share over LAN</string>
     <string name="port_proxy">SOCKS5 proxy port</string>
+    <string name="port_http">HTTP proxy port</string>
     <string name="port_local_dns">Local DNS port</string>
     <string name="port_transproxy">Transproxy port</string>
     <string name="allow_access">Allow connections from the LAN</string>
@@ -34,8 +35,13 @@
     <string name="local_dns">Enable local DNS</string>
     <string name="domestic_dns">Domestic DNS</string>
     <string name="cag_route">Route Settings</string>
-
     <string name="remote_dns">Remote DNS</string>
+    <string name="force_ss_rust">No v2ray-core shadowsocks</string>
+    <string name="force_ss_sum">Force all shadowsocks profiles to use the same shadowsocks-rust backend as Shadowsocks Android</string>
+    <string name="inbound_settings">Inbound Settings</string>
+    <string name="general_settings">App Settings</string>
+    <string name="require_http">Enable HTTP inbound</string>
+
     <string name="traffic">%1$s↑\t%2$s↓</string>
     <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s\nReceived: \t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>

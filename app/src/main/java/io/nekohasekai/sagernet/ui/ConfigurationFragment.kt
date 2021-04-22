@@ -123,11 +123,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
 
             if (fragment != null) {
-                if (fragment.selected) {
-                    val selectedProxy = DataStore.selectedProxy
-                    val selectedProfileIndex =
-                        fragment.adapter.configurationIdList.indexOf(selectedProxy)
-
+                val selectedProxy = DataStore.selectedProxy
+                val selectedProfileIndex =
+                    fragment.adapter.configurationIdList.indexOf(selectedProxy)
+                if (selectedProfileIndex != -1) {
                     val first =
                         (fragment.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     val last =
@@ -141,6 +140,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
                 fragment.configurationListView.scrollTo(0)
             }
+
         }
     }
 

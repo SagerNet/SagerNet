@@ -52,7 +52,6 @@ import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ServiceButton
 import io.nekohasekai.sagernet.widget.StatsBar
 
-
 class MainActivity : AppCompatActivity(), SagerConnection.Callback,
     OnPreferenceDataStoreChangeListener {
 

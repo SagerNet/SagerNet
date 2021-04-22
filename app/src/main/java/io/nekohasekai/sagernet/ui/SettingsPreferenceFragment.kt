@@ -60,6 +60,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             val ipv6Route = findPreference<Preference>(Key.IPV6_ROUTE)!!
             val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
 
+            val requireHttp = findPreference<SwitchPreference>(Key.REQUIRE_HTTP)!!
+            val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
+            val forceShadowsocksRust =
+                findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
+
             val remoteDns = findPreference<Preference>(Key.REMOTE_DNS)!!
             val enableLocalDns = findPreference<SwitchPreference>(Key.ENABLE_LOCAL_DNS)!!
             val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
@@ -67,6 +72,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
             portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
             portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+            portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
             val currServiceMode = DataStore.serviceMode
             isProxyApps = findPreference(Key.PROXY_APPS)!!
@@ -85,25 +91,31 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
             val listener: (BaseService.State) -> Unit = {
                 val stopped = it == BaseService.State.Stopped
-                listView.post {
-                    persistAcrossReboot.isEnabled = stopped
-                    directBootAware.isEnabled = stopped
-                    serviceMode.isEnabled = stopped
-                    portSocks5.isEnabled = stopped
-
-                    isProxyApps.isEnabled = currServiceMode == Key.MODE_VPN && stopped
-                    metedNetwork.isEnabled = currServiceMode == Key.MODE_VPN && stopped
-
-                    routeMode.isEnabled = stopped
-                    allowAccess.isEnabled = stopped
-                    remoteDns.isEnabled = stopped
-                    portLocalDns.isEnabled = stopped
-                    domesticDns.isEnabled = stopped
-                    ipv6Route.isEnabled = stopped
-                    preferIpv6.isEnabled = stopped
-                }
 
                 runOnDefaultDispatcher {
+                    val sMode = DataStore.serviceMode
+
+                    listView.post {
+                        persistAcrossReboot.isEnabled = stopped
+                        directBootAware.isEnabled = stopped
+                        serviceMode.isEnabled = stopped
+                        portSocks5.isEnabled = stopped
+                        requireHttp.isEnabled = stopped
+                        portHttp.isEnabled = stopped
+                        forceShadowsocksRust.isEnabled = stopped
+
+                        isProxyApps.isEnabled = sMode == Key.MODE_VPN && stopped
+                        metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
+
+                        routeMode.isEnabled = stopped
+                        allowAccess.isEnabled = stopped
+                        remoteDns.isEnabled = stopped
+                        portLocalDns.isEnabled = stopped
+                        domesticDns.isEnabled = stopped
+                        ipv6Route.isEnabled = stopped
+                        preferIpv6.isEnabled = stopped
+                    }
+
                     when (DataStore.routeMode) {
                         RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> {
                             listView.post {

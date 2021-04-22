@@ -1,45 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreference
-        app:key="isAutoConnect"
-        app:icon="@drawable/ic_communication_phonelink_ring"
-        app:summary="@string/auto_connect_summary"
-        app:title="@string/auto_connect"/>
-    <SwitchPreference
-        app:key="directBootAware"
-        app:icon="@drawable/ic_action_lock"
-        app:summary="@string/direct_boot_aware_summary"
-        app:title="@string/direct_boot_aware"/>
+    <PreferenceCategory
+        app:initialExpandedChildrenCount="1"
+        app:title="@string/general_settings">
+        <SwitchPreference
+            app:icon="@drawable/ic_communication_phonelink_ring"
+            app:key="isAutoConnect"
+            app:summary="@string/auto_connect_summary"
+            app:title="@string/auto_connect" />
+        <SwitchPreference
+            app:icon="@drawable/ic_action_lock"
+            app:key="directBootAware"
+            app:summary="@string/direct_boot_aware_summary"
+            app:title="@string/direct_boot_aware" />
 
-    <com.takisoft.preferencex.SimpleMenuPreference
-        app:defaultValue="vpn"
-        app:entries="@array/service_modes"
-        app:entryValues="@array/service_mode_values"
-        app:icon="@drawable/ic_device_developer_mode"
-        app:key="serviceMode"
-        app:title="@string/service_mode"
-        app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_device_data_usage"
+            app:key="meteredNetwork"
+            app:summary="@string/metered_summary"
+            app:title="@string/metered" />
 
-    <SwitchPreference
-        app:key="proxyApps"
-        app:icon="@drawable/ic_navigation_apps"
-        app:summary="@string/proxied_apps_summary"
-        app:title="@string/proxied_apps"/>
+    </PreferenceCategory>
 
-    <SwitchPreference
-        app:key="meteredNetwork"
-        app:icon="@drawable/ic_device_data_usage"
-        app:summary="@string/metered_summary"
-        app:title="@string/metered"/>
+    <PreferenceCategory
+        app:initialExpandedChildrenCount="2"
+        app:title="@string/inbound_settings">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="vpn"
+            app:entries="@array/service_modes"
+            app:entryValues="@array/service_mode_values"
+            app:icon="@drawable/ic_device_developer_mode"
+            app:key="serviceMode"
+            app:title="@string/service_mode"
+            app:useSimpleSummaryProvider="true" />
 
-    <EditTextPreference
-        app:key="socksPort"
-        app:icon="@drawable/ic_maps_directions_boat"
-        app:title="@string/port_proxy"
-        app:useSimpleSummaryProvider="true"/>
+        <SwitchPreference
+            app:icon="@drawable/ic_navigation_apps"
+            app:key="proxyApps"
+            app:summary="@string/proxied_apps_summary"
+            app:title="@string/proxied_apps" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_nat_24"
+            app:key="allowAccess"
+            app:summary="@string/allow_access_sum"
+            app:title="@string/allow_access" />
+        <EditTextPreference
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="socksPort"
+            app:title="@string/port_proxy"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_http_24"
+            app:key="requireHttp"
+            app:title="@string/require_http" />
+        <EditTextPreference
+            app:key="httpPort"
+            app:title="@string/port_http"
+            app:useSimpleSummaryProvider="true" />
 
-    <PreferenceCategory app:title="@string/cag_route">
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:initialExpandedChildrenCount="2"
+        app:title="@string/cag_route">
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="bypass-lan"
             app:entries="@array/route_entry"
@@ -53,38 +77,21 @@
             app:icon="@drawable/ic_image_looks_6"
             app:key="ipv6Route"
             app:summary="@string/ipv6_summary"
-            app:title="@string/ipv6"
-            app:useSimpleSummaryProvider="true" />
+            app:title="@string/ipv6" />
         <SwitchPreference
             app:key="preferIpv6"
             app:summary="@string/ipv6_prefer_summary"
             app:title="@string/ipv6_prefer" />
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_nat_24"
-            app:key="allowAccess"
-            app:summary="@string/allow_access_sum"
-            app:title="@string/allow_access" />
+            app:icon="@drawable/ic_baseline_airplanemode_active_24"
+            app:key="forceShadowsocksRust"
+            app:summary="@string/force_ss_sum"
+            app:title="@string/force_ss_rust" />
     </PreferenceCategory>
 
-    <!-- <SwitchPreference
-         app:icon="@drawable/ic_communication_phonelink_ring"
-         app:key="isAutoConnect"
-         app:summary="@string/auto_connect_summary"
-         app:title="@string/auto_connect" />
-
-     <SwitchPreference
-         app:icon="@drawable/ic_action_lock"
-         app:key="directBootAware"
-         app:summary="@string/direct_boot_aware_summary"
-         app:title="@string/direct_boot_aware" />-->
-
-    <!--<EditTextPreference
-        app:icon="@drawable/ic_maps_directions_boat"
-        app:key="portProxy"
-        app:title="@string/port_proxy"
-        app:useSimpleSummaryProvider="true" />-->
-
-    <PreferenceCategory app:title="@string/cag_dns">
+    <PreferenceCategory
+        app:initialExpandedChildrenCount="1"
+        app:title="@string/cag_dns">
         <EditTextPreference
             app:defaultValue="1.1.1.1"
             app:icon="@drawable/ic_action_dns"
@@ -105,12 +112,5 @@
             app:title="@string/domestic_dns"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
-
-    <!--  <EditTextPreference
-          app:isPreferenceVisible="false"
-          app:key="portTransproxy"
-          app:title="@string/port_transproxy"
-          app:useSimpleSummaryProvider="true" />-->
-
 
 </PreferenceScreen>

@@ -33,6 +33,7 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 const val TAG_SOCKS = "in"
+const val TAG_HTTP = "http"
 const val TAG_AGENT = "out"
 const val TAG_DIRECT = "bypass"
 const val TAG_DNS_IN = "dns-in"
@@ -108,6 +109,22 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                     })
             }
         )
+
+        val requireHttp = DataStore.requireHttp
+
+        if (requireHttp) {
+            InboundObject().apply {
+                tag = TAG_HTTP
+                listen = bind
+                port = DataStore.httpPort
+                protocol = "http"
+                settings = LazyInboundConfigurationObject(
+                    HTTPInboundConfigurationObject().apply {
+                        allowTransparent = true
+                        userLevel = 0
+                    })
+            }
+        }
 
         outbounds = mutableListOf()
         outbounds.add(
@@ -220,7 +237,12 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
             }
 
             rules.add(RoutingObject.RuleObject().apply {
-                inboundTag = listOf(TAG_SOCKS)
+                inboundTag = mutableListOf(TAG_SOCKS)
+
+                if (requireHttp) {
+                    inboundTag.add(TAG_HTTP)
+                }
+
                 outboundTag = TAG_AGENT
                 type = "field"
             })

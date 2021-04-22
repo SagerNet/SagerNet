@@ -49,6 +49,9 @@ object Key {
 
     const val ROUTE_MODE = "routeMode"
     const val SOCKS_PORT = "socksPort"
+    const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"
+    const val REQUIRE_HTTP = "requireHttp"
+    const val HTTP_PORT = "httpPort"
 
     const val ALLOW_ACCESS = "allowAccess"
 
