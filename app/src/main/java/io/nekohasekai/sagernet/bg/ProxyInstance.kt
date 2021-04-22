@@ -13,6 +13,7 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2rayConfig
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
 import libv2ray.Libv2ray
 import libv2ray.V2RayPoint
@@ -60,13 +61,17 @@ class ProxyInstance(val profile: ProxyEntity) {
                 it["local_udp_address"] = "127.0.0.1"
                 it["local_udp_port"] = port
                 it["mode"] = "tcp_and_udp"
+
+                if (DataStore.ipv6Route && DataStore.preferIpv6) {
+                    it["ipv6_first"] = true
+                }
             }
 
             if (bean.plugin.isNotBlank()) {
                 val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
                 PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                     proxyConfig["plugin"] = path
-                    proxyConfig["plugin-opts"] = opts.toString()
+                    proxyConfig["plugin_opts"] = opts.toString()
                 }
             }
 
@@ -134,7 +139,13 @@ class ProxyInstance(val profile: ProxyEntity) {
             profile.rx += downlinkTotal
             SagerDatabase.proxyDao.updateProxy(profile)
         } catch (e: IOException) {
-            /*  if (!DataStore.directBootAware) throw e*/ // we should only reach here because we're in direct boot
+            if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot
+            val profile = DirectBoot.getDeviceProfile()!!
+            profile.tx += uplinkTotal
+            profile.rx += downlinkTotal
+            profile.dirty = true
+            DirectBoot.update(profile)
+            DirectBoot.listenForUnlock()
         }
     }
 

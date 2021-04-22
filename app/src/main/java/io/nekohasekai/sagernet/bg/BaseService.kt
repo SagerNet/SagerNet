@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.RemoteCallbackList
 import android.os.RemoteException
 import io.nekohasekai.sagernet.Action
+import io.nekohasekai.sagernet.BootReceiver
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.IShadowsocksService
 import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
@@ -274,6 +275,7 @@ class BaseService {
             }
             val proxy = ProxyInstance(profile)
             data.proxy = proxy
+            BootReceiver.enabled = DataStore.persistAcrossReboot
             if (!data.closeReceiverRegistered) {
                 registerReceiver(data.closeReceiver, IntentFilter().apply {
                     addAction(Action.RELOAD)

@@ -18,20 +18,38 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
 
+    <uses-feature android:name="android.hardware.touchscreen"
+        android:required="false"/>
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false"/>
+
     <application
-        android:name=".SagerNet"
-        android:allowBackup="false"
+        android:name="io.nekohasekai.sagernet.SagerNet"
+        android:allowBackup="true"
+        android:autoRevokePermissions="allowed"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:fullBackupOnly="true"
+        android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SagerNet.Immersive">
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
+
         <activity
-            android:name=".ui.MainActivity"
+            android:name="io.nekohasekai.sagernet.ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.SagerNet.Immersive.Navigation">
             <intent-filter>
@@ -40,23 +58,51 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.VpnRequestActivity" />
-        <activity android:name=".ui.profile.SocksSettingsActivity" />
-        <activity android:name=".ui.profile.ShadowsocksSettingsActivity" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.VpnRequestActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.AppCompat.Translucent" />
+        <activity android:name="io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity" />
+        <activity android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.AppManagerActivity"
+            android:label="@string/proxied_apps"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/Theme.SagerNet.Immersive"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"/>
 
         <service
-            android:name=".bg.ProxyService"
+            android:name="io.nekohasekai.sagernet.bg.ProxyService"
+            android:directBootAware="true"
+            android:exported="false"
             android:process=":bg" />
+
         <service
-            android:name=".bg.VpnService"
+            android:name="io.nekohasekai.sagernet.bg.VpnService"
+            android:directBootAware="true"
             android:exported="false"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_VPN_SERVICE"
             android:process=":bg">
+
             <intent-filter>
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
+
+        <receiver android:name="io.nekohasekai.sagernet.BootReceiver"
+            android:process=":bg"
+            android:directBootAware="true"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />

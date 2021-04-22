@@ -2,9 +2,12 @@ package io.nekohasekai.sagernet.database
 
 import android.content.Context
 import android.content.Intent
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.*
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -17,7 +20,7 @@ import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 @Entity(tableName = "proxy_entities", indices = [
     Index("groupId", name = "groupId")
 ])
-class ProxyEntity(
+data class ProxyEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
     var groupId: Long,
@@ -31,10 +34,51 @@ class ProxyEntity(
     var vmessBean: VMessBean? = null,
     var socksBean: SOCKSBean? = null,
     var ssBean: ShadowsocksBean? = null,
-) {
+) : Parcelable {
 
+    @Ignore
+    @Transient
+    var dirty: Boolean = false
+
+    @Ignore
     @Transient
     var stats: TrafficStats? = null
+
+
+    constructor(parcel: Parcel) : this(
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readString() ?: "",
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readInt(),
+        parcel.readString(),
+        parcel.readInt()) {
+        dirty = parcel.readByte() > 0
+        val byteArray = ByteArray(parcel.readInt())
+        parcel.readByteArray(byteArray)
+        when (type) {
+            "socks" -> socksBean = KryoConverters.socksDeserialize(byteArray)
+            "ss" -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
+        }
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(id)
+        parcel.writeLong(groupId)
+        parcel.writeString(type)
+        parcel.writeLong(userOrder)
+        parcel.writeLong(tx)
+        parcel.writeLong(rx)
+        parcel.writeInt(proxyApps)
+        parcel.writeString(individual)
+        parcel.writeInt(meteredNetwork)
+        parcel.writeByte(if (dirty) 1 else 0)
+        val byteArray = KryoConverters.serialize(requireBean())
+        parcel.writeInt(byteArray.size)
+        parcel.writeByteArray(byteArray)
+    }
 
     fun displayType(): String {
         return when (type) {
@@ -133,5 +177,19 @@ class ProxyEntity(
         @Query("DELETE FROM proxy_entities WHERE groupId = :groupId")
         fun deleteAll(groupId: Long): Int
 
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<ProxyEntity> {
+        override fun createFromParcel(parcel: Parcel): ProxyEntity {
+            return ProxyEntity(parcel)
+        }
+
+        override fun newArray(size: Int): Array<ProxyEntity?> {
+            return arrayOfNulls(size)
+        }
     }
 }

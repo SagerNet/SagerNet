@@ -149,6 +149,7 @@ dependencies {
         exclude group: "androidx.recyclerview"
         exclude group: "androidx.appcompat"
     }
+    implementation "org.smali:dexlib2:2.5.2"
 
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"

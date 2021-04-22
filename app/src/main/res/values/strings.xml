@@ -76,11 +76,16 @@
     <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="search_apps">Search…</string>
+    <string name="scanning">Scanning…</string>
+
     <string name="proxied_apps_mode">Mode</string>
     <string name="bypass_apps">Bypass</string>
     <string name="bypass_apps_summary">Enable this option to bypass selected apps</string>
+    <string name="show_system_apps">Show system apps</string>
+
     <string name="auto_connect">Auto Connect</string>
-    <string name="auto_connect_summary">Enable Shadowsocks on startup/app update if it was running before</string>
+    <string name="auto_connect_summary">Enable SagerNet on startup/app update if it was running before</string>
     <string name="direct_boot_aware">Allow Toggling in Lock Screen</string>
     <string name="direct_boot_aware_summary">Your selected profile information will be less protected</string>
     <plurals name="hosts_summary">
@@ -122,7 +127,7 @@
     <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_group">Group</string>
     <string name="action_from_link">From subscription</string>
-    <string name="action_apply_all">Apply Settings to All Profiles</string>
+    <string name="action_scan_china_apps">Scan China apps</string>
     <string name="action_export_more">Export…</string>
     <string name="action_export_file">Export to file…</string>
     <string name="action_export">Export to Clipboard</string>
@@ -143,7 +148,7 @@
     <string name="delete">Remove</string>
     <string name="delete_confirm_prompt">Are you sure you want to remove this profile?</string>
     <string name="share_qr_nfc">QR code</string>
-    <string name="add_profile_dialog">Add this Shadowsocks Profile?</string>
+    <string name="add_profile_dialog">Add this Profile?</string>
     <string name="add_profile_methods_scan_qr_code">Scan QR code</string>
     <string name="add_profile_methods_manual_settings">Manual Settings</string>
     <string name="add_profile_scanner_permission_required">Camera permission is required for scanning QR code.</string>

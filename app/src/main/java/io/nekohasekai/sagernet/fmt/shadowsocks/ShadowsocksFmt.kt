@@ -2,6 +2,7 @@ package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
 import com.github.shadowsocks.plugin.PluginOptions
+import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -69,7 +70,9 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             method = link.username
             password = link.password
             plugin = ""
-            name = link.fragment ?: ""
+            if (url.contains("#")) {
+                name = url.substringAfter("#").unUrlSafe()
+            }
 
         }
 

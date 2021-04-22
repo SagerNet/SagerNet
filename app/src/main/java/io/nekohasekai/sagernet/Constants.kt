@@ -6,6 +6,9 @@ object Key {
     const val DB_PROFILE = "sager_net.db"
     const val DISABLE_AEAD = "V2RAY_VMESS_AEAD_DISABLED"
 
+    const val PERSIST_ACROSS_REBOOT = "isAutoConnect"
+    const val DIRECT_BOOT_AWARE = "directBootAware"
+
     const val SERVICE_MODE = "serviceMode"
     const val MODE_VPN = "vpn"
     const val MODE_PROXY = "proxy"
@@ -18,6 +21,10 @@ object Key {
 
     const val IPV6_ROUTE = "ipv6Route"
     const val PREFER_IPV6 = "preferIpv6"
+
+    const val PROXY_APPS = "proxyApps"
+    const val BYPASS_MODE = "bypassMode"
+    const val METERED_NETWORK = "meteredNetwork"
 
     const val ROUTE_MODE = "routeMode"
     const val SOCKS_PORT = "socksPort"

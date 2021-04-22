@@ -14,6 +14,7 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.parseProxies
+import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONException
@@ -104,6 +105,7 @@ object ProfileManager {
     suspend fun deleteProfile(groupId: Long, profileId: Long) {
         check(SagerDatabase.proxyDao.deleteById(profileId) > 0)
         if (DataStore.selectedProxy == profileId) {
+            if (DataStore.directBootAware) DirectBoot.clean()
             DataStore.selectedProxy = 0L
         }
         iterator { onRemoved(groupId, profileId) }
@@ -123,7 +125,9 @@ object ProfileManager {
     }
 
     suspend fun clear(groupId: Long) {
+        DataStore.selectedProxy = 0L
         SagerDatabase.proxyDao.deleteAll(groupId)
+        if (DataStore.directBootAware) DirectBoot.clean()
         iterator { onCleared(groupId) }
     }
 

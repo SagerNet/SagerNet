@@ -23,6 +23,7 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
 
@@ -122,6 +123,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             }
             ProfileManager.updateProfile(entity.apply { (requireBean() as T).serialize() })
         }
+        if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
         finish()
 
     }
@@ -224,8 +226,8 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             } else {
                 "\u2022".repeat(preference.text.length)
             }
-
         }
+
     }
 
 }

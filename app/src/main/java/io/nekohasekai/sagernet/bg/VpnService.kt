@@ -2,18 +2,23 @@ package io.nekohasekai.sagernet.bg
 
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.LocalSocket
 import android.net.LocalSocketAddress
+import android.net.Network
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
+import androidx.annotation.RequiresApi
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
+import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -44,6 +49,16 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     private var conn: ParcelFileDescriptor? = null
     private var active = false
     private var metered = false
+    @Volatile
+    private var underlyingNetwork: Network? = null
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+        set(value) {
+            field = value
+            if (active) setUnderlyingNetworks(underlyingNetworks)
+        }
+    private val underlyingNetworks get() =
+        // clearing underlyingNetworks makes Android 9 consider the network to be metered
+        if (Build.VERSION.SDK_INT == 28 && metered) null else underlyingNetwork?.let { arrayOf(it) }
 
     override suspend fun startProcesses() {
         super.startProcesses()
@@ -78,6 +93,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         return Service.START_NOT_STICKY
     }
 
+    override suspend fun preInit() = DefaultNetworkListener.start(this) { underlyingNetwork = it }
+
     inner class NullConnectionException : NullPointerException(), BaseService.ExpectedException {
         override fun getLocalizedMessage() = getString(R.string.reboot_required)
     }
@@ -92,6 +109,11 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         if (DataStore.ipv6Route) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            builder.setUnderlyingNetworks(underlyingNetworks)
+        }
+        if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
         when (DataStore.routeMode) {
             RouteMode.BYPASS_LAN, RouteMode.BYPASS_LAN_CHINA -> {
@@ -112,43 +134,31 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         // https://issuetracker.google.com/issues/149636790
 
+        val me = packageName
+        if (DataStore.proxyApps) {
+            val bypass = DataStore.bypass
 
-        /* val proxyApps = when (profile.proxyApps) {
-             0 -> DataStore.proxyApps > 0
-             1 -> false
-             else -> true
-         }
-         val bypass = when (profile.proxyApps) {
-             0 -> DataStore.proxyApps == 2
-             3 -> true
-             else -> false
-         }
+            (profile.individual ?: DataStore.individual).split('\n')
+                .filter { it.isNotBlank() && it != me }
+                .forEach {
+                    try {
+                        if (bypass) builder.addDisallowedApplication(it)
+                        else builder.addAllowedApplication(it)
+                    } catch (ex: PackageManager.NameNotFoundException) {
+                        Logs.w(ex)
+                    }
+                }
 
-         if (proxyApps) {
-
-             val me = packageName
-             (profile.individual ?: DataStore.individual ?: "").split('\n')
-                 .filter { it.isNotBlank() && it != me }
-                 .forEach {
-                     try {
-                         if (bypass) builder.addDisallowedApplication(it)
-                         else builder.addAllowedApplication(it)
-                     } catch (ex: PackageManager.NameNotFoundException) {
-    //                        Timber.w(ex)
-                     }
-                 }
-
-         }
-    */
+            if (bypass) builder.addDisallowedApplication(me)
+        } else {
+            builder.addDisallowedApplication(me)
+        }
 
         if (DataStore.enableLocalDNS) {
             builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
         } else {
             builder.addDnsServer(DataStore.remoteDNS)
         }
-
-        builder.addDisallowedApplication("com.github.shadowsocks")
-        builder.addDisallowedApplication(packageName)
 
         metered = when (profile.meteredNetwork) {
             0 -> DataStore.meteredNetwork
