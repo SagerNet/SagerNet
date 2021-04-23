@@ -7,7 +7,7 @@
         android:shortcutShortLabel="@string/quick_toggle">
         <intent
             android:action="android.intent.action.MAIN"
-            android:targetClass="com.github.shadowsocks.QuickToggleShortcut"
+            android:targetClass="io.nekohasekai.sagernet.QuickToggleShortcut"
             android:targetPackage="${applicationId}" />
     </shortcut>
     <shortcut
