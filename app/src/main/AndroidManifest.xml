@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.nekohasekai.sagernet">
 
-    <uses-sdk
-        android:minSdkVersion="21"
-        tools:overrideLibrary="com.google.zxing.client.android" />
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
     <permission
         android:name="${applicationId}.SERVICE"

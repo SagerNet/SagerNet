@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">SagerNet</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
+    <string name="action_settings">Settings</string>
     <string name="menu_configuration">Configuration</string>
+    <string name="menu_group">Group</string>
     <string name="menu_about">About</string>
 
     <string name="group_default">Default</string>
@@ -15,9 +13,23 @@
     <string name="quick_toggle">Toggle</string>
     <string name="send_email">Send email</string>
 
-    <!-- tab -->
+    <!-- group -->
+    <string name="group_name">Group name</string>
+    <string name="group_update">Update</string>
+    <string name="group_subscription_link">Subscription link</string>
+    <string name="group_name_required">Group name required</string>
+    <string name="group_create">Create group</string>
+    <string name="group_create_subscription">Create subscription</string>
+    <string name="group_edit">Edit group</string>
+    <string name="group_edit_subscription">Edit subscription</string>
 
-    <string name="edit_tab">Edit group</string>
+    <string name="group_status_empty">Empty group</string>
+    <string name="group_status_empty_subscription">Not updated yet</string>
+    <string name="group_status_proxies">%d Proxies</string>
+    <string name="group_status_proxies_subscription">%d Proxies, updated on %s.</string>
+    <string name="group_no_difference">No difference</string>
+    <string name="group_updated">Updated %d proxies</string>
+    <string name="group_delete_confirm_prompt">Are you sure you want to remove this group?</string>
 
     <!-- misc -->
     <string name="service_mode">Service mode</string>
@@ -134,7 +146,10 @@
     <string name="action_socks">Socks</string>
     <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_group">Group</string>
+
+    <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
+
     <string name="action_scan_china_apps">Scan China apps</string>
     <string name="action_export_more">Export…</string>
     <string name="action_export_file">Export to file…</string>
@@ -185,7 +200,6 @@
     <!-- subscriptions -->
     <string name="subscriptions">Subscriptions</string>
     <string name="cleartext_http_warning">Cleartext HTTP traffic is insecure</string>
-    <string name="add_subscription">Add subscription</string>
     <string name="fetching_subscription">Fetching subscription…</string>
     <string name="error_title">Error</string>
     <string name="no_proxies_found">No proxies found in the link</string>

@@ -39,7 +39,6 @@ import androidx.preference.PreferenceFragmentCompat
 import cn.hutool.core.util.NumberUtil
 import com.github.shadowsocks.plugin.*
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
-import com.github.shadowsocks.plugin.fragment.showAllowingStateLoss
 import com.github.shadowsocks.preference.PluginConfigurationDialogFragment
 import com.github.shadowsocks.preference.PluginPreference
 import com.github.shadowsocks.preference.PluginPreferenceDialogFragment
@@ -214,12 +213,12 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
         return true
     }
 
-    val pluginHelp = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            (resultCode, data) ->
-        if (resultCode == Activity.RESULT_OK) AlertDialog.Builder(this)
-            .setTitle("?")
-            .setMessage(data?.getCharSequenceExtra(PluginContract.EXTRA_HELP_MESSAGE))
-            .show()
-    }
+    val pluginHelp =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
+            if (resultCode == Activity.RESULT_OK) AlertDialog.Builder(this)
+                .setTitle("?")
+                .setMessage(data?.getCharSequenceExtra(PluginContract.EXTRA_HELP_MESSAGE))
+                .show()
+        }
 
 }

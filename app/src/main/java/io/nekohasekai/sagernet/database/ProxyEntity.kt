@@ -45,13 +45,10 @@ data class ProxyEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
     var groupId: Long,
-    var type: String = "",
+    var type: Int = 0,
     var userOrder: Long = 0L,
     var tx: Long = 0L,
     var rx: Long = 0L,
-    var proxyApps: Int = 0,
-    var individual: String? = null,
-    var meteredNetwork: Int = 0,
     var vmessBean: VMessBean? = null,
     var socksBean: SOCKSBean? = null,
     var ssBean: ShadowsocksBean? = null,
@@ -69,32 +66,26 @@ data class ProxyEntity(
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readLong(),
-        parcel.readString() ?: "",
-        parcel.readLong(),
-        parcel.readLong(),
-        parcel.readLong(),
         parcel.readInt(),
-        parcel.readString(),
-        parcel.readInt()) {
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong()) {
         dirty = parcel.readByte() > 0
         val byteArray = ByteArray(parcel.readInt())
         parcel.readByteArray(byteArray)
         when (type) {
-            "socks" -> socksBean = KryoConverters.socksDeserialize(byteArray)
-            "ss" -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
+            0 -> socksBean = KryoConverters.socksDeserialize(byteArray)
+            1 -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
         }
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(id)
         parcel.writeLong(groupId)
-        parcel.writeString(type)
+        parcel.writeInt(type)
         parcel.writeLong(userOrder)
         parcel.writeLong(tx)
         parcel.writeLong(rx)
-        parcel.writeInt(proxyApps)
-        parcel.writeString(individual)
-        parcel.writeInt(meteredNetwork)
         parcel.writeByte(if (dirty) 1 else 0)
         val byteArray = KryoConverters.serialize(requireBean())
         parcel.writeInt(byteArray.size)
@@ -103,9 +94,9 @@ data class ProxyEntity(
 
     fun displayType(): String {
         return when (type) {
-            "vmess" -> "VMess"
-            "socks" -> "SOCKS5"
-            "ss" -> "Shadowsocks"
+            //     2 -> "VMess"
+            0 -> "SOCKS5"
+            1 -> "Shadowsocks"
             else -> "Undefined type $type"
         }
     }
@@ -117,15 +108,15 @@ data class ProxyEntity(
 
     fun requireBean(): AbstractBean {
         return when (type) {
-            "vmess" -> vmessBean ?: error("Null vmess node")
-            "socks" -> socksBean ?: error("Null socks node")
-            "ss" -> ssBean ?: error("Null ss node")
+            // 2 -> vmessBean ?: error("Null vmess node")
+            0 -> socksBean ?: error("Null socks node")
+            1 -> ssBean ?: error("Null ss node")
             else -> error("Undefined type $type")
         }
     }
 
     fun useExternalShadowsocks(): Boolean {
-        if (type != "ss") return false
+        if (type != 1) return false
         val bean = requireSS()
         if (bean.plugin.isNotBlank()) {
             Logs.d("Requiring plugin ${bean.plugin}")
@@ -139,17 +130,17 @@ data class ProxyEntity(
     fun putBean(bean: AbstractBean) {
         when (bean) {
             is SOCKSBean -> {
-                type = "socks"
+                type = 0
                 socksBean = bean
             }
-            is VMessBean -> {
-                type = "vmess"
-                vmessBean = bean
-            }
             is ShadowsocksBean -> {
-                type = "ss"
+                type = 1
                 ssBean = bean
             }
+            /*is VMessBean -> {
+                type = 2
+                vmessBean = bean
+            }*/
             else -> error("Undefined type $type")
         }
     }
@@ -160,8 +151,8 @@ data class ProxyEntity(
 
     fun settingIntent(ctx: Context): Intent {
         return Intent(ctx, when (type) {
-            "socks" -> SocksSettingsActivity::class.java
-            "ss" -> ShadowsocksSettingsActivity::class.java
+            0 -> SocksSettingsActivity::class.java
+            1 -> ShadowsocksSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)
@@ -186,14 +177,18 @@ data class ProxyEntity(
         @Query("SELECT * FROM proxy_entities WHERE id = :proxyId")
         fun getById(proxyId: Long): ProxyEntity?
 
-        @Query("DELETE FROM proxy_entities WHERE id = :proxyId")
+        @Query("DELETE FROM proxy_entities WHERE id IN (:proxyId)")
         fun deleteById(proxyId: Long): Int
+
+        @Delete
+        fun deleteProxy(vararg proxy: ProxyEntity)
+
+        @Update
+        fun updateProxy(vararg proxy: ProxyEntity)
 
         @Insert
         fun addProxy(proxy: ProxyEntity): Long
 
-        @Update
-        fun updateProxy(vararg proxy: ProxyEntity)
 
         @Query("DELETE FROM proxy_entities WHERE groupId = :groupId")
         fun deleteAll(groupId: Long): Int

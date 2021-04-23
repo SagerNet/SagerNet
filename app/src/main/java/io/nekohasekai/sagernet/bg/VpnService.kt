@@ -70,6 +70,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     private var conn: ParcelFileDescriptor? = null
     private var active = false
     private var metered = false
+
     @Volatile
     private var underlyingNetwork: Network? = null
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
@@ -77,9 +78,12 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             field = value
             if (active) setUnderlyingNetworks(underlyingNetworks)
         }
-    private val underlyingNetworks get() =
-        // clearing underlyingNetworks makes Android 9 consider the network to be metered
-        if (Build.VERSION.SDK_INT == 28 && metered) null else underlyingNetwork?.let { arrayOf(it) }
+    private val underlyingNetworks
+        get() =
+            // clearing underlyingNetworks makes Android 9 consider the network to be metered
+            if (Build.VERSION.SDK_INT == 28 && metered) null else underlyingNetwork?.let {
+                arrayOf(it)
+            }
 
     override suspend fun startProcesses() {
         super.startProcesses()
@@ -159,16 +163,14 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         if (DataStore.proxyApps) {
             val bypass = DataStore.bypass
 
-            (profile.individual ?: DataStore.individual).split('\n')
-                .filter { it.isNotBlank() && it != me }
-                .forEach {
-                    try {
-                        if (bypass) builder.addDisallowedApplication(it)
-                        else builder.addAllowedApplication(it)
-                    } catch (ex: PackageManager.NameNotFoundException) {
-                        Logs.w(ex)
-                    }
+            DataStore.individual.split('\n').filter { it.isNotBlank() && it != me }.forEach {
+                try {
+                    if (bypass) builder.addDisallowedApplication(it)
+                    else builder.addAllowedApplication(it)
+                } catch (ex: PackageManager.NameNotFoundException) {
+                    Logs.w(ex)
                 }
+            }
 
             if (bypass) builder.addDisallowedApplication(me)
         } else {
@@ -181,11 +183,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             builder.addDnsServer(DataStore.remoteDNS)
         }
 
-        metered = when (profile.meteredNetwork) {
-            0 -> DataStore.meteredNetwork
-            1 -> false
-            else -> true
-        }
+        metered = DataStore.meteredNetwork
         active = true   // possible race condition here?
 //        builder.setUnderlyingNetworks(underlyingNetworks)
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
@@ -211,10 +209,6 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         if (DataStore.ipv6Route) {
             cmd += "--netif-ip6addr"
             cmd += PRIVATE_VLAN6_ROUTER
-        }
-        var enableUDP = false
-        when (profile.type) {
-            "socks" -> enableUDP = profile.requireSOCKS().udp
         }
         cmd += "--enable-udprelay"
         data.processes!!.start(cmd, onRestartCallback = {

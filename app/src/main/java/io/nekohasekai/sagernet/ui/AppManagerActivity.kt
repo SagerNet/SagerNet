@@ -22,8 +22,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.Manifest
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Intent
@@ -54,7 +52,6 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -214,24 +211,6 @@ class AppManagerActivity : AppCompatActivity() {
     private var apps = emptyList<ProxiedApp>()
     private val appsAdapter = AppsAdapter()
 
-    private val shortAnimTime by lazy {
-        resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
-    }
-
-    private fun View.crossFadeFrom(other: View) {
-        clearAnimation()
-        other.clearAnimation()
-        if (visibility == View.VISIBLE && other.visibility == View.GONE) return
-        alpha = 0F
-        visibility = View.VISIBLE
-        animate().alpha(1F).duration = shortAnimTime
-        other.animate().alpha(0F).setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                other.visibility = View.GONE
-            }
-        }).duration = shortAnimTime
-    }
-
     private fun initProxiedUids(str: String = DataStore.individual) {
         proxiedUids.clear()
         val apps = getCachedApps(packageManager)
@@ -375,8 +354,7 @@ class AppManagerActivity : AppCompatActivity() {
                 "com.vivo",
                 "com.xiaomi",
                 "com.huawei",
-                "com.taobao",
-                "com.iab"
+                "com.taobao"
             ).joinToString("|") + ").*").toRegex()
 
             val bypass = DataStore.bypass

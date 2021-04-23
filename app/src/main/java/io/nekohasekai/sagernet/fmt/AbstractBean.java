@@ -26,6 +26,8 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 import cn.hutool.core.clone.Cloneable;
 
 public abstract class AbstractBean implements Cloneable<AbstractBean> {
@@ -50,5 +52,17 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
     @NotNull
     @Override
     public abstract AbstractBean clone();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return Arrays.equals(KryoConverters.serialize(this), KryoConverters.serialize((AbstractBean) o));
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(KryoConverters.serialize(this));
+    }
 
 }

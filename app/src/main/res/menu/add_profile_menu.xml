@@ -27,13 +27,7 @@
                         android:title="@string/action_shadowsocks" />
                 </menu>
             </item>
-            <item android:title="@string/action_group">
-                <menu>
-                    <item
-                        android:id="@+id/action_from_link"
-                        android:title="@string/action_from_link" />
-                </menu>
-            </item>
+
         </menu>
     </item>
 </menu>

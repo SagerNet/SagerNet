@@ -23,6 +23,8 @@
 
 package io.nekohasekai.sagernet.ktx
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -35,8 +37,10 @@ import android.os.Parcelable
 import android.system.Os
 import android.system.OsConstants
 import android.util.TypedValue
+import android.view.View
 import androidx.annotation.AttrRes
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -45,6 +49,7 @@ import cn.hutool.core.net.URLDecoder
 import cn.hutool.core.net.URLEncoder
 import cn.hutool.core.util.CharsetUtil
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -168,7 +173,7 @@ fun String.unUrlSafe(): String {
     return URLDecoder.decode(this, CharsetUtil.CHARSET_UTF_8)
 }
 
-fun RecyclerView.scrollTo( index: Int) {
+fun RecyclerView.scrollTo(index: Int) {
     post {
         scrollToPosition(index)
     }
@@ -189,3 +194,25 @@ fun RecyclerView.scrollTo( index: Int) {
 }
 
 val app get() = SagerNet.application
+
+suspend fun View.postOnMainDispatcher(action: () -> Unit) = onMainDispatcher { post(action) }
+
+val shortAnimTime by lazy {
+    app.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+}
+
+fun View.crossFadeFrom(other: View) {
+    clearAnimation()
+    other.clearAnimation()
+    if (visibility == View.VISIBLE && other.visibility == View.GONE) return
+    alpha = 0F
+    visibility = View.VISIBLE
+    animate().alpha(1F).duration = shortAnimTime
+    other.animate().alpha(0F).setListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            other.visibility = View.GONE
+        }
+    }).duration = shortAnimTime
+}
+
+fun Fragment.snackbar(text: CharSequence) = (requireActivity() as MainActivity).snackbar(text)

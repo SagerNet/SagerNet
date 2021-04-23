@@ -21,21 +21,28 @@
 
 package io.nekohasekai.sagernet.database
 
+import android.os.Parcelable
 import androidx.room.*
-import java.util.*
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.ktx.app
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "proxy_groups")
-class ProxyGroup(
+@Parcelize
+data class ProxyGroup(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
     var userOrder: Long = 0L,
     var isDefault: Boolean = false,
     var name: String? = null,
     var isSubscription: Boolean = false,
-    var subscriptionLinks: MutableList<String> = LinkedList(),
+    var subscriptionLink: String = "",
     var lastUpdate: Long = 0L,
-    var layout: Int = 0,
-) {
+) : Parcelable {
+
+    fun displayName(): String {
+        return name.takeIf { !it.isNullOrBlank() } ?: app.getString(R.string.group_default)
+    }
 
     @androidx.room.Dao
     interface Dao {
@@ -43,14 +50,23 @@ class ProxyGroup(
         @Query("SELECT * FROM proxy_groups ORDER BY userOrder")
         fun allGroups(): List<ProxyGroup>
 
+        @Query("SELECT MAX(userOrder) + 1 FROM proxy_groups")
+        fun nextOrder(): Long?
+
         @Query("SELECT * FROM proxy_groups WHERE id = :groupId")
         fun getById(groupId: Long): ProxyGroup?
 
+        @Query("DELETE FROM proxy_groups WHERE id = :groupId")
+        fun deleteById(groupId: Long): Int
+
         @Delete
-        fun delete(group: ProxyGroup)
+        fun deleteGroup(vararg group: ProxyGroup)
 
         @Insert
         fun createGroup(group: ProxyGroup): Long
+
+        @Update
+        fun updateGroup(group: ProxyGroup)
 
     }
 

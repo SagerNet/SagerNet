@@ -19,16 +19,27 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:JvmName("Utils")
+package io.nekohasekai.sagernet.ktx
 
-package com.github.shadowsocks.plugin.fragment
+import androidx.fragment.app.Fragment
+import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ui.MainActivity
+import okhttp3.OkHttpClient
+import java.net.InetSocketAddress
+import java.net.Proxy
 
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
+val okHttpClient = OkHttpClient.Builder()
+    .followRedirects(true)
+    .followSslRedirects(true)
+    .build()
 
-typealias Empty = com.github.shadowsocks.plugin.Empty
+fun Fragment.createHttpClient(): OkHttpClient {
+    if ((activity as MainActivity?)?.state != BaseService.State.Connected) {
+        return okHttpClient
+    }
 
-@JvmOverloads
-fun DialogFragment.showAllowingStateLoss(fragmentManager: FragmentManager, tag: String? = null) {
-    if (!fragmentManager.isStateSaved) show(fragmentManager, tag)
+    return okHttpClient.newBuilder()
+        .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort)))
+        .build()
 }

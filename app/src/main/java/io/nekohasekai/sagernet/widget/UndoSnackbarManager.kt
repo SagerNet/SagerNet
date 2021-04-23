@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.widget
 
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ui.MainActivity
@@ -33,13 +32,21 @@ import io.nekohasekai.sagernet.ui.MainActivity
  * @param commit Callback for committing removals.
  * @tparam T Item type.
  */
-class UndoSnackbarManager<in T>(private val activity: MainActivity, private val undo: (List<Pair<Int, T>>) -> Unit,
-                                commit: ((List<Pair<Int, T>>) -> Unit)? = null) {
+class UndoSnackbarManager<in T>(
+    private val activity: MainActivity,
+    private val callback: Interface<T>,
+) {
+
+    interface Interface<in T> {
+        fun undo(actions: List<Pair<Int, T>>)
+        fun commit(actions: List<Pair<Int, T>>)
+    }
+
     private val recycleBin = ArrayList<Pair<Int, T>>()
     private val removedCallback = object : Snackbar.Callback() {
         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
             if (last === transientBottomBar && event != DISMISS_EVENT_ACTION) {
-                commit?.invoke(recycleBin)
+                callback.commit(recycleBin)
                 recycleBin.clear()
                 last = null
             }
@@ -51,15 +58,16 @@ class UndoSnackbarManager<in T>(private val activity: MainActivity, private val 
     fun remove(items: Collection<Pair<Int, T>>) {
         recycleBin.addAll(items)
         val count = recycleBin.size
-        activity.snackbar(activity.resources.getQuantityString(R.plurals.removed, count, count)).apply {
-            addCallback(removedCallback)
-            setAction(R.string.undo) {
-                undo(recycleBin.reversed())
-                recycleBin.clear()
+        activity.snackbar(activity.resources.getQuantityString(R.plurals.removed, count, count))
+            .apply {
+                addCallback(removedCallback)
+                setAction(R.string.undo) {
+                    callback.undo(recycleBin.reversed())
+                    recycleBin.clear()
+                }
+                last = this
+                show()
             }
-            last = this
-            show()
-        }
     }
 
     fun remove(vararg items: Pair<Int, T>) = remove(items.toList())

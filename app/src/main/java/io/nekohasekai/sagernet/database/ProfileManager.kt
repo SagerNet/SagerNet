@@ -22,18 +22,16 @@
 package io.nekohasekai.sagernet.database
 
 import android.database.sqlite.SQLiteCantOpenDatabaseException
-import android.os.SystemClock
 import android.util.Base64
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.parseProxies
 import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.Response
@@ -47,37 +45,59 @@ import java.util.*
 
 object ProfileManager {
 
-    private val listeners = LinkedList<WeakReference<Listener>>()
-    private val groupListeners = LinkedList<WeakReference<GroupListener>>()
-    private suspend fun iterator(what: Listener.() -> Unit) {
-        onMainDispatcher {
-            synchronized(listeners) {
-                val iterator = listeners.iterator()
-                while (iterator.hasNext()) {
-                    val listener = iterator.next().get()
-                    if (listener == null) {
-                        iterator.remove()
-                        continue
-                    }
-                    what(listener)
-                }
-            }
+    interface Listener {
+        suspend fun onAdd(profile: ProxyEntity)
+        suspend fun onUpdated(profileId: Long, trafficStats: TrafficStats)
+        suspend fun onUpdated(profile: ProxyEntity)
+        suspend fun onRemoved(groupId: Long, profileId: Long)
+        suspend fun onCleared(groupId: Long)
+        suspend fun reloadProfiles(groupId: Long)
+    }
+
+    interface GroupListener {
+        suspend fun onAdd(group: ProxyGroup)
+        suspend fun onUpdated(group: ProxyGroup)
+        suspend fun onRemoved(groupId: Long)
+
+        suspend fun onUpdated(groupId: Long) {}
+        suspend fun refreshSubscription(proxyGroup: ProxyGroup) {}
+        suspend fun refreshSubscription(
+            proxyGroup: ProxyGroup,
+            onRefreshStarted: Runnable,
+            onRefreshFinished: Runnable,
+        ) {
         }
     }
 
-    private suspend fun groupIterator(what: GroupListener.() -> Unit) {
-        onMainDispatcher {
-            synchronized(groupListeners) {
-                val iterator = groupListeners.iterator()
-                while (iterator.hasNext()) {
-                    val listener = iterator.next().get()
-                    if (listener == null) {
-                        iterator.remove()
-                        continue
-                    }
-                    what(listener)
-                }
+
+    private val listeners = LinkedList<WeakReference<Listener>>()
+    private val groupListeners = LinkedList<WeakReference<GroupListener>>()
+
+    suspend fun iterator(what: suspend Listener.() -> Unit) {
+        val listeners = synchronized(listeners) {
+            listeners
+        }
+        for (profileListener in listeners) {
+            val listener = profileListener.get()
+            if (listener == null) {
+                this.listeners.remove(profileListener)
+                return
             }
+            what(listener)
+        }
+    }
+
+    suspend fun groupIterator(what: suspend GroupListener.() -> Unit) {
+        val groupListeners = synchronized(groupListeners) {
+            groupListeners
+        }
+        for (groupListener in groupListeners) {
+            val listener = groupListener.get()
+            if (listener == null) {
+                this.groupListeners.remove(groupListener)
+                return
+            }
+            what(listener)
         }
     }
 
@@ -93,19 +113,6 @@ object ProfileManager {
         }
     }
 
-    interface Listener {
-        fun onAdd(profile: ProxyEntity)
-        fun onUpdated(profileId: Long, trafficStats: TrafficStats)
-        fun onUpdated(profile: ProxyEntity)
-        fun onRemoved(groupId: Long, profileId: Long)
-        fun onCleared(groupId: Long)
-        fun reloadProfiles(groupId: Long)
-    }
-
-    interface GroupListener {
-        fun onAdd(group: ProxyGroup)
-        fun onAddFinish(size: Int)
-    }
 
     suspend fun createProfile(groupId: Long, bean: AbstractBean): ProxyEntity {
         val profile = ProxyEntity(groupId = groupId).apply {
@@ -118,9 +125,11 @@ object ProfileManager {
         return profile
     }
 
-    suspend fun updateProfile(profile: ProxyEntity) {
-        SagerDatabase.proxyDao.updateProxy(profile)
-        iterator { onUpdated(profile) }
+    suspend fun updateProfile(vararg profile: ProxyEntity) {
+        SagerDatabase.proxyDao.updateProxy(* profile)
+        profile.forEach {
+            iterator { onUpdated(it) }
+        }
     }
 
     suspend fun deleteProfile(groupId: Long, profileId: Long) {
@@ -180,30 +189,60 @@ object ProfileManager {
         iterator { onUpdated(profile) }
     }
 
-    suspend fun postTrafficUpdated(profileId: Long, stats: TrafficStats) {
-        iterator { onUpdated(profileId,stats) }
+    suspend fun postReload(groupId: Long) {
+        iterator { reloadProfiles(groupId) }
+        groupIterator { onUpdated(groupId) }
     }
 
-    suspend fun createGroup(response: Response) {
-        val proxies = parseSubscription((response.body ?: error("Empty response")).string())
-        if (proxies.isEmpty()) error(SagerNet.application.getString(R.string.no_proxies_found))
+    suspend fun postTrafficUpdated(profileId: Long, stats: TrafficStats) {
+        iterator { onUpdated(profileId, stats) }
+    }
 
-        val newGroup = ProxyGroup(
-            name = "New group",
-            isSubscription = true,
-            subscriptionLinks = mutableListOf(response.request.url.toString()),
-            lastUpdate = SystemClock.elapsedRealtimeNanos()
-        )
+    suspend fun createGroup(group: ProxyGroup): ProxyGroup {
+        group.userOrder = SagerDatabase.groupDao.nextOrder() ?: 1
+        group.id = SagerDatabase.groupDao.createGroup(group)
+        groupIterator { onAdd(group) }
+        return group
+    }
 
-        newGroup.id = SagerDatabase.groupDao.createGroup(newGroup)
+    suspend fun updateGroup(group: ProxyGroup) {
+        SagerDatabase.groupDao.updateGroup(group)
+        groupIterator { onUpdated(group) }
+    }
 
-        groupIterator { onAdd(newGroup) }
+    suspend fun deleteGroup(groupId: Long) {
+        SagerDatabase.groupDao.deleteById(groupId)
+        groupIterator { onRemoved(groupId) }
+    }
 
-        for (proxy in proxies) {
-            createProfile(newGroup.id, proxy)
+    suspend fun deleteGroup(vararg group: ProxyGroup) {
+        SagerDatabase.groupDao.deleteGroup(* group)
+        for (proxyGroup in group) {
+            groupIterator { onRemoved(proxyGroup.id) }
         }
+    }
 
-        groupIterator { onAddFinish(proxies.size) }
+
+    suspend fun createGroup(response: Response) {
+        /* val proxies =
+         if (proxies.isEmpty()) error(SagerNet.application.getString(R.string.no_proxies_found))
+
+         val newGroup = ProxyGroup(
+             name = "New group",
+             isSubscription = true,
+             subscriptionLinks = mutableListOf(response.request.url.toString()),
+             lastUpdate = SystemClock.elapsedRealtimeNanos(),
+         )
+
+         newGroup.id = SagerDatabase.groupDao.createGroup(newGroup)
+
+         groupIterator { onAdd(newGroup) }
+
+         for (proxy in proxies) {
+             createProfile(newGroup.id, proxy)
+         }
+
+         groupIterator { onAddFinish(proxies.size) }*/
     }
 
     fun parseSubscription(text: String, tryDecode: Boolean = true): List<AbstractBean> {
@@ -319,7 +358,9 @@ object ProfileManager {
             }
         }
 
-        return parseProxies(text)
+        val results = parseProxies(text)
+        if (results.isEmpty()) error(app.getString(R.string.no_proxies_found))
+        return results
 
     }
 

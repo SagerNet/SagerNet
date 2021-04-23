@@ -30,6 +30,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -64,6 +65,8 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
     lateinit var stats: StatsBar
     lateinit var drawer: DrawerLayout
     lateinit var coordinator: CoordinatorLayout
+    lateinit var navView: NavigationView
+    lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +77,8 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         stats = findViewById(R.id.stats)
         drawer = findViewById(R.id.drawer_layout)
 
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
+        navView = findViewById(R.id.nav_view)
+        navController = findNavController(R.id.nav_host_fragment)
 
         fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
         stats.setOnClickListener { if (state == BaseService.State.Connected) stats.testConnection() }
@@ -83,7 +86,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         ViewCompat.setOnApplyWindowInsetsListener(coordinator, ListHolderListener)
 
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_configuration, R.id.nav_about
+            R.id.nav_configuration, R.id.nav_group, R.id.nav_settings, R.id.nav_about
         ), drawer)
 
         navView.setupWithNavController(navController)

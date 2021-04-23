@@ -23,13 +23,16 @@ package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.widget.ListHolderListener
 
 class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        ViewCompat.setOnApplyWindowInsetsListener(view, ListHolderListener)
         toolbar.setTitle(R.string.menu_about)
     }
 
