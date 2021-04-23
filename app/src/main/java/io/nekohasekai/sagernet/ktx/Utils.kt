@@ -195,8 +195,6 @@ fun RecyclerView.scrollTo(index: Int) {
 
 val app get() = SagerNet.application
 
-suspend fun View.postOnMainDispatcher(action: () -> Unit) = onMainDispatcher { post(action) }
-
 val shortAnimTime by lazy {
     app.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 }

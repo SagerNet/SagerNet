@@ -65,12 +65,16 @@ import kotlin.collections.ArrayList
 
 class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItemClickListener {
 
+    lateinit var activity: MainActivity
     lateinit var groupListView: RecyclerView
     lateinit var groupAdapter: GroupAdapter
     lateinit var undoManager: UndoSnackbarManager<ProxyGroup>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity = requireActivity() as MainActivity
+
         ViewCompat.setOnApplyWindowInsetsListener(view, ListHolderListener)
         toolbar.setTitle(R.string.menu_group)
         toolbar.inflateMenu(R.menu.add_group_menu)
@@ -82,7 +86,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         groupListView.adapter = groupAdapter
 
         undoManager =
-            UndoSnackbarManager(activity as MainActivity, groupAdapter)
+            UndoSnackbarManager(activity, groupAdapter)
 
         ItemTouchHelper(object :
             ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -151,8 +155,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         onRefreshStarted: Runnable,
         onRefreshFinished: Runnable,
     ) {
-        val activity = activity as MainActivity? ?: return
-
         onRefreshStarted.run()
 
         runOnDefaultDispatcher {
@@ -180,6 +182,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             }
                             return
                         }
+
                         val nameMap = mapOf(* proxies.map { bean ->
                             (bean.name.takeIf { !it.isNullOrBlank() }
                                 ?: "${bean.serverAddress}:${bean.serverPort}") to bean
@@ -194,8 +197,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                 null
                             }
                         }.toMap()
-
                         val toUpdate = LinkedList<ProxyEntity>()
+
+                        val added = mutableListOf<String>()
+                        val updated = mutableMapOf<String, String>()
+                        val deleted = toDelete.map { it.displayName() }
 
                         var userOrder = 1L
                         var changed = toDelete.size
@@ -206,6 +212,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                     entity.putBean(bean)
                                     entity.userOrder = userOrder
                                     toUpdate.add(entity)
+                                    updated.put(entity.displayName(), name)
                                 }
                             } else {
                                 changed++
@@ -215,6 +222,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                 ).apply {
                                     putBean(bean)
                                 })
+                                added.add(name)
                             }
                             userOrder++
                         }
@@ -223,6 +231,10 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         SagerDatabase.proxyDao.deleteProxy(* toDelete.toTypedArray())
 
                         runBlocking {
+                            ProfileManager.updateGroup(proxyGroup.apply {
+                                lastUpdate = System.currentTimeMillis()
+                            })
+
                             ProfileManager.postReload(proxyGroup.id)
                             onMainDispatcher {
                                 onRefreshFinished.run()
@@ -232,7 +244,32 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                         .show()
                                 } else {
                                     activity.snackbar(activity.getString(R.string.group_updated,
-                                        changed)).show()
+                                        changed)).setAction(R.string.group_show_diff) {
+
+
+                                        var status = ""
+                                        if (added.isNotEmpty()) {
+                                            status += activity.getString(R.string.group_added,
+                                                added.joinToString("\n", postfix = "\n\n"))
+                                        }
+                                        if (updated.isNotEmpty()) {
+                                            status += activity.getString(R.string.group_changed,
+                                                updated.map { it }
+                                                    .joinToString("\n", postfix = "\n\n") {
+                                                        if (it.key == it.value) it.key else "${it.key} => ${it.value}"
+                                                    })
+                                        }
+                                        if (deleted.isNotEmpty()) {
+                                            status += activity.getString(R.string.group_deleted,
+                                                deleted.joinToString("\n", postfix = "\n\n"))
+                                        }
+
+                                        val dialog = AlertDialog.Builder(activity)
+                                            .setTitle(R.string.group_show_diff)
+                                            .setMessage(status)
+                                            .setPositiveButton(android.R.string.ok, null)
+                                            .show()
+                                    }.show()
                                 }
                             }
                         }
@@ -476,7 +513,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         override suspend fun onAdd(group: ProxyGroup) {
-            groupListView.postOnMainDispatcher {
+            onMainDispatcher {
                 undoManager.flush()
                 groupList.add(group)
                 notifyItemInserted(groupList.size - 1)
@@ -486,7 +523,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         override suspend fun onRemoved(groupId: Long) {
             val index = groupList.indexOfFirst { it.id == groupId }
             if (index == -1) return
-            groupListView.postOnMainDispatcher {
+            onMainDispatcher {
                 undoManager.flush()
 
                 groupList.removeAt(index)
@@ -501,7 +538,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 return
             }
             groupList[index] = group
-            groupListView.postOnMainDispatcher {
+            onMainDispatcher {
                 undoManager.flush()
 
                 notifyItemChanged(index)
@@ -514,7 +551,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 reload()
                 return
             }
-            groupListView.postOnMainDispatcher {
+            onMainDispatcher {
                 notifyItemChanged(index)
             }
         }
@@ -560,7 +597,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         val refreshRunnable = { needGo: Boolean ->
             runOnDefaultDispatcher {
                 var uVisible = false
-                val activity = (activity as MainActivity?) ?: return@runOnDefaultDispatcher
 
                 ProfileManager.groupIterator {
                     refreshSubscription(proxyGroup,
@@ -572,7 +608,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                 if (editButton.isVisible) {
                                     uVisible = true
                                     editButton.isVisible = false
-                                    shareButton.isVisible = false
+                                    //    shareButton.isVisible = false
                                 }
                             }
                         },
@@ -583,7 +619,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                 if (uVisible) {
                                     editButton.isVisible = true
                                 }
-                                shareButton.isVisible = true
+                                // shareButton.isVisible = true
 
                                 if (needGo) {
                                     DataStore.selectedGroup = proxyGroup.id
@@ -617,6 +653,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
             updateButton.setOnClickListener {
                 refreshRunnable(false)
             }
+
+            shareButton.isVisible = false
 
             runOnDefaultDispatcher {
                 val size = SagerDatabase.proxyDao.countByGroup(proxyGroup.id)

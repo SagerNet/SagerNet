@@ -258,7 +258,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 tabLayout.visibility = View.VISIBLE
             }
 
-            groupPager.postOnMainDispatcher {
+            onMainDispatcher {
                 groupList.add(group)
                 notifyItemInserted(groupList.size - 1)
                 tabLayout.getTabAt(groupList.size - 1)?.select()
@@ -269,7 +269,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             val index = groupList.indexOfFirst { it.id == groupId }
             if (index == -1) return
 
-            groupPager.postOnMainDispatcher {
+            onMainDispatcher {
                 groupList.removeAt(index)
                 notifyItemRemoved(index)
             }
@@ -279,7 +279,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             val index = groupList.indexOfFirst { it.id == group.id }
             if (index == -1) return
 
-            groupPager.postOnMainDispatcher {
+            onMainDispatcher {
                 tabLayout.getTabAt(index)?.text = group.displayName()
             }
         }
@@ -466,7 +466,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             override suspend fun onAdd(profile: ProxyEntity) {
                 if (profile.groupId != proxyGroup.id) return
 
-                configurationListView.postOnMainDispatcher {
+                onMainDispatcher {
                     undoManager.flush()
                     val pos = itemCount
                     configurationList[profile.id] = profile
@@ -481,7 +481,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 if (index < 0) return
                 undoManager.flush()
                 configurationList[profile.id] = profile
-                configurationListView.postOnMainDispatcher {
+                onMainDispatcher {
                     notifyItemChanged(index)
                 }
             }
@@ -506,14 +506,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 if (index < 0) return
                 configurationIdList.removeAt(index)
                 configurationList.remove(profileId)
-                configurationListView.postOnMainDispatcher {
+                onMainDispatcher {
                     notifyItemRemoved(index)
                 }
             }
 
             override suspend fun onCleared(groupId: Long) {
                 if (groupId != proxyGroup.id) return
-                configurationListView.postOnMainDispatcher {
+                onMainDispatcher {
                     configurationList.clear()
                     configurationList.clear()
                     notifyDataSetChanged()
@@ -536,7 +536,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     }
                 }
 
-                configurationListView.postOnMainDispatcher {
+                onMainDispatcher {
                     notifyDataSetChanged()
                 }
 
