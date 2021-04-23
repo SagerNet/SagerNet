@@ -59,6 +59,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
+import kotlin.properties.Delegates
 
 
 class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
@@ -150,7 +151,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                         snackbar(getString(R.string.action_import_err)).show()
                     } else {
                         val selectedGroup = selectedGroup
-                        var targetIndex: Int = null!!
+                        var targetIndex by Delegates.notNull<Int>()
                         val targetId = if (!selectedGroup.isSubscription) {
                             selectedGroup.id
                         } else {

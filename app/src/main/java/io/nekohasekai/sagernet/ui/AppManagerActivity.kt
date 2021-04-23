@@ -41,6 +41,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
+import androidx.core.util.contains
 import androidx.core.util.set
 import androidx.core.view.ViewCompat
 import androidx.core.widget.addTextChangedListener
@@ -292,6 +293,35 @@ class AppManagerActivity : AppCompatActivity() {
                 scanChinaApps()
                 return true
             }
+            R.id.action_invert_selections -> {
+                runOnDefaultDispatcher {
+                    for (app in apps) {
+                        if (proxiedUids.contains(app.uid)) {
+                            proxiedUids.delete(app.uid)
+                        } else {
+                            proxiedUids[app.uid] = true
+                        }
+                    }
+                    DataStore.individual =
+                        apps.filter { isProxiedApp(it) }.joinToString("\n") { it.packageName }
+                    apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
+                    onMainDispatcher {
+                        appsAdapter.filter.filter(search.text?.toString() ?: "")
+                    }
+                }
+
+                return true
+            }
+            R.id.action_clear_selections -> {
+                runOnDefaultDispatcher {
+                    proxiedUids.clear()
+                    DataStore.individual = ""
+                    apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
+                    onMainDispatcher {
+                        appsAdapter.filter.filter(search.text?.toString() ?: "")
+                    }
+                }
+            }
             R.id.action_export_clipboard -> {
                 val success =
                     SagerNet.trySetPrimaryClip("${DataStore.bypass}\n${DataStore.individual}")
@@ -428,8 +458,10 @@ class AppManagerActivity : AppCompatActivity() {
             DataStore.individual =
                 apps.filter { isProxiedApp(it) }.joinToString("\n") { it.packageName }
 
+            apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
+
             onMainDispatcher {
-                appsAdapter.notifyDataSetChanged()
+                appsAdapter.filter.filter(search.text?.toString() ?: "")
 
                 dialog.dismiss()
             }

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source "bin/init/env.sh"
+
 export GO111MOUDLE=on
 export PATH="$PATH:$(go env GOPATH)/bin"
 

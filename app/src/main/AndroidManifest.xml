@@ -87,7 +87,6 @@
             android:screenOrientation="locked"
             android:theme="@style/Theme.SagerNet" />
 
-
         <service
             android:name="io.nekohasekai.sagernet.bg.ProxyService"
             android:directBootAware="true"
@@ -106,6 +105,23 @@
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="io.nekohasekai.sagernet.bg.TileService"
+            android:directBootAware="true"
+            android:icon="@drawable/ic_service_active"
+            android:label="@string/quick_toggle"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:process=":bg"
+            tools:targetApi="n">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.TOGGLEABLE_TILE"
+                android:value="true" />
+        </service>
+
 
         <receiver
             android:name="io.nekohasekai.sagernet.BootReceiver"

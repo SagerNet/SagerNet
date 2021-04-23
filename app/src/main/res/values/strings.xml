@@ -100,7 +100,8 @@
     <string name="off">Off</string>
     <string name="search_apps">Search…</string>
     <string name="scanning">Scanning…</string>
-    <string name="revert_selections">Revert selections</string>
+    <string name="invert_selections">Invert selections</string>
+    <string name="clear_selections">Clear selections</string>
 
     <string name="proxied_apps_mode">Mode</string>
     <string name="bypass_apps">Bypass</string>

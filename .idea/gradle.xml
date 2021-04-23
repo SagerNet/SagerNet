@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/shadowsocks" />
+            <option value="$PROJECT_DIR$/shadowsocksr" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

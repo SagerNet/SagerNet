@@ -5,8 +5,12 @@
         android:title="@string/action_scan_china_apps"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_revert_selections"
-        android:title="@string/revert_selections"
+        android:id="@+id/action_invert_selections"
+        android:title="@string/invert_selections"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_selections"
+        android:title="@string/clear_selections"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_export_clipboard"

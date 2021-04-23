@@ -10,3 +10,21 @@
 [submodule "shadowsocks/src/main/rust/shadowsocks-rust"]
 	path = shadowsocks/src/main/rust/shadowsocks-rust
 	url = https://github.com/shadowsocks/shadowsocks-rust.git
+[submodule "shadowsocksr/src/main/jni/shadowsocks-libev"]
+	path = shadowsocksr/src/main/jni/shadowsocks-libev
+	url = https://github.com/shadowsocksRb/shadowsocksr-libev
+[submodule "shadowsocksr/src/main/jni/mbedtls"]
+	path = shadowsocksr/src/main/jni/mbedtls
+	url = https://github.com/ARMmbed/mbedtls
+[submodule "shadowsocksr/src/main/jni/libancillary"]
+	path = shadowsocksr/src/main/jni/libancillary
+	url = https://github.com/shadowsocks/libancillary
+[submodule "shadowsocksr/src/main/jni/pcre"]
+	path = shadowsocksr/src/main/jni/pcre
+	url = https://android.googlesource.com/platform/external/pcre
+[submodule "shadowsocksr/src/main/jni/libsodium"]
+	path = shadowsocksr/src/main/jni/libsodium
+	url = https://github.com/jedisct1/libsodium
+[submodule "shadowsocksr/src/main/jni/re2"]
+	path = shadowsocksr/src/main/jni/re2
+	url = https://github.com/google/re2
