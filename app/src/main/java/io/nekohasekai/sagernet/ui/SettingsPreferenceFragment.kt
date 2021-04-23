@@ -30,7 +30,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
@@ -91,63 +90,33 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
             val listener: (BaseService.State) -> Unit = {
                 val stopped = it == BaseService.State.Stopped
+                val sMode = DataStore.serviceMode
 
-                runOnDefaultDispatcher {
-                    val sMode = DataStore.serviceMode
+                listView.post {
+                    persistAcrossReboot.isEnabled = stopped
+                    directBootAware.isEnabled = stopped
+                    serviceMode.isEnabled = stopped
+                    portSocks5.isEnabled = stopped
+                    requireHttp.isEnabled = stopped
+                    portHttp.isEnabled = stopped
+                    forceShadowsocksRust.isEnabled = stopped
 
-                    listView.post {
-                        persistAcrossReboot.isEnabled = stopped
-                        directBootAware.isEnabled = stopped
-                        serviceMode.isEnabled = stopped
-                        portSocks5.isEnabled = stopped
-                        requireHttp.isEnabled = stopped
-                        portHttp.isEnabled = stopped
-                        forceShadowsocksRust.isEnabled = stopped
+                    isProxyApps.isEnabled = sMode == Key.MODE_VPN && stopped
+                    metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
 
-                        isProxyApps.isEnabled = sMode == Key.MODE_VPN && stopped
-                        metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
-
-                        routeMode.isEnabled = stopped
-                        allowAccess.isEnabled = stopped
-                        remoteDns.isEnabled = stopped
-                        portLocalDns.isEnabled = stopped
-                        domesticDns.isEnabled = stopped
-                        ipv6Route.isEnabled = stopped
-                        preferIpv6.isEnabled = stopped
-                    }
-
-                    when (DataStore.routeMode) {
-                        RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> {
-                            listView.post {
-                                enableLocalDns.isChecked = true
-                                enableLocalDns.isEnabled = false
-                            }
-                        }
-                        else -> {
-                            listView.post {
-                                enableLocalDns.isEnabled = stopped
-                            }
-                        }
-                    }
+                    routeMode.isEnabled = stopped
+                    allowAccess.isEnabled = stopped
+                    remoteDns.isEnabled = stopped
+                    enableLocalDns.isEnabled = stopped
+                    portLocalDns.isEnabled = stopped
+                    domesticDns.isEnabled = stopped
+                    ipv6Route.isEnabled = stopped
+                    preferIpv6.isEnabled = stopped
                 }
             }
 
             listener((activity as MainActivity).state)
             MainActivity.stateListener = listener
-            routeMode.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, newValue ->
-                    when (newValue) {
-                        RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> listView.post {
-                            enableLocalDns.isChecked = true
-                            enableLocalDns.isEnabled = false
-                            DataStore.enableLocalDNS = true
-                        }
-                        else -> listView.post {
-                            enableLocalDns.isEnabled = true
-                        }
-                    }
-                    true
-                }
             serviceMode.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     listView.post {

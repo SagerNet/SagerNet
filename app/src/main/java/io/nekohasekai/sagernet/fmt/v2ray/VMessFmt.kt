@@ -44,6 +44,8 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
     val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
     val remoteDns = DataStore.remoteDNS.split(",")
     val domesticDns = DataStore.domesticDns.split(',')
+    val enableLocalDNS = DataStore.enableLocalDNS
+    val routeMode = DataStore.routeMode
 
     val bean = proxy.requireBean()
 
@@ -61,9 +63,9 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                 }
             })
 
-            if (DataStore.enableLocalDNS) {
-                when (DataStore.routeMode) {
-                    RouteMode.BYPASS_LAN, RouteMode.BYPASS_LAN_CHINA -> {
+            if (enableLocalDNS) {
+                when (routeMode) {
+                    RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> {
                         servers.add(DnsObject.StringOrServerObject().apply {
                             valueY = DnsObject.ServerObject().apply {
                                 address = domesticDns.first()
@@ -105,7 +107,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                     SocksInboundConfigurationObject().apply {
                         auth = "noauth"
                         udp = true
-                        userLevel = 0
+                        userLevel = 8
                     })
             }
         )
@@ -121,7 +123,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                 settings = LazyInboundConfigurationObject(
                     HTTPInboundConfigurationObject().apply {
                         allowTransparent = true
-                        userLevel = 0
+                        userLevel = 8
                     })
             }
         }
@@ -129,7 +131,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
         outbounds = mutableListOf()
         outbounds.add(
             OutboundObject().apply {
-                tag = "out"
+                tag = TAG_AGENT
                 if (bean is SOCKSBean) {
                     protocol = "socks"
                     settings = LazyOutboundConfigurationObject(
@@ -236,7 +238,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                 }
             }
 
-            rules.add(RoutingObject.RuleObject().apply {
+           /* rules.add(RoutingObject.RuleObject().apply {
                 inboundTag = mutableListOf(TAG_SOCKS)
 
                 if (requireHttp) {
@@ -245,7 +247,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
 
                 outboundTag = TAG_AGENT
                 type = "field"
-            })
+            })*/
         }
 
         if (DataStore.enableLocalDNS) {
@@ -285,7 +287,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                 routing.rules.add(0, RoutingObject.RuleObject().apply {
                     type = "field"
                     outboundTag = TAG_AGENT
-                    ip = arrayListOf(remoteDns.first())
+                    ip = listOf(remoteDns.first())
                     port = "53"
                 })
             }

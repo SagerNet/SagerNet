@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     id "kotlin-kapt"
     id "kotlin-parcelize"
+    id "com.jaredsburrows.license"
 }
 
 def keystorePwd = null
@@ -118,6 +119,15 @@ android {
         }
     }
 
+}
+
+licenseReport {
+    generateCsvReport = false
+    generateJsonReport = false
+    generateHtmlReport = true
+    copyHtmlReportToAssets = true
+    copyJsonReportToAssets = false
+    copyCsvReportToAssets = false
 }
 
 dependencies {

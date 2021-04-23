@@ -54,6 +54,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -396,7 +397,8 @@ class AppManagerActivity : AppCompatActivity() {
 
                 onMainDispatcher {
                     text.text = (txt + " " + app.packageName + "\n\n" +
-                            chinaApps.map { it.second }.reversed().joinToString("\n", postfix = "\n")).trim()
+                            chinaApps.map { it.second }.reversed()
+                                .joinToString("\n", postfix = "\n")).trim()
                 }
 
                 val dex = File(app.applicationInfo.publicSourceDir)

@@ -84,11 +84,13 @@
     <string name="off">Off</string>
     <string name="search_apps">Search…</string>
     <string name="scanning">Scanning…</string>
+    <string name="revert_selections">Revert selections</string>
 
     <string name="proxied_apps_mode">Mode</string>
     <string name="bypass_apps">Bypass</string>
     <string name="bypass_apps_summary">Enable this option to bypass selected apps</string>
     <string name="show_system_apps">Show system apps</string>
+    <string name="show_search">Show search</string>
 
     <string name="auto_connect">Auto Connect</string>
     <string name="auto_connect_summary">Enable SagerNet on startup/app update if it was running before</string>

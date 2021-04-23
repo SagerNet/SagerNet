@@ -203,7 +203,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 VPN_MTU.toString(),
                 "--sock-path",
                 File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
-                "--loglevel", "debug")
+                "--loglevel", "warning")
         if (DataStore.enableLocalDNS) {
             cmd += "--dnsgw"
             cmd += "127.0.0.1:${DataStore.localDNSPort}"

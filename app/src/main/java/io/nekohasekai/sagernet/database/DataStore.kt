@@ -58,7 +58,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeMode by configurationStore.string(Key.ROUTE_MODE) { RouteMode.ALL }
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
 
-    var enableLocalDNS by configurationStore.boolean(Key.ENABLE_LOCAL_DNS)
+    var enableLocalDNS by configurationStore.boolean(Key.ENABLE_LOCAL_DNS) { true }
     var remoteDNS by configurationStore.string(Key.REMOTE_DNS) { "1.1.1.1" }
     var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "9.9.9.11" }
 
