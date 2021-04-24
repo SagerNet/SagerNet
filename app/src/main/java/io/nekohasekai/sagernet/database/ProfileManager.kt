@@ -366,6 +366,8 @@ object ProfileManager {
                     }
                 }
             }
+
+            return proxies
         }
 
         val results = parseProxies(text)

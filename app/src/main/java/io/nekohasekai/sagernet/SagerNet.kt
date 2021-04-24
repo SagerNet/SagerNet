@@ -45,6 +45,11 @@ import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
+import org.acra.config.mailSender
+import org.acra.config.notification
+import org.acra.data.StringFormat
+import org.acra.file.Directory
+import org.acra.ktx.initAcra
 import java.io.File
 
 class SagerNet : Application() {
@@ -116,6 +121,30 @@ class SagerNet : Application() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         application = this
+
+        initAcra {
+            alsoReportToAndroidFramework = true
+
+            applicationLogFileDir = Directory.EXTERNAL_FILES
+            applicationLogFile = "application_log.txt"
+            buildConfigClass = BuildConfig::class.java
+            reportFormat = StringFormat.JSON
+            sendReportsInDevMode = false
+            stopServicesOnCrash = true
+
+            mailSender {
+                mailTo = "sekai@neko.services"
+                reportAsFile = true
+                reportFileName = "crash_report.json"
+            }
+
+
+            notification {
+                channelName = "Crash report"
+                channelDescription = ":("
+            }
+
+        }
     }
 
     override fun onCreate() {
