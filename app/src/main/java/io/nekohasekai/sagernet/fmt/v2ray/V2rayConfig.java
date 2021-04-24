@@ -504,12 +504,12 @@ public class V2rayConfig {
 
             public String address;
             public Integer port;
-            public UserObject users;
+            public List<UserObject> users;
 
             public static class UserObject {
 
                 public String id;
-                public String alterId;
+                public Integer alterId;
                 public String security;
                 public Integer level;
 
@@ -538,13 +538,13 @@ public class V2rayConfig {
 
     public static class VLESSOutboundConfigurationObject implements OutboundConfigurationObject {
 
-        public List<VMessOutboundConfigurationObject.ServerObject> vnext;
+        public List<ServerObject> vnext;
 
         public static class ServerObject {
 
             public String address;
             public Integer port;
-            public UserObject users;
+            public List<UserObject> users;
 
             public static class UserObject {
 
@@ -575,6 +575,7 @@ public class V2rayConfig {
         public HttpObject httpSettings;
         public QuicObject quicSettings;
         public DomainSocketObject dsSettings;
+        public GrpcObject grpcObject;
 
     }
 
@@ -589,6 +590,7 @@ public class V2rayConfig {
         public HttpObject httpSettings;
         public QuicObject quicSettings;
         public DomainSocketObject dsSettings;
+        public GrpcObject grpcObject;
         public SockoptObject sockopt;
 
         public static class SockoptObject {
@@ -711,6 +713,12 @@ public class V2rayConfig {
         @SerializedName("abstract")
         public Boolean isAbstract;
         public Boolean padding;
+
+    }
+
+    public static class GrpcObject {
+
+        public String serviceName;
 
     }
 

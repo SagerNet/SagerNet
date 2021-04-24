@@ -34,6 +34,7 @@ import cn.hutool.core.util.ArrayUtil;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
+import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean;
 import io.nekohasekai.sagernet.ktx.KryosKt;
 
@@ -61,12 +62,6 @@ public class KryoConverters {
     }
 
     @TypeConverter
-    public static VMessBean vmessDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
-        return deserialize(new VMessBean(), bytes);
-    }
-
-    @TypeConverter
     public static SOCKSBean socksDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new SOCKSBean(), bytes);
@@ -84,5 +79,16 @@ public class KryoConverters {
         return deserialize(new ShadowsocksRBean(), bytes);
     }
 
+    @TypeConverter
+    public static VMessBean vmessDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new VMessBean(), bytes);
+    }
+
+    @TypeConverter
+    public static VLESSBean vlessDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new VLESSBean(), bytes);
+    }
 
 }

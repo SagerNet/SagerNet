@@ -66,16 +66,16 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     private lateinit var receiver: BroadcastReceiver
 
     override fun init() {
-        init(ShadowsocksBean.DEFAULT_BEAN)
+        ShadowsocksBean.DEFAULT_BEAN.init()
     }
 
-    override fun init(bean: ShadowsocksBean) {
-        DataStore.profileName = bean.name
-        DataStore.serverAddress = bean.serverAddress
-        DataStore.serverPort = bean.serverPort
-        DataStore.serverMethod = bean.method
-        DataStore.serverPassword = bean.password
-        DataStore.serverPlugin = bean.plugin
+    override fun ShadowsocksBean.init() {
+        DataStore.profileName = name
+        DataStore.serverAddress = serverAddress
+        DataStore.serverPort = serverPort
+        DataStore.serverMethod = method
+        DataStore.serverPassword = password
+        DataStore.serverPlugin = plugin
     }
 
     override fun ShadowsocksBean.serialize() {

@@ -68,10 +68,26 @@ object Key {
     const val SERVER_METHOD = "serverMethod"
     const val SERVER_PLUGIN = "serverPlugin"
     const val SERVER_PLUGIN_CONFIGURE = "serverPluginConfigure"
+
+    // ssr
     const val SERVER_PROTOCOL = "serverProtocol"
     const val SERVER_PROTOCOL_PARAM = "serverProtocolParam"
     const val SERVER_OBFS = "serverObfs"
     const val SERVER_OBFS_PARAM = "serverObfsParam"
+
+    //vmess
+    const val SERVER_USER_ID = "serverUserId"
+    const val SERVER_ALTER_ID = "serverAlterId"
+    const val SERVER_SECURITY = "serverSecurity"
+    const val SERVER_NETWORK = "serverNetwork"
+    const val SERVER_HEADER = "serverHeader"
+    const val SERVER_HOST = "serverHost"
+    const val SERVER_PATH = "serverPath"
+    const val SERVER_SNI = "serverSNI"
+    const val SERVER_TLS = "serverTLS"
+
+    // vless
+    const val SERVER_ENCRYPTION = "serverEncryption"
 
 }
 

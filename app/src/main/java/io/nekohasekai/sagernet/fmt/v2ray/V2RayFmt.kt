@@ -29,6 +29,7 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig.*
+import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -151,6 +152,230 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                 }
                             )
                         })
+                } else if (bean is VMessBean) {
+                    protocol = "vmess"
+                    settings = LazyOutboundConfigurationObject(
+                        VMessOutboundConfigurationObject().apply {
+                            vnext = listOf(
+                                VMessOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    port = bean.serverPort
+                                    users = listOf(
+                                        VMessOutboundConfigurationObject.ServerObject.UserObject()
+                                            .apply {
+                                                id = bean.uuid
+                                                alterId = bean.alterId
+                                                security = bean.security.takeIf { it.isNotBlank() }
+                                                    ?: "auto"
+                                                level = 8
+                                            }
+                                    )
+                                }
+                            )
+                        })
+
+                    streamSettings = StreamSettingsObject().apply {
+                        network = bean.network
+                        security = if (bean.tls) "tls" else ""
+                        if (bean.tls) {
+                            tlsSettings = TLSObject().apply {
+                                if (bean.sni.isNotBlank()) {
+                                    serverName = bean.sni
+                                }
+                            }
+                        }
+
+                        when (network) {
+                            "tcp" -> {
+                                tcpSettings = TcpObject().apply {
+                                    if (bean.headerType == "http") {
+                                        header = TcpObject.HeaderObject().apply {
+                                            type = "http"
+                                            if (bean.requestHost.isNotBlank() || bean.path.isNotBlank()) {
+                                                request = TcpObject.HeaderObject.HTTPRequestObject()
+                                                    .apply {
+                                                        headers = mutableMapOf()
+                                                        if (bean.requestHost.isNotBlank()) {
+                                                            headers["Host"] =
+                                                                bean.requestHost.split(",")
+                                                                    .map { it.trim() }
+                                                        }
+                                                        if (bean.path.isNotBlank()) {
+                                                            path = bean.path.split(",")
+                                                        }
+                                                    }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            "kcp" -> {
+                                kcpSettings = KcpObject().apply {
+                                    mtu = 1350
+                                    tti = 50
+                                    uplinkCapacity = 12
+                                    downlinkCapacity = 100
+                                    congestion = false
+                                    readBufferSize = 1
+                                    writeBufferSize = 1
+                                    header = KcpObject.HeaderObject().apply {
+                                        type = bean.headerType
+                                    }
+                                    if (bean.path.isNotBlank()) {
+                                        seed = bean.path
+                                    }
+                                }
+                            }
+                            "ws" -> {
+                                wsSettings = WebSocketObject().apply {
+                                    headers = mutableMapOf()
+
+                                    if (bean.requestHost.isNotBlank()) {
+                                        headers["Host"] = bean.requestHost
+                                    }
+
+                                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                                }
+                            }
+                            "http", "h2" -> {
+                                network = "h2"
+
+                                httpSettings = HttpObject().apply {
+                                    if (bean.requestHost.isNotBlank()) {
+                                        host = bean.requestHost.split(",")
+                                    }
+
+                                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                                }
+                            }
+                            "quic" -> {
+                                quicSettings = QuicObject().apply {
+                                    security = bean.requestHost.takeIf { it.isNotBlank() } ?: "none"
+                                    key = bean.path
+                                    header = QuicObject.HeaderObject().apply {
+                                        type = bean.headerType.takeIf { it.isNotBlank() } ?: "none"
+                                    }
+                                }
+                            }
+                            "grpc" -> {
+                                grpcObject = GrpcObject().apply {
+                                    serviceName = bean.path
+                                }
+                            }
+                        }
+
+                    }
+                } else if (bean is VLESSBean) {
+                    protocol = "vless"
+                    settings = LazyOutboundConfigurationObject(
+                        VLESSOutboundConfigurationObject().apply {
+                            vnext = listOf(
+                                VLESSOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    port = bean.serverPort
+                                    users = listOf(
+                                        VLESSOutboundConfigurationObject.ServerObject.UserObject()
+                                            .apply {
+                                                id = bean.uuid
+                                                encryption = bean.encryption
+                                                level = 8
+                                            }
+                                    )
+                                }
+                            )
+                        })
+
+                    streamSettings = StreamSettingsObject().apply {
+                        network = bean.network
+                        security = if (bean.tls) "tls" else ""
+                        if (bean.tls) {
+                            tlsSettings = TLSObject().apply {
+                                if (bean.sni.isNotBlank()) {
+                                    serverName = bean.sni
+                                }
+                            }
+                        }
+
+                        when (network) {
+                            "tcp" -> {
+                                tcpSettings = TcpObject().apply {
+                                    if (bean.headerType == "http") {
+                                        header = TcpObject.HeaderObject().apply {
+                                            type = "http"
+                                            if (bean.requestHost.isNotBlank() || bean.path.isNotBlank()) {
+                                                request = TcpObject.HeaderObject.HTTPRequestObject()
+                                                    .apply {
+                                                        headers = mutableMapOf()
+                                                        if (bean.requestHost.isNotBlank()) {
+                                                            headers["Host"] =
+                                                                bean.requestHost.split(",")
+                                                                    .map { it.trim() }
+                                                        }
+                                                        if (bean.path.isNotBlank()) {
+                                                            path = bean.path.split(",")
+                                                        }
+                                                    }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            "kcp" -> {
+                                kcpSettings = KcpObject().apply {
+                                    mtu = 1350
+                                    tti = 50
+                                    uplinkCapacity = 12
+                                    downlinkCapacity = 100
+                                    congestion = false
+                                    readBufferSize = 1
+                                    writeBufferSize = 1
+                                    header = KcpObject.HeaderObject().apply {
+                                        type = bean.headerType
+                                    }
+                                    if (bean.path.isNotBlank()) {
+                                        seed = bean.path
+                                    }
+                                }
+                            }
+                            "ws" -> {
+                                wsSettings = WebSocketObject().apply {
+                                    headers = mutableMapOf()
+
+                                    if (bean.requestHost.isNotBlank()) {
+                                        headers["Host"] = bean.requestHost
+                                    }
+
+                                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                                }
+                            }
+                            "http", "h2" -> {
+                                network = "h2"
+
+                                httpSettings = HttpObject().apply {
+                                    if (bean.requestHost.isNotBlank()) {
+                                        host = bean.requestHost.split(",")
+                                    }
+
+                                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                                }
+                            }
+                            "quic" -> {
+                                quicSettings = QuicObject().apply {
+                                    security = bean.requestHost.takeIf { it.isNotBlank() } ?: "none"
+                                    key = bean.path
+                                    header = QuicObject.HeaderObject().apply {
+                                        type = bean.headerType.takeIf { it.isNotBlank() } ?: "none"
+                                    }
+                                }
+                            }
+                            "grpc" -> {
+                                grpcObject = GrpcObject().apply {
+                                    serviceName = bean.path
+                                }
+                            }
+                        }
+
+                    }
                 } else if (bean is ShadowsocksBean) {
                     if (!proxy.useExternalShadowsocks()) {
                         protocol = "shadowsocks"
@@ -323,10 +548,11 @@ fun parseVmess(link: String): VMessBean {
 
     bean.serverAddress = json.getStr("add")
     bean.serverPort = json.getInt("port")
+    bean.security = json.getStr("scy")
     bean.uuid = json.getStr("id")
     bean.alterId = json.getInt("aid")
-    bean.network = json.getStr("network")
-    bean.header = json.getStr("type")
+    bean.network = json.getStr("net")
+    bean.headerType = json.getStr("type")
     bean.requestHost = json.getStr("host")
     bean.path = json.getStr("path")
     bean.name = json.getStr("ps")
@@ -383,7 +609,7 @@ fun parseVmess1(link: String): VMessBean {
     bean.name = lnk.fragment
     lnk.queryParameterNames.forEach {
         when (it) {
-            "tag" -> bean.tag = lnk.queryParameter(it)
+            //  "tag" -> bean.tag = lnk.queryParameter(it)
             "tls" -> bean.tls = lnk.queryParameter(it) == "true"
             "network" -> {
                 bean.network = lnk.queryParameter(it)!!
@@ -391,11 +617,10 @@ fun parseVmess1(link: String): VMessBean {
                     bean.path = lnk.pathSegments.joinToString("/", "/")
                 }
             }
-            "kcp.uplinkcapacity" -> bean.kcpUpLinkCapacity = lnk.queryParameter(it)!!.toInt()
-            "kcp.downlinkcapacity" -> bean.kcpDownLinkCapacity =
-                lnk.queryParameter(it)!!.toInt()
-            "header" -> bean.header = lnk.queryParameter(it)
-            "mux" -> bean.mux = lnk.queryParameter(it)!!.toInt()
+            /*  "kcp.uplinkcapacity" -> bean.kcpUpLinkCapacity = lnk.queryParameter(it)!!.toInt()
+              "kcp.downlinkcapacity" -> bean.kcpDownLinkCapacity =
+                  lnk.queryParameter(it)!!.toInt()*/
+            "header" -> bean.headerType = lnk.queryParameter(it)
             // custom
             "host" -> bean.requestHost = lnk.queryParameter(it)
             "sni" -> bean.sni = lnk.queryParameter(it)
@@ -406,6 +631,28 @@ fun parseVmess1(link: String): VMessBean {
 
     bean.initDefaultValues()
     return bean
+}
+
+fun VMessBean.toV2rayN(): String {
+
+    return "vmess://" + JSONObject().also {
+
+        it["v"] = 2
+        it["ps"] = name
+        it["add"] = serverAddress
+        it["port"] = serverPort
+        it["id"] = uuid
+        it["aid"] = alterId
+        it["net"] = network
+        it["host"] = requestHost
+        it["type"] = headerType
+        it["path"] = path
+        it["tls"] = if (tls) "true" else ""
+        it["sni"] = sni
+        it["scy"] = security
+
+    }.toString().let { Base64.encodeUrlSafe(it) }
+
 }
 
 fun VMessBean.toVmess1(): String {
@@ -423,32 +670,32 @@ fun VMessBean.toVmess1(): String {
         builder.addPathSegment(path)
     }
 
-    if (!tag.isNullOrBlank()) {
-        builder.addQueryParameter("tag", tag)
-    }
-
+    /* if (!tag.isNullOrBlank()) {
+         builder.addQueryParameter("tag", tag)
+     }
+ */
     if (!network.isNullOrBlank()) {
         builder.addQueryParameter("network", network)
     }
 
-    if (kcpUpLinkCapacity != 0) {
-        builder.addQueryParameter("kcp.uplinkcapacity", "$kcpUpLinkCapacity")
+    /* if (kcpUpLinkCapacity != 0) {
+         builder.addQueryParameter("kcp.uplinkcapacity", "$kcpUpLinkCapacity")
+     }
+
+     if (kcpDownLinkCapacity != 0) {
+         builder.addQueryParameter("kcp.downlinkcapacity", "$kcpDownLinkCapacity")
+     }*/
+
+    if (!headerType.isNullOrBlank()) {
+        builder.addQueryParameter("header", headerType)
     }
 
-    if (kcpDownLinkCapacity != 0) {
-        builder.addQueryParameter("kcp.downlinkcapacity", "$kcpDownLinkCapacity")
-    }
-
-    if (!header.isNullOrBlank()) {
-        builder.addQueryParameter("header", header)
-    }
-
-    if (mux != 0) {
-        builder.addQueryParameter("mux", "$mux")
-    }
+    /* if (mux != 0) {
+         builder.addQueryParameter("mux", "$mux")
+     }*/
 
     if (!name.isNullOrBlank()) {
-        builder.fragment(name)
+        builder.encodedFragment(name.urlSafe())
     }
 
     // custom
@@ -469,6 +716,6 @@ fun VMessBean.toVmess1(): String {
         builder.addQueryParameter("alterid", "$alterId")
     }
 
-    return builder.build().toString().replace("https://", "vmess1://")
+    return builder.build().toString().replace("https://", "vmess://")
 
 }

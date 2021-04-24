@@ -28,6 +28,12 @@
                     <item
                         android:id="@+id/action_new_ssr"
                         android:title="@string/action_shadowsocksr" />
+                    <item
+                        android:id="@+id/action_new_vmess"
+                        android:title="@string/action_vmess" />
+                    <item
+                        android:id="@+id/action_new_vless"
+                        android:title="@string/action_vless" />
                 </menu>
             </item>
 

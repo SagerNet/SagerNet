@@ -130,10 +130,26 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
     var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
     var serverPlugin by profileCacheStore.string(Key.SERVER_PLUGIN)
+
+    // ssr
     var serverProtocol by profileCacheStore.string(Key.SERVER_PROTOCOL)
     var serverProtocolParam by profileCacheStore.string(Key.SERVER_PROTOCOL_PARAM)
     var serverObfs by profileCacheStore.string(Key.SERVER_OBFS)
     var serverObfsParam by profileCacheStore.string(Key.SERVER_OBFS_PARAM)
+
+    // vmess
+    var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)
+    var serverAlterId by profileCacheStore.stringToInt(Key.SERVER_ALTER_ID)
+    var serverSecurity by profileCacheStore.string(Key.SERVER_SECURITY)
+    var serverNetwork by profileCacheStore.string(Key.SERVER_NETWORK)
+    var serverHeader by profileCacheStore.string(Key.SERVER_HEADER)
+    var serverHost by profileCacheStore.string(Key.SERVER_HOST)
+    var serverPath by profileCacheStore.string(Key.SERVER_PATH)
+    var serverSNI by profileCacheStore.string(Key.SERVER_SNI)
+    var serverTLS by profileCacheStore.boolean(Key.SERVER_TLS)
+
+    // vless
+    var serverEncryption by profileCacheStore.string(Key.SERVER_ENCRYPTION)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {

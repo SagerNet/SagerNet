@@ -3,13 +3,16 @@
     <words>
       <w>aead</w>
       <w>downlink</w>
+      <w>grpc</w>
       <w>gson</w>
       <w>nekohasekai</w>
       <w>obfs</w>
+      <w>quic</w>
       <w>shadowsocks</w>
       <w>shadowsocksr</w>
       <w>snackbar</w>
       <w>uplink</w>
+      <w>vless</w>
       <w>vmess</w>
     </words>
   </dictionary>

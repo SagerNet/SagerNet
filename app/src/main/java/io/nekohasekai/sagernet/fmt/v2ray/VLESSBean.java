@@ -30,17 +30,16 @@ import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class VMessBean extends AbstractBean {
+public class VLESSBean extends AbstractBean {
 
-    public static VMessBean DEFAULT_BEAN = new VMessBean() {{
+    public static VLESSBean DEFAULT_BEAN = new VLESSBean() {{
         serverPort = 1080;
         initDefaultValues();
     }};
 
     public String uuid;
-    public String security;
+    public String encryption;
 
-    public int alterId;
     public String network;
     public String headerType;
 
@@ -60,8 +59,8 @@ public class VMessBean extends AbstractBean {
         if (StrUtil.isBlank(uuid)) {
             uuid = "";
         }
-        if (StrUtil.isBlank(security)) {
-            security = "auto";
+        if (StrUtil.isBlank(encryption)) {
+            encryption = "none";
         }
         if (StrUtil.isBlank(network)) {
             network = "tcp";
@@ -85,9 +84,8 @@ public class VMessBean extends AbstractBean {
         output.writeInt(0);
         super.serialize(output);
         output.writeString(uuid);
-        output.writeString(security);
+        output.writeString(encryption);
 
-        output.writeInt(alterId);
         output.writeString(network);
         output.writeString(headerType);
 
@@ -103,9 +101,8 @@ public class VMessBean extends AbstractBean {
         int version = input.readInt();
         super.deserialize(input);
         uuid = input.readString();
-        security = input.readString();
+        encryption = input.readString();
 
-        alterId = input.readInt();
         network = input.readString();
         headerType = input.readString();
 
@@ -118,7 +115,7 @@ public class VMessBean extends AbstractBean {
 
     @NotNull
     @Override
-    public VMessBean clone() {
-        return KryoConverters.deserialize(new VMessBean(), KryoConverters.serialize(this));
+    public VLESSBean clone() {
+        return KryoConverters.deserialize(new VLESSBean(), KryoConverters.serialize(this));
     }
 }

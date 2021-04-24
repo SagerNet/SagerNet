@@ -82,6 +82,16 @@
     <string name="protocol_param">Protocol Param</string>
     <string name="obfs">Obfs</string>
     <string name="obfs_param">Obfs Param</string>
+    <string name="uuid">User ID</string>
+    <string name="alter_id">Alter ID</string>
+    <string name="security">Security</string>
+    <string name="network">Network</string>
+    <string name="header_type">Header Type</string>
+    <string name="request_host">Request Host / QUIC Security</string>
+    <string name="path">Path / Key / Seed / ServiceName</string>
+    <string name="tls">Use TLS</string>
+    <string name="sni">Server Name Indication</string>
+    <string name="encryption">Encryption</string>
 
     <!-- feature category -->
     <string name="ipv6">IPv6 Route</string>
@@ -155,8 +165,10 @@
     <string name="action_socks">Socks</string>
     <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_shadowsocksr">ShadowsocksR</string>
-    <string name="action_group">Group</string>
+    <string name="action_vmess">VMess</string>
+    <string name="action_vless">VLESS</string>
 
+    <string name="action_group">Group</string>
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
 

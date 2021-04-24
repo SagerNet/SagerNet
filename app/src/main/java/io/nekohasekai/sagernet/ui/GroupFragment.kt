@@ -98,12 +98,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 super.getSwipeDirs(recyclerView, viewHolder)
             } else 0
 
-            override fun getDragDirs(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-            ) = if (!(viewHolder as GroupHolder).refreshing) super.getDragDirs(recyclerView,
-                viewHolder) else 0
-
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val index = viewHolder.adapterPosition
                 groupAdapter.remove(index)

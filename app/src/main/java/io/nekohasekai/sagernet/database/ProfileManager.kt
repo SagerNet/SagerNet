@@ -31,6 +31,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.parseProxies
@@ -249,6 +250,7 @@ object ProfileManager {
          groupIterator { onAddFinish(proxies.size) }*/
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun parseSubscription(text: String, tryDecode: Boolean = true): List<AbstractBean> {
         if (tryDecode) {
             try {
@@ -296,35 +298,40 @@ object ProfileManager {
                             plugin = pluginStr
                             name = proxy["name"] as String? ?: ""
                         })
-                        /*"vmess" -> {
-                            val opts = AngConfig.VmessBean()
-                            for (opt in proxy) {
-                                when (opt.key) {
-                                    "name" -> opts.remarks = opt.value as String
-                                    "server" -> opts.address = opt.value as String
-                                    "port" -> opts.port = opt.value as Int
-                                    "uuid" -> opts.id = opt.value as String
-                                    "alterId" -> opts.alterId = opt.value as Int
-                                    "cipher" -> opts.security = opt.value as String
-                                    "network" -> opts.network = opt.value as String
-                                    "tls" -> opts.streamSecurity = if (opt.value?.toString() == "true") "tls" else opts.streamSecurity
-                                    "ws-path" -> opts.path = opt.value as String
-                                    "servername" -> opts.requestHost = opt.value as String
-                                    "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
-                                        when (h2Opt.key) {
-                                            "host" -> opts.requestHost = (h2Opt.value as List<String>).first()
-                                            "path" -> opts.path = h2Opt.value as String
-                                        }
+                    }
+                    "vmess" -> {
+                        val bean = VMessBean()
+                        for (opt in proxy) {
+                            when (opt.key) {
+                                "name" -> bean.name = opt.value as String
+                                "server" -> bean.serverAddress = opt.value as String
+                                "port" -> bean.serverPort = opt.value as Int
+                                "uuid" -> bean.uuid = opt.value as String
+                                "alterId" -> bean.alterId = opt.value as Int
+                                "cipher" -> bean.security = opt.value as String
+                                "network" -> bean.network = opt.value as String
+                                "tls" -> bean.tls = opt.value?.toString() == "true"
+                                "ws-path" -> bean.path = opt.value as String
+                                "servername" -> bean.requestHost = opt.value as String
+                                "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
+                                    when (h2Opt.key) {
+                                        "host" -> bean.requestHost =
+                                            (h2Opt.value as List<String>).first()
+                                        "path" -> bean.path = h2Opt.value as String
                                     }
-                                    "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
-                                        when (httpOpt.key) {
-                                            "path" -> opts.path = (httpOpt.value as List<String>).first()
-                                        }
+                                }
+                                "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
+                                    when (httpOpt.key) {
+                                        "path" -> bean.path =
+                                            (httpOpt.value as List<String>).first()
                                     }
                                 }
                             }
-                            proxies.add(opts.toString())
                         }
+                        proxies.add(bean)
+                    }
+
+                    /*
                         "trojan" -> {
                             val opts = AngConfig.VmessBean()
                             opts.configType = V2RayConfig.EConfigType.Trojan
@@ -340,7 +347,6 @@ object ProfileManager {
                             proxies.add(opts.toString())
                         }
                         */
-                    }
                     "ssr" -> {
                         val entity = ShadowsocksRBean()
                         for (opt in proxy) {

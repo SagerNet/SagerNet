@@ -35,19 +35,19 @@ class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>()
     override fun createEntity() = ShadowsocksRBean()
 
     override fun init() {
-        init(ShadowsocksRBean.DEFAULT_BEAN)
+        ShadowsocksRBean.DEFAULT_BEAN.init()
     }
 
-    override fun init(bean: ShadowsocksRBean) {
-        DataStore.profileName = bean.name
-        DataStore.serverAddress = bean.serverAddress
-        DataStore.serverPort = bean.serverPort
-        DataStore.serverPassword = bean.password
-        DataStore.serverMethod = bean.method
-        DataStore.serverProtocol = bean.protocol
-        DataStore.serverProtocolParam = bean.protocolParam
-        DataStore.serverObfs = bean.obfs
-        DataStore.serverObfsParam = bean.obfsParam
+    override fun ShadowsocksRBean.init() {
+        DataStore.profileName = name
+        DataStore.serverAddress = serverAddress
+        DataStore.serverPort = serverPort
+        DataStore.serverPassword = password
+        DataStore.serverMethod = method
+        DataStore.serverProtocol = protocol
+        DataStore.serverProtocolParam = protocolParam
+        DataStore.serverObfs = obfs
+        DataStore.serverObfsParam = obfsParam
     }
 
     override fun ShadowsocksRBean.serialize() {
@@ -61,7 +61,6 @@ class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>()
         obfs = DataStore.serverObfs
         obfsParam = DataStore.serverObfsParam
     }
-
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,

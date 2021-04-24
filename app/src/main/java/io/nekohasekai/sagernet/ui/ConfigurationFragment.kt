@@ -45,9 +45,7 @@ import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity
-import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
-import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import okhttp3.*
@@ -192,14 +190,12 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             R.id.action_new_ssr -> {
                 startActivity(Intent(requireActivity(), ShadowsocksRSettingsActivity::class.java))
             }
-            /*R.id.action_from_link -> {
-                AlertDialogFragment.setResultListener<SubDialogFragment, SubEditResult>(this) { _, ret ->
-                    val result =
-                        ret?.takeIf { !it.link.isNullOrEmpty() } ?: return@setResultListener
-                    SubAddDialog().apply { arg(result);key() }.show(parentFragmentManager, null)
-                }
-                SubDialogFragment().apply { key() }.show(parentFragmentManager, null)
-            }*/
+            R.id.action_new_vmess -> {
+                startActivity(Intent(requireActivity(), VMessSettingsActivity::class.java))
+            }
+            R.id.action_new_vless -> {
+                startActivity(Intent(requireActivity(), VLESSSettingsActivity::class.java))
+            }
         }
         return true
     }
@@ -567,7 +563,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         }
 
 
-
         inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
             PopupMenu.OnMenuItemClickListener {
 
@@ -630,8 +625,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     val popup = PopupMenu(requireContext(), it)
                     popup.menuInflater.inflate(when (proxyEntity.type) {
                         0 -> R.menu.socks_share_menu
-                        1 -> R.menu.shadowsocks_share_menu
-                        2 -> R.menu.shadowsocksr_share_menu
+                        1 -> R.menu.socks_share_menu
+                        2 -> R.menu.socks_share_menu
+                        3 -> R.menu.socks_share_menu
                         else -> error("Undefined type $proxyEntity.type")
                     }, popup.menu)
                     popup.setOnMenuItemClickListener(this)

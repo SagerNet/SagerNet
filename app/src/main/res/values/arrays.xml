@@ -201,16 +201,16 @@
     <string-array name="service_modes">
         <item>@string/service_mode_vpn</item>
         <item>@string/service_mode_proxy</item>
-<!--
-        <item>@string/service_mode_transproxy</item>
--->
+        <!--
+                <item>@string/service_mode_transproxy</item>
+        -->
     </string-array>
     <string-array name="service_mode_values" translatable="false">
         <item>vpn</item>
         <item>proxy</item>
-<!--
-        <item>transproxy</item>
--->
+        <!--
+                <item>transproxy</item>
+        -->
     </string-array>
 
     <string-array name="route_entry">
@@ -268,7 +268,7 @@
         <item>chacha20-ietf</item>
     </string-array>
 
-    <string-array name="protocol_entry">
+    <string-array name="protocol_entry" translatable="false">
         <item>ORIGIN</item>
         <item>VERIFY_SIMPLE</item>
         <item>VERIFY_SHA1</item>
@@ -281,7 +281,7 @@
         <item>AUTH_CHAIN_B</item>
     </string-array>
 
-    <string-array name="protocol_value">
+    <string-array name="protocol_value" translatable="false">
         <item>origin</item>
         <item>verify_simple</item>
         <item>verify_sha1</item>
@@ -294,8 +294,7 @@
         <item>auth_chain_b</item>
     </string-array>
 
-
-    <string-array name="obfs_entry">
+    <string-array name="obfs_entry" translatable="false">
         <item>PLAIN</item>
         <item>HTTP_SIMPLE</item>
         <item>HTTP_POST</item>
@@ -303,12 +302,67 @@
         <item>TLS1.2_TICKET_AUTH</item>
     </string-array>
 
-    <string-array name="obfs_value">
+    <string-array name="obfs_value" translatable="false">
         <item>plain</item>
         <item>http_simple</item>
         <item>http_post</item>
         <item>tls_simple</item>
         <item>tls1.2_ticket_auth</item>
     </string-array>
+
+    <string-array name="networks_entry" translatable="false">
+        <item>TCP</item>
+        <item>KCP</item>
+        <item>WS</item>
+        <item>H2</item>
+        <item>QUIC</item>
+        <item>GRPC</item>
+    </string-array>
+
+    <string-array name="networks_value" translatable="false">
+        <item>tcp</item>
+        <item>kcp</item>
+        <item>ws</item>
+        <item>h2</item>
+        <item>quic</item>
+        <item>grpc</item>
+    </string-array>
+
+    <string-array name="headers_entry" translatable="false">
+        <item>NONE</item>
+        <item>HTTP</item>
+        <item>SRTP</item>
+        <item>UTP</item>
+        <item>WECHAT-VIDEO</item>
+        <item>DTLS</item>
+        <item>WIREGUARD</item>
+    </string-array>
+
+    <string-array name="headers_value" translatable="false">
+        <item>none</item>
+        <item>http</item>
+        <item>srtp</item>
+        <item>utp</item>
+        <item>wechat-video</item>
+        <item>dtls</item>
+        <item>wireguard</item>
+    </string-array>
+
+    <string-array name="securities_entry" translatable="false">
+        <item>CHACHA20-POLY1305</item>
+        <item>AES-128-GCM</item>
+        <item>AUTO</item>
+        <item>NONE</item>
+        <item>ZERO</item>
+    </string-array>
+
+    <string-array name="securities_value" translatable="false">
+        <item>chacha20-poly1305</item>
+        <item>aes-128-gcm</item>
+        <item>auto</item>
+        <item>none</item>
+        <item>zero</item>
+    </string-array>
+
 
 </resources>

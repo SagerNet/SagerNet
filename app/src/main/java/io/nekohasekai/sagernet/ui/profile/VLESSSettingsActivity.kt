@@ -28,43 +28,56 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
+import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 
-class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
+class VLESSSettingsActivity : ProfileSettingsActivity<VLESSBean>() {
 
-    override fun createEntity() = SOCKSBean()
+    override fun createEntity() = VLESSBean()
 
     override fun init() {
-        SOCKSBean.DEFAULT_BEAN.init()
+        VLESSBean.DEFAULT_BEAN.init()
     }
 
-    override fun SOCKSBean.init() {
+    override fun VLESSBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
-        DataStore.serverUsername = username
-        DataStore.serverPassword = password
-        DataStore.serverUdp = udp
+        DataStore.serverUserId = uuid
+        DataStore.serverEncryption = encryption
+        DataStore.serverNetwork = network
+        DataStore.serverHeader = headerType
+        DataStore.serverHost = requestHost
+        DataStore.serverPath = path
+        DataStore.serverSNI = sni
+        DataStore.serverTLS = tls
     }
 
-    override fun SOCKSBean.serialize() {
+    override fun VLESSBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
-        username = DataStore.serverUsername
-        password = DataStore.serverPassword
-        udp = DataStore.serverUdp
+        uuid = DataStore.serverUserId
+        encryption = DataStore.serverEncryption
+        network = DataStore.serverNetwork
+        headerType = DataStore.serverHeader
+        requestHost = DataStore.serverHost
+        path = DataStore.serverPath
+        sni = DataStore.serverSNI
+        tls = DataStore.serverTLS
     }
+
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.socks_preferences)
+        addPreferencesFromResource(R.xml.vmess_preferences)
+
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
-        findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
+        findPreference<EditTextPreference>(Key.SERVER_USER_ID)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
     }

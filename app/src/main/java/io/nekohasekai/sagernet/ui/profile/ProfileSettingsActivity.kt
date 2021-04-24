@@ -89,7 +89,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
     abstract fun createEntity(): T
     abstract fun init()
-    abstract fun init(bean: T)
+    abstract fun T.init()
     abstract fun T.serialize()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +119,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
                         return@runOnDefaultDispatcher
                     }
                     DataStore.editingGroup = proxyEntity.groupId
-                    init(proxyEntity.requireBean() as T)
+                    (proxyEntity.requireBean() as T).init()
                 }
 
                 onMainDispatcher {

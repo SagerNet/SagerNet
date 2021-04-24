@@ -36,12 +36,11 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
+import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ui.profile.ProfileSettingsActivity
-import io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity
-import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
-import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(tableName = "proxy_entities", indices = [
     Index("groupId", name = "groupId")
@@ -54,10 +53,11 @@ data class ProxyEntity(
     var userOrder: Long = 0L,
     var tx: Long = 0L,
     var rx: Long = 0L,
-    var vmessBean: VMessBean? = null,
     var socksBean: SOCKSBean? = null,
     var ssBean: ShadowsocksBean? = null,
     var ssrBean: ShadowsocksRBean? = null,
+    var vmessBean: VMessBean? = null,
+    var vlessBean: VLESSBean? = null,
 ) : Parcelable {
 
     @Ignore
@@ -83,6 +83,7 @@ data class ProxyEntity(
             0 -> socksBean = KryoConverters.socksDeserialize(byteArray)
             1 -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
             2 -> ssrBean = KryoConverters.shadowsocksRDeserialize(byteArray)
+            3 -> vmessBean = KryoConverters.vmessDeserialize(byteArray)
         }
     }
 
@@ -105,6 +106,8 @@ data class ProxyEntity(
             0 -> "SOCKS5"
             1 -> "Shadowsocks"
             2 -> "ShadowsocksR"
+            3 -> "VMess"
+            4 -> "VLESS"
             else -> "Undefined type $type"
         }
     }
@@ -120,6 +123,8 @@ data class ProxyEntity(
             0 -> socksBean ?: error("Null socks node")
             1 -> ssBean ?: error("Null ss node")
             2 -> ssrBean ?: error("Null ssr node")
+            3 -> vmessBean ?: error("Null vmess node")
+            4 -> vlessBean ?: error("Null vless node")
             else -> error("Undefined type $type")
         }
     }
@@ -129,6 +134,8 @@ data class ProxyEntity(
             0 -> requireSOCKS().toUri()
             1 -> requireSS().toUri()
             2 -> requireSSR().toUri()
+            3 -> requireVMess().toV2rayN()
+            4 -> "目前 VLESS 不支持分享。(https://www.v2fly.org/config/protocols/vless.html)"
             else -> error("Undefined type $type")
         }
     }
@@ -159,24 +166,30 @@ data class ProxyEntity(
                 type = 2
                 ssrBean = bean
             }
-            /*is VMessBean -> {
-                type = 2
+            is VMessBean -> {
+                type = 3
                 vmessBean = bean
-            }*/
+            }
+            is VLESSBean -> {
+                type = 4
+                vlessBean = bean
+            }
             else -> error("Undefined type $type")
         }
     }
 
-    fun requireVMess() = requireBean() as VMessBean
     fun requireSOCKS() = requireBean() as SOCKSBean
     fun requireSS() = requireBean() as ShadowsocksBean
     fun requireSSR() = requireBean() as ShadowsocksRBean
+    fun requireVMess() = requireBean() as VMessBean
+    fun requireVLESS() = requireBean() as VMessBean
 
     fun settingIntent(ctx: Context): Intent {
         return Intent(ctx, when (type) {
             0 -> SocksSettingsActivity::class.java
             1 -> ShadowsocksSettingsActivity::class.java
             2 -> ShadowsocksRSettingsActivity::class.java
+            3 -> VMessSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)
