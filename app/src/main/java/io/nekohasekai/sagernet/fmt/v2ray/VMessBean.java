@@ -50,7 +50,6 @@ public class VMessBean extends AbstractV2RayBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
         super.serialize(output);
 
         output.writeString(security);
@@ -59,7 +58,6 @@ public class VMessBean extends AbstractV2RayBean {
 
     @Override
     public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
         super.deserialize(input);
 
         security = input.readString();

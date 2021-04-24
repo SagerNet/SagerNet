@@ -70,6 +70,7 @@ public abstract class AbstractV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
+        output.writeInt(0);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(network);
@@ -84,6 +85,7 @@ public abstract class AbstractV2RayBean extends AbstractBean {
 
     @Override
     public void deserialize(ByteBufferInput input) {
+        int version = input.readInt();
         super.deserialize(input);
         uuid = input.readString();
         network = input.readString();

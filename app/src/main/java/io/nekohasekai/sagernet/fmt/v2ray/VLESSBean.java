@@ -49,14 +49,12 @@ public class VLESSBean extends AbstractV2RayBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
         super.serialize(output);
         output.writeString(encryption);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
         super.deserialize(input);
         encryption = input.readString();
     }

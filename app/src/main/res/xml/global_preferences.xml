@@ -113,4 +113,21 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:initialExpandedChildrenCount="1"
+        app:title="@string/cag_ws">
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="wsBrowserForwarding"
+            app:summary="@string/ws_browser_forwarding_sum"
+            app:title="@string/ws_browser_forwarding" />
+        <EditTextPreference
+            app:defaultValue="0"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="wsMaxEarlyData"
+            app:title="@string/ws_max_early_data"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

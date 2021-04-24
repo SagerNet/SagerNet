@@ -113,7 +113,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var wsMaxEarlyData by configurationStore.stringToInt(Key.WS_MAX_EARLY_DATA) { 0 }
-    var wsBrowserForwarding by configurationStore.boolean(Key.WS_BROWSER_FORWARDING) { true }
+    var wsBrowserForwarding by configurationStore.boolean(Key.WS_BROWSER_FORWARDING) { false }
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
