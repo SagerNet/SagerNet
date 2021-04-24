@@ -75,6 +75,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         groupPager = view.findViewById(R.id.group_pager)
         tabLayout = view.findViewById(R.id.group_tab)
         adapter = GroupPagerAdapter()
+        ProfileManager.addListener(adapter)
+
         groupPager.adapter = adapter
         groupPager.offscreenPageLimit = 2
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -127,6 +129,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             }
 
         }
+    }
+
+    override fun onDestroy() {
+        if (::adapter.isInitialized) {
+            ProfileManager.removeListener(adapter)
+        }
+
+        super.onDestroy()
     }
 
     fun snackbar(text: String) = (activity as MainActivity).snackbar(text)
@@ -200,7 +210,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         var groupList: ArrayList<ProxyGroup> = ArrayList()
 
         init {
-            ProfileManager.addListener(this)
 
             runOnDefaultDispatcher {
                 groupList = ArrayList(SagerDatabase.groupDao.allGroups())
@@ -310,6 +319,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = ConfigurationAdapter()
+            ProfileManager.addListener(adapter)
 
             configurationListView = view.findViewById(R.id.configuration_list)
             configurationListView.layoutManager = layoutManager
@@ -363,6 +373,17 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
         }
 
+        override fun onDestroy() {
+            if (::adapter.isInitialized) {
+                ProfileManager.removeListener(adapter)
+            }
+
+            super.onDestroy()
+
+            if (!::undoManager.isInitialized) return
+            undoManager.flush()
+        }
+
         inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
             ProfileManager.Listener, UndoSnackbarManager.Interface<ProxyEntity> {
 
@@ -383,7 +404,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             private fun getItemAt(index: Int) = getItem(configurationIdList[index])
 
             init {
-                ProfileManager.addListener(this)
                 runOnDefaultDispatcher {
                     reloadProfiles(proxyGroup.id)
                 }
@@ -546,12 +566,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
         }
 
-        override fun onDestroyView() {
-            super.onDestroyView()
 
-            if (!::undoManager.isInitialized) return
-            undoManager.flush()
-        }
 
         inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
             PopupMenu.OnMenuItemClickListener {

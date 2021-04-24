@@ -384,8 +384,23 @@ class AppManagerActivity : AppCompatActivity() {
                 "com.vivo",
                 "com.xiaomi",
                 "com.huawei",
-                "com.taobao"
-            ).joinToString("|") + ").*").toRegex()
+                "com.taobao",
+                "com.secneo",
+                "s.h.e.l.l",
+                "com.stub",
+                "com.kiwisec",
+                "com.secshell",
+                "com.wrapper",
+                "cn.securitystack",
+                "com.mogosec",
+                "com.secoen",
+                "com.netease",
+                "com.mx",
+                "com.qq.e",
+                "com.baidu",
+                "com.bytedance",
+                "com.bugly"
+            ).joinToString("|") { "${it.replace(".", "\\.")}\\." } + ").*").toRegex()
 
             val bypass = DataStore.bypass
 

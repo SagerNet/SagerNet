@@ -32,7 +32,7 @@
     <string name="group_show_diff">Diff</string>
     <string name="group_delete_confirm_prompt">Are you sure you want to remove this group?</string>
     <string name="group_added">Added: \n%s</string>
-    <string name="group_changed">Added: \n%s</string>
+    <string name="group_changed">Updated: \n%s</string>
     <string name="group_deleted">Deleted: \n%s</string>
 
     <!-- misc -->

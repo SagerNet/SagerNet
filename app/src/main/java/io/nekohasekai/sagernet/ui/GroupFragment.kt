@@ -82,6 +82,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         groupListView = view.findViewById(R.id.group_list)
         groupListView.layoutManager = LinearLayoutManager(requireContext())
         groupAdapter = GroupAdapter()
+        ProfileManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter
 
         undoManager =
@@ -265,7 +266,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
                                         val dialog = AlertDialog.Builder(activity)
                                             .setTitle(R.string.group_show_diff)
-                                            .setMessage(status)
+                                            .setMessage(status.trim())
                                             .setPositiveButton(android.R.string.ok, null)
                                             .show()
                                     }.show()
@@ -441,8 +442,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         init {
-            ProfileManager.addListener(this)
-
             runOnDefaultDispatcher {
                 reload()
             }
@@ -574,8 +573,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        if (::groupAdapter.isInitialized) {
+            ProfileManager.removeListener(groupAdapter)
+        }
+
+        super.onDestroy()
 
         if (!::undoManager.isInitialized) return
         undoManager.flush()

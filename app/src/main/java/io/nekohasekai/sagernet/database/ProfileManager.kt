@@ -40,9 +40,9 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.yaml.snakeyaml.Yaml
 import java.io.IOException
-import java.lang.ref.WeakReference
 import java.sql.SQLException
 import java.util.*
+import kotlin.collections.ArrayList
 
 object ProfileManager {
 
@@ -71,20 +71,15 @@ object ProfileManager {
     }
 
 
-    private val listeners = LinkedList<WeakReference<Listener>>()
-    private val groupListeners = LinkedList<WeakReference<GroupListener>>()
+    private val listeners = ArrayList<Listener>()
+    private val groupListeners = ArrayList<GroupListener>()
 
     suspend fun iterator(what: suspend Listener.() -> Unit) {
         val listeners = synchronized(listeners) {
             listeners
         }
         for (profileListener in listeners) {
-            val listener = profileListener.get()
-            if (listener == null) {
-                this.listeners.remove(profileListener)
-                return
-            }
-            what(listener)
+            what(profileListener)
         }
     }
 
@@ -92,25 +87,33 @@ object ProfileManager {
         val groupListeners = synchronized(groupListeners) {
             groupListeners
         }
-        for (groupListener in groupListeners) {
-            val listener = groupListener.get()
-            if (listener == null) {
-                this.groupListeners.remove(groupListener)
-                return
-            }
+        for (listener in groupListeners) {
             what(listener)
         }
     }
 
     fun addListener(listener: Listener) {
         synchronized(listeners) {
-            listeners.add(WeakReference(listener))
+            listeners.add(listener)
+        }
+    }
+
+    fun removeListener(listener: Listener) {
+        synchronized(listeners) {
+            listeners.remove(listener)
         }
     }
 
     fun addListener(listener: GroupListener) {
         synchronized(groupListeners) {
-            groupListeners.add(WeakReference(listener))
+            groupListeners.add(listener)
+        }
+    }
+
+
+    fun removeListener(listener: GroupListener) {
+        synchronized(groupListeners) {
+            groupListeners.remove(listener)
         }
     }
 
