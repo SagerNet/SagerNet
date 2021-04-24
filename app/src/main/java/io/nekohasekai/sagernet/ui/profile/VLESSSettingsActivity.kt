@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
-import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 
 class VLESSSettingsActivity : ProfileSettingsActivity<VLESSBean>() {
 
@@ -72,7 +71,7 @@ class VLESSSettingsActivity : ProfileSettingsActivity<VLESSBean>() {
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.vmess_preferences)
+        addPreferencesFromResource(R.xml.vless_preferences)
 
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)

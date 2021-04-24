@@ -258,7 +258,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                 }
                             }
                             "grpc" -> {
-                                grpcObject = GrpcObject().apply {
+                                grpcSettings = GrpcObject().apply {
                                     serviceName = bean.path
                                 }
                             }
@@ -369,7 +369,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                 }
                             }
                             "grpc" -> {
-                                grpcObject = GrpcObject().apply {
+                                grpcSettings = GrpcObject().apply {
                                     serviceName = bean.path
                                 }
                             }

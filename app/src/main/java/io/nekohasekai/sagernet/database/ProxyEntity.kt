@@ -190,6 +190,7 @@ data class ProxyEntity(
             1 -> ShadowsocksSettingsActivity::class.java
             2 -> ShadowsocksRSettingsActivity::class.java
             3 -> VMessSettingsActivity::class.java
+            4 -> VLESSSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)

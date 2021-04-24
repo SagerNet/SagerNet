@@ -575,7 +575,7 @@ public class V2rayConfig {
         public HttpObject httpSettings;
         public QuicObject quicSettings;
         public DomainSocketObject dsSettings;
-        public GrpcObject grpcObject;
+        public GrpcObject grpcSettings;
 
     }
 
@@ -590,7 +590,7 @@ public class V2rayConfig {
         public HttpObject httpSettings;
         public QuicObject quicSettings;
         public DomainSocketObject dsSettings;
-        public GrpcObject grpcObject;
+        public GrpcObject grpcSettings;
         public SockoptObject sockopt;
 
         public static class SockoptObject {
