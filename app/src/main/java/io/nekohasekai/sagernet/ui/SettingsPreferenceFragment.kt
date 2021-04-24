@@ -52,6 +52,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             val persistAcrossReboot = findPreference<SwitchPreference>(Key.PERSIST_ACROSS_REBOOT)!!
             val directBootAware = findPreference<SwitchPreference>(Key.DIRECT_BOOT_AWARE)!!
             val portSocks5 = findPreference<EditTextPreference>(Key.SOCKS_PORT)!!
+            val speedInterval = findPreference<Preference>(Key.SPEED_INTERVAL)!!
 
             val serviceMode = findPreference<Preference>(Key.SERVICE_MODE)!!
             val routeMode = findPreference<Preference>(Key.ROUTE_MODE)!!
@@ -100,6 +101,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                     persistAcrossReboot.isEnabled = stopped
                     directBootAware.isEnabled = stopped
                     serviceMode.isEnabled = stopped
+                    speedInterval.isEnabled = stopped
                     portSocks5.isEnabled = stopped
                     requireHttp.isEnabled = stopped
                     portHttp.isEnabled = stopped
@@ -128,6 +130,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                     listView.post {
                         isProxyApps.isEnabled = newValue == Key.MODE_VPN
                     }
+                    true
+                }
+            speedInterval.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    (requireActivity() as MainActivity).connection.bandwidthTimeout =
+                        (newValue as String).toLong()
                     true
                 }
         }

@@ -53,6 +53,7 @@ object Key {
     const val REQUIRE_HTTP = "requireHttp"
     const val HTTP_PORT = "httpPort"
     const val ALLOW_ACCESS = "allowAccess"
+    const val SPEED_INTERVAL = "speedInterval"
     const val WS_MAX_EARLY_DATA = "wsMaxEarlyData"
     const val WS_BROWSER_FORWARDING = "wsBrowserForwarding"
 

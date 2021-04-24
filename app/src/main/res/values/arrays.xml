@@ -364,5 +364,20 @@
         <item>zero</item>
     </string-array>
 
+    <string-array name="notifications_entry">
+        <item>Disable</item>
+        <item>500ms</item>
+        <item>1s</item>
+        <item>3s</item>
+        <item>10s</item>
+    </string-array>
+
+    <string-array name="notifications_value">
+        <item>0</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>3000</item>
+        <item>10000</item>
+    </string-array>
 
 </resources>

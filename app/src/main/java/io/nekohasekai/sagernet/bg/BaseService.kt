@@ -126,16 +126,17 @@ class BaseService {
             while (true) {
                 val delayMs = bandwidthListeners.values.minOrNull()
                 delay(delayMs ?: return)
+                if (delayMs == 0L) return
                 val queryTime = System.currentTimeMillis()
-                val sinceLastQueryInSeconds = (queryTime - lastQueryTime) / 1000L
+                val sinceLastQueryInSeconds = (queryTime - lastQueryTime).toDouble() / 1000L
                 val proxy = data?.proxy ?: continue
                 lastQueryTime = queryTime
                 val up = proxy.uplink
                 val down = proxy.downlink
                 if (up + down == 0L) continue
                 val stats = TrafficStats(
-                    up / sinceLastQueryInSeconds,
-                    down / sinceLastQueryInSeconds,
+                    (up / sinceLastQueryInSeconds).toLong(),
+                    (down / sinceLastQueryInSeconds).toLong(),
                     proxy.uplinkTotal,
                     proxy.downlinkTotal
                 )

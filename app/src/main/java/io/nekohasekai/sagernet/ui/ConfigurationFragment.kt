@@ -182,7 +182,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             }
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
-
             }
             R.id.action_new_ss -> {
                 startActivity(Intent(requireActivity(), ShadowsocksSettingsActivity::class.java))

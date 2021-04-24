@@ -5,6 +5,7 @@
       <w>downlink</w>
       <w>grpc</w>
       <w>gson</w>
+      <w>libev</w>
       <w>nekohasekai</w>
       <w>obfs</w>
       <w>quic</w>

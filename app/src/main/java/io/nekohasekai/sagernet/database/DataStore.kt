@@ -69,6 +69,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
     var routeMode by configurationStore.string(Key.ROUTE_MODE) { RouteMode.ALL }
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
+    var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
     var enableLocalDNS by configurationStore.boolean(Key.ENABLE_LOCAL_DNS) { true }
     var remoteDNS by configurationStore.string(Key.REMOTE_DNS) { "1.1.1.1" }

@@ -1,17 +1,53 @@
 # SagerNet for Android
 
-[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
+[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 [![Releases](https://img.shields.io/github/downloads/nekohasekai/SagerNet/total.svg)](https://github.com/nekohasekai/SagerNet/releases)
 [![Language: Kotlin](https://img.shields.io/github/languages/top/nekohasekai/SagerNet.svg)](https://github.com/nekohasekai/SagerNet/search?l=kotlin)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-orange.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 The universal proxy toolchain for Android, written in Kotlin.
 
+## PROTOCOLS
+
+The application is designed to be used whenever possible.
+ 
+### Protocols
+
+* SOCKS
+* Shadowsocks
+* ShadowsocksR
+* VMess
+* VLESS
+* Trojan
+* SSH (not yet)
+* OpenVPN (not yet)
+* Chain (not yet)
+
+### Subscription protocols
+
+* Universal base64 format
+* SIP008
+* Clash
+
+## FEATURES
+
+* Full basic features  
+* Option to change the notification update interval  
+* A china apps scanner (based on dex classpath scanning, so it's may slower)
+
+## TIPS
+
+* Click on the title to scroll to the first proxy or the selected proxy  
+* Proxy list can be dragged by holding the progress bar  
+* The china apps scanner will only scan system apps if "Show system apps" is checked  
+* V2Ray browser forwarding is not yet available, only for developers to debug
+
 ## OPEN SOURCE LICENSES
 
 <ul>
     <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks-android</a>: GPL 3.0</li>
     <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">AndroidLibV2rayLite</a>: LGPL 3.0</li>
+    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksr-libev</a>: GPL 3.0</li>
 </ul>
 
 ### LICENSE

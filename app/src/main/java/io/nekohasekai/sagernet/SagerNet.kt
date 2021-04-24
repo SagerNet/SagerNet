@@ -122,29 +122,33 @@ class SagerNet : Application() {
         super.attachBaseContext(base)
         application = this
 
-        initAcra {
-            alsoReportToAndroidFramework = true
+        if (!BuildConfig.DEBUG) {
 
-            applicationLogFileDir = Directory.EXTERNAL_FILES
-            applicationLogFile = "application_log.txt"
-            buildConfigClass = BuildConfig::class.java
-            reportFormat = StringFormat.JSON
-            sendReportsInDevMode = false
-            stopServicesOnCrash = true
+            initAcra {
+                alsoReportToAndroidFramework = true
 
-            mailSender {
-                mailTo = "sekai@neko.services"
-                reportAsFile = true
-                reportFileName = "crash_report.json"
-            }
+                applicationLogFileDir = Directory.EXTERNAL_FILES
+                applicationLogFile = "application_log.txt"
+                buildConfigClass = BuildConfig::class.java
+                reportFormat = StringFormat.JSON
+                stopServicesOnCrash = true
+
+                mailSender {
+                    mailTo = "sekai@neko.services"
+                    reportAsFile = true
+                    reportFileName = "crash_report.json"
+                }
 
 
-            notification {
-                channelName = "Crash report"
-                channelDescription = ":("
+                notification {
+                    channelName = "Crash report"
+                    channelDescription = ":("
+                }
+
             }
 
         }
+
     }
 
     override fun onCreate() {

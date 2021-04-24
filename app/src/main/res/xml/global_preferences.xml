@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="1"
-        app:title="@string/general_settings">
+    <PreferenceCategory app:title="@string/general_settings">
         <SwitchPreference
             app:icon="@drawable/ic_communication_phonelink_ring"
             app:key="isAutoConnect"
@@ -14,13 +12,20 @@
             app:key="directBootAware"
             app:summary="@string/direct_boot_aware_summary"
             app:title="@string/direct_boot_aware" />
-
         <SwitchPreference
             app:icon="@drawable/ic_device_data_usage"
             app:key="meteredNetwork"
             app:summary="@string/metered_summary"
             app:title="@string/metered" />
 
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="1000"
+            app:entries="@array/notifications_entry"
+            app:entryValues="@array/notifications_value"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="speedInterval"
+            app:title="@string/speed_interval"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory

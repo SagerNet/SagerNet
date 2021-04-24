@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         changeState(state, msg, true)
     }
 
-    private val connection = SagerConnection(true)
+    val connection = SagerConnection(true)
     override fun onServiceConnected(service: IShadowsocksService) = changeState(try {
         BaseService.State.values()[service.state]
     } catch (_: RemoteException) {
@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun onStart() {
         super.onStart()
-        connection.bandwidthTimeout = 1000
+        connection.bandwidthTimeout = DataStore.speedInterval.toLong()
     }
 
     override fun onStop() {

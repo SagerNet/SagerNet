@@ -33,11 +33,12 @@ import android.text.format.Formatter
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
-import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
-import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
+import io.nekohasekai.sagernet.aidl.TrafficStats
+import io.nekohasekai.sagernet.database.DataStore
 
 /**
  * User can customize visibility of notification since Android 8.
@@ -114,7 +115,8 @@ class ServiceNotification(
     private fun updateCallback(screenOn: Boolean) {
         if (screenOn) {
             service.data.binder.registerCallback(callback)
-            service.data.binder.startListeningForBandwidth(callback, 3000)
+            service.data.binder.startListeningForBandwidth(callback,
+                DataStore.speedInterval.toLong())
             callbackRegistered = true
         } else if (callbackRegistered) {    // unregister callback to save battery
             service.data.binder.unregisterCallback(callback)
