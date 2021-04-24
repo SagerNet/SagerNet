@@ -25,7 +25,6 @@ import android.os.Build
 import android.os.SystemClock
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
@@ -43,22 +42,29 @@ import java.net.*
 class HttpsTest : ViewModel() {
     sealed class Status {
         protected abstract val status: CharSequence
-        open fun retrieve(setStatus: (CharSequence) -> Unit, errorCallback: (String) -> Unit) = setStatus(status)
+        open fun retrieve(setStatus: (CharSequence) -> Unit, errorCallback: (String) -> Unit) =
+            setStatus(status)
 
         object Idle : Status() {
             override val status get() = app.getText(R.string.vpn_connected)
         }
+
         object Testing : Status() {
             override val status get() = app.getText(R.string.connection_test_testing)
         }
+
         class Success(private val elapsed: Long) : Status() {
             override val status get() = app.getString(R.string.connection_test_available, elapsed)
         }
+
         sealed class Error : Status() {
             override val status get() = app.getText(R.string.connection_test_fail)
             protected abstract val error: String
             private var shown = false
-            override fun retrieve(setStatus: (CharSequence) -> Unit, errorCallback: (String) -> Unit) {
+            override fun retrieve(
+                setStatus: (CharSequence) -> Unit,
+                errorCallback: (String) -> Unit,
+            ) {
                 super.retrieve(setStatus, errorCallback)
                 if (shown) return
                 shown = true
@@ -66,8 +72,11 @@ class HttpsTest : ViewModel() {
             }
 
             class UnexpectedResponseCode(private val code: Int) : Error() {
-                override val error get() = app.getString(R.string.connection_test_error_status_code, code)
+                override val error
+                    get() = app.getString(R.string.connection_test_error_status_code,
+                        code)
             }
+
             class IOFailure(private val e: IOException) : Error() {
                 override val error get() = app.getString(R.string.connection_test_error, e.message)
             }
@@ -81,9 +90,8 @@ class HttpsTest : ViewModel() {
         cancelTest()
         status.value = Status.Testing
         val url = URL("https://cp.cloudflare.com")
-        val conn = (if (DataStore.serviceMode != Key.MODE_VPN) {
-            url.openConnection(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort)))
-        } else url.openConnection()) as HttpURLConnection
+        val conn =  url.openConnection(Proxy(Proxy.Type.SOCKS,
+            InetSocketAddress("127.0.0.1", DataStore.socksPort)))
         conn.setRequestProperty("Connection", "close")
         conn.instanceFollowRedirects = false
         conn.useCaches = false
