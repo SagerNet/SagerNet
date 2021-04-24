@@ -24,46 +24,74 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import org.jetbrains.annotations.NotNull;
-
 import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.AbstractBean;
 
-public class VLESSBean extends AbstractV2RayBean {
+public abstract class AbstractV2RayBean extends AbstractBean {
 
-    public static VLESSBean DEFAULT_BEAN = new VLESSBean() {{
-        serverPort = 1080;
-        initDefaultValues();
-    }};
 
-    public String encryption;
+    public String uuid;
 
-    @Override
+    public String network;
+    public String headerType;
+
+    public String requestHost;
+    public String path;
+
+    public String sni;
+    public boolean tls;
+
     public void initDefaultValues() {
-        super.initDefaultValues();
-
-        if (StrUtil.isBlank(encryption)) {
-            encryption = "none";
+        if (StrUtil.isBlank(name)) {
+            name = "";
+        }
+        if (StrUtil.isBlank(serverAddress)) {
+            serverAddress = "";
+        }
+        if (StrUtil.isBlank(uuid)) {
+            uuid = "";
+        }
+        if (StrUtil.isBlank(network)) {
+            network = "tcp";
+        }
+        if (StrUtil.isBlank(headerType)) {
+            headerType = "none";
+        }
+        if (StrUtil.isBlank(requestHost)) {
+            requestHost = "";
+        }
+        if (StrUtil.isBlank(path)) {
+            path = "";
+        }
+        if (StrUtil.isBlank(sni)) {
+            sni = "";
         }
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
         super.serialize(output);
-        output.writeString(encryption);
+        output.writeString(uuid);
+        output.writeString(network);
+        output.writeString(headerType);
+
+        output.writeString(requestHost);
+        output.writeString(path);
+
+        output.writeString(sni);
+        output.writeBoolean(tls);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
         super.deserialize(input);
-        encryption = input.readString();
+        uuid = input.readString();
+        network = input.readString();
+        headerType = input.readString();
+        requestHost = input.readString();
+        path = input.readString();
+        sni = input.readString();
+        tls = input.readBoolean();
     }
 
-    @NotNull
-    @Override
-    public VLESSBean clone() {
-        return KryoConverters.deserialize(new VLESSBean(), KryoConverters.serialize(this));
-    }
 }

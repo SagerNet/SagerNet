@@ -152,138 +152,49 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                 }
                             )
                         })
-                } else if (bean is VMessBean) {
-                    protocol = "vmess"
-                    settings = LazyOutboundConfigurationObject(
-                        VMessOutboundConfigurationObject().apply {
-                            vnext = listOf(
-                                VMessOutboundConfigurationObject.ServerObject().apply {
-                                    address = bean.serverAddress
-                                    port = bean.serverPort
-                                    users = listOf(
-                                        VMessOutboundConfigurationObject.ServerObject.UserObject()
-                                            .apply {
-                                                id = bean.uuid
-                                                alterId = bean.alterId
-                                                security = bean.security.takeIf { it.isNotBlank() }
-                                                    ?: "auto"
-                                                level = 8
-                                            }
-                                    )
-                                }
-                            )
-                        })
-
-                    streamSettings = StreamSettingsObject().apply {
-                        network = bean.network
-                        security = if (bean.tls) "tls" else ""
-                        if (bean.tls) {
-                            tlsSettings = TLSObject().apply {
-                                if (bean.sni.isNotBlank()) {
-                                    serverName = bean.sni
-                                }
-                            }
-                        }
-
-                        when (network) {
-                            "tcp" -> {
-                                tcpSettings = TcpObject().apply {
-                                    if (bean.headerType == "http") {
-                                        header = TcpObject.HeaderObject().apply {
-                                            type = "http"
-                                            if (bean.requestHost.isNotBlank() || bean.path.isNotBlank()) {
-                                                request = TcpObject.HeaderObject.HTTPRequestObject()
-                                                    .apply {
-                                                        headers = mutableMapOf()
-                                                        if (bean.requestHost.isNotBlank()) {
-                                                            headers["Host"] =
-                                                                bean.requestHost.split(",")
-                                                                    .map { it.trim() }
-                                                        }
-                                                        if (bean.path.isNotBlank()) {
-                                                            path = bean.path.split(",")
-                                                        }
-                                                    }
-                                            }
-                                        }
+                } else if (bean is AbstractV2RayBean) {
+                    if (bean is VMessBean) {
+                        protocol = "vmess"
+                        settings = LazyOutboundConfigurationObject(
+                            VMessOutboundConfigurationObject().apply {
+                                vnext = listOf(
+                                    VMessOutboundConfigurationObject.ServerObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        users = listOf(
+                                            VMessOutboundConfigurationObject.ServerObject.UserObject()
+                                                .apply {
+                                                    id = bean.uuid
+                                                    alterId = bean.alterId
+                                                    security =
+                                                        bean.security.takeIf { it.isNotBlank() }
+                                                            ?: "auto"
+                                                    level = 8
+                                                }
+                                        )
                                     }
-                                }
-                            }
-                            "kcp" -> {
-                                kcpSettings = KcpObject().apply {
-                                    mtu = 1350
-                                    tti = 50
-                                    uplinkCapacity = 12
-                                    downlinkCapacity = 100
-                                    congestion = false
-                                    readBufferSize = 1
-                                    writeBufferSize = 1
-                                    header = KcpObject.HeaderObject().apply {
-                                        type = bean.headerType
+                                )
+                            })
+                    } else if (bean is VLESSBean) {
+                        protocol = "vless"
+                        settings = LazyOutboundConfigurationObject(
+                            VLESSOutboundConfigurationObject().apply {
+                                vnext = listOf(
+                                    VLESSOutboundConfigurationObject.ServerObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        users = listOf(
+                                            VLESSOutboundConfigurationObject.ServerObject.UserObject()
+                                                .apply {
+                                                    id = bean.uuid
+                                                    encryption = bean.encryption
+                                                    level = 8
+                                                }
+                                        )
                                     }
-                                    if (bean.path.isNotBlank()) {
-                                        seed = bean.path
-                                    }
-                                }
-                            }
-                            "ws" -> {
-                                wsSettings = WebSocketObject().apply {
-                                    headers = mutableMapOf()
-
-                                    if (bean.requestHost.isNotBlank()) {
-                                        headers["Host"] = bean.requestHost
-                                    }
-
-                                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
-                                }
-                            }
-                            "http", "h2" -> {
-                                network = "h2"
-
-                                httpSettings = HttpObject().apply {
-                                    if (bean.requestHost.isNotBlank()) {
-                                        host = bean.requestHost.split(",")
-                                    }
-
-                                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
-                                }
-                            }
-                            "quic" -> {
-                                quicSettings = QuicObject().apply {
-                                    security = bean.requestHost.takeIf { it.isNotBlank() } ?: "none"
-                                    key = bean.path
-                                    header = QuicObject.HeaderObject().apply {
-                                        type = bean.headerType.takeIf { it.isNotBlank() } ?: "none"
-                                    }
-                                }
-                            }
-                            "grpc" -> {
-                                grpcSettings = GrpcObject().apply {
-                                    serviceName = bean.path
-                                }
-                            }
-                        }
-
+                                )
+                            })
                     }
-                } else if (bean is VLESSBean) {
-                    protocol = "vless"
-                    settings = LazyOutboundConfigurationObject(
-                        VLESSOutboundConfigurationObject().apply {
-                            vnext = listOf(
-                                VLESSOutboundConfigurationObject.ServerObject().apply {
-                                    address = bean.serverAddress
-                                    port = bean.serverPort
-                                    users = listOf(
-                                        VLESSOutboundConfigurationObject.ServerObject.UserObject()
-                                            .apply {
-                                                id = bean.uuid
-                                                encryption = bean.encryption
-                                                level = 8
-                                            }
-                                    )
-                                }
-                            )
-                        })
 
                     streamSettings = StreamSettingsObject().apply {
                         network = bean.network
@@ -346,6 +257,20 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                     }
 
                                     path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+
+                                    val wsMaxEarlyData = DataStore.wsMaxEarlyData
+                                    if (wsMaxEarlyData != 0) {
+                                        maxEarlyData = wsMaxEarlyData
+                                    }
+
+                                    if (DataStore.wsBrowserForwarding) {
+                                        useBrowserForwarding = true
+
+                                        browserForwarder = BrowserForwarderObject().apply {
+                                            listenAddr = "127.0.0.1"
+                                            listenPort = DataStore.socksPort + 11
+                                        }
+                                    }
                                 }
                             }
                             "http", "h2" -> {

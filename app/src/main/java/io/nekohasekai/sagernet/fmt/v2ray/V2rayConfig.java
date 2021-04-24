@@ -683,6 +683,8 @@ public class V2rayConfig {
         public Boolean acceptProxyProtocol;
         public String path;
         public Map<String, String> headers;
+        public Integer maxEarlyData;
+        public Boolean useBrowserForwarding;
 
     }
 
@@ -723,5 +725,14 @@ public class V2rayConfig {
     }
 
     public Map<String, Object> stats;
+
+    public BrowserForwarderObject browserForwarder;
+
+    public static class BrowserForwarderObject {
+
+        public String listenAddr;
+        public Integer listenPort;
+
+    }
 
 }

@@ -21,8 +21,10 @@
 
 package io.nekohasekai.sagernet.bg
 
+import android.content.Context
 import android.os.Build
 import android.os.SystemClock
+import android.webkit.WebView
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
@@ -31,6 +33,9 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.gson.gson
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.v2ray.AbstractV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2rayConfig
 import io.nekohasekai.sagernet.ktx.Logs
@@ -48,6 +53,7 @@ class ProxyInstance(val profile: ProxyEntity) {
     lateinit var v2rayPoint: V2RayPoint
     lateinit var config: V2rayConfig
     lateinit var base: BaseService.Interface
+    lateinit var wsForwarder: WebView
 
     fun init(service: BaseService.Interface) {
         base = service
@@ -68,8 +74,10 @@ class ProxyInstance(val profile: ProxyEntity) {
     var cacheFiles = LinkedList<File>()
 
     fun start() {
+        val bean = profile.requireBean()
+
         if (profile.useExternalShadowsocks()) {
-            val bean = profile.requireSS()
+            bean as ShadowsocksBean
             val port = DataStore.socksPort + 10
 
             val proxyConfig = JSONObject().also {
@@ -115,7 +123,7 @@ class ProxyInstance(val profile: ProxyEntity) {
 
             base.data.processes!!.start(commands)
         } else if (profile.type == 2) {
-            val bean = profile.requireSSR()
+            bean as ShadowsocksRBean
             val port = DataStore.socksPort + 10
 
             val proxyConfig = JSONObject().also {
@@ -152,6 +160,11 @@ class ProxyInstance(val profile: ProxyEntity) {
             )
 
             base.data.processes!!.start(commands)
+        } else if (bean is AbstractV2RayBean) {
+            if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
+                wsForwarder = WebView(base as Context)
+                wsForwarder.loadUrl("http://127.0.0.1:" + DataStore.socksPort + 11)
+            }
         }
 
         v2rayPoint.runLoop(DataStore.preferIpv6)
@@ -159,6 +172,11 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     fun stop() {
         v2rayPoint.stopLoop()
+
+        if (::wsForwarder.isInitialized) {
+            wsForwarder.clearView()
+            wsForwarder.destroy()
+        }
     }
 
     fun printStats() {

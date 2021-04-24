@@ -52,8 +52,9 @@ object Key {
     const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"
     const val REQUIRE_HTTP = "requireHttp"
     const val HTTP_PORT = "httpPort"
-
     const val ALLOW_ACCESS = "allowAccess"
+    const val WS_MAX_EARLY_DATA = "wsMaxEarlyData"
+    const val WS_BROWSER_FORWARDING = "wsBrowserForwarding"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"

@@ -127,8 +127,7 @@ class SagerNet : Application() {
 
         Seq.setContext(applicationContext)
         Libv2ray.setAssetsPath(
-            File(application.filesDir, "geofile").absolutePath,
-            "geofile/"
+            File(application.filesDir, "geofile").absolutePath, "v2ray/"
         )
     }
 

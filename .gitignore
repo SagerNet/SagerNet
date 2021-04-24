@@ -14,5 +14,4 @@ build/
 .cxx
 local.properties
 /app/libs/
-/app/src/main/assets/geofile/
-/app/src/main/assets/browserforwarder/
+/app/src/main/assets/v2ray

@@ -156,7 +156,6 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             }
         }
 
-
         // https://issuetracker.google.com/issues/149636790
 
         val me = packageName

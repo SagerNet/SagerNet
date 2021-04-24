@@ -112,13 +112,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var individual by configurationStore.string("individual")
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
+    var wsMaxEarlyData by configurationStore.stringToInt(Key.WS_MAX_EARLY_DATA) { 0 }
+    var wsBrowserForwarding by configurationStore.boolean(Key.WS_BROWSER_FORWARDING) { true }
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
     val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
 
-
     // cache
+
     var dirty by profileCacheStore.boolean(Key.PROFILE_DIRTY)
     var editingId by profileCacheStore.long(Key.PROFILE_ID)
     var editingGroup by profileCacheStore.long(Key.PROFILE_GROUP)
@@ -131,13 +133,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
     var serverPlugin by profileCacheStore.string(Key.SERVER_PLUGIN)
 
-    // ssr
     var serverProtocol by profileCacheStore.string(Key.SERVER_PROTOCOL)
     var serverProtocolParam by profileCacheStore.string(Key.SERVER_PROTOCOL_PARAM)
     var serverObfs by profileCacheStore.string(Key.SERVER_OBFS)
     var serverObfsParam by profileCacheStore.string(Key.SERVER_OBFS_PARAM)
 
-    // vmess
     var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)
     var serverAlterId by profileCacheStore.stringToInt(Key.SERVER_ALTER_ID)
     var serverSecurity by profileCacheStore.string(Key.SERVER_SECURITY)
@@ -147,8 +147,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverPath by profileCacheStore.string(Key.SERVER_PATH)
     var serverSNI by profileCacheStore.string(Key.SERVER_SNI)
     var serverTLS by profileCacheStore.boolean(Key.SERVER_TLS)
-
-    // vless
     var serverEncryption by profileCacheStore.string(Key.SERVER_ENCRYPTION)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {

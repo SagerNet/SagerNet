@@ -34,7 +34,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.net.*
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.URL
+import java.net.URLConnection
+import javax.net.ssl.HttpsURLConnection
 
 /**
  * Based on: https://android.googlesource.com/platform/frameworks/base/+/b19a838/services/core/java/com/android/server/connectivity/NetworkMonitor.java#1071
@@ -91,7 +95,7 @@ class HttpsTest : ViewModel() {
         status.value = Status.Testing
         val url = URL("https://cp.cloudflare.com")
         val conn =  url.openConnection(Proxy(Proxy.Type.SOCKS,
-            InetSocketAddress("127.0.0.1", DataStore.socksPort)))
+            InetSocketAddress("127.0.0.1", DataStore.socksPort))) as HttpsURLConnection
         conn.setRequestProperty("Connection", "close")
         conn.instanceFollowRedirects = false
         conn.useCaches = false
