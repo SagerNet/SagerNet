@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.ktx
 
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
+import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.v2ray.parseVmess
 import java.util.*
@@ -49,6 +50,13 @@ fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse shadowsocks link: $link")
             runCatching {
                 entities.add(parseShadowsocks(link))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (link.startsWith("ssr://")) {
+            Logs.d("Try parse shadowsocksr link: $link")
+            runCatching {
+                entities.add(parseShadowsocksR(link))
             }.onFailure {
                 Logs.w(it)
             }

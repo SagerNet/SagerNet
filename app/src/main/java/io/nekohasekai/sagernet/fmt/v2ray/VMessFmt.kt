@@ -178,6 +178,17 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                 )
                             })
                     }
+                } else {
+                    protocol = "socks"
+                    settings = LazyOutboundConfigurationObject(
+                        SocksOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                SocksOutboundConfigurationObject.ServerObject().apply {
+                                    address = "127.0.0.1"
+                                    port = DataStore.socksPort + 10
+                                }
+                            )
+                        })
                 }
             }
         )
@@ -238,16 +249,16 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                 }
             }
 
-           /* rules.add(RoutingObject.RuleObject().apply {
-                inboundTag = mutableListOf(TAG_SOCKS)
+            /* rules.add(RoutingObject.RuleObject().apply {
+                 inboundTag = mutableListOf(TAG_SOCKS)
 
-                if (requireHttp) {
-                    inboundTag.add(TAG_HTTP)
-                }
+                 if (requireHttp) {
+                     inboundTag.add(TAG_HTTP)
+                 }
 
-                outboundTag = TAG_AGENT
-                type = "field"
-            })*/
+                 outboundTag = TAG_AGENT
+                 type = "field"
+             })*/
         }
 
         if (DataStore.enableLocalDNS) {

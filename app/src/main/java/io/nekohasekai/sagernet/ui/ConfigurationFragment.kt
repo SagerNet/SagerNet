@@ -43,13 +43,9 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
-import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
-import io.nekohasekai.sagernet.fmt.shadowsocks.toV2rayN
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.fmt.socks.toUri
-import io.nekohasekai.sagernet.fmt.socks.toV2rayN
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.ui.profile.ProfileSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 import io.nekohasekai.sagernet.widget.QRCodeDialog
@@ -177,15 +173,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 }
             }
             R.id.action_new_socks -> {
-                startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java).apply {
-                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectedGroup.id)
-                })
+                startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
+
             }
             R.id.action_new_ss -> {
-                startActivity(Intent(requireActivity(),
-                    ShadowsocksSettingsActivity::class.java).apply {
-                    putExtra(ProfileSettingsActivity.EXTRA_GROUP_ID, selectedGroup.id)
-                })
+                startActivity(Intent(requireActivity(), ShadowsocksSettingsActivity::class.java))
+            }
+            R.id.action_new_ssr -> {
+                startActivity(Intent(requireActivity(), ShadowsocksRSettingsActivity::class.java))
             }
             /*R.id.action_from_link -> {
                 AlertDialogFragment.setResultListener<SubDialogFragment, SubEditResult>(this) { _, ret ->
@@ -618,14 +613,12 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
                 shareButton.setOnClickListener {
                     val popup = PopupMenu(requireContext(), it)
-                    when (proxyEntity.type) {
-                        0 -> {
-                            popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
-                        }
-                        1 -> {
-                            popup.menuInflater.inflate(R.menu.shadowsocks_share_menu, popup.menu)
-                        }
-                    }
+                    popup.menuInflater.inflate(when (proxyEntity.type) {
+                        0 -> R.menu.socks_share_menu
+                        1 -> R.menu.shadowsocks_share_menu
+                        2 -> R.menu.shadowsocksr_share_menu
+                        else -> error("Undefined type $proxyEntity.type")
+                    }, popup.menu)
                     popup.setOnMenuItemClickListener(this)
                     popup.show()
                 }
@@ -655,32 +648,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 try {
                     when (item.itemId) {
                         // socks
-                        R.id.action_qr_code_standard -> {
-                            showCode(entity.requireSOCKS().toUri())
+                        R.id.action_qr_code -> {
+                            showCode(entity.toUri())
                         }
-                        R.id.action_qr_code_v2rayn -> {
-                            showCode(entity.requireSOCKS().toV2rayN())
-                        }
-                        R.id.action_export_clipboard_standard -> {
-                            export(entity.requireSOCKS().toUri())
-                        }
-                        R.id.action_export_clipboard_v2rayn -> {
-                            export(entity.requireSOCKS().toV2rayN())
-                        }
-
-                        // shadowsocks
-
-                        R.id.action_ss_qr_code_standard -> {
-                            showCode(entity.requireSS().toUri())
-                        }
-                        R.id.action_ss_qr_code_v2rayn -> {
-                            showCode(entity.requireSS().toV2rayN())
-                        }
-                        R.id.action_ss_export_clipboard_standard -> {
-                            export(entity.requireSS().toUri())
-                        }
-                        R.id.action_ss_export_clipboard_v2rayn -> {
-                            export(entity.requireSS().toV2rayN())
+                        R.id.action_export_clipboard -> {
+                            export(entity.toUri())
                         }
                     }
                 } catch (e: Exception) {

@@ -25,6 +25,9 @@
                     <item
                         android:id="@+id/action_new_ss"
                         android:title="@string/action_shadowsocks" />
+                    <item
+                        android:id="@+id/action_new_ssr"
+                        android:title="@string/action_shadowsocksr" />
                 </menu>
             </item>
 

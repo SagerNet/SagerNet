@@ -30,11 +30,9 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
-import io.nekohasekai.sagernet.ktx.boolean
-import io.nekohasekai.sagernet.ktx.long
-import io.nekohasekai.sagernet.ktx.parsePort
-import io.nekohasekai.sagernet.ktx.string
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
+import kotlin.properties.Delegates
 
 object DataStore : OnPreferenceDataStoreChangeListener {
 
@@ -54,6 +52,20 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var selectedGroup by configurationStore.long(Key.PROFILE_GROUP) {
         SagerNet.currentProfile?.groupId ?: 0L
     }
+
+    suspend fun selectedGroupForImport(): Long {
+        val groups = SagerDatabase.groupDao.allGroups()
+        val selectedGroup = SagerDatabase.groupDao.getById(selectedGroup) ?: groups[0]
+        var targetIndex by Delegates.notNull<Int>()
+        val targetId = if (!selectedGroup.isSubscription) {
+            selectedGroup.id
+        } else {
+            targetIndex = groups.indexOfFirst { !it.isSubscription }
+            groups[targetIndex].id
+        }
+        return targetId
+    }
+
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
     var routeMode by configurationStore.string(Key.ROUTE_MODE) { RouteMode.ALL }
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
@@ -112,12 +124,16 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var editingGroup by profileCacheStore.long(Key.PROFILE_GROUP)
     var profileName by profileCacheStore.string(Key.PROFILE_NAME)
     var serverAddress by profileCacheStore.string(Key.SERVER_ADDRESS)
-    var serverPort by profileCacheStore.string(Key.SERVER_PORT)
+    var serverPort by profileCacheStore.stringToInt(Key.SERVER_PORT)
     var serverUsername by profileCacheStore.string(Key.SERVER_USERNAME)
     var serverPassword by profileCacheStore.string(Key.SERVER_PASSWORD)
     var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
     var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
     var serverPlugin by profileCacheStore.string(Key.SERVER_PLUGIN)
+    var serverProtocol by profileCacheStore.string(Key.SERVER_PROTOCOL)
+    var serverProtocolParam by profileCacheStore.string(Key.SERVER_PROTOCOL_PARAM)
+    var serverObfs by profileCacheStore.string(Key.SERVER_OBFS)
+    var serverObfsParam by profileCacheStore.string(Key.SERVER_OBFS_PARAM)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {

@@ -31,10 +31,15 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
+import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ui.profile.ProfileSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 
@@ -52,6 +57,7 @@ data class ProxyEntity(
     var vmessBean: VMessBean? = null,
     var socksBean: SOCKSBean? = null,
     var ssBean: ShadowsocksBean? = null,
+    var ssrBean: ShadowsocksRBean? = null,
 ) : Parcelable {
 
     @Ignore
@@ -76,6 +82,7 @@ data class ProxyEntity(
         when (type) {
             0 -> socksBean = KryoConverters.socksDeserialize(byteArray)
             1 -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
+            2 -> ssrBean = KryoConverters.shadowsocksRDeserialize(byteArray)
         }
     }
 
@@ -97,6 +104,7 @@ data class ProxyEntity(
             //     2 -> "VMess"
             0 -> "SOCKS5"
             1 -> "Shadowsocks"
+            2 -> "ShadowsocksR"
             else -> "Undefined type $type"
         }
     }
@@ -111,6 +119,16 @@ data class ProxyEntity(
             // 2 -> vmessBean ?: error("Null vmess node")
             0 -> socksBean ?: error("Null socks node")
             1 -> ssBean ?: error("Null ss node")
+            2 -> ssrBean ?: error("Null ssr node")
+            else -> error("Undefined type $type")
+        }
+    }
+
+    fun toUri(): String {
+        return when (type) {
+            0 -> requireSOCKS().toUri()
+            1 -> requireSS().toUri()
+            2 -> requireSSR().toUri()
             else -> error("Undefined type $type")
         }
     }
@@ -137,6 +155,10 @@ data class ProxyEntity(
                 type = 1
                 ssBean = bean
             }
+            is ShadowsocksRBean -> {
+                type = 2
+                ssrBean = bean
+            }
             /*is VMessBean -> {
                 type = 2
                 vmessBean = bean
@@ -148,11 +170,13 @@ data class ProxyEntity(
     fun requireVMess() = requireBean() as VMessBean
     fun requireSOCKS() = requireBean() as SOCKSBean
     fun requireSS() = requireBean() as ShadowsocksBean
+    fun requireSSR() = requireBean() as ShadowsocksRBean
 
     fun settingIntent(ctx: Context): Intent {
         return Intent(ctx, when (type) {
             0 -> SocksSettingsActivity::class.java
             1 -> ShadowsocksSettingsActivity::class.java
+            2 -> ShadowsocksRSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)

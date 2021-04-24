@@ -19,45 +19,49 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.database
+package io.nekohasekai.sagernet.fmt.shadowsocksr
 
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import dev.matrix.roomigrant.GenerateRoomMigrations
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.database.preference.KeyValuePair
-import io.nekohasekai.sagernet.fmt.KryoConverters
-import io.nekohasekai.sagernet.fmt.gson.GsonConverters
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import cn.hutool.core.codec.Base64
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import java.util.*
 
-@Database(entities = [ProxyGroup::class, ProxyEntity::class, KeyValuePair::class], version = 2)
-@TypeConverters(value = [KryoConverters::class, GsonConverters::class])
-@GenerateRoomMigrations
-abstract class SagerDatabase : RoomDatabase() {
+fun parseShadowsocksR(url: String): ShadowsocksRBean {
 
-    companion object {
-        private val instance by lazy {
-            Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build())
-                .allowMainThreadQueries()
-                .enableMultiInstanceInvalidation()
-                .fallbackToDestructiveMigration()
-                .setQueryExecutor { GlobalScope.launch { it.run() } }
-                .build()
-        }
+    val params = Base64.decodeStr(url.substringAfter("ssr://")).split(":")
 
-        val profileCacheDao get() = instance.profileCacheDao()
-        val groupDao get() = instance.groupDao()
-        val proxyDao get() = instance.proxyDao()
-
+    val bean = ShadowsocksRBean().apply {
+        serverAddress = params[0]
+        serverPort = params[1].toInt()
+        protocol = params[2]
+        method = params[3]
+        obfs = params[4]
+        password = Base64.decodeStr(params[5].substringBefore("/"))
     }
 
-    abstract fun profileCacheDao(): KeyValuePair.Dao
-    abstract fun groupDao(): ProxyGroup.Dao
-    abstract fun proxyDao(): ProxyEntity.Dao
+    val httpUrl = ("https://localhost" + params[5].substringAfter("/")).toHttpUrl()
 
+    runCatching {
+        bean.obfsParam = Base64.decodeStr(httpUrl.queryParameter("obfsparam")!!)
+    }
+    runCatching {
+        bean.protocolParam = Base64.decodeStr(httpUrl.queryParameter("protoparam")!!)
+    }
+
+    val remarks = httpUrl.queryParameter("remarks")
+    if (!remarks.isNullOrBlank()) {
+        bean.name = Base64.decodeStr(remarks)
+    }
+
+    return bean
+
+}
+
+fun ShadowsocksRBean.toUri(): String {
+
+    return "ssr://" + Base64.encodeUrlSafe("%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
+        Locale.ENGLISH, serverAddress, serverPort, protocol, method, obfs,
+        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, password)),
+        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)),
+        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)),
+        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, name ?: ""))))
 }

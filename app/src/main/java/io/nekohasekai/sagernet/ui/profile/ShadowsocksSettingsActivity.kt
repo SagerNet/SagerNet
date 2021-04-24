@@ -58,7 +58,6 @@ import kotlinx.coroutines.launch
 class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     Preference.OnPreferenceChangeListener {
 
-    override val type = "ss"
     override fun createEntity() = ShadowsocksBean()
 
     private lateinit var plugin: PluginPreference
@@ -73,7 +72,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     override fun init(bean: ShadowsocksBean) {
         DataStore.profileName = bean.name
         DataStore.serverAddress = bean.serverAddress
-        DataStore.serverPort = "${bean.serverPort}"
+        DataStore.serverPort = bean.serverPort
         DataStore.serverMethod = bean.method
         DataStore.serverPassword = bean.password
         DataStore.serverPlugin = bean.plugin
@@ -82,10 +81,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     override fun ShadowsocksBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
-        serverPort =
-            DataStore.serverPort
-                .takeIf { !it.isNullOrBlank() && NumberUtil.isInteger(it) }?.toInt()
-                ?: 1080
+        serverPort = DataStore.serverPort
         method = DataStore.serverMethod
         password = DataStore.serverPassword
         plugin = DataStore.serverPlugin

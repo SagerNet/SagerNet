@@ -53,7 +53,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
             service else null), false)
-        if (profile.useExternalShadowsocks()) {
+        if (profile.useExternalShadowsocks() || profile.type == 2) {
             v2rayPoint.domainName = "127.0.0.1:${DataStore.socksPort + 10}"
         } else {
             v2rayPoint.domainName =
@@ -111,6 +111,44 @@ class ProxyInstance(val profile: ProxyEntity) {
                 File(SagerNet.application.applicationInfo.nativeLibraryDir,
                     Executable.SS_LOCAL).absolutePath,
                 "-c", configFile.absolutePath
+            )
+
+            base.data.processes!!.start(commands)
+        } else if (profile.type == 2) {
+            val bean = profile.requireSSR()
+            val port = DataStore.socksPort + 10
+
+            val proxyConfig = JSONObject().also {
+
+                it["server"] = bean.serverAddress
+                it["server_port"] = bean.serverPort
+                it["method"] = bean.method
+                it["password"] = bean.password
+                it["protocol"] = bean.protocol
+                it["protocol_param"] = bean.protocolParam
+                it["obfs"] = bean.obfs
+                it["obfs_param"] = bean.obfsParam
+                it["ipv6"] = DataStore.ipv6Route
+            }
+
+            Logs.d(proxyConfig.toStringPretty())
+
+            val context =
+                if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                    SagerNet.application else SagerNet.deviceStorage
+
+            val configFile =
+                File(context.noBackupFilesDir,
+                    "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
+            configFile.writeText(proxyConfig.toString())
+            cacheFiles.add(configFile)
+
+            val commands = mutableListOf(
+                File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                    Executable.SSR_LOCAL).absolutePath,
+                "-b", "127.0.0.1",
+                "-c", configFile.absolutePath,
+                "-l", "$port"
             )
 
             base.data.processes!!.start(commands)

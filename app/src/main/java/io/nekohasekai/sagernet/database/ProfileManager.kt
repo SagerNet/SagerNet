@@ -29,6 +29,7 @@ import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
@@ -335,26 +336,26 @@ object ProfileManager {
                             }
                             proxies.add(opts.toString())
                         }
-                        "ssr" -> {
-                            val opts = ShadowsocksRLoader.Bean()
-                            for (opt in proxy) {
-                                when (opt.key) {
-                                    "name" -> opts.remarks = opt.value as String
-                                    "server" -> opts.host = opt.value as String
-                                    "port" -> opts.remotePort = opt.value as Int
-                                    "cipher" -> opts.method = opt.value as String
-                                    "password" -> opts.password = opt.value as String
-                                    "obfs" -> opts.obfs = opt.value as String
-                                    "protocol" -> opts.protocol = opt.value as String
-                                    "obfs-param" -> opts.obfs_param = opt.value as String
-                                    "protocol-param" -> opts.protocol_param = opt.value as String
-                                }
+                        */
+                    }
+                    "ssr" -> {
+                        val entity = ShadowsocksRBean()
+                        for (opt in proxy) {
+                            when (opt.key) {
+                                "name" -> entity.name = opt.value as String
+                                "server" -> entity.serverAddress = opt.value as String
+                                "port" -> entity.serverPort = opt.value as Int
+                                "cipher" -> entity.method = opt.value as String
+                                "password" -> entity.password = opt.value as String
+                                "obfs" -> entity.obfs = opt.value as String
+                                "protocol" -> entity.protocol = opt.value as String
+                                "obfs-param" -> entity.obfsParam = opt.value as String
+                                "protocol-param" -> entity.protocolParam = opt.value as String
                             }
-                            proxies.add(opts.toString())
-                        }*/
+                        }
+                        proxies.add(entity)
                     }
                 }
-                return proxies
             }
         }
 

@@ -28,45 +28,53 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 
-class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
+class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>() {
 
-    override fun createEntity() = SOCKSBean()
+    override fun createEntity() = ShadowsocksRBean()
 
     override fun init() {
-        init(SOCKSBean.DEFAULT_BEAN)
+        init(ShadowsocksRBean.DEFAULT_BEAN)
     }
 
-    override fun init(bean: SOCKSBean) {
+    override fun init(bean: ShadowsocksRBean) {
         DataStore.profileName = bean.name
         DataStore.serverAddress = bean.serverAddress
         DataStore.serverPort = bean.serverPort
-        DataStore.serverUsername = bean.username
         DataStore.serverPassword = bean.password
-        DataStore.serverUdp = bean.udp
+        DataStore.serverMethod = bean.method
+        DataStore.serverProtocol = bean.protocol
+        DataStore.serverProtocolParam = bean.protocolParam
+        DataStore.serverObfs = bean.obfs
+        DataStore.serverObfsParam = bean.obfsParam
     }
 
-    override fun SOCKSBean.serialize() {
+    override fun ShadowsocksRBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
-        username = DataStore.serverUsername
+        method = DataStore.serverMethod
         password = DataStore.serverPassword
-        udp = DataStore.serverUdp
+        protocol = DataStore.serverProtocol
+        protocolParam = DataStore.serverProtocolParam
+        obfs = DataStore.serverObfs
+        obfsParam = DataStore.serverObfsParam
     }
+
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.socks_preferences)
+        addPreferencesFromResource(R.xml.shadowsocksr_preferences)
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
+
     }
 
 }

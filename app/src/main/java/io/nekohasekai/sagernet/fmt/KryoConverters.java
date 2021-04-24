@@ -31,8 +31,8 @@ import java.io.ByteArrayOutputStream;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
-import io.nekohasekai.sagernet.database.ProxyEntity;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean;
 import io.nekohasekai.sagernet.ktx.KryosKt;
@@ -77,5 +77,12 @@ public class KryoConverters {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new ShadowsocksBean(), bytes);
     }
+
+    @TypeConverter
+    public static ShadowsocksRBean shadowsocksRDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new ShadowsocksRBean(), bytes);
+    }
+
 
 }

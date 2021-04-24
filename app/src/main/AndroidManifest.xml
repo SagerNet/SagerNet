@@ -71,6 +71,7 @@
             android:theme="@style/Theme.AppCompat.Translucent" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity" />
+        <activity android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.AppManagerActivity"
             android:excludeFromRecents="true"

@@ -226,4 +226,89 @@
         <item>bypass-lan-china</item>
     </string-array>
 
+    <string-array name="enc_method_entry_ssr" translatable="false">
+        <item>NONE</item>
+        <item>TABLE</item>
+        <item>RC4</item>
+        <item>RC4-MD5</item>
+        <item>RC4-MD5-6</item>
+        <item>AES-128-CFB</item>
+        <item>AES-192-CFB</item>
+        <item>AES-256-CFB</item>
+        <item>AES-128-CTR</item>
+        <item>AES-192-CTR</item>
+        <item>AES-256-CTR</item>
+        <item>BF-CFB</item>
+        <item>CAMELLIA-128-CFB</item>
+        <item>CAMELLIA-192-CFB</item>
+        <item>CAMELLIA-256-CFB</item>
+        <item>SALSA20</item>
+        <item>CHACHA20</item>
+        <item>CHACHA20-IETF</item>
+    </string-array>
+
+    <string-array name="enc_method_value_ssr" translatable="false">
+        <item>none</item>
+        <item>table</item>
+        <item>rc4</item>
+        <item>rc4-md5</item>
+        <item>rc4-md5-6</item>
+        <item>aes-128-cfb</item>
+        <item>aes-192-cfb</item>
+        <item>aes-256-cfb</item>
+        <item>aes-128-ctr</item>
+        <item>aes-192-ctr</item>
+        <item>aes-256-ctr</item>
+        <item>bf-cfb</item>
+        <item>camellia-128-cfb</item>
+        <item>camellia-192-cfb</item>
+        <item>camellia-256-cfb</item>
+        <item>salsa20</item>
+        <item>chacha20</item>
+        <item>chacha20-ietf</item>
+    </string-array>
+
+    <string-array name="protocol_entry">
+        <item>ORIGIN</item>
+        <item>VERIFY_SIMPLE</item>
+        <item>VERIFY_SHA1</item>
+        <item>AUTH_SHA1</item>
+        <item>AUTH_SHA1_V2</item>
+        <item>AUTH_SHA1_V4</item>
+        <item>AUTH_AES128_SHA1</item>
+        <item>AUTH_AES128_MD5</item>
+        <item>AUTH_CHAIN_A</item>
+        <item>AUTH_CHAIN_B</item>
+    </string-array>
+
+    <string-array name="protocol_value">
+        <item>origin</item>
+        <item>verify_simple</item>
+        <item>verify_sha1</item>
+        <item>auth_sha1</item>
+        <item>auth_sha1_v2</item>
+        <item>auth_sha1_v4</item>
+        <item>auth_aes128_sha1</item>
+        <item>auth_aes128_md5</item>
+        <item>auth_chain_a</item>
+        <item>auth_chain_b</item>
+    </string-array>
+
+
+    <string-array name="obfs_entry">
+        <item>PLAIN</item>
+        <item>HTTP_SIMPLE</item>
+        <item>HTTP_POST</item>
+        <item>TLS_SIMPLE</item>
+        <item>TLS1.2_TICKET_AUTH</item>
+    </string-array>
+
+    <string-array name="obfs_value">
+        <item>plain</item>
+        <item>http_simple</item>
+        <item>http_post</item>
+        <item>tls_simple</item>
+        <item>tls1.2_ticket_auth</item>
+    </string-array>
+
 </resources>

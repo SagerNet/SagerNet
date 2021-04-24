@@ -78,6 +78,10 @@
     <string name="server_udp">UDP Route</string>
     <string name="udp_summary">Redirect UDP traffic to remote</string>
     <string name="enc_method">Encrypt Method</string>
+    <string name="protocol">Protocol</string>
+    <string name="protocol_param">Protocol Param</string>
+    <string name="obfs">Obfs</string>
+    <string name="obfs_param">Obfs Param</string>
 
     <!-- feature category -->
     <string name="ipv6">IPv6 Route</string>
@@ -150,6 +154,7 @@
     <string name="action_profile">Profile</string>
     <string name="action_socks">Socks</string>
     <string name="action_shadowsocks">Shadowsocks</string>
+    <string name="action_shadowsocksr">ShadowsocksR</string>
     <string name="action_group">Group</string>
 
     <string name="action_create_group">Empty group</string>

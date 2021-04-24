@@ -43,6 +43,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.widget.ListListener
@@ -83,12 +84,9 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
     }
 
     companion object {
-        const val REQUEST_UNSAVED_CHANGES = 10
         const val EXTRA_PROFILE_ID = "id"
-        const val EXTRA_GROUP_ID = "group"
     }
 
-    abstract val type: String
     abstract fun createEntity(): T
     abstract fun init()
     abstract fun init(bean: T)
@@ -108,25 +106,36 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
             DataStore.dirty = false
             DataStore.editingId = editingId
-            if (editingId == 0L) {
-                val editingGroup = intent.getLongExtra(EXTRA_GROUP_ID, 0L)
-                DataStore.editingGroup = editingGroup
-                init()
-            } else {
-                val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
-                if (proxyEntity == null) {
-                    finish()
-                    return
+            runOnDefaultDispatcher {
+                if (editingId == 0L) {
+                    DataStore.editingGroup = DataStore.selectedGroupForImport()
+                    init()
+                } else {
+                    val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
+                    if (proxyEntity == null) {
+                        onMainDispatcher {
+                            finish()
+                        }
+                        return@runOnDefaultDispatcher
+                    }
+                    DataStore.editingGroup = proxyEntity.groupId
+                    init(proxyEntity.requireBean() as T)
                 }
-                DataStore.editingGroup = proxyEntity.groupId
-                init(proxyEntity.requireBean() as T)
+
+                onMainDispatcher {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.settings,
+                            MyPreferenceFragmentCompat().apply {
+                                activity = this@ProfileSettingsActivity
+                            })
+                        .commit()
+
+                    DataStore.profileCacheStore.registerChangeListener(this@ProfileSettingsActivity)
+                }
             }
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.settings,
-                    MyPreferenceFragmentCompat().apply { activity = this@ProfileSettingsActivity })
-                .commit()
+
+
         }
-        DataStore.profileCacheStore.registerChangeListener(this)
 
     }
 
