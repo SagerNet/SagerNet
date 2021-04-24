@@ -19,45 +19,37 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.database
+package io.nekohasekai.sagernet.fmt.trojan
 
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import dev.matrix.roomigrant.GenerateRoomMigrations
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.database.preference.KeyValuePair
-import io.nekohasekai.sagernet.fmt.KryoConverters
-import io.nekohasekai.sagernet.fmt.gson.GsonConverters
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import io.nekohasekai.sagernet.ktx.urlSafe
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-@Database(entities = [ProxyGroup::class, ProxyEntity::class, KeyValuePair::class], version = 2)
-@TypeConverters(value = [KryoConverters::class, GsonConverters::class])
-@GenerateRoomMigrations
-abstract class SagerDatabase : RoomDatabase() {
+fun parseTrojan(server: String): TrojanBean {
 
-    companion object {
-        private val instance by lazy {
-            Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build())
-                .allowMainThreadQueries()
-                .enableMultiInstanceInvalidation()
-                .fallbackToDestructiveMigration()
-                .setQueryExecutor { GlobalScope.launch { it.run() } }
-                .build()
+    val link = server.replace("trojan://", "https://").toHttpUrlOrNull()
+        ?: error("invalid trojan link $server")
+
+    return TrojanBean().apply {
+        serverAddress = link.host
+        serverPort = link.port
+        password = link.username
+
+        if (link.password.isNotBlank()) {
+            // https://github.com/trojan-gfw/igniter/issues/318
+            password += ":" + link.password
         }
 
-        val profileCacheDao get() = instance.profileCacheDao()
-        val groupDao get() = instance.groupDao()
-        val proxyDao get() = instance.proxyDao()
-
+        sni = link.queryParameter("sni") ?: ""
+        name = link.fragment ?: ""
     }
 
-    abstract fun profileCacheDao(): KeyValuePair.Dao
-    abstract fun groupDao(): ProxyGroup.Dao
-    abstract fun proxyDao(): ProxyEntity.Dao
+}
+
+fun TrojanBean.toUri(): String {
+
+    val params = if (sni.isNotBlank()) "?sni=" + sni.urlSafe() else ""
+    val remark = if (name.isNotBlank()) "#" + name.urlSafe() else ""
+
+    return "trojan://" + password.urlSafe() + "@" + serverAddress + ":" + serverPort + params + remark
 
 }

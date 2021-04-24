@@ -35,7 +35,7 @@ import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
 import io.nekohasekai.sagernet.fmt.gson.JsonOr;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused", "RedundantSuppression"})
-public class V2rayConfig {
+public class V2RayConfig {
 
     public LogObject log;
 
@@ -403,10 +403,12 @@ public class V2rayConfig {
                         return SocksOutboundConfigurationObject.class;
                     case "vmess":
                         return VMessOutboundConfigurationObject.class;
-                    case "shadowsocks":
-                        return ShadowsocksOutboundConfigurationObject.class;
                     case "vless":
                         return VLESSOutboundConfigurationObject.class;
+                    case "shadowsocks":
+                        return ShadowsocksOutboundConfigurationObject.class;
+                    case "trojan":
+                        return TrojanOutboundConfigurationObject.class;
                     case "loopback":
                         return LoopbackOutboundConfigurationObject.class;
                 }
@@ -553,6 +555,22 @@ public class V2rayConfig {
                 public Integer level;
 
             }
+
+        }
+
+    }
+
+    public static class TrojanOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public List<ServerObject> servers;
+
+        public static class ServerObject {
+
+            public String address;
+            public Integer port;
+            public String password;
+            public String email;
+            public Integer level;
 
         }
 

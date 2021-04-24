@@ -196,6 +196,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             R.id.action_new_vless -> {
                 startActivity(Intent(requireActivity(), VLESSSettingsActivity::class.java))
             }
+            R.id.action_new_trojan -> {
+                startActivity(Intent(requireActivity(), TrojanSettingsActivity::class.java))
+            }
         }
         return true
     }

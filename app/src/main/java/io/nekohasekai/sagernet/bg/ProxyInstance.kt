@@ -36,7 +36,7 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.v2ray.AbstractV2RayBean
-import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig
+import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2rayConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.utils.DirectBoot
@@ -51,7 +51,7 @@ import java.util.*
 class ProxyInstance(val profile: ProxyEntity) {
 
     lateinit var v2rayPoint: V2RayPoint
-    lateinit var config: V2rayConfig
+    lateinit var config: V2RayConfig
     lateinit var base: BaseService.Interface
     lateinit var wsForwarder: WebView
 

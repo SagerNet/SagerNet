@@ -28,7 +28,8 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.fmt.v2ray.V2rayConfig.*
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -40,7 +41,7 @@ const val TAG_DIRECT = "bypass"
 const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
-fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
+fun buildV2rayConfig(proxy: ProxyEntity): V2RayConfig {
 
     val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
     val remoteDns = DataStore.remoteDNS.split(",")
@@ -50,7 +51,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
 
     val bean = proxy.requireBean()
 
-    return V2rayConfig().apply {
+    return V2RayConfig().apply {
 
         dns = DnsObject().apply {
             hosts = mapOf(
@@ -327,6 +328,29 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2rayConfig {
                                     }
                                 )
                             })
+                    }
+                } else if (bean is TrojanBean) {
+                    protocol = "trojan"
+                    settings = LazyOutboundConfigurationObject(
+                        TrojanOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                TrojanOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    port = bean.serverPort
+                                    password = bean.password
+                                    level = 8
+                                }
+                            )
+                        }
+                    )
+                    streamSettings = StreamSettingsObject().apply {
+                        network = "tcp"
+                        security = "tls"
+                        if (bean.sni.isNotBlank()) {
+                            tlsSettings = TLSObject().apply {
+                                serverName = bean.sni
+                            }
+                        }
                     }
                 } else {
                     protocol = "socks"

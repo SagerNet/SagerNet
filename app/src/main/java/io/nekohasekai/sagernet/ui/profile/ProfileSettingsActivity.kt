@@ -223,11 +223,15 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
         override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
             R.id.action_delete -> {
-                DeleteConfirmationDialogFragment().apply {
-                    arg(ProfileIdArg(DataStore.editingId,
-                        DataStore.editingGroup))
-                    key()
-                }.show(parentFragmentManager, null)
+                if (DataStore.editingId == 0L) {
+                    requireActivity().finish()
+                } else {
+                    DeleteConfirmationDialogFragment().apply {
+                        arg(ProfileIdArg(DataStore.editingId,
+                            DataStore.editingGroup))
+                        key()
+                    }.show(parentFragmentManager, null)
+                }
                 true
             }
             R.id.action_apply -> {

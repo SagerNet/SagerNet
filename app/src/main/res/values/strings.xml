@@ -171,6 +171,7 @@
     <string name="action_shadowsocksr">ShadowsocksR</string>
     <string name="action_vmess">VMess</string>
     <string name="action_vless">VLESS</string>
+    <string name="action_trojan">Trojan</string>
 
     <string name="action_group">Group</string>
     <string name="action_create_group">Empty group</string>

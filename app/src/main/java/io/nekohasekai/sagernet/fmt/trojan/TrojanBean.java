@@ -19,45 +19,48 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.database
+package io.nekohasekai.sagernet.fmt.trojan;
 
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import dev.matrix.roomigrant.GenerateRoomMigrations
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.database.preference.KeyValuePair
-import io.nekohasekai.sagernet.fmt.KryoConverters
-import io.nekohasekai.sagernet.fmt.gson.GsonConverters
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-@Database(entities = [ProxyGroup::class, ProxyEntity::class, KeyValuePair::class], version = 2)
-@TypeConverters(value = [KryoConverters::class, GsonConverters::class])
-@GenerateRoomMigrations
-abstract class SagerDatabase : RoomDatabase() {
+import org.jetbrains.annotations.NotNull;
 
-    companion object {
-        private val instance by lazy {
-            Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build())
-                .allowMainThreadQueries()
-                .enableMultiInstanceInvalidation()
-                .fallbackToDestructiveMigration()
-                .setQueryExecutor { GlobalScope.launch { it.run() } }
-                .build()
-        }
+import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-        val profileCacheDao get() = instance.profileCacheDao()
-        val groupDao get() = instance.groupDao()
-        val proxyDao get() = instance.proxyDao()
+public class TrojanBean extends AbstractBean {
 
+    public static TrojanBean DEFAULT_BEAN = new TrojanBean() {{
+        name = "";
+        serverAddress = "127.0.0.1";
+        serverPort = 1080;
+        password = "";
+        sni = "";
+    }};
+
+    public String password;
+    public String sni;
+
+    @Override
+    public void serialize(ByteBufferOutput output) {
+        output.writeInt(0);
+        super.serialize(output);
+        output.writeString(password);
+        output.writeString(sni);
     }
 
-    abstract fun profileCacheDao(): KeyValuePair.Dao
-    abstract fun groupDao(): ProxyGroup.Dao
-    abstract fun proxyDao(): ProxyEntity.Dao
+    @Override
+    public void deserialize(ByteBufferInput input) {
+        int version = input.readInt();
+        super.deserialize(input);
+        password = input.readString();
+        sni = input.readString();
+    }
 
+    @NotNull
+    @Override
+    public AbstractBean clone() {
+        return KryoConverters.deserialize(new TrojanBean(), KryoConverters.serialize(this));
+    }
 }

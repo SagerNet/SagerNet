@@ -19,45 +19,52 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.database
+package io.nekohasekai.sagernet.ui.profile
 
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import dev.matrix.roomigrant.GenerateRoomMigrations
+import android.os.Bundle
+import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.database.preference.KeyValuePair
-import io.nekohasekai.sagernet.fmt.KryoConverters
-import io.nekohasekai.sagernet.fmt.gson.GsonConverters
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 
-@Database(entities = [ProxyGroup::class, ProxyEntity::class, KeyValuePair::class], version = 2)
-@TypeConverters(value = [KryoConverters::class, GsonConverters::class])
-@GenerateRoomMigrations
-abstract class SagerDatabase : RoomDatabase() {
+class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
 
-    companion object {
-        private val instance by lazy {
-            Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build())
-                .allowMainThreadQueries()
-                .enableMultiInstanceInvalidation()
-                .fallbackToDestructiveMigration()
-                .setQueryExecutor { GlobalScope.launch { it.run() } }
-                .build()
-        }
+    override fun createEntity() = TrojanBean()
 
-        val profileCacheDao get() = instance.profileCacheDao()
-        val groupDao get() = instance.groupDao()
-        val proxyDao get() = instance.proxyDao()
-
+    override fun init() {
+        TrojanBean.DEFAULT_BEAN.init()
     }
 
-    abstract fun profileCacheDao(): KeyValuePair.Dao
-    abstract fun groupDao(): ProxyGroup.Dao
-    abstract fun proxyDao(): ProxyEntity.Dao
+    override fun TrojanBean.init() {
+        DataStore.profileName = name
+        DataStore.serverAddress = serverAddress
+        DataStore.serverPort = serverPort
+        DataStore.serverPassword = password
+        DataStore.serverSNI = sni
+    }
+
+    override fun TrojanBean.serialize() {
+        name = DataStore.profileName
+        serverAddress = DataStore.serverAddress
+        serverPort = DataStore.serverPort
+        password = DataStore.serverPassword
+        sni = DataStore.serverSNI
+    }
+
+    override fun PreferenceFragmentCompat.createPreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
+        addPreferencesFromResource(R.xml.trojan_preferences)
+        findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
+            summaryProvider = PasswordSummaryProvider
+        }
+    }
 
 }

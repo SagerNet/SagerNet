@@ -46,7 +46,10 @@ public abstract class AbstractV2RayBean extends AbstractBean {
             name = "";
         }
         if (StrUtil.isBlank(serverAddress)) {
-            serverAddress = "";
+            serverAddress = "127.0.0.1";
+        }
+        if (serverPort == 0) {
+            serverPort = 1080;
         }
         if (StrUtil.isBlank(uuid)) {
             uuid = "";

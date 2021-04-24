@@ -306,7 +306,7 @@ class BaseService {
                 data.closeReceiverRegistered = true
             }
 
-            data.notification = createNotification(profile.requireBean().name)
+            data.notification = createNotification(profile.displayName())
 
             data.changeState(State.Connecting)
             data.connectingJob = GlobalScope.launch(Dispatchers.Main) {
