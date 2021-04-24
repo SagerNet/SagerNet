@@ -30,7 +30,7 @@ suspend fun onDefaultDispatcher(block: suspend CoroutineScope.() -> Unit) =
     withContext(Dispatchers.Default, block = block)
 
 fun runOnMainDispatcher(block: suspend CoroutineScope.() -> Unit) =
-    GlobalScope.launch(Dispatchers.Main, block = block)
+    GlobalScope.launch(Dispatchers.Main.immediate, block = block)
 
 suspend fun onMainDispatcher(block: suspend CoroutineScope.() -> Unit) =
-    withContext(Dispatchers.Main, block = block)
+    withContext(Dispatchers.Main.immediate, block = block)
