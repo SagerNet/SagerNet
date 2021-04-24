@@ -5,6 +5,12 @@
     <mapping directory="$PROJECT_DIR$/app/src/main/jni/badvpn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libsodium" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/mbedtls" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/pcre" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/re2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/shadowsocks-libev" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/v2ray" vcs="Git" />
   </component>
 </project>
