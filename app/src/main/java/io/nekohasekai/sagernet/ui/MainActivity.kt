@@ -23,12 +23,9 @@ package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
 import android.os.RemoteException
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -92,13 +89,13 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
         navView.setupWithNavController(navController)
 
-       /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
-            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom +
-                        resources.getDimensionPixelOffset(R.dimen.mtrl_bottomappbar_fab_bottom_margin)
-            }
-            insets
-        }*/
+        /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
+             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                 bottomMargin = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom +
+                         resources.getDimensionPixelOffset(R.dimen.mtrl_bottomappbar_fab_bottom_margin)
+             }
+             insets
+         }*/
 
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
@@ -172,7 +169,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun onStart() {
         super.onStart()
-        connection.bandwidthTimeout = DataStore.speedInterval.toLong()
+        connection.bandwidthTimeout = 500
     }
 
     override fun onStop() {

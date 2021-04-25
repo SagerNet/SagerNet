@@ -132,12 +132,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                     }
                     true
                 }
-            speedInterval.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, newValue ->
-                    (requireActivity() as MainActivity).connection.bandwidthTimeout =
-                        (newValue as String).toLong()
-                    true
-                }
         }
 
     }
