@@ -1,0 +1,119 @@
+name: Debug build
+
+on:
+  push:
+    branches:
+      - dev
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+      - '!.github/workflows/debug.yml'
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  v2ray:
+    name: Native Build (V2Ray)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status v2ray > v2ray_status
+      - name: V2Ray Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/libv2ray.aar
+          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs v2ray
+  shadowsocks:
+    name: Native Build (Shadowsocks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'shadowsocks/*' > shadowsocks_status
+      - name: Shadowsocks Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/shadowsocks-release.aar
+          key: ${{ hashFiles('shadowsocks_status') }}
+      - name: Install Rust
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run init action shadowsocks
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs shadowsocks
+  shadowsocksr:
+    name: Native Build (ShadowsocksR)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'shadowsocksr/*' > shadowsocksr_status
+      - name: ShadowsocksR Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/shadowsocksr-release.aar
+          key: ${{ hashFiles('shadowsocksr_status') }}
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs shadowsocksr
+  build:
+    name: Gradle Build
+    runs-on: ubuntu-latest
+    needs:
+      - v2ray
+      - shadowsocks
+      - shadowsocksr
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+      - name: Fetch Status
+        run: |
+          git submodule status 'shadowsocks/*' > shadowsocks_status
+          git submodule status 'shadowsocks/*' > shadowsocks_status
+          git submodule status v2ray > v2ray_status
+      - name: V2Ray Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/libv2ray.aar
+          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+      - name: Shadowsocks Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/shadowsocks-release.aar
+          key: ${{ hashFiles('shadowsocks_status') }}
+      - name: ShadowsocksR Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/shadowsocksr-release.aar
+          key: ${{ hashFiles('shadowsocksr_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/*.gradle') }}
+      - name: Debug Build
+        run: ./gradlew TMessagesProj:assembleDebug
