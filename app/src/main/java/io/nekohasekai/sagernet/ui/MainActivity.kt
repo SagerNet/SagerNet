@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         setContentView(R.layout.layout_main)
 
         coordinator = findViewById(R.id.coordinator)
+
         fab = findViewById(R.id.fab)
         stats = findViewById(R.id.stats)
         drawer = findViewById(R.id.drawer_layout)
@@ -91,13 +92,13 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
         navView.setupWithNavController(navController)
 
-        ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
+       /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom +
                         resources.getDimensionPixelOffset(R.dimen.mtrl_bottomappbar_fab_bottom_margin)
             }
             insets
-        }
+        }*/
 
         changeState(BaseService.State.Idle)
         connection.connect(this, this)

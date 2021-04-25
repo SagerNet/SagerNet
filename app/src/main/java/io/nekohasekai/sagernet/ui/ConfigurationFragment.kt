@@ -316,11 +316,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             if (!::proxyGroup.isInitialized) return
 
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = ConfigurationAdapter()
-            ProfileManager.addListener(adapter)
 
             configurationListView = view.findViewById(R.id.configuration_list)
             configurationListView.layoutManager = layoutManager
+            adapter = ConfigurationAdapter()
+            ProfileManager.addListener(adapter)
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
 
