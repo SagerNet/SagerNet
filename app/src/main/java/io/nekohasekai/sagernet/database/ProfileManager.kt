@@ -79,7 +79,7 @@ object ProfileManager {
 
     suspend fun iterator(what: suspend Listener.() -> Unit) {
         val listeners = synchronized(listeners) {
-            listeners
+            listeners.toList()
         }
         for (profileListener in listeners) {
             what(profileListener)
@@ -88,7 +88,7 @@ object ProfileManager {
 
     suspend fun groupIterator(what: suspend GroupListener.() -> Unit) {
         val groupListeners = synchronized(groupListeners) {
-            groupListeners
+            groupListeners.toList()
         }
         for (listener in groupListeners) {
             what(listener)

@@ -115,22 +115,13 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 val selectedProfileIndex =
                     fragment.adapter.configurationIdList.indexOf(selectedProxy)
                 if (selectedProfileIndex != -1) {
-                    val layoutManager = fragment.layoutManager
-                    if (layoutManager is StaggeredGridLayoutManager) {
-                        val indices = layoutManager.findFirstVisibleItemPositions(null)
-                        if (selectedProfileIndex !in indices) {
-                            fragment.configurationListView.scrollTo(selectedProfileIndex)
-                            return@setOnClickListener
-                        }
-                    } else {
-                        layoutManager as LinearLayoutManager
-                        val first = layoutManager.findFirstVisibleItemPosition()
-                        val last = layoutManager.findLastVisibleItemPosition()
+                    val layoutManager = fragment.layoutManager as LinearLayoutManager
+                    val first = layoutManager.findFirstVisibleItemPosition()
+                    val last = layoutManager.findLastVisibleItemPosition()
 
-                        if (selectedProfileIndex !in first..last) {
-                            fragment.configurationListView.scrollTo(selectedProfileIndex)
-                            return@setOnClickListener
-                        }
+                    if (selectedProfileIndex !in first..last) {
+                        fragment.configurationListView.scrollTo(selectedProfileIndex)
+                        return@setOnClickListener
                     }
 
                 }
@@ -330,7 +321,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             layoutManager = if (proxyGroup.type != 1) {
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             } else {
-                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                GridLayoutManager(context, 2)
             }
 
             configurationListView = view.findViewById(R.id.configuration_list)
@@ -429,7 +420,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             ): ConfigurationHolder {
                 return ConfigurationHolder(
                     LayoutInflater.from(parent.context)
-                        .inflate(if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash, parent, false)
+                        .inflate(if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
+                            parent,
+                            false)
                 )
             }
 
