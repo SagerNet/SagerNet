@@ -31,6 +31,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
@@ -331,22 +332,21 @@ object ProfileManager {
                         proxies.add(bean)
                     }
 
-                    /*
-                        "trojan" -> {
-                            val opts = AngConfig.VmessBean()
-                            opts.configType = V2RayConfig.EConfigType.Trojan
-                            for (opt in proxy) {
-                                when (opt.key) {
-                                    "name" -> opts.remarks = opt.value as String
-                                    "server" -> opts.address = opt.value as String
-                                    "port" -> opts.port = opt.value as Int
-                                    "password" -> opts.id = opt.value as String
-                                    "sni" -> opts.requestHost = opt.value as String
-                                }
+
+                    "trojan" -> {
+                        val bean = TrojanBean()
+                        for (opt in proxy) {
+                            when (opt.key) {
+                                "name" -> bean.name = opt.value as String
+                                "server" -> bean.serverAddress = opt.value as String
+                                "port" -> bean.serverPort = opt.value as Int
+                                "password" -> bean.password = opt.value as String
+                                "sni" -> bean.sni = opt.value as String
                             }
-                            proxies.add(opts.toString())
                         }
-                        */
+                        proxies.add(bean)
+                    }
+
                     "ssr" -> {
                         val entity = ShadowsocksRBean()
                         for (opt in proxy) {

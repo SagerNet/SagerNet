@@ -35,7 +35,10 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs v2ray
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run libs v2ray
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest
@@ -56,7 +59,10 @@ jobs:
         run: ./run init action shadowsocks
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs shadowsocks
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run libs shadowsocks
   shadowsocksr:
     name: Native Build (ShadowsocksR)
     runs-on: ubuntu-latest
@@ -74,7 +80,10 @@ jobs:
           key: ${{ hashFiles('shadowsocksr_status') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs shadowsocksr
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run libs shadowsocksr
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
@@ -90,7 +99,7 @@ jobs:
       - name: Fetch Status
         run: |
           git submodule status 'shadowsocks/*' > shadowsocks_status
-          git submodule status 'shadowsocks/*' > shadowsocks_status
+          git submodule status 'shadowsocksr/*' > shadowsocksr_status
           git submodule status v2ray > v2ray_status
       - name: V2Ray Cache
         uses: actions/cache@v2
@@ -115,5 +124,11 @@ jobs:
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle') }}
+      - name: Checkout Library
+        run: |
+          git submodule update --init 'app/*'
       - name: Debug Build
-        run: ./gradlew TMessagesProj:assembleDebug
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./gradlew app:assembleDebug
