@@ -122,32 +122,38 @@ class SagerNet : Application() {
         super.attachBaseContext(base)
         application = this
 
-        if (!BuildConfig.DEBUG) {
+        // if (!BuildConfig.DEBUG) {
 
-            initAcra {
-                alsoReportToAndroidFramework = true
+        initAcra {
+            alsoReportToAndroidFramework = true
 
-                applicationLogFileDir = Directory.EXTERNAL_FILES
-                applicationLogFile = "application_log.txt"
-                buildConfigClass = BuildConfig::class.java
-                reportFormat = StringFormat.JSON
-                stopServicesOnCrash = true
+            applicationLogFileDir = Directory.EXTERNAL_FILES
+            applicationLogFile = "application_log.txt"
+            buildConfigClass = BuildConfig::class.java
+            reportFormat = StringFormat.JSON
+            stopServicesOnCrash = true
 
-                mailSender {
-                    mailTo = "sekai@neko.services"
-                    reportAsFile = true
-                    reportFileName = "crash_report.json"
-                }
+            mailSender {
+                mailTo = "sekai@neko.services"
+                reportAsFile = true
+                reportFileName = "crash_report.json"
+                subject = "Crash report (SagerNet)"
+            }
 
-
-                notification {
-                    channelName = "Crash report"
-                    channelDescription = ":("
-                }
-
+            notification {
+                channelName = "Crash report"
+                channelDescription = ":("
+                context = this@SagerNet
+                sendOnClick = true
+                withResTitle(R.string.acra_title)
+                withResTickerText(R.string.acra_ticker)
+                withResSendButtonText(android.R.string.ok)
+                withResDiscardButtonText(android.R.string.cancel)
             }
 
         }
+
+        // }
 
     }
 
