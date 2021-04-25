@@ -165,7 +165,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        val proxies = try {
+                        val (subType, proxies) = try {
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())
                         } catch (e: Exception) {
@@ -227,6 +227,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         runBlocking {
                             ProfileManager.updateGroup(proxyGroup.apply {
                                 lastUpdate = System.currentTimeMillis()
+                                type = subType
                             })
 
                             ProfileManager.postReload(proxyGroup.id)

@@ -63,7 +63,7 @@
     <string name="ws_browser_forwarding_sum">Forward corresponding WebSockets through the browser.</string>
     <string name="speed_interval">Speed notification update interval</string>
 
-    <string name="traffic">%1$s↑\t%2$s↓</string>
+    <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s\nReceived: \t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_pending">Check Connectivity</string>

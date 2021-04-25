@@ -22,8 +22,10 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.format.Formatter
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -32,6 +34,7 @@ import android.widget.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -112,15 +115,24 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 val selectedProfileIndex =
                     fragment.adapter.configurationIdList.indexOf(selectedProxy)
                 if (selectedProfileIndex != -1) {
-                    val first =
-                        (fragment.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                    val last =
-                        (fragment.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                    val layoutManager = fragment.layoutManager
+                    if (layoutManager is StaggeredGridLayoutManager) {
+                        val indices = layoutManager.findFirstVisibleItemPositions(null)
+                        if (selectedProfileIndex !in indices) {
+                            fragment.configurationListView.scrollTo(selectedProfileIndex)
+                            return@setOnClickListener
+                        }
+                    } else {
+                        layoutManager as LinearLayoutManager
+                        val first = layoutManager.findFirstVisibleItemPosition()
+                        val last = layoutManager.findLastVisibleItemPosition()
 
-                    if (selectedProfileIndex !in first..last) {
-                        fragment.configurationListView.scrollTo(selectedProfileIndex)
-                        return@setOnClickListener
+                        if (selectedProfileIndex !in first..last) {
+                            fragment.configurationListView.scrollTo(selectedProfileIndex)
+                            return@setOnClickListener
+                        }
                     }
+
                 }
 
                 fragment.configurationListView.scrollTo(0)
@@ -315,7 +327,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             if (!::proxyGroup.isInitialized) return
 
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            layoutManager = if (proxyGroup.type != 1) {
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            } else {
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            }
 
             configurationListView = view.findViewById(R.id.configuration_list)
             configurationListView.layoutManager = layoutManager
@@ -413,7 +429,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             ): ConfigurationHolder {
                 return ConfigurationHolder(
                     LayoutInflater.from(parent.context)
-                        .inflate(R.layout.layout_profile, parent, false)
+                        .inflate(if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash, parent, false)
                 )
             }
 
@@ -564,83 +580,141 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
         }
 
+        interface ConfigurationHolderImpl {
+            fun bind(proxyEntity: ProxyEntity)
+        }
 
         inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
             PopupMenu.OnMenuItemClickListener {
 
-            val profileName: TextView = view.findViewById(R.id.profile_name)
-            val profileType: TextView = view.findViewById(R.id.profile_type)
-            val profileAddress: TextView = view.findViewById(R.id.profile_address)
-            val trafficText: TextView = view.findViewById(R.id.traffic_text)
-            val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
-            val editButton: ImageView = view.findViewById(R.id.edit)
-            val shareButton: ImageView = view.findViewById(R.id.share)
-
             lateinit var entity: ProxyEntity
+            val impl =
+                if (proxyGroup.type != 1) DefaultConfigurationHolderImpl() else ClashConfigurationHolderImpl()
 
             fun bind(proxyEntity: ProxyEntity) {
                 entity = proxyEntity
+                impl.bind(proxyEntity)
+            }
 
-                view.setOnClickListener {
-                    runOnDefaultDispatcher {
-                        if (DataStore.selectedProxy != proxyEntity.id) {
-                            val lastSelected = DataStore.selectedProxy
-                            DataStore.selectedProxy = proxyEntity.id
-                            ProfileManager.postUpdate(lastSelected)
-                            onMainDispatcher {
-                                selectedView.visibility = View.VISIBLE
-                                if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
+            inner class DefaultConfigurationHolderImpl : ConfigurationHolderImpl {
+
+                val profileName: TextView = view.findViewById(R.id.profile_name)
+                val profileType: TextView = view.findViewById(R.id.profile_type)
+                val profileAddress: TextView = view.findViewById(R.id.profile_address)
+                val trafficText: TextView = view.findViewById(R.id.traffic_text)
+                val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
+                val editButton: ImageView = view.findViewById(R.id.edit)
+                val shareButton: ImageView = view.findViewById(R.id.share)
+
+                override fun bind(proxyEntity: ProxyEntity) {
+
+                    view.setOnClickListener {
+                        runOnDefaultDispatcher {
+                            if (DataStore.selectedProxy != proxyEntity.id) {
+                                val lastSelected = DataStore.selectedProxy
+                                DataStore.selectedProxy = proxyEntity.id
+                                ProfileManager.postUpdate(lastSelected)
+                                onMainDispatcher {
+                                    selectedView.visibility = View.VISIBLE
+                                    if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
+                                }
                             }
                         }
                     }
-                }
 
-                profileName.text = proxyEntity.displayName()
-                profileType.text = proxyEntity.displayType()
 
-                var rx = proxyEntity.rx
-                var tx = proxyEntity.tx
+                    profileName.text = proxyEntity.displayName()
 
-                val stats = proxyEntity.stats
-                if (stats != null) {
-                    rx += stats.rxTotal
-                    tx += stats.txTotal
-                }
-
-                val showTraffic = rx + tx != 0L
-                trafficText.isGone = !showTraffic
-                if (showTraffic) {
-                    trafficText.text = view.context.getString(R.string.traffic,
-                        Formatter.formatFileSize(view.context, tx),
-                        Formatter.formatFileSize(view.context, rx))
-                }
-                //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
-
-                editButton.isGone = proxyGroup.isSubscription
-                if (!proxyGroup.isSubscription) {
-                    editButton.setOnClickListener {
-                        it.context.startActivity(proxyEntity.settingIntent(it.context))
+                    if (proxyGroup.type == 1) {
+                        profileName.isSingleLine = true
+                        profileName.typeface = Typeface.DEFAULT
+                        profileName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
                     }
-                }
 
-                shareButton.setOnClickListener {
-                    val popup = PopupMenu(requireContext(), it)
-                    popup.menuInflater.inflate(when (proxyEntity.type) {
-                        0 -> R.menu.socks_share_menu
-                        1 -> R.menu.socks_share_menu
-                        2 -> R.menu.socks_share_menu
-                        3 -> R.menu.socks_share_menu
-                        else -> error("Undefined type $proxyEntity.type")
-                    }, popup.menu)
-                    popup.setOnMenuItemClickListener(this)
-                    popup.show()
-                }
+                    profileType.text = proxyEntity.displayType()
 
-                runOnDefaultDispatcher {
-                    val selected = DataStore.selectedProxy == proxyEntity.id
-                    onMainDispatcher {
-                        selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                    var rx = proxyEntity.rx
+                    var tx = proxyEntity.tx
+
+                    val stats = proxyEntity.stats
+                    if (stats != null) {
+                        rx += stats.rxTotal
+                        tx += stats.txTotal
                     }
+
+                    val showTraffic = rx + tx != 0L
+                    trafficText.isGone = !showTraffic
+                    if (showTraffic) {
+                        trafficText.text = view.context.getString(R.string.traffic,
+                            Formatter.formatFileSize(view.context, tx),
+                            Formatter.formatFileSize(view.context, rx))
+                    }
+                    //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
+
+                    editButton.isGone = proxyGroup.isSubscription
+                    if (!proxyGroup.isSubscription) {
+                        editButton.setOnClickListener {
+                            it.context.startActivity(proxyEntity.settingIntent(it.context))
+                        }
+                    }
+
+                    shareButton.isVisible = proxyGroup.type != 1
+                    shareButton.setOnClickListener {
+                        val popup = PopupMenu(requireContext(), it)
+                        popup.menuInflater.inflate(when (proxyEntity.type) {
+                            0 -> R.menu.socks_share_menu
+                            1 -> R.menu.socks_share_menu
+                            2 -> R.menu.socks_share_menu
+                            3 -> R.menu.socks_share_menu
+                            else -> error("Undefined type $proxyEntity.type")
+                        }, popup.menu)
+                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                        popup.show()
+                    }
+
+                    runOnDefaultDispatcher {
+                        val selected = DataStore.selectedProxy == proxyEntity.id
+                        onMainDispatcher {
+                            selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                        }
+                    }
+
+                }
+
+            }
+
+            inner class ClashConfigurationHolderImpl : ConfigurationHolderImpl {
+
+                val profileName: TextView = view.findViewById(R.id.profile_name)
+                val profileType: TextView = view.findViewById(R.id.profile_type)
+                val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
+
+                override fun bind(proxyEntity: ProxyEntity) {
+
+                    view.setOnClickListener {
+                        runOnDefaultDispatcher {
+                            if (DataStore.selectedProxy != proxyEntity.id) {
+                                val lastSelected = DataStore.selectedProxy
+                                DataStore.selectedProxy = proxyEntity.id
+                                ProfileManager.postUpdate(lastSelected)
+                                onMainDispatcher {
+                                    selectedView.visibility = View.VISIBLE
+                                    if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
+                                }
+                            }
+                        }
+                    }
+
+                    profileName.text = proxyEntity.displayName()
+                    profileType.text = proxyEntity.displayType()
+
+                    runOnDefaultDispatcher {
+                        val selected = DataStore.selectedProxy == proxyEntity.id
+                        onMainDispatcher {
+                            selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                        }
+                    }
+
                 }
 
             }
