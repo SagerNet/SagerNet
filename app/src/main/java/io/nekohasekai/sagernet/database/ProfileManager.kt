@@ -278,7 +278,6 @@ object ProfileManager {
         if (text.contains("proxies:\n")) {
 
             // clash
-
             for (proxy in (Yaml().loadAs(text,
                 Map::class.java)["proxies"] as List<Map<String, Any?>>)) {
                 val type = proxy["type"] as String
@@ -293,7 +292,7 @@ object ProfileManager {
                         }
                         proxies.add(ShadowsocksBean().apply {
                             serverAddress = proxy["server"] as String
-                            serverPort = proxy["port"] as Int
+                            serverPort = proxy["port"].toString().toInt()
                             password = proxy["password"] as String
                             method = proxy["cipher"] as String
                             plugin = pluginStr
@@ -306,9 +305,9 @@ object ProfileManager {
                             when (opt.key) {
                                 "name" -> bean.name = opt.value as String
                                 "server" -> bean.serverAddress = opt.value as String
-                                "port" -> bean.serverPort = opt.value as Int
+                                "port" -> bean.serverPort = opt.value.toString().toInt()
                                 "uuid" -> bean.uuid = opt.value as String
-                                "alterId" -> bean.alterId = opt.value as Int
+                                "alterId" -> bean.alterId = opt.value.toString().toInt()
                                 "cipher" -> bean.security = opt.value as String
                                 "network" -> bean.network = opt.value as String
                                 "tls" -> bean.tls = opt.value?.toString() == "true"
@@ -339,7 +338,7 @@ object ProfileManager {
                             when (opt.key) {
                                 "name" -> bean.name = opt.value as String
                                 "server" -> bean.serverAddress = opt.value as String
-                                "port" -> bean.serverPort = opt.value as Int
+                                "port" -> bean.serverPort = opt.value.toString().toInt()
                                 "password" -> bean.password = opt.value as String
                                 "sni" -> bean.sni = opt.value as String
                             }
@@ -353,20 +352,20 @@ object ProfileManager {
                             when (opt.key) {
                                 "name" -> entity.name = opt.value as String
                                 "server" -> entity.serverAddress = opt.value as String
-                                "port" -> entity.serverPort = opt.value as Int
+                                "port" -> entity.serverPort = opt.value.toString().toInt()
                                 "cipher" -> entity.method = opt.value as String
                                 "password" -> entity.password = opt.value as String
                                 "obfs" -> entity.obfs = opt.value as String
                                 "protocol" -> entity.protocol = opt.value as String
                                 "obfs-param" -> entity.obfsParam = opt.value as String
-                                "protocol-param" -> entity.protocolParam = opt.value as String
+                                "protocol-param" -> entity.protocolParam =
+                                    opt.value as String
                             }
                         }
                         proxies.add(entity)
                     }
                 }
             }
-
             return proxies
         }
 
