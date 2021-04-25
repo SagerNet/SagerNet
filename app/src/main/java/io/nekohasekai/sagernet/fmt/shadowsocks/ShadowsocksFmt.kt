@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
+import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
@@ -35,6 +36,35 @@ val methodsV2fly = arrayOf(
     "aes-256-gcm",
     "chacha20-ietf-poly1305"
 )
+
+fun ShadowsocksBean.fixInvalidParams() {
+    if (method == "plain") method = "none"
+
+    val pl = PluginConfiguration(plugin)
+
+    if (pl.selected.contains("v2ray") && pl.selected != "v2ray-plugin") {
+
+        pl.pluginsOptions["v2ray-plugin"] = pl.getOptions().apply { id = "v2ray-plugin" }
+        pl.pluginsOptions.remove(pl.selected)
+        pl.selected = "v2ray-plugin"
+
+        // reslove v2ray plugin
+
+    }
+
+    if (pl.selected == "obfs") {
+
+        pl.pluginsOptions["obfs-local"] = pl.getOptions().apply { id = "obfs-local" }
+        pl.pluginsOptions.remove(pl.selected)
+        pl.selected = "obfs-local"
+
+        // reslove clash obfs
+
+    }
+
+    plugin = pl.toString()
+
+}
 
 fun parseShadowsocks(url: String): ShadowsocksBean {
 
@@ -56,6 +86,8 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
                 plugin = link.queryParameter("plugin") ?: ""
                 name = link.fragment ?: ""
 
+                fixInvalidParams()
+
             }
 
         }
@@ -70,6 +102,8 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             password = methodAndPswd.substringAfter(":")
             plugin = link.queryParameter("plugin") ?: ""
             name = link.fragment ?: ""
+
+            fixInvalidParams()
 
         }
 
@@ -95,6 +129,8 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             if (url.contains("#")) {
                 name = url.substringAfter("#").unUrlSafe()
             }
+
+            fixInvalidParams()
 
         }
 
@@ -148,5 +184,7 @@ fun parseShadowsocks(ssObj: JSONObject): ShadowsocksBean {
         method = ssObj.getString("method")
         plugin = pluginStr
         name = ssObj.optString("remarks", "")
+
+        fixInvalidParams()
     }
 }

@@ -67,4 +67,5 @@ public class ShadowsocksBean extends AbstractBean {
     public ShadowsocksBean clone() {
         return KryoConverters.deserialize(new ShadowsocksBean(), KryoConverters.serialize(this));
     }
+
 }

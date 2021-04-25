@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -251,8 +252,9 @@ object ProfileManager {
          groupIterator { onAddFinish(proxies.size) }*/
     }
 
+
     @Suppress("UNCHECKED_CAST")
-    fun parseSubscription(text: String, tryDecode: Boolean = true): List<AbstractBean> {
+    fun parseSubscription(text: String, tryDecode: Boolean = true): Pair<Int, List<AbstractBean>> {
         if (tryDecode) {
             try {
                 return parseSubscription(String(Base64.decode(text, Base64.NO_PADDING)), false)
@@ -271,7 +273,7 @@ object ProfileManager {
             } catch (e: Exception) {
                 throw  e
             }
-            return proxies
+            return 0 to proxies
         } catch (ignored: JSONException) {
         }
 
@@ -297,6 +299,8 @@ object ProfileManager {
                             method = proxy["cipher"] as String
                             plugin = pluginStr
                             name = proxy["name"] as String? ?: ""
+
+                            fixInvalidParams()
                         })
                     }
                     "vmess" -> {
@@ -366,12 +370,12 @@ object ProfileManager {
                     }
                 }
             }
-            return proxies
+            return 1 to proxies
         }
 
         val results = parseProxies(text)
         if (results.isEmpty()) error(app.getString(R.string.no_proxies_found))
-        return results
+        return 2 to results
 
     }
 

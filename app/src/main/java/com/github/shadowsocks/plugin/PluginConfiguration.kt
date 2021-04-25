@@ -25,9 +25,9 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.utils.Commandline
 import java.util.*
 
-class PluginConfiguration(val pluginsOptions: Map<String, PluginOptions>, val selected: String) {
+class PluginConfiguration(val pluginsOptions: MutableMap<String, PluginOptions>, var selected: String) {
     private constructor(plugins: List<PluginOptions>) : this(
-            plugins.filter { it.id.isNotEmpty() }.associateBy { it.id },
+            plugins.filter { it.id.isNotEmpty() }.associateBy { it.id }.toMutableMap(),
             if (plugins.isEmpty()) "" else plugins[0].id)
     constructor(plugin: String) : this(plugin.split('\n').map { line ->
         if (line.startsWith("kcptun ")) {

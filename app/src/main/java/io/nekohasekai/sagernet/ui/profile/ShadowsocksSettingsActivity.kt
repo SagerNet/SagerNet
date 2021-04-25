@@ -166,8 +166,8 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean = try {
         val selected = pluginConfiguration.selected
-        pluginConfiguration = PluginConfiguration(pluginConfiguration.pluginsOptions +
-                (pluginConfiguration.selected to PluginOptions(selected, newValue as? String?)),
+        pluginConfiguration = PluginConfiguration((pluginConfiguration.pluginsOptions +
+                (pluginConfiguration.selected to PluginOptions(selected, newValue as? String?))).toMutableMap(),
             selected)
         DataStore.serverPlugin = pluginConfiguration.toString()
         DataStore.dirty = true
