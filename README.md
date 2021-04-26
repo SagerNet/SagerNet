@@ -41,7 +41,7 @@ The application is designed to be used whenever possible.
 
 ## XRAY
 
-SagerNet is a V2Ray client, not an XRay client. For that, please use the official X-flutter client.
+SagerNet is a V2Ray client, not an Xray client. For that, please use the official X-flutter client.
 
 ## OPEN SOURCE LICENSES
 
