@@ -507,6 +507,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
         override suspend fun onAdd(group: ProxyGroup) {
             groupList.add(group)
+            delay(300L)
+
             onMainDispatcher {
                 undoManager.flush()
                 notifyItemInserted(groupList.size - 1)

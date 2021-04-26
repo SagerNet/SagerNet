@@ -269,8 +269,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             }
 
             onMainDispatcher {
-                notifyItemInserted(groupList.size - 1)
-                tabLayout.getTabAt(groupList.size - 1)?.select()
+                tabLayout.post {
+                    notifyItemInserted(groupList.size - 1)
+                    tabLayout.getTabAt(groupList.size - 1)?.select()
+                }
             }
         }
 
