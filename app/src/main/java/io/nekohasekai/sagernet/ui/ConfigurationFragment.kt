@@ -654,13 +654,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     shareButton.isVisible = proxyGroup.type != 1
                     shareButton.setOnClickListener {
                         val popup = PopupMenu(requireContext(), it)
-                        popup.menuInflater.inflate(when (proxyEntity.type) {
-                            0 -> R.menu.socks_share_menu
-                            1 -> R.menu.socks_share_menu
-                            2 -> R.menu.socks_share_menu
-                            3 -> R.menu.socks_share_menu
-                            else -> error("Undefined type $proxyEntity.type")
-                        }, popup.menu)
+                        popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                         popup.show()
                     }
