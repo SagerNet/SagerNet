@@ -30,7 +30,7 @@ The application is designed to be used whenever possible.
 
 * Full basic features  
 * Option to change the notification update interval  
-* A china apps scanner (based on dex classpath scanning, so it's may slower)
+* A China apps scanner (based on dex classpath scanning, so it may be slower)
 
 ## TIPS
 
