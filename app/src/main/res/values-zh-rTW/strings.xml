@@ -1,0 +1,280 @@
+<resources>
+    <string name="app_name">SagerNet</string>
+    <string name="app_desc">適用於 Android 的通用代理工具鏈，由 Kotlin 開發。</string>
+
+    <string name="project">專案</string>
+    <string name="github">原始碼</string>
+    <string name="telegram">Telegram 更新頻道</string>
+    <string name="oss_licenses">開放原始碼授權協定</string>
+
+    <string name="misc">雜項</string>
+    <string name="app_version">版本</string>
+    <string name="v2ray_version">版本(v2ray-core))</string>
+    <string name="logcat">匯出除錯資訊</string>
+    <string name="logcat_summary">Such useful very wow</string>
+
+    <string name="action_settings">設定</string>
+    <string name="menu_configuration">設定檔</string>
+    <string name="menu_group">群組</string>
+    <string name="menu_about">關於</string>
+
+    <string name="group_default">預設</string>
+    <string name="profile_address">127.0.0.1:1080</string>
+    <string name="profile_type">socks5</string>
+
+    <string name="quick_toggle">切換</string>
+    <string name="send_email">傳送電子郵件</string>
+
+    <!-- group -->
+    <string name="group_name">群組名稱</string>
+    <string name="group_update">更新</string>
+    <string name="group_subscription_link">訂閱連接</string>
+    <string name="group_name_required">需要群組名稱</string>
+    <string name="group_create">建立新群組</string>
+    <string name="group_create_subscription">建立新訂閱</string>
+    <string name="group_edit">編輯</string>
+    <string name="group_edit_subscription">編輯訂閱</string>
+
+    <string name="group_status_empty">空白群組</string>
+    <string name="group_status_empty_subscription">尚未更新</string>
+    <string name="group_status_proxies">%d 個代理</string>
+    <string name="group_status_proxies_subscription">%d 個代理，上次更新於 %s。</string>
+    <string name="group_no_difference">沒有變化</string>
+    <string name="group_updated">更新了 %d 個代理</string>
+    <string name="group_show_diff">變化</string>
+    <string name="group_delete_confirm_prompt">您真的希望刪除這個群組嗎？</string>
+    <string name="group_added">新增於：\n%s</string>
+    <string name="group_changed">更新於：\n%s</string>
+    <string name="group_deleted">刪除於：\n%s</string>
+
+    <!-- misc -->
+    <string name="service_mode">執行模式</string>
+    <string name="service_mode_proxy">進代理</string>
+    <string name="service_mode_vpn">VPN</string>
+    <string name="service_mode_transproxy">透明代理</string>
+    <string name="share_over_lan">LAN 共用</string>
+    <string name="port_proxy">SOCKS5 代理連接埠</string>
+    <string name="port_http">HTTP 代理連接埠</string>
+    <string name="port_local_dns">本地 DNS 連接埠</string>
+    <string name="port_transproxy">透明代理連接埠</string>
+    <string name="allow_access">允許來自區域網路的連線</string>
+    <string name="allow_access_sum">繫結傳入伺服器至 0.0.0.0</string>
+    <string name="cag_dns">DNS 設定</string>
+    <string name="local_dns">啟用本地 DNS</string>
+    <string name="domestic_dns">國內 DNS</string>
+    <string name="cag_route">路由設定</string>
+    <string name="remote_dns">遠端 DNS</string>
+    <string name="force_ss_rust">不使用 v2ray-core 的 shadowsocks</string>
+    <string name="force_ss_sum">強制所有 Shadowsocks 設定檔使用和 Shadowsocks Android 相同的 shadowsocks-rust 後端。</string>
+    <string name="inbound_settings">傳入設定</string>
+    <string name="general_settings">應用程式設定</string>
+    <string name="require_http">啟用 HTTP 傳入伺服器</string>
+    <string name="cag_ws">WebSocket 設定</string>
+    <string name="ws_max_early_data">Max early data</string>
+    <string name="ws_browser_forwarding">Browser Forwarding</string>
+    <string name="ws_browser_forwarding_sum">轉傳對應的 WebSocket 連線至瀏覽器。</string>
+    <string name="speed_interval">速度通知更新間隔</string>
+
+    <string name="traffic">%1$s↑ %2$s↓</string>
+    <string name="stat_summary">送出：\t\t\t\t\t%3$s\t↑\t%1$s\n接收：\t%4$s\t↓\t%2$s</string>
+    <string name="speed">%s/s</string>
+    <string name="connection_test_pending">檢查連線能力</string>
+    <string name="connection_test_testing">測試中……</string>
+    <string name="connection_test_available">成功：HTTP 握手花費 %dms</string>
+    <string name="connection_test_error">檢查網路連線失敗：%s</string>
+    <string name="connection_test_fail">網路不可用</string>
+    <string name="connection_test_error_status_code">錯誤碼：#%d</string>
+
+    <!-- proxy category -->
+    <string name="profile_name">設定檔名稱</string>
+    <string name="server_address">伺服器</string>
+    <string name="server_port">遠端連接埠</string>
+    <string name="username_opt">使用者名稱（可選）</string>
+    <string name="password_opt">密碼（可選）</string>
+    <string name="password">密碼</string>
+    <string name="server_udp">UDP 路由</string>
+    <string name="udp_summary">向遠端重新導向 UDP 流量。</string>
+    <string name="enc_method">加密方式</string>
+    <string name="protocol">設定</string>
+    <string name="protocol_param">協定參數</string>
+    <string name="obfs">混淆</string>
+    <string name="obfs_param">混淆參數</string>
+    <string name="uuid">使用者 ID</string>
+    <string name="alter_id">替代 ID</string>
+    <string name="security">安全</string>
+    <string name="network">網路</string>
+    <string name="header_type">標頭類型</string>
+    <string name="request_host">請求主機 / QUIC 安全</string>
+    <string name="path">Path / Key / Seed / ServiceName</string>
+    <string name="tls">使用 TLS</string>
+    <string name="sni">伺服器名稱指示</string>
+    <string name="encryption">加密</string>
+
+    <!-- feature category -->
+    <string name="ipv6">IPv6 路由</string>
+    <string name="ipv6_summary">向遠端重新導向 IPv6 流量。</string>
+    <string name="ipv6_prefer">偏好 IPv6</string>
+    <string name="ipv6_prefer_summary">偏好 IPv6 位址和路由。</string>
+
+    <string name="metered">計量付費提示</string>
+    <string name="metered_summary">提示系統將 VPN 視為計量付費。</string>
+    <string name="route_list">路由</string>
+    <string name="route_entry_all">全域</string>
+    <string name="route_entry_bypass_lan">略過區域網路</string>
+    <string name="route_entry_bypass_chn">略過中國大陸</string>
+    <string name="route_entry_bypass_lan_chn">略過區域網路和中國大陸</string>
+    <string name="route_entry_gfwlist">GFW List</string>
+    <string name="route_entry_chinalist">China List</string>
+    <string name="proxied_apps">應用程式 VPN 模式</string>
+    <string name="proxied_apps_summary">為被選取的應用程式設定 VPN 模式。</string>
+    <string name="on">啟用</string>
+    <string name="off">停用</string>
+    <string name="search_apps">搜尋中……</string>
+    <string name="scanning">掃描中……</string>
+    <string name="invert_selections">反向選取</string>
+    <string name="clear_selections">清除選取</string>
+
+    <string name="proxied_apps_mode">模式</string>
+    <string name="bypass_apps">略過</string>
+    <string name="bypass_apps_summary">啟用此選項以略過被選取的應用。</string>
+    <string name="show_system_apps">顯示系統應用</string>
+    <string name="show_search">顯示搜尋</string>
+
+    <string name="auto_connect">自動連線</string>
+    <string name="auto_connect_summary">如果 SagerNet 在開機或應用更新前正在運行，啟用 SagerNet。</string>
+    <string name="direct_boot_aware">允許鎖定螢幕切換</string>
+    <string name="direct_boot_aware_summary">您選取的設定檔將受到較少的保護。</string>
+    <plurals name="hosts_summary">
+        <item quantity="one">1 個主機名稱已被設定</item>
+        <item quantity="other">%d 個主機名稱已被設定</item>
+    </plurals>
+    <string name="udp_dns">透過 UDP 傳送 DNS 請求</string>
+    <string name="udp_dns_summary">需要伺服器支援轉傳 UDP 流量。</string>
+    <string name="udp_fallback">遞補 UDP</string>
+
+    <!-- notification category -->
+    <string name="service_vpn">VPN 服務</string>
+    <string name="service_proxy">代理服務</string>
+    <string name="service_transproxy">透明代理服務</string>
+    <string name="forward_success">SagerNet 已啟動。</string>
+    <string name="invalid_server">伺服器名稱無效</string>
+    <string name="service_failed">無法連接遠端伺服器</string>
+    <string name="stop">停止</string>
+    <string name="stopping">關閉中……</string>
+    <string name="vpn_error">%s</string>
+    <string name="vpn_permission_denied">建立 VPN 服務的權限被拒。</string>
+    <string name="reboot_required">無法啟動 VPN 服務，您可能需要重新啟動您的裝置。</string>
+    <string name="profile_invalid_input">找不到有效的設定檔資料。</string>
+
+    <!-- alert category -->
+    <string name="profile_empty">請選擇一個設定檔</string>
+    <string name="proxy_empty">代理或密碼必須不為空</string>
+    <string name="connect">連線</string>
+    <string name="clipboard_empty">剪貼簿為空</string>
+
+    <!-- menu category -->
+    <string name="profiles">設定檔</string>
+    <string name="settings">設定</string>
+    <string name="edit">編輯</string>
+    <string name="share">分享</string>
+    <string name="add_profile">新增設定檔</string>
+    <string name="action_profile">設定檔</string>
+    <string name="action_socks">Socks</string>
+    <string name="action_shadowsocks">Shadowsocks</string>
+    <string name="action_shadowsocksr">ShadowsocksR</string>
+    <string name="action_vmess">VMess</string>
+    <string name="action_vless">VLESS</string>
+    <string name="action_trojan">Trojan</string>
+
+    <string name="action_group">群組</string>
+    <string name="action_create_group">空白群組</string>
+    <string name="action_from_link">來自訂閱</string>
+
+    <string name="action_scan_china_apps">掃描中國應用程式</string>
+    <string name="action_export_more">匯出……</string>
+    <string name="action_export_file">匯出至檔案……</string>
+    <string name="action_export">匯出至剪貼簿……</string>
+    <string name="action_import">自剪貼簿匯入……</string>
+    <string name="action_import_file">自檔案匯入……</string>
+    <string name="action_replace_file">自檔案替換……</string>
+    <string name="action_export_msg">匯出成功！</string>
+    <string name="action_export_err">匯出失敗。</string>
+    <string name="action_import_msg">匯入成功！</string>
+    <string name="action_import_err">匯入失敗。</string>
+
+    <!-- share -->
+    <string name="format_standard">標準</string>
+    <string name="format_v2rayn">V2rayN</string>
+
+    <!-- profile -->
+    <string name="profile_config">設定檔設定</string>
+    <string name="delete">刪除</string>
+    <string name="delete_confirm_prompt">您確定要刪除此設定檔嗎？</string>
+    <string name="share_qr_nfc">QR 碼</string>
+    <string name="add_profile_dialog">新增此設定檔？</string>
+    <string name="add_profile_methods_scan_qr_code">掃描 QR 碼</string>
+    <string name="add_profile_methods_manual_settings">手動設定</string>
+    <string name="add_profile_scanner_permission_required">需要相機權限以掃描 QR 碼。</string>
+    <plurals name="removed">
+        <item quantity="one">已刪除</item>
+        <item quantity="other">%d 個項目已被刪除</item>
+    </plurals>
+    <plurals name="added">
+        <item quantity="one">已新增</item>
+        <item quantity="other">%d 個代理已被新增</item>
+    </plurals>
+    <string name="undo">復原</string>
+
+    <!-- tasker -->
+    <string name="toggle_service_state">啟動服務</string>
+    <string name="start_service_default">連線至當前伺服器</string>
+    <string name="start_service">連線至 %s</string>
+    <string name="stop_service">切換至 %s</string>
+    <string name="profile_default">使用當前設定檔</string>
+
+    <!-- status -->
+    <string name="connecting">連線中……</string>
+    <string name="vpn_connected">已連線，輕觸以檢查連線能力</string>
+    <string name="not_connected">未連線</string>
+
+    <!-- subscriptions -->
+    <string name="subscriptions">訂閱</string>
+    <string name="cleartext_http_warning">純文字 HTTP 流量並不安全</string>
+    <string name="fetching_subscription">擷取訂閱中……</string>
+    <string name="error_title">錯誤</string>
+    <string name="no_proxies_found">此連接不包含任何代理</string>
+
+    <!-- plugin -->
+    <string name="plugin">外掛程式</string>
+    <string name="plugin_configure">設定……</string>
+    <string name="plugin_disabled">已停用</string>
+    <string name="plugin_unknown">未知外掛程式 %s</string>
+    <string name="plugin_untrusted">警告：此外掛程式並非來自可靠的可信來源。</string>
+    <string name="plugin_auto_connect_unlock_only">此外掛程式可能不支援自動連線</string>
+    <string name="title_activity_socks_settings">SocksSettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">訊息</string>
+    <string name="sync_header">同步</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string name="proxy_cat">Server Settings</string>
+    <string name="feature_cat">Feature Settings</string>
+    <string name="unsaved_changes_prompt">Changes not saved. Do you want to save?</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="apply">套用</string>
+
+    <string name="license">授權協定</string>
+
+</resources>
