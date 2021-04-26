@@ -9,9 +9,8 @@
 
     <string name="misc">雜項</string>
     <string name="app_version">版本</string>
-    <string name="v2ray_version">版本(v2ray-core))</string>
+    <string name="v2ray_version">版本(v2ray-core)</string>
     <string name="logcat">匯出除錯資訊</string>
-    <string name="logcat_summary">Such useful very wow</string>
 
     <string name="action_settings">設定</string>
     <string name="menu_configuration">設定檔</string>
@@ -49,7 +48,7 @@
 
     <!-- misc -->
     <string name="service_mode">執行模式</string>
-    <string name="service_mode_proxy">進代理</string>
+    <string name="service_mode_proxy">代理</string>
     <string name="service_mode_vpn">VPN</string>
     <string name="service_mode_transproxy">透明代理</string>
     <string name="share_over_lan">LAN 共用</string>
@@ -251,22 +250,6 @@
     <string name="plugin_unknown">未知外掛程式 %s</string>
     <string name="plugin_untrusted">警告：此外掛程式並非來自可靠的可信來源。</string>
     <string name="plugin_auto_connect_unlock_only">此外掛程式可能不支援自動連線</string>
-    <string name="title_activity_socks_settings">SocksSettingsActivity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">訊息</string>
-    <string name="sync_header">同步</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
     <string name="proxy_cat">Server Settings</string>
     <string name="feature_cat">Feature Settings</string>

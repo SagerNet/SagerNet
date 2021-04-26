@@ -11,7 +11,6 @@
     <string name="app_version">Version</string>
     <string name="v2ray_version">Version (v2ray-core)</string>
     <string name="logcat">Export debug information</string>
-    <string name="logcat_summary">Such useful very wow</string>
 
     <string name="action_settings">Settings</string>
     <string name="menu_configuration">Configuration</string>
@@ -251,22 +250,6 @@
     <string name="plugin_unknown">Unknown plugin %s</string>
     <string name="plugin_untrusted">Warning: This plugin does not seem to come from a known trusted source.</string>
     <string name="plugin_auto_connect_unlock_only">This plugin might not work with Auto Connect</string>
-    <string name="title_activity_socks_settings">SocksSettingsActivity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
     <string name="proxy_cat">Server Settings</string>
     <string name="feature_cat">Feature Settings</string>
