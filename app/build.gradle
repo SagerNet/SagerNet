@@ -39,7 +39,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "0.1-SNAPSHOT"
+        versionName "0.1-beta1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -116,6 +116,12 @@ android {
         abi {
             enable true
             universalApk false
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = outputFileName.replace("app", "SagerNet")
         }
     }
 

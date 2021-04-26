@@ -78,14 +78,12 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             runOnDefaultDispatcher {
                 val logDir = File(app.cacheDir, "log")
                 logDir.mkdir()
-                val logFile = File.createTempFile("sagernet-", ".log", logDir)
+                val logFile = File.createTempFile("SagerNet-", ".log", logDir)
                 logFile.outputStream().use { out ->
                     PrintWriter(out.bufferedWriter()).use { writer ->
-                        writer.println("APP ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+                        writer.println("SagerNet ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE}) on API ${Build.VERSION.SDK_INT}")
                         @Suppress("DEPRECATION")
                         writer.println("ABI ${Build.CPU_ABI} (${Build.SUPPORTED_ABIS.joinToString(", ")})")
-                        writer.println("API ${Build.VERSION.SDK_INT}")
-                        writer.println("DEV ${Build.DEVICE}")
                         writer.flush()
                         try {
                             Runtime.getRuntime()

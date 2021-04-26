@@ -33,8 +33,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.remove
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -94,7 +96,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 val stopped = it == BaseService.State.Stopped
                 val sMode = DataStore.serviceMode
 
-                listView.post {
+                runOnMainDispatcher {
                     persistAcrossReboot.isEnabled = stopped
                     directBootAware.isEnabled = stopped
                     serviceMode.isEnabled = stopped

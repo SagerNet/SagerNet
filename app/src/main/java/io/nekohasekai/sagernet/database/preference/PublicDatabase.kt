@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 abstract class PublicDatabase : RoomDatabase() {
     companion object {
         private val instance by lazy {
+            SagerNet.deviceStorage.getDatabasePath(Key.DB_PROFILE).parentFile?.mkdirs()
             Room.databaseBuilder(SagerNet.deviceStorage, PublicDatabase::class.java, Key.DB_PUBLIC)
                 .addMigrations(*PublicDatabase_Migrations.build())
                 .allowMainThreadQueries()
