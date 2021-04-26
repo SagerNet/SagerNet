@@ -90,6 +90,12 @@
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity"
             android:screenOrientation="locked"
             android:theme="@style/Theme.SagerNet" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.LicenseActivity"
+            android:label="@string/oss_licenses"
+            android:launchMode="singleTask"
+            android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity"
+            android:theme="@style/Theme.SagerNet" />
 
         <service
             android:name="io.nekohasekai.sagernet.bg.ProxyService"
@@ -126,6 +132,15 @@
                 android:value="true" />
         </service>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.log"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/log_paths" />
+        </provider>
 
         <receiver
             android:name="io.nekohasekai.sagernet.BootReceiver"

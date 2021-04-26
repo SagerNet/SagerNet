@@ -4,6 +4,11 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/main/jni/badvpn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/main/jni/libancillary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openvpn/src/main/cpp/asio" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openvpn/src/main/cpp/lz4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openvpn/src/main/cpp/openssl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openvpn/src/main/cpp/openvpn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openvpn/src/main/cpp/openvpn3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libsodium" vcs="Git" />

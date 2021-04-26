@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt.v2ray
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
@@ -41,7 +42,7 @@ const val TAG_DIRECT = "bypass"
 const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
-fun buildV2rayConfig(proxy: ProxyEntity): V2RayConfig {
+fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 
     val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
     val remoteDns = DataStore.remoteDNS.split(",")
@@ -82,7 +83,7 @@ fun buildV2rayConfig(proxy: ProxyEntity): V2RayConfig {
         }
 
         log = LogObject().apply {
-            loglevel = "debug"
+            loglevel = if (BuildConfig.DEBUG) "debug" else "warning"
         }
 
         policy = PolicyObject().apply {

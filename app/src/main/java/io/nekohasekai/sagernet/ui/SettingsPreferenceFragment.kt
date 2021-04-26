@@ -33,7 +33,6 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.remove
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 
@@ -43,12 +42,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = DataStore.configurationStore
+        DataStore.initGlobal()
+        addPreferencesFromResource(R.xml.global_preferences)
 
         runOnDefaultDispatcher {
-            DataStore.initGlobal()
-            onMainDispatcher {
-                addPreferencesFromResource(R.xml.global_preferences)
-            }
             val persistAcrossReboot = findPreference<SwitchPreference>(Key.PERSIST_ACROSS_REBOOT)!!
             val directBootAware = findPreference<SwitchPreference>(Key.DIRECT_BOOT_AWARE)!!
             val portSocks5 = findPreference<EditTextPreference>(Key.SOCKS_PORT)!!

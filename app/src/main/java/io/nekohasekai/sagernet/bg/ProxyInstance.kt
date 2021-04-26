@@ -37,7 +37,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.v2ray.AbstractV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
-import io.nekohasekai.sagernet.fmt.v2ray.buildV2rayConfig
+import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
@@ -65,7 +65,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             v2rayPoint.domainName =
                 profile.requireBean().serverAddress + ":" + profile.requireBean().serverPort
         }
-        config = buildV2rayConfig(profile)
+        config = buildV2RayConfig(profile)
         v2rayPoint.configureFileContent = gson.toJson(config).also {
             Logs.d(it)
         }

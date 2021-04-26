@@ -184,7 +184,6 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         metered = DataStore.meteredNetwork
         active = true   // possible race condition here?
-//        builder.setUnderlyingNetworks(underlyingNetworks)
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
         val conn = builder.establish() ?: throw NullConnectionException()

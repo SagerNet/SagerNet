@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">SagerNet</string>
+    <string name="app_desc">The universal proxy toolchain for Android, written in Kotlin.</string>
+
+    <string name="project">Project</string>
+    <string name="github">Source code</string>
+    <string name="telegram">Telegram update channel</string>
+    <string name="oss_licenses">Open source licenses</string>
+
+    <string name="misc">Misc</string>
+    <string name="app_version">Version</string>
+    <string name="v2ray_version">Version (v2ray-core)</string>
+    <string name="logcat">Export debug information</string>
+    <string name="logcat_summary">Such useful very wow</string>
 
     <string name="action_settings">Settings</string>
     <string name="menu_configuration">Configuration</string>
@@ -263,6 +275,6 @@
     <string name="no">No</string>
     <string name="apply">Apply</string>
 
-    <string name="about_text">The universal proxy toolchain for Android, written in Kotlin.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</string>
+    <string name="license">License</string>
 
 </resources>
