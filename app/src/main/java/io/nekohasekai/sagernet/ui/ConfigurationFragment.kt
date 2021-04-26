@@ -262,12 +262,13 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         }
 
         override suspend fun onAdd(group: ProxyGroup) {
+            groupList.add(group)
+
             if (groupList.all { it.isDefault }) tabLayout.post {
                 tabLayout.visibility = View.VISIBLE
             }
 
             onMainDispatcher {
-                groupList.add(group)
                 notifyItemInserted(groupList.size - 1)
                 tabLayout.getTabAt(groupList.size - 1)?.select()
             }

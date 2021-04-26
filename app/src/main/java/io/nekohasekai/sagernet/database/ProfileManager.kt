@@ -41,6 +41,7 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
 import org.yaml.snakeyaml.Yaml
 import java.io.IOException
 import java.sql.SQLException
@@ -265,7 +266,13 @@ object ProfileManager {
         val proxies = LinkedList<AbstractBean>()
         try {
             // sip008
-            val ssArray = JSONArray(text)
+            val ssArray = try {
+                JSONArray(text)
+            } catch (e: JSONException) {
+                JSONObject(text).getJSONArray("servers")
+            } catch (e: JSONException) {
+                throw e
+            }
             try {
                 for (index in 0 until ssArray.length()) {
                     proxies.add(parseShadowsocks(ssArray.getJSONObject(index)))
@@ -274,7 +281,8 @@ object ProfileManager {
                 throw  e
             }
             return 0 to proxies
-        } catch (ignored: JSONException) {
+        } catch (e: JSONException) {
+            Logs.e("Not SIP008 subscription: ", e)
         }
 
         if (text.contains("proxies:\n")) {
