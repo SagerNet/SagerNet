@@ -11,6 +11,7 @@
     <string name="app_version">版本</string>
     <string name="v2ray_version">版本(v2ray-core)</string>
     <string name="logcat">匯出除錯資訊</string>
+    <string name="logcat_summary">Such useful very wow</string>
 
     <string name="action_settings">設定</string>
     <string name="menu_configuration">設定檔</string>
