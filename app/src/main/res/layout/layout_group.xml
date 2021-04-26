@@ -15,11 +15,11 @@
             android:id="@+id/group_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="4dp"
             app:fastScrollAutoHide="true"
             app:fastScrollThumbColor="?colorPrimary"
             app:fastScrollThumbInactiveColor="?colorPrimary"
-            app:fastScrollTrackColor="?colorOnPrimarySurface">
+            app:fastScrollTrackColor="?colorOnPrimarySurface"
+            app:fitSystemWindowsInsets="bottom">
 
         </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
 

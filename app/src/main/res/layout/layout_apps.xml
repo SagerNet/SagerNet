@@ -5,11 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:duplicateParentState="false"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:consumeSystemWindowsInsets="start|end"
+    app:edgeToEdge="true"
+    app:fitSystemWindowsInsets="start|end">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:background="?attr/colorPrimary"
+        app:statusBarForeground="?colorPrimaryDark">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -26,7 +32,7 @@
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 android:touchscreenBlocksFocus="false"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:popupTheme="?attr/toolbarPopupTheme"
                 app:title="@string/app_name" />
 
             <LinearLayout
@@ -145,6 +151,7 @@
         app:fastScrollPopupBgColor="?colorOnPrimarySurface"
         app:fastScrollPopupTextColor="?colorPrimary"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:fitSystemWindowsInsets="bottom"
         tools:listitem="@layout/layout_apps_item" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

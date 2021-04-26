@@ -22,11 +22,13 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import android.content.DialogInterface
+import android.content.res.Resources
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -34,6 +36,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -46,11 +49,16 @@ import io.nekohasekai.sagernet.ktx.Empty
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
-import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
+import rikka.core.res.resolveColor
+import rikka.material.app.MaterialActivity
+import rikka.recyclerview.addVerticalPadding
+import rikka.recyclerview.fixEdgeEffect
+import rikka.widget.borderview.BorderRecyclerView
+import rikka.widget.borderview.BorderView
 
 @Suppress("UNCHECKED_CAST")
-abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
+abstract class ProfileSettingsActivity<T : AbstractBean> : MaterialActivity(),
     OnPreferenceDataStoreChangeListener {
 
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
@@ -214,8 +222,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
-            ViewCompat.setOnApplyWindowInsetsListener(listView, ListListener)
-
             activity.apply {
                 viewCreated(view, savedInstanceState)
             }
@@ -250,6 +256,12 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             super.onDisplayPreferenceDialog(preference)
         }
 
+        override fun onCreateRecyclerView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): RecyclerView {
+            val recyclerView = super.onCreateRecyclerView(inflater, parent, savedInstanceState) as BorderRecyclerView
+            recyclerView.fixEdgeEffect()
+            return recyclerView
+        }
+
     }
 
     object PasswordSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
@@ -262,6 +274,31 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             }
         }
 
+    }
+
+    override fun onApplyTranslucentSystemBars() {
+        super.onApplyTranslucentSystemBars()
+
+        val window = window
+        val theme = theme
+
+        window.statusBarColor = Color.TRANSPARENT
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            window?.decorView?.post {
+                if (window.decorView.rootWindowInsets?.systemWindowInsetBottom ?: 0 >= Resources.getSystem().displayMetrics.density * 40) {
+                    window.navigationBarColor = theme.resolveColor(android.R.attr.navigationBarColor) and 0x00ffffff or -0x20000000
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        window.isNavigationBarContrastEnforced = false
+                    }
+                } else {
+                    window.navigationBarColor = Color.TRANSPARENT
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        window.isNavigationBarContrastEnforced = true
+                    }
+                }
+            }
+        }
     }
 
 }

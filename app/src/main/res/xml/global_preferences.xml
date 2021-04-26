@@ -18,7 +18,7 @@
             app:summary="@string/metered_summary"
             app:title="@string/metered" />
 
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:defaultValue="1000"
             app:entries="@array/notifications_entry"
             app:entryValues="@array/notifications_value"
@@ -31,7 +31,7 @@
     <PreferenceCategory
         app:initialExpandedChildrenCount="2"
         app:title="@string/inbound_settings">
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:defaultValue="vpn"
             app:entries="@array/service_modes"
             app:entryValues="@array/service_mode_values"
@@ -69,7 +69,7 @@
     <PreferenceCategory
         app:initialExpandedChildrenCount="2"
         app:title="@string/cag_route">
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:defaultValue="bypass-lan"
             app:entries="@array/route_entry"
             app:entryValues="@array/route_value"

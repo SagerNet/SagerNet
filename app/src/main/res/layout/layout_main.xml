@@ -1,111 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:clipChildren="false"
+    app:consumeSystemWindowsInsets="start|end"
+    app:edgeToEdge="true"
+    app:fitSystemWindowsInsets="start|end">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator"
+    <androidx.drawerlayout.widget.DrawerLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        tools:openDrawer="start">
 
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+        <io.nekohasekai.sagernet.widget.IgnoreFitsSystemWindowsFullyDraggableDrawerContentLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/mobile_navigation" />
+            android:fitsSystemWindows="true">
 
-        <io.nekohasekai.sagernet.widget.ServiceButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="6dp"
-            android:nextFocusDown="@+id/stats"
-            app:layout_anchor="@id/stats"
-            app:pressedTranslationZ="6dp"
-            app:srcCompat="@drawable/ic_service_idle" />
-
-        <io.nekohasekai.sagernet.widget.StatsBar
-            android:id="@+id/stats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:fitsSystemWindows="true"
-            android:nextFocusUp="@+id/fab"
-            app:backgroundTint="@color/background_stat"
-            app:contentInsetStart="0dp"
-            app:fabAlignmentMode="end"
-            app:fabCradleMargin="0dp"
-            app:fabCradleRoundedCornerRadius="0dp"
-            app:fabCradleVerticalOffset="8dp"
-            app:hideOnScroll="true"
-            app:layout_scrollFlags="enterAlways|scroll">
-
-            <GridLayout
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/coordinator"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:orientation="vertical"
-                android:padding="16dip">
+                android:layout_height="match_parent"
+                android:clipChildren="false">
 
-                <TextView
-                    android:id="@+id/tx"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill_horizontal"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
-                    android:textSize="14sp" />
+                <fragment
+                    android:id="@+id/nav_host_fragment"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/mobile_navigation" />
 
-                <TextView
-                    android:id="@+id/rx"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_row="1"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="fill_horizontal"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/status"
+                <io.nekohasekai.sagernet.widget.ServiceButton
+                    android:id="@+id/fab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_row="2"
-                    android:layout_column="0"
-                    android:layout_columnSpan="3"
-                    android:layout_gravity="fill_horizontal"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
-                    android:textSize="16sp"
-                    tools:text="@string/connection_test_available" />
+                    android:elevation="6dp"
+                    android:nextFocusDown="@+id/stats"
+                    app:layout_anchor="@id/stats"
+                    app:pressedTranslationZ="6dp"
+                    app:srcCompat="@drawable/ic_service_idle" />
 
-            </GridLayout>
+                <io.nekohasekai.sagernet.widget.StatsBar
+                    android:id="@+id/stats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:fitsSystemWindows="true"
+                    android:nextFocusUp="@+id/fab"
+                    app:backgroundTint="@color/background_stat"
+                    app:contentInsetStart="0dp"
+                    app:fabAlignmentMode="end"
+                    app:fabCradleMargin="0dp"
+                    app:fabCradleRoundedCornerRadius="0dp"
+                    app:fabCradleVerticalOffset="8dp"
+                    app:hideOnScroll="true"
+                    app:layout_scrollFlags="enterAlways|scroll">
 
-        </io.nekohasekai.sagernet.widget.StatsBar>
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical"
+                        android:padding="16dip">
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                        <TextView
+                            android:id="@+id/tx"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:textColor="?android:attr/textColorPrimaryInverse"
+                            android:textSize="14sp" />
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/main_drawer_menu" />
+                        <TextView
+                            android:id="@+id/rx"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_row="1"
+                            android:layout_column="0"
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:textColor="?android:attr/textColorPrimaryInverse"
+                            android:textSize="14sp" />
 
-</androidx.drawerlayout.widget.DrawerLayout>
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_row="2"
+                            android:layout_column="0"
+                            android:layout_columnSpan="3"
+                            android:layout_gravity="fill_horizontal"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="?android:attr/textColorPrimaryInverse"
+                            android:textSize="16sp"
+                            tools:text="@string/connection_test_available" />
+
+                    </GridLayout>
+
+                </io.nekohasekai.sagernet.widget.StatsBar>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        </io.nekohasekai.sagernet.widget.IgnoreFitsSystemWindowsFullyDraggableDrawerContentLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:menu="@menu/main_drawer_menu" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+</FrameLayout>

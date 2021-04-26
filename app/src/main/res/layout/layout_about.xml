@@ -3,7 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:fitSystemWindowsInsets="bottom"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
     <include
         layout="@layout/layout_appbar"
@@ -12,7 +15,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,8 +59,7 @@
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/fragment_holder"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true" />
+                android:layout_height="match_parent" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

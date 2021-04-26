@@ -28,18 +28,17 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.util.SparseBooleanArray
 import android.view.*
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.util.contains
 import androidx.core.util.set
@@ -58,8 +57,6 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.widget.ListHolderListener
-import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
@@ -67,12 +64,15 @@ import kotlinx.coroutines.withContext
 import okhttp3.internal.closeQuietly
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
 import org.jf.dexlib2.iface.DexFile
+import rikka.core.res.resolveColor
+import rikka.material.app.MaterialActivity
+import rikka.recyclerview.fixEdgeEffect
 import java.io.File
 import java.util.*
 import java.util.zip.ZipFile
 import kotlin.coroutines.coroutineContext
 
-class AppManagerActivity : AppCompatActivity() {
+class AppManagerActivity : MaterialActivity() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         private var instance: AppManagerActivity? = null
@@ -127,11 +127,11 @@ class AppManagerActivity : AppCompatActivity() {
             itemView.findViewById<ImageView>(R.id.itemicon).setImageDrawable(app.icon)
             itemView.findViewById<TextView>(R.id.title).text = app.name
             itemView.findViewById<TextView>(R.id.desc).text = "${app.packageName} (${app.uid})"
-            itemView.findViewById<SwitchCompat>(R.id.itemcheck).isChecked = isProxiedApp(app)
+            itemView.findViewById<Switch>(R.id.itemcheck).isChecked = isProxiedApp(app)
         }
 
         fun handlePayload(payloads: List<String>) {
-            if (payloads.contains(SWITCH)) itemView.findViewById<SwitchCompat>(R.id.itemcheck).isChecked =
+            if (payloads.contains(SWITCH)) itemView.findViewById<Switch>(R.id.itemcheck).isChecked =
                 isProxiedApp(item)
         }
 
@@ -236,7 +236,6 @@ class AppManagerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_apps)
-        ListHolderListener.setup(this)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -260,7 +259,7 @@ class AppManagerActivity : AppCompatActivity() {
 
         initProxiedUids()
         list = findViewById(R.id.list)
-        ViewCompat.setOnApplyWindowInsetsListener(list, ListListener)
+        list.fixEdgeEffect()
         list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         list.itemAnimator = DefaultItemAnimator()
         list.adapter = appsAdapter
@@ -499,4 +498,30 @@ class AppManagerActivity : AppCompatActivity() {
         loader?.cancel()
         super.onDestroy()
     }
+
+    override fun onApplyTranslucentSystemBars() {
+        super.onApplyTranslucentSystemBars()
+
+        val window = window
+        val theme = theme
+
+        window.statusBarColor = Color.TRANSPARENT
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            window?.decorView?.post {
+                if (window.decorView.rootWindowInsets?.systemWindowInsetBottom ?: 0 >= Resources.getSystem().displayMetrics.density * 40) {
+                    window.navigationBarColor = theme.resolveColor(android.R.attr.navigationBarColor) and 0x00ffffff or -0x20000000
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        window.isNavigationBarContrastEnforced = false
+                    }
+                } else {
+                    window.navigationBarColor = Color.TRANSPARENT
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        window.isNavigationBarContrastEnforced = true
+                    }
+                }
+            }
+        }
+    }
+
 }

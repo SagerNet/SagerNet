@@ -5,10 +5,10 @@
     android:id="@+id/configuration_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp"
     android:scrollbarSize="0dp"
     app:fastScrollAutoHide="true"
     app:fastScrollThumbInactiveColor="?colorPrimary"
     app:fastScrollThumbColor="?colorPrimary"
     app:fastScrollTrackColor="?colorOnPrimarySurface"
+    app:fitSystemWindowsInsets="bottom"
     tools:listitem="@layout/layout_profile" />

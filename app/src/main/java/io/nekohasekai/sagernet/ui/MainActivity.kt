@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.RemoteException
 import androidx.appcompat.app.AppCompatActivity
@@ -46,11 +47,11 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ServiceButton
 import io.nekohasekai.sagernet.widget.StatsBar
+import rikka.material.app.MaterialActivity
 
-class MainActivity : AppCompatActivity(), SagerConnection.Callback,
+class MainActivity : MaterialActivity(), SagerConnection.Callback,
     OnPreferenceDataStoreChangeListener {
 
     companion object {
@@ -80,8 +81,6 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
         fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
         stats.setOnClickListener { if (state == BaseService.State.Connected) stats.testConnection() }
-
-        ViewCompat.setOnApplyWindowInsetsListener(coordinator, ListHolderListener)
 
         appBarConfiguration = AppBarConfiguration(setOf(
             R.id.nav_configuration, R.id.nav_group, R.id.nav_settings, R.id.nav_about
@@ -186,6 +185,13 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onApplyTranslucentSystemBars() {
+        super.onApplyTranslucentSystemBars()
+
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
     }
 
 }

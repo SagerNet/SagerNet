@@ -52,6 +52,8 @@ import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import okhttp3.*
+import rikka.recyclerview.addVerticalPadding
+import rikka.recyclerview.fixEdgeEffect
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -306,8 +308,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?,
-        ): View? {
-            return inflater.inflate(R.layout.layout_profile_list, container, false)
+        ): View {
+            val recyclerView = inflater.inflate(R.layout.layout_profile_list, container, false) as RecyclerView
+            recyclerView.fixEdgeEffect()
+            return recyclerView
         }
 
         lateinit var undoManager: UndoSnackbarManager<ProxyEntity>

@@ -45,6 +45,7 @@ import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
+import rikka.material.app.DayNightDelegate
 import java.io.File
 
 class SagerNet : Application() {
@@ -120,6 +121,8 @@ class SagerNet : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        DayNightDelegate.setApplicationContext(this)
+
         System.setProperty(DEBUG_PROPERTY_NAME, DEBUG_PROPERTY_VALUE_ON)
 
         DataStore.init()

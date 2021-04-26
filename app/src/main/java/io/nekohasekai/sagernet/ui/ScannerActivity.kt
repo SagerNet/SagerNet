@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
 import android.content.pm.ShortcutManager
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
@@ -47,10 +48,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.widget.ListHolderListener
+import rikka.material.app.MaterialActivity
 
 
-class ScannerActivity : AppCompatActivity(), BarcodeCallback {
+class ScannerActivity : MaterialActivity(), BarcodeCallback {
 
     lateinit var toolbar: MaterialToolbar
     lateinit var capture: CaptureManager
@@ -60,7 +61,6 @@ class ScannerActivity : AppCompatActivity(), BarcodeCallback {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= 25) getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
         setContentView(R.layout.layout_scanner)
-        ListHolderListener.setup(this)
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -210,6 +210,13 @@ class ScannerActivity : AppCompatActivity(), BarcodeCallback {
                     .show()
             }
         }
+    }
+
+    override fun onApplyTranslucentSystemBars() {
+        super.onApplyTranslucentSystemBars()
+
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
     }
 
 }

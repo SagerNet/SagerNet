@@ -49,7 +49,6 @@ import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -59,6 +58,7 @@ import okhttp3.Callback
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 import okhttp3.Response
+import rikka.recyclerview.fixEdgeEffect
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -74,13 +74,13 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         super.onViewCreated(view, savedInstanceState)
         activity = requireActivity() as MainActivity
 
-        ViewCompat.setOnApplyWindowInsetsListener(view, ListHolderListener)
         toolbar.setTitle(R.string.menu_group)
         toolbar.inflateMenu(R.menu.add_group_menu)
         toolbar.setOnMenuItemClickListener(this)
 
         groupListView = view.findViewById(R.id.group_list)
         groupListView.layoutManager = LinearLayoutManager(requireContext())
+        groupListView.fixEdgeEffect()
         groupAdapter = GroupAdapter()
         ProfileManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter

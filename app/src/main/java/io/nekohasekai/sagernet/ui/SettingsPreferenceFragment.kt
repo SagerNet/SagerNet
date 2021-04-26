@@ -24,10 +24,15 @@ package io.nekohasekai.sagernet.ui
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import androidx.recyclerview.widget.RecyclerView
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
@@ -37,6 +42,10 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.remove
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import rikka.material.app.DayNightDelegate
+import rikka.recyclerview.addVerticalPadding
+import rikka.recyclerview.fixEdgeEffect
+import rikka.widget.borderview.BorderRecyclerView
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -133,6 +142,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 }
         }
 
+    }
+
+    override fun onCreateRecyclerView(inflater: LayoutInflater, parent: ViewGroup, savedInstanceState: Bundle?): RecyclerView {
+        val recyclerView = super.onCreateRecyclerView(inflater, parent, savedInstanceState) as BorderRecyclerView
+        recyclerView.fixEdgeEffect()
+        return recyclerView
     }
 
     override fun onResume() {

@@ -28,7 +28,6 @@ import com.mikepenz.aboutlibraries.LibsBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.widget.ListHolderListener
 
 class LicenseActivity : AppCompatActivity() {
 
@@ -43,7 +42,6 @@ class LicenseActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
-        ListHolderListener.setup(this)
 
         val libs = LibsBuilder()
             .withAboutIconShown(false)

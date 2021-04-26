@@ -1,13 +1,13 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.SagerNet" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:navigationBarColor">@color/color_primary_dark</item>
+    <style name="Base.AppTheme.Light" parent="Theme.Material.Light">
         <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
         <item name="actionModeCloseDrawable">@drawable/ic_navigation_close</item>
         <item name="colorButtonNormal">@color/material_accent_200</item>
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/dark_color_primary_dark</item>
         <item name="colorAccent">@color/material_accent_200</item>
+        <item name="toolbarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
 
         <item name="windowActionModeOverlay">true</item>
 
@@ -16,6 +16,23 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="Base.AppTheme" parent="Theme.Material">
+        <item name="actionBarStyle">@style/Widget.MaterialComponents.Light.ActionBar.Solid</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_navigation_close</item>
+        <item name="colorButtonNormal">@color/material_accent_200</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/dark_color_primary_dark</item>
+        <item name="colorAccent">@color/material_accent_200</item>
+        <item name="toolbarPopupTheme">@style/ThemeOverlay.MaterialComponents.Dark</item>
+
+        <item name="windowActionModeOverlay">true</item>
+
+        <!-- Remove ActionBar but keep styles and themes -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.SagerNet" parent="Base.AppTheme.Light"/>
 
     <style name="Theme.SagerNet.ActionBar">
         <item name="windowActionBar">true</item>

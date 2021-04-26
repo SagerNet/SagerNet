@@ -28,21 +28,21 @@
             app:key="serverAlterId"
             app:title="@string/alter_id"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/securities_entry"
             app:entryValues="@array/securities_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverSecurity"
             app:title="@string/security"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/networks_entry"
             app:entryValues="@array/networks_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="serverNetwork"
             app:title="@string/network"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/headers_entry"
             app:entryValues="@array/headers_value"
             app:icon="@drawable/ic_baseline_texture_24"
