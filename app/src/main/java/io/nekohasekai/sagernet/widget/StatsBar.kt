@@ -126,6 +126,8 @@ class StatsBar @JvmOverloads constructor(
         }"
     }
 
-    fun testConnection() = tester.testConnection()
+    fun testConnection() {
+        tester.testConnection()
+    }
 
 }

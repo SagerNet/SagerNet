@@ -21,24 +21,19 @@
 
 package io.nekohasekai.sagernet.utils
 
-import android.os.Build
 import android.os.SystemClock
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.useCancellable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import okhttp3.*
+import okhttp3.internal.headersContentLength
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
-import java.net.URL
-import java.net.URLConnection
-import javax.net.ssl.HttpsURLConnection
 
 /**
  * Based on: https://android.googlesource.com/platform/frameworks/base/+/b19a838/services/core/java/com/android/server/connectivity/NetworkMonitor.java#1071
@@ -87,33 +82,50 @@ class HttpsTest : ViewModel() {
         }
     }
 
-    private var running: Job? = null
+    private var running: Call? = null
     val status = MutableLiveData<Status>(Status.Idle)
 
     fun testConnection() {
         cancelTest()
         status.value = Status.Testing
-        val url = URL("https://cp.cloudflare.com")
-        val conn =  url.openConnection(Proxy(Proxy.Type.SOCKS,
-            InetSocketAddress("127.0.0.1", DataStore.socksPort))) as HttpsURLConnection
-        conn.setRequestProperty("Connection", "close")
-        conn.instanceFollowRedirects = false
-        conn.useCaches = false
-        running = GlobalScope.launch(Dispatchers.Main.immediate) {
-            status.value = conn.useCancellable {
-                try {
-                    val start = SystemClock.elapsedRealtime()
-                    val code = responseCode
-                    val elapsed = SystemClock.elapsedRealtime() - start
-                    if (code == 204 || code == 200 && responseLength == 0L) Status.Success(elapsed)
-                    else Status.Error.UnexpectedResponseCode(code)
-                } catch (e: IOException) {
-                    Status.Error.IOFailure(e)
-                } finally {
-                    disconnect()
-                }
+
+        runOnDefaultDispatcher {
+            val okhttp = OkHttpClient.Builder()
+                .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort)))
+                .build()
+            val start = SystemClock.elapsedRealtime()
+            running = okhttp.newCall(
+                Request.Builder()
+                    .url("https://cp.cloudflare.com")
+                    .addHeader("Connection", "close")
+                    .build()
+            ).apply {
+                enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        runOnMainDispatcher {
+                            status.value = Status.Error.IOFailure(e)
+                            running = null
+                        }
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        val code = response.code
+                        val elapsed = SystemClock.elapsedRealtime() - start
+                        runOnMainDispatcher {
+                            status.value =
+                                if (code == 204 || code == 200 && response.headersContentLength() == 0L) {
+                                    Status.Success(elapsed)
+                                } else {
+                                    Status.Error.UnexpectedResponseCode(code)
+                                }
+                            running = null
+                        }
+
+                    }
+                })
             }
         }
+
     }
 
     private fun cancelTest() {
@@ -126,6 +138,4 @@ class HttpsTest : ViewModel() {
         status.value = Status.Idle
     }
 
-    private val URLConnection.responseLength: Long
-        get() = if (Build.VERSION.SDK_INT >= 24) contentLengthLong else contentLength.toLong()
 }
