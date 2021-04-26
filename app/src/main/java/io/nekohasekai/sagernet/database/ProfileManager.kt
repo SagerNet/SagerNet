@@ -281,8 +281,7 @@ object ProfileManager {
                 throw  e
             }
             return 0 to proxies
-        } catch (e: JSONException) {
-            Logs.e("Not SIP008 subscription: ", e)
+        } catch (ignored: JSONException) {
         }
 
         if (text.contains("proxies:\n")) {
