@@ -25,6 +25,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
+import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.v2ray.parseVmess
 import java.util.*
 
@@ -43,6 +44,13 @@ fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse vmess link: $link")
             runCatching {
                 entities.add(parseVmess(link))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (link.startsWith("trojan://")) {
+            Logs.d("Try parse trojan link: $link")
+            runCatching {
+                entities.add(parseTrojan(link))
             }.onFailure {
                 Logs.w(it)
             }

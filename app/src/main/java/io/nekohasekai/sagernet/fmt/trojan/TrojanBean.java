@@ -26,6 +26,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
+import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
@@ -41,6 +42,18 @@ public class TrojanBean extends AbstractBean {
 
     public String password;
     public String sni;
+
+    public void initDefaultValues() {
+        if (StrUtil.isNotBlank(serverAddress)) {
+            serverAddress = "";
+        }
+        if (StrUtil.isNotBlank(password)) {
+            password = "";
+        }
+        if (StrUtil.isNotBlank(sni)) {
+            sni = "";
+        }
+    }
 
     @Override
     public void serialize(ByteBufferOutput output) {

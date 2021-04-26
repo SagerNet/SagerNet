@@ -347,6 +347,7 @@ object ProfileManager {
                                 "sni" -> bean.sni = opt.value as String
                             }
                         }
+                        bean.initDefaultValues()
                         proxies.add(bean)
                     }
 
