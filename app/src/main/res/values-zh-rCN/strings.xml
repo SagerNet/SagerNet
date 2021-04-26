@@ -56,8 +56,8 @@
     <string name="port_http">HTTP 代理连接端口</string>
     <string name="port_local_dns">本地 DNS 连接端口</string>
     <string name="port_transproxy">透明代理连接端口</string>
-    <string name="allow_access">允许来自局域网路的连接</string>
-    <string name="allow_access_sum">绑定传入服务器至 0.0.0.0</string>
+    <string name="allow_access">允许来自局域网的连接</string>
+    <string name="allow_access_sum">绑定入站服务器到 0.0.0.0</string>
     <string name="cag_dns">DNS 设置</string>
     <string name="local_dns">启用本地 DNS</string>
     <string name="domestic_dns">国内 DNS</string>
@@ -67,7 +67,7 @@
     <string name="force_ss_sum">强制所有 Shadowsocks 配置使用和 Shadowsocks Android 相同的 shadowsocks-rust 后端。</string>
     <string name="inbound_settings">入站设置</string>
     <string name="general_settings">应用程序设置</string>
-    <string name="require_http">激活 HTTP 传入服务器</string>
+    <string name="require_http">启用 HTTP 入站</string>
     <string name="cag_ws">WebSocket 设置</string>
     <string name="ws_max_early_data">Max early data</string>
     <string name="ws_browser_forwarding">浏览器转发</string>
