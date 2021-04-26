@@ -95,7 +95,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         })
 
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
-            tab.text = adapter.groupList[position].displayName()
+            if (adapter.groupList.size > position) {
+                tab.text = adapter.groupList[position].displayName()
+            }
             /* tab.view.setOnLongClickListener { tabView ->
                  val popup = PopupMenu(requireContext(), tabView)
                  popup.menuInflater.inflate(R.menu.tab_edit_menu, popup.menu)
