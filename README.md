@@ -30,13 +30,13 @@ The application is designed to be used whenever possible.
 
 * Full basic features  
 * Option to change the notification update interval  
-* A China apps scanner (based on dex classpath scanning, so it may be slower)
+* A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
 
 ## TIPS
 
 * Click on the title to scroll to the first proxy or the selected proxy  
 * Proxy list can be dragged by holding the progress bar  
-* The china apps scanner will only scan system apps if "Show system apps" is checked  
+* The Chinese apps scanner will only scan system apps if "Show system apps" is checked  
 * V2Ray browser forwarding is not yet available, only for developers to debug
 
 ## XRAY
