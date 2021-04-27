@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SagerNet</string>
-    <string name="app_desc">适用于 Android 之通用代理工具, 由 Kotlin 编写.</string>
+    <string name="app_desc">适用于 Android 之通用代理工具, 使用 Kotlin 编写。</string>
 
     <string name="project">项目</string>
     <string name="github">源代码</string>
@@ -57,14 +57,14 @@
     <string name="port_local_dns">本地 DNS 端口</string>
     <string name="port_transproxy">透明代理端口</string>
     <string name="allow_access">允许来自局域网的连接</string>
-    <string name="allow_access_sum">将传入服务器绑定至 0.0.0.0</string>
+    <string name="allow_access_sum">将入站绑定至 0.0.0.0</string>
     <string name="cag_dns">DNS 设置</string>
     <string name="local_dns">启用本地 DNS</string>
     <string name="domestic_dns">国内 DNS</string>
     <string name="cag_route">路由设置</string>
     <string name="remote_dns">远程DNS</string>
-    <string name="force_ss_rust">不要使用 v2ray 路由 shadowsocks</string>
-    <string name="force_ss_sum">强制所有 shadowsocks 节点使用和 Shadowsocks Android 相同的 shadowsocks-rust 后端</string>
+    <string name="force_ss_rust">不要使用 V2Ray 路由 Shadowsocks</string>
+    <string name="force_ss_sum">强制所有 Shadowsocks 节点使用和 Shadowsocks Android 相同的 shadowsocks-rust 后端</string>
     <string name="inbound_settings">入站设置</string>
     <string name="general_settings">软件设置</string>
     <string name="require_http">启用 HTTP 入站</string>
@@ -177,8 +177,8 @@
     <string name="action_vless">VLESS</string>
     <string name="action_trojan">Trojan</string>
 
-    <string name="action_create_group">空组</string>
-    <string name="action_from_link">来自订阅</string>
+    <string name="action_create_group">空白组</string>
+    <string name="action_from_link">添加订阅</string>
 
     <string name="action_scan_china_apps">扫描中国应用</string>
     <string name="action_export_more">导出…</string>
