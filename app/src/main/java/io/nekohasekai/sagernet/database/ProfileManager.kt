@@ -350,22 +350,27 @@ object ProfileManager {
                                 "network" -> bean.network = opt.value as String
                                 "tls" -> bean.tls = opt.value?.toString() == "true"
                                 "ws-path" -> bean.path = opt.value as String
+                                "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
+                                    when (wsOpt.key.toLowerCase()) {
+                                        "host" -> bean.requestHost = wsOpt.value as String
+                                    }
+                                }
                                 "servername" -> bean.requestHost = opt.value as String
                                 "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
-                                    when (h2Opt.key) {
+                                    when (h2Opt.key.toLowerCase()) {
                                         "host" -> bean.requestHost =
                                             (h2Opt.value as List<String>).first()
                                         "path" -> bean.path = h2Opt.value as String
                                     }
                                 }
                                 "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
-                                    when (httpOpt.key) {
+                                    when (httpOpt.key.toLowerCase()) {
                                         "path" -> bean.path =
                                             (httpOpt.value as List<String>).first()
                                     }
                                 }
                                 "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
-                                    when (grpcOpt.key) {
+                                    when (grpcOpt.key.toLowerCase()) {
                                         "grpc-service-name" -> bean.path = grpcOpt.value as String
                                     }
                                 }
