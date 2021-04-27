@@ -28,7 +28,15 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password_opt" />
-
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_https_24"
+            app:key="serverTLS"
+            app:title="@string/tls" />
+        <EditTextPreference
+            app:icon="@drawable/ic_action_copyright"
+            app:key="serverSNI"
+            app:title="@string/sni"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 

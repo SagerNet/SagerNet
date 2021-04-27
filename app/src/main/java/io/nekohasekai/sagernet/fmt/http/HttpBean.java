@@ -21,6 +21,9 @@
 
 package io.nekohasekai.sagernet.fmt.http;
 
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
+
 import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
@@ -39,6 +42,32 @@ public class HttpBean extends AbstractBean {
         if (username == null) username = "";
         if (password == null) password = "";
         if (sni == null) sni = "";
+    }
+
+    @Override
+    public void serialize(ByteBufferOutput output) {
+        output.writeInt(0);
+        super.serialize(output);
+        output.writeString(username);
+        output.writeString(password);
+        output.writeBoolean(tls);
+        output.writeString(sni);
+    }
+
+    @Override
+    public void deserialize(ByteBufferInput input) {
+        try {
+            int version = input.readInt();
+            if (version != 0) throw new IllegalStateException();
+        } catch (Exception e) {
+            initDefaultValues();
+            return;
+        }
+        super.deserialize(input);
+        username = input.readString();
+        password = input.readString();
+        tls = input.readBoolean();
+        sni = input.readString();
     }
 
     @NotNull
