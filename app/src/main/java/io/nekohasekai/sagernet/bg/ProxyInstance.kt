@@ -90,6 +90,11 @@ class ProxyInstance(val profile: ProxyEntity) {
                 it["local_udp_address"] = "127.0.0.1"
                 it["local_udp_port"] = port
                 it["mode"] = "tcp_and_udp"
+                if (DataStore.enableLocalDNS) {
+                    it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+                } else {
+                    it["dns"] = DataStore.remoteDNS
+                }
 
                 if (DataStore.ipv6Route && DataStore.preferIpv6) {
                     it["ipv6_first"] = true

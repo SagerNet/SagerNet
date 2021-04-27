@@ -205,7 +205,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                     entity.putBean(bean)
                                     entity.userOrder = userOrder
                                     toUpdate.add(entity)
-                                    updated.put(entity.displayName(), name)
+                                    updated[entity.displayName()] = name
                                 }
                             } else {
                                 changed++

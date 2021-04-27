@@ -450,7 +450,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             }
 
             override fun onBindViewHolder(holder: ConfigurationHolder, position: Int) {
-                holder.bind(getItemAt(position))
+                try {
+                    holder.bind(getItemAt(position))
+                } catch (ignored: NullPointerException) {
+                    // when group deleted
+                }
             }
 
             override fun getItemCount(): Int {
