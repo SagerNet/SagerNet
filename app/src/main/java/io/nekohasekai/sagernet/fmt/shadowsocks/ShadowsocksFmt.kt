@@ -52,7 +52,7 @@ fun ShadowsocksBean.fixInvalidParams() {
 
     }
 
-    if (pl.selected == "obfs") {
+    if (pl.selected.contains("obfs") && pl.selected != "obfs-local") {
 
         pl.pluginsOptions["obfs-local"] = pl.getOptions().apply { id = "obfs-local" }
         pl.pluginsOptions.remove(pl.selected)
