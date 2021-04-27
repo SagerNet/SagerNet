@@ -35,6 +35,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -67,6 +68,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
     lateinit var tabLayout: TabLayout
     lateinit var groupPager: ViewPager2
     val selectedGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
+
+    override fun onResume() {
+        super.onResume()
+
+        if (::groupPager.isInitialized && groupPager.size == 0) {
+            adapter.reload()
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -215,7 +224,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         var selectedGroupIndex = 0
         var groupList: ArrayList<ProxyGroup> = ArrayList()
 
-        init {
+        fun reload() {
 
             runOnDefaultDispatcher {
                 groupList = ArrayList(SagerDatabase.groupDao.allGroups())
@@ -241,6 +250,10 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     toolbar.elevation = if (hideTab) 0F else dp2px(4).toFloat()
                 }
             }
+        }
+
+        init {
+            reload()
         }
 
         override fun getItemCount(): Int {
