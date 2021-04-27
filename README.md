@@ -4,6 +4,7 @@
 [![Releases](https://img.shields.io/github/downloads/nekohasekai/SagerNet/total.svg)](https://github.com/nekohasekai/SagerNet/releases)
 [![Language: Kotlin](https://img.shields.io/github/languages/top/nekohasekai/SagerNet.svg)](https://github.com/nekohasekai/SagerNet/search?l=kotlin)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-orange.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnekohasekai%2FSagerNet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnekohasekai%2FSagerNet?ref=badge_shield)
 
 The universal proxy toolchain for Android, written in Kotlin.
 
@@ -51,6 +52,9 @@ SagerNet is a V2Ray client, not an Xray client. For that, please use the officia
     <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">AndroidLibV2rayLite</a>: LGPL 3.0</li>
     <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksr-libev</a>: GPL 3.0</li>
 </ul>
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnekohasekai%2FSagerNet.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnekohasekai%2FSagerNet?ref=badge_large)
 
 ### LICENSE
 
