@@ -4,7 +4,6 @@
     package="io.nekohasekai.sagernet"
     android:installLocation="internalOnly">
 
-
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
     <permission

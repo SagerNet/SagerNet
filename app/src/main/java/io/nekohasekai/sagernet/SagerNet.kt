@@ -45,7 +45,6 @@ import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
-import java.io.File
 
 class SagerNet : Application() {
 
@@ -126,9 +125,7 @@ class SagerNet : Application() {
         updateNotificationChannels()
 
         Seq.setContext(applicationContext)
-        Libv2ray.setAssetsPath(
-            File(application.filesDir, "geofile").absolutePath, "v2ray/"
-        )
+        Libv2ray.setAssetsPath(application.filesDir.absolutePath, "v2ray/")
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,

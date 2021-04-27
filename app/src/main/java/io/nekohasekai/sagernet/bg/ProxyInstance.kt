@@ -39,8 +39,10 @@ import io.nekohasekai.sagernet.fmt.v2ray.AbstractV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import libv2ray.Libv2ray
 import libv2ray.V2RayPoint
 import libv2ray.V2RayVPNServiceSupportsSet
@@ -165,14 +167,26 @@ class ProxyInstance(val profile: ProxyEntity) {
             )
 
             base.data.processes!!.start(commands)
-        } else if (bean is AbstractV2RayBean) {
-            if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
-                wsForwarder = WebView(base as Context)
-                wsForwarder.loadUrl("http://127.0.0.1:" + DataStore.socksPort + 11)
-            }
         }
 
-        v2rayPoint.runLoop(DataStore.preferIpv6)
+        runOnDefaultDispatcher {
+            runCatching {
+                v2rayPoint.runLoop(DataStore.preferIpv6)
+
+                if (bean is AbstractV2RayBean) {
+                    if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
+                        wsForwarder = WebView(base as Context)
+                        while (wsForwarder.contentHeight == 0) {
+                            wsForwarder.loadUrl("http://127.0.0.1:" + DataStore.socksPort + 11)
+
+                            delay(1000L)
+                        }
+                    }
+                }
+            }.onFailure {
+                Logs.w(it)
+            }
+        }
     }
 
     fun stop() {
