@@ -40,7 +40,6 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.core.date.DateUtil
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
@@ -80,7 +79,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         toolbar.setOnMenuItemClickListener(this)
 
         groupListView = view.findViewById(R.id.group_list)
-        groupListView.layoutManager = LinearLayoutManager(requireContext())
+        groupListView.layoutManager = FixedLinearLayoutManager(view.context)
         groupAdapter = GroupAdapter()
         ProfileManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter

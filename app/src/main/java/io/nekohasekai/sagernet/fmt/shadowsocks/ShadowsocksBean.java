@@ -45,6 +45,15 @@ public class ShadowsocksBean extends AbstractBean {
     public String plugin;
 
     @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+
+        if (method == null) method = "";
+        if (password == null) password = "";
+        if (plugin == null) plugin = "";
+    }
+
+    @Override
     public void serialize(ByteBufferOutput output) {
         output.writeInt(0);
         super.serialize(output);

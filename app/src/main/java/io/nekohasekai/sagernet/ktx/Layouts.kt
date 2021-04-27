@@ -19,57 +19,33 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.trojan;
+package io.nekohasekai.sagernet.ktx
 
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import android.content.Context
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-import org.jetbrains.annotations.NotNull;
+class FixedLinearLayoutManager(context: Context) :
+    LinearLayoutManager(context, RecyclerView.VERTICAL, false) {
 
-import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.AbstractBean;
-import io.nekohasekai.sagernet.fmt.KryoConverters;
-
-public class TrojanBean extends AbstractBean {
-
-    public static TrojanBean DEFAULT_BEAN = new TrojanBean() {{
-        name = "";
-        serverAddress = "127.0.0.1";
-        serverPort = 1080;
-        password = "";
-        sni = "";
-    }};
-
-    public String password;
-    public String sni;
-
-    @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
-
-        if (password == null) password = "";
-        if (sni == null) sni = "";
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
+        try {
+            super.onLayoutChildren(recycler, state)
+        } catch (ignored: IndexOutOfBoundsException) {
+        }
     }
 
-    @Override
-    public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
-        super.serialize(output);
-        output.writeString(password);
-        output.writeString(sni);
+}
+
+class FixedGridLayoutManager(context: Context, spanCount: Int) :
+    GridLayoutManager(context, spanCount) {
+
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
+        try {
+            super.onLayoutChildren(recycler, state)
+        } catch (ignored: IndexOutOfBoundsException) {
+        }
     }
 
-    @Override
-    public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
-        super.deserialize(input);
-        password = input.readString();
-        sni = input.readString();
-    }
-
-    @NotNull
-    @Override
-    public AbstractBean clone() {
-        return KryoConverters.deserialize(new TrojanBean(), KryoConverters.serialize(this));
-    }
 }

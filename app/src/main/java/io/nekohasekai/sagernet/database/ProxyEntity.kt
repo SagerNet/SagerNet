@@ -29,6 +29,8 @@ import androidx.room.*
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
+import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
@@ -56,6 +58,7 @@ data class ProxyEntity(
     var tx: Long = 0L,
     var rx: Long = 0L,
     var socksBean: SOCKSBean? = null,
+    var httpBean: HttpBean? = null,
     var ssBean: ShadowsocksBean? = null,
     var ssrBean: ShadowsocksRBean? = null,
     var vmessBean: VMessBean? = null,
@@ -89,6 +92,7 @@ data class ProxyEntity(
             3 -> vmessBean = KryoConverters.vmessDeserialize(byteArray)
             4 -> vlessBean = KryoConverters.vlessDeserialize(byteArray)
             5 -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
+            6 -> httpBean = KryoConverters.httpDeserialize(byteArray)
         }
     }
 
@@ -114,6 +118,7 @@ data class ProxyEntity(
             3 -> "VMess"
             4 -> "VLESS"
             5 -> "Trojan"
+            6 -> if (requireHttp().tls) "HTTPS" else "HTTP"
             else -> "Undefined type $type"
         }
     }
@@ -132,6 +137,7 @@ data class ProxyEntity(
             3 -> vmessBean ?: error("Null vmess node")
             4 -> vlessBean ?: error("Null vless node")
             5 -> trojanBean ?: error("Null trojan node")
+            6 -> httpBean ?: error("Null http node")
             else -> error("Undefined type $type")
         }
     }
@@ -144,19 +150,20 @@ data class ProxyEntity(
             3 -> requireVMess().toV2rayN()
             4 -> "目前 VLESS 不支持分享。(https://www.v2fly.org/config/protocols/vless.html)"
             5 -> requireTrojan().toUri()
+            6 -> requireHttp().toUri()
             else -> error("Undefined type $type")
         }
     }
 
     fun useExternalShadowsocks(): Boolean {
         if (type != 1) return false
+        if (DataStore.forceShadowsocksRust) return true
         val bean = requireSS()
         if (bean.plugin.isNotBlank()) {
             Logs.d("Requiring plugin ${bean.plugin}")
             return true
         }
         if (bean.method !in methodsV2fly) return true
-        if (DataStore.forceShadowsocksRust) return true
         return false
     }
 
@@ -165,6 +172,10 @@ data class ProxyEntity(
             is SOCKSBean -> {
                 type = 0
                 socksBean = bean
+            }
+            is HttpBean -> {
+                type = 6
+                httpBean = bean
             }
             is ShadowsocksBean -> {
                 type = 1
@@ -196,6 +207,7 @@ data class ProxyEntity(
     fun requireVMess() = requireBean() as VMessBean
     fun requireVLESS() = requireBean() as VMessBean
     fun requireTrojan() = requireBean() as TrojanBean
+    fun requireHttp() = requireBean() as HttpBean
 
     fun settingIntent(ctx: Context): Intent {
         return Intent(ctx, when (type) {
@@ -205,6 +217,7 @@ data class ProxyEntity(
             3 -> VMessSettingsActivity::class.java
             4 -> VLESSSettingsActivity::class.java
             5 -> TrojanSettingsActivity::class.java
+            6 -> HttpSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)

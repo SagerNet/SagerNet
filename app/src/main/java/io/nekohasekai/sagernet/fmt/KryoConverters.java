@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
+import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
@@ -66,6 +67,12 @@ public class KryoConverters {
     public static SOCKSBean socksDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new SOCKSBean(), bytes);
+    }
+
+    @TypeConverter
+    public static HttpBean httpDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new HttpBean(), bytes);
     }
 
     @TypeConverter

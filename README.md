@@ -14,6 +14,7 @@ The application is designed to be used whenever possible.
 ### Protocols
 
 * SOCKS
+* HTTP(s) / nativeproxy
 * Shadowsocks
 * ShadowsocksR
 * VMess
@@ -23,7 +24,7 @@ The application is designed to be used whenever possible.
 ### Subscription protocols
 
 * Universal base64 format
-* SIP008
+* Shadowsocks SIP008
 * Clash
 
 ## FEATURES

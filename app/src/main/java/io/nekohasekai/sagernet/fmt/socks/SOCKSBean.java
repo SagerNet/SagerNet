@@ -26,33 +26,35 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class SOCKSBean extends AbstractBean {
 
-    public static SOCKSBean DEFAULT_BEAN = new SOCKSBean() {{
-        name = "";
-        serverAddress = "127.0.0.1";
-        serverPort = 1080;
-        username = "";
-        password = "";
-        udp = false;
-    }};
-
     public String username;
     public String password;
     public boolean udp;
+    public boolean tls;
+    public String sni;
+
+    @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+
+        if (username == null) username = "";
+        if (password == null) password = "";
+        if (sni == null) sni = "";
+    }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(username);
         output.writeString(password);
         output.writeBoolean(udp);
+        output.writeBoolean(tls);
+        output.writeString(sni);
     }
 
     @Override
@@ -62,6 +64,12 @@ public class SOCKSBean extends AbstractBean {
         username = input.readString();
         password = input.readString();
         udp = input.readBoolean();
+        if (version > 0) {
+            tls = input.readBoolean();
+            sni = input.readString();
+        } else {
+            initDefaultValues();
+        }
     }
 
     @NotNull

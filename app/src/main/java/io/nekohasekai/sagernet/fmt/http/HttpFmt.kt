@@ -19,57 +19,45 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.trojan;
+package io.nekohasekai.sagernet.fmt.http
 
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import io.nekohasekai.sagernet.ktx.urlSafe
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-import org.jetbrains.annotations.NotNull;
+fun parseHttp(link: String): HttpBean {
+    val httpUrl = link.replace("native+https://", "https://").toHttpUrlOrNull()
+        ?: error("Invalid http(s) link: $link")
 
-import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.AbstractBean;
-import io.nekohasekai.sagernet.fmt.KryoConverters;
+    return HttpBean().apply {
+        serverAddress = httpUrl.host
+        serverPort = httpUrl.port
+        username = httpUrl.username
+        password = httpUrl.password
+        sni = httpUrl.queryParameter("sni")
+        name = httpUrl.fragment
+        tls = httpUrl.scheme == "https"
+    }
+}
 
-public class TrojanBean extends AbstractBean {
+fun HttpBean.toUri(): String {
+    val builder = HttpUrl.Builder()
+        .scheme(if (tls) "https" else "http")
+        .host(serverAddress)
+        .port(serverPort)
 
-    public static TrojanBean DEFAULT_BEAN = new TrojanBean() {{
-        name = "";
-        serverAddress = "127.0.0.1";
-        serverPort = 1080;
-        password = "";
-        sni = "";
-    }};
-
-    public String password;
-    public String sni;
-
-    @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
-
-        if (password == null) password = "";
-        if (sni == null) sni = "";
+    if (username.isNotBlank()) {
+        builder.username(username)
+    }
+    if (password.isNotBlank()) {
+        builder.password(password)
+    }
+    if (sni.isNotBlank()) {
+        builder.addQueryParameter("sni", sni)
+    }
+    if (name.isNotBlank()) {
+        builder.encodedFragment(name.urlSafe())
     }
 
-    @Override
-    public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
-        super.serialize(output);
-        output.writeString(password);
-        output.writeString(sni);
-    }
-
-    @Override
-    public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
-        super.deserialize(input);
-        password = input.readString();
-        sni = input.readString();
-    }
-
-    @NotNull
-    @Override
-    public AbstractBean clone() {
-        return KryoConverters.deserialize(new TrojanBean(), KryoConverters.serialize(this));
-    }
+    return builder.toString()
 }

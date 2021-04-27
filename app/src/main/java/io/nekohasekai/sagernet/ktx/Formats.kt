@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.ktx
 
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.http.parseHttp
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
@@ -37,6 +38,13 @@ fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse socks link: $link")
             runCatching {
                 entities.add(parseSOCKS(link))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (link.matches("(http|https|native\\+https)://.*".toRegex())) {
+            Logs.d("Try parse http link: $link")
+            runCatching {
+                entities.add(parseHttp(link))
             }.onFailure {
                 Logs.w(it)
             }
@@ -70,5 +78,6 @@ fun parseProxies(text: String): List<AbstractBean> {
             }
         }
     }
+    entities.forEach { it.initDefaultValues() }
     return entities
 }

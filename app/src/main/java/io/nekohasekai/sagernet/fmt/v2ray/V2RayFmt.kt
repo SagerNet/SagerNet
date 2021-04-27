@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
@@ -154,6 +155,45 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                                 }
                             )
                         })
+                    if (bean.tls) {
+                        streamSettings = StreamSettingsObject().apply {
+                            network = "tls"
+                            if (bean.sni.isNotBlank()) {
+                                tlsSettings = TLSObject().apply {
+                                    serverName = bean.sni
+                                }
+                            }
+                        }
+                    }
+                } else if (bean is HttpBean) {
+                    protocol = "http"
+                    settings = LazyOutboundConfigurationObject(
+                        HTTPOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                HTTPOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    port = bean.serverPort
+                                    if (!bean.username.isNullOrBlank()) {
+                                        users =
+                                            listOf(HTTPInboundConfigurationObject.AccountObject()
+                                                .apply {
+                                                    user = bean.username
+                                                    pass = bean.password
+                                                })
+                                    }
+                                }
+                            )
+                        })
+                    if (bean.tls) {
+                        streamSettings = StreamSettingsObject().apply {
+                            network = "tls"
+                            if (bean.sni.isNotBlank()) {
+                                tlsSettings = TLSObject().apply {
+                                    serverName = bean.sni
+                                }
+                            }
+                        }
+                    }
                 } else if (bean is AbstractV2RayBean) {
                     if (bean is VMessBean) {
                         protocol = "vmess"
@@ -492,9 +532,12 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 
 fun parseVmess(link: String): VMessBean {
     if (link.contains("?") || link.startsWith("vmess1://")) return parseVmess1(link)
-
+    val result = Base64.decodeStr(link.substringAfter("vmess://"))
+    if (result.contains("= vmess")) {
+        return parseCsvVMess(result)
+    }
     val bean = VMessBean()
-    val json = JSONObject(Base64.decodeStr(link.substringAfter("vmess://")))
+    val json = JSONObject(result)
 
     bean.serverAddress = json.getStr("add")
     bean.serverPort = json.getInt("port")
@@ -542,10 +585,56 @@ fun parseVmess(link: String): VMessBean {
         }
     }
 
-    bean.initDefaultValues()
     return bean
 
 }
+
+private fun parseCsvVMess(csv: String): VMessBean {
+
+    val args = csv.split(",")
+
+    val bean = VMessBean()
+
+    bean.serverAddress = args[1]
+    bean.serverPort = args[2].toInt()
+    bean.security = args[3]
+    bean.uuid = args[4].replace("\"", "")
+
+    args.subList(5, args.size).forEach {
+
+        when {
+            it == "over-tls=true" -> bean.tls = true
+            it.startsWith("tls-host=") -> bean.requestHost = it.substringAfter("=")
+            it.startsWith("obfs=") -> bean.network = it.substringAfter("=")
+
+            it.startsWith("obfs-path=") || it.contains("Host:") -> {
+
+                runCatching {
+
+                    bean.path = it
+                        .substringAfter("obfs-path=\"")
+                        .substringBefore("\"obfs")
+
+                }
+
+                runCatching {
+
+                    bean.requestHost = it
+                        .substringAfter("Host:")
+                        .substringBefore("[")
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return bean
+
+}
+
 
 fun parseVmess1(link: String): VMessBean {
     val bean = VMessBean()

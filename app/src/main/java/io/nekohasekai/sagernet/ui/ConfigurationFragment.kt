@@ -188,6 +188,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
             }
+            R.id.action_new_http -> {
+                startActivity(Intent(requireActivity(), HttpSettingsActivity::class.java))
+            }
             R.id.action_new_ss -> {
                 startActivity(Intent(requireActivity(), ShadowsocksSettingsActivity::class.java))
             }
@@ -262,17 +265,15 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         }
 
         override suspend fun onAdd(group: ProxyGroup) {
-            groupList.add(group)
+            tabLayout.post {
+                groupList.add(group)
 
-            if (groupList.all { it.isDefault }) tabLayout.post {
-                tabLayout.visibility = View.VISIBLE
-            }
-
-            onMainDispatcher {
-                tabLayout.post {
-                    notifyItemInserted(groupList.size - 1)
-                    tabLayout.getTabAt(groupList.size - 1)?.select()
+                if (groupList.all { it.isDefault }) tabLayout.post {
+                    tabLayout.visibility = View.VISIBLE
                 }
+
+                notifyItemInserted(groupList.size - 1)
+                tabLayout.getTabAt(groupList.size - 1)?.select()
             }
         }
 
@@ -280,7 +281,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             val index = groupList.indexOfFirst { it.id == groupId }
             if (index == -1) return
 
-            onMainDispatcher {
+            tabLayout.post {
                 groupList.removeAt(index)
                 notifyItemRemoved(index)
             }
@@ -290,7 +291,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             val index = groupList.indexOfFirst { it.id == group.id }
             if (index == -1) return
 
-            onMainDispatcher {
+            tabLayout.post {
                 tabLayout.getTabAt(index)?.text = group.displayName()
             }
         }
@@ -324,9 +325,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             if (!::proxyGroup.isInitialized) return
 
             layoutManager = if (proxyGroup.type != 1) {
-                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                FixedLinearLayoutManager(view.context)
             } else {
-                GridLayoutManager(context, 2)
+                FixedGridLayoutManager(view.context, 2)
             }
 
             configurationListView = view.findViewById(R.id.configuration_list)
@@ -476,9 +477,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
             override fun undo(actions: List<Pair<Int, ProxyEntity>>) {
                 for ((index, item) in actions) {
-                    configurationList[item.id] = item
-                    configurationIdList.add(index, item.id)
-                    notifyItemInserted(index)
+                    configurationListView.post {
+                        configurationList[item.id] = item
+                        configurationIdList.add(index, item.id)
+                        notifyItemInserted(index)
+                    }
                 }
             }
 
@@ -494,7 +497,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             override suspend fun onAdd(profile: ProxyEntity) {
                 if (profile.groupId != proxyGroup.id) return
 
-                onMainDispatcher {
+                configurationListView.post {
                     undoManager.flush()
                     val pos = itemCount
                     configurationList[profile.id] = profile
@@ -507,9 +510,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 if (profile.groupId != proxyGroup.id) return
                 val index = configurationIdList.indexOf(profile.id)
                 if (index < 0) return
-                undoManager.flush()
-                configurationList[profile.id] = profile
-                onMainDispatcher {
+                configurationListView.post {
+                    undoManager.flush()
+                    configurationList[profile.id] = profile
                     notifyItemChanged(index)
                 }
             }
@@ -532,16 +535,16 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 if (groupId != proxyGroup.id) return
                 val index = configurationIdList.indexOf(profileId)
                 if (index < 0) return
-                configurationIdList.removeAt(index)
-                configurationList.remove(profileId)
-                onMainDispatcher {
+                configurationListView.post {
+                    configurationIdList.removeAt(index)
+                    configurationList.remove(profileId)
                     notifyItemRemoved(index)
                 }
             }
 
             override suspend fun onCleared(groupId: Long) {
                 if (groupId != proxyGroup.id) return
-                onMainDispatcher {
+                configurationListView.post {
                     configurationList.clear()
                     configurationList.clear()
                     notifyDataSetChanged()
@@ -551,27 +554,29 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             override suspend fun reloadProfiles(groupId: Long) {
                 if (groupId != proxyGroup.id) return
 
-                configurationIdList.clear()
-                configurationIdList.addAll(SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id))
+                val newProfiles = SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id)
 
                 if (selected && !scrolled) {
                     scrolled = true
                     val selectedProxy = DataStore.selectedProxy
-                    val selectedProfileIndex = configurationIdList.indexOf(selectedProxy)
+                    val selectedProfileIndex = newProfiles.indexOf(selectedProxy)
 
                     configurationListView.post {
-                        configurationListView.scrollTo(selectedProfileIndex)
+                        configurationListView.scrollTo(selectedProfileIndex, true)
                     }
                 }
 
-                onMainDispatcher {
+                configurationListView.post {
+                    configurationIdList.clear()
+                    configurationIdList.addAll(newProfiles)
                     notifyDataSetChanged()
                 }
 
-                if (configurationIdList.isEmpty() && proxyGroup.isDefault) {
+                if (newProfiles.isEmpty() && proxyGroup.isDefault) {
                     ProfileManager.createProfile(groupId,
-                        SOCKSBean.DEFAULT_BEAN.clone().apply {
+                        SOCKSBean().apply {
                             name = "Local tunnel"
+                            initDefaultValues()
                         })
                 }
             }

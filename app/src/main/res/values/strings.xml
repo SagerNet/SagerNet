@@ -23,7 +23,6 @@
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">Toggle</string>
-    <string name="send_email">Send email</string>
 
     <!-- group -->
     <string name="group_name">Group name</string>
@@ -123,8 +122,6 @@
     <string name="route_entry_bypass_lan">Bypass LAN</string>
     <string name="route_entry_bypass_chn">Bypass mainland China</string>
     <string name="route_entry_bypass_lan_chn">Bypass LAN &amp; mainland China</string>
-    <string name="route_entry_gfwlist">GFW List</string>
-    <string name="route_entry_chinalist">China List</string>
     <string name="proxied_apps">Apps VPN mode</string>
     <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>
     <string name="on">On</string>
@@ -134,11 +131,8 @@
     <string name="invert_selections">Invert selections</string>
     <string name="clear_selections">Clear selections</string>
 
-    <string name="proxied_apps_mode">Mode</string>
     <string name="bypass_apps">Bypass</string>
-    <string name="bypass_apps_summary">Enable this option to bypass selected apps</string>
     <string name="show_system_apps">Show system apps</string>
-    <string name="show_search">Show search</string>
 
     <string name="auto_connect">Auto Connect</string>
     <string name="auto_connect_summary">Enable SagerNet on startup/app update if it was running before</string>
@@ -148,9 +142,6 @@
         <item quantity="one">1 hostname configured</item>
         <item quantity="other">%d hostnames configured</item>
     </plurals>
-    <string name="udp_dns">Send DNS over UDP</string>
-    <string name="udp_dns_summary">Requires UDP forwarding on server side</string>
-    <string name="udp_fallback">UDP Fallback</string>
 
     <!-- notification category -->
     <string name="service_vpn">VPN Service</string>
@@ -168,7 +159,6 @@
 
     <!-- alert category -->
     <string name="profile_empty">Please select a profile</string>
-    <string name="proxy_empty">Proxy/Password should not be empty</string>
     <string name="connect">Connect</string>
     <string name="clipboard_empty">Clipboard is empty</string>
 
@@ -179,14 +169,14 @@
     <string name="share">Share</string>
     <string name="add_profile">Add Profile</string>
     <string name="action_profile">Profile</string>
-    <string name="action_socks">Socks</string>
+    <string name="action_socks">SOCKS</string>
+    <string name="action_http">HTTP</string>
     <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_shadowsocksr">ShadowsocksR</string>
     <string name="action_vmess">VMess</string>
     <string name="action_vless">VLESS</string>
     <string name="action_trojan">Trojan</string>
 
-    <string name="action_group">Group</string>
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
 
@@ -240,7 +230,6 @@
     <!-- subscriptions -->
     <string name="subscriptions">Subscriptions</string>
     <string name="cleartext_http_warning">Cleartext HTTP traffic is insecure</string>
-    <string name="fetching_subscription">Fetching subscription…</string>
     <string name="error_title">Error</string>
     <string name="no_proxies_found">No proxies found in the link</string>
 

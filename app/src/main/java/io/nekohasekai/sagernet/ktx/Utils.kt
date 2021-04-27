@@ -173,8 +173,8 @@ fun String.unUrlSafe(): String {
     return URLDecoder.decode(this, CharsetUtil.CHARSET_UTF_8)
 }
 
-fun RecyclerView.scrollTo(index: Int) {
-    post {
+fun RecyclerView.scrollTo(index: Int, force: Boolean = false) {
+    if (force) post {
         scrollToPosition(index)
     }
     post {

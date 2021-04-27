@@ -27,6 +27,7 @@ import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
@@ -150,8 +151,9 @@ object ProfileManager {
         if (SagerDatabase.proxyDao.countByGroup(groupId) == 0L) {
             val group = SagerDatabase.groupDao.getById(groupId) ?: return
             if (group.isDefault) {
-                val created = createProfile(groupId, SOCKSBean.DEFAULT_BEAN.clone().apply {
+                val created = createProfile(groupId, SOCKSBean().apply {
                     name = "Local tunnel"
+                    initDefaultValues()
                 })
                 if (DataStore.selectedProxy == 0L) {
                     DataStore.selectedProxy = created.id
@@ -291,6 +293,31 @@ object ProfileManager {
                 Map::class.java)["proxies"] as List<Map<String, Any?>>)) {
                 val type = proxy["type"] as String
                 when (type) {
+                    "socks5" -> {
+                        proxies.add(SOCKSBean().apply {
+                            serverAddress = proxy["server"] as String
+                            serverPort = proxy["port"].toString().toInt()
+                            username = proxy["username"] as String?
+                            password = proxy["password"] as String?
+                            tls = proxy["tls"]?.toString() == "true"
+                            sni = proxy["sni"] as String?
+                            udp = proxy["udp"]?.toString() == "true"
+                            name = proxy["name"] as String?
+                        })
+                    }
+                    "http" -> {
+                        proxies.add(
+                            HttpBean().apply {
+                                serverAddress = proxy["server"] as String
+                                serverPort = proxy["port"].toString().toInt()
+                                username = proxy["username"] as String?
+                                password = proxy["password"] as String?
+                                tls = proxy["tls"]?.toString() == "true"
+                                sni = proxy["sni"] as String?
+                                name = proxy["name"] as String?
+                            }
+                        )
+                    }
                     "ss" -> {
                         var pluginStr = ""
                         if (proxy.contains("plugin")) {
@@ -305,7 +332,7 @@ object ProfileManager {
                             password = proxy["password"] as String
                             method = proxy["cipher"] as String
                             plugin = pluginStr
-                            name = proxy["name"] as String? ?: ""
+                            name = proxy["name"] as String?
 
                             fixInvalidParams()
                         })
@@ -337,24 +364,26 @@ object ProfileManager {
                                             (httpOpt.value as List<String>).first()
                                     }
                                 }
+                                "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
+                                    when (grpcOpt.key) {
+                                        "grpc-service-name" -> bean.path = grpcOpt.value as String
+                                    }
+                                }
                             }
                         }
                         proxies.add(bean)
                     }
-
-
                     "trojan" -> {
                         val bean = TrojanBean()
                         for (opt in proxy) {
                             when (opt.key) {
-                                "name" -> bean.name = opt.value as String
+                                "name" -> bean.name = opt.value as String?
                                 "server" -> bean.serverAddress = opt.value as String
                                 "port" -> bean.serverPort = opt.value.toString().toInt()
                                 "password" -> bean.password = opt.value as String
-                                "sni" -> bean.sni = opt.value as String
+                                "sni" -> bean.sni = opt.value as String?
                             }
                         }
-                        bean.initDefaultValues()
                         proxies.add(bean)
                     }
 
@@ -378,6 +407,7 @@ object ProfileManager {
                     }
                 }
             }
+            proxies.forEach { it.initDefaultValues() }
             return 1 to proxies
         }
 

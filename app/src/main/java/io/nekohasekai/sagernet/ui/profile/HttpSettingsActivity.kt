@@ -28,34 +28,32 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.http.HttpBean
 
-class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
+class HttpSettingsActivity : ProfileSettingsActivity<HttpBean>() {
 
-    override fun createEntity() = SOCKSBean()
+    override fun createEntity() = HttpBean()
 
     override fun init() {
-        SOCKSBean().apply { initDefaultValues() }.init()
+        HttpBean().apply { initDefaultValues() }.init()
     }
 
-    override fun SOCKSBean.init() {
+    override fun HttpBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
         DataStore.serverUsername = username
         DataStore.serverPassword = password
-        DataStore.serverUdp = udp
         DataStore.serverTLS = tls
         DataStore.serverSNI = sni
     }
 
-    override fun SOCKSBean.serialize() {
+    override fun HttpBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
         username = DataStore.serverUsername
         password = DataStore.serverPassword
-        udp = DataStore.serverUdp
         tls = DataStore.serverTLS
         sni = DataStore.serverSNI
     }
@@ -64,7 +62,7 @@ class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.socks_preferences)
+        addPreferencesFromResource(R.xml.http_preferences)
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }

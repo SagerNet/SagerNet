@@ -51,6 +51,19 @@ public class ShadowsocksRBean extends AbstractBean {
     public String obfsParam;
 
     @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+
+        if (password == null) password = "";
+        if (method == null) method = "";
+        if (protocol == null) protocol = "";
+        if (protocolParam == null) protocolParam = "";
+        if (obfs == null) obfs = "";
+        if (obfsParam == null) obfsParam = "";
+
+    }
+
+    @Override
     public void serialize(ByteBufferOutput output) {
         output.writeInt(0);
         super.serialize(output);

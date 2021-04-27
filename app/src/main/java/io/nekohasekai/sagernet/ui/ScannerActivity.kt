@@ -151,8 +151,12 @@ class ScannerActivity : AppCompatActivity(), BarcodeCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        importCodeFile.launch("image/*")
-        return true
+        if (item.itemId == R.id.action_import_from_file) {
+            importCodeFile.launch("image/*")
+            return true
+        } else {
+            return super.onOptionsItemSelected(item)
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SagerNet</string>
-    <string name="app_desc">適用於 Android 的通用代理工具鏈，由 Kotlin 開發。</string>
+    <string name="app_desc">適用於 Android 的通用代理工具鏈，由 Kotlin 編寫。</string>
 
     <string name="project">專案</string>
     <string name="github">原始碼</string>
@@ -9,9 +9,9 @@
 
     <string name="misc">雜項</string>
     <string name="app_version">版本</string>
-    <string name="v2ray_version">版本(v2ray-core)</string>
-    <string name="logcat">匯出除錯資訊</string>
-    <string name="logcat_summary">Such useful very wow</string>
+    <string name="v2ray_version">版本 (v2ray-core)</string>
+    <string name="logcat">匯出 debug 所需資訊</string>
+    <string name="logcat_summary">這種非常有用啊(^O^)／</string>
 
     <string name="action_settings">設定</string>
     <string name="menu_configuration">設定檔</string>
@@ -23,7 +23,6 @@
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">切換</string>
-    <string name="send_email">傳送電子郵件</string>
 
     <!-- group -->
     <string name="group_name">群組名稱</string>
@@ -43,9 +42,9 @@
     <string name="group_updated">更新了 %d 個代理</string>
     <string name="group_show_diff">變化</string>
     <string name="group_delete_confirm_prompt">您真的希望刪除這個群組嗎？</string>
-    <string name="group_added">新增於：\n%s</string>
-    <string name="group_changed">更新於：\n%s</string>
-    <string name="group_deleted">刪除於：\n%s</string>
+    <string name="group_added">新增：\n%s</string>
+    <string name="group_changed">更新：\n%s</string>
+    <string name="group_deleted">刪除：\n%s</string>
 
     <!-- misc -->
     <string name="service_mode">執行模式</string>
@@ -64,7 +63,7 @@
     <string name="domestic_dns">國內 DNS</string>
     <string name="cag_route">路由設定</string>
     <string name="remote_dns">遠端 DNS</string>
-    <string name="force_ss_rust">不使用 v2ray-core 的 shadowsocks</string>
+    <string name="force_ss_rust">不使用 v2ray 路由 shadowsocks</string>
     <string name="force_ss_sum">強制所有 Shadowsocks 設定檔使用和 Shadowsocks Android 相同的 shadowsocks-rust 後端。</string>
     <string name="inbound_settings">傳入設定</string>
     <string name="general_settings">應用程式設定</string>
@@ -80,7 +79,7 @@
     <string name="speed">%s/s</string>
     <string name="connection_test_pending">檢查連線能力</string>
     <string name="connection_test_testing">測試中……</string>
-    <string name="connection_test_available">成功：HTTP 握手花費 %dms</string>
+    <string name="connection_test_available">成功：HTTPS 握手花費 %dms</string>
     <string name="connection_test_error">檢查網路連線失敗：%s</string>
     <string name="connection_test_fail">網路不可用</string>
     <string name="connection_test_error_status_code">錯誤碼：#%d</string>
@@ -123,34 +122,26 @@
     <string name="route_entry_bypass_lan">略過區域網路</string>
     <string name="route_entry_bypass_chn">略過中國大陸</string>
     <string name="route_entry_bypass_lan_chn">略過區域網路和中國大陸</string>
-    <string name="route_entry_gfwlist">GFW List</string>
-    <string name="route_entry_chinalist">China List</string>
     <string name="proxied_apps">應用程式 VPN 模式</string>
     <string name="proxied_apps_summary">為被選取的應用程式設定 VPN 模式。</string>
     <string name="on">啟用</string>
     <string name="off">停用</string>
-    <string name="search_apps">搜尋中……</string>
+    <string name="search_apps">搜尋…</string>
     <string name="scanning">掃描中……</string>
     <string name="invert_selections">反向選取</string>
     <string name="clear_selections">清除選取</string>
 
-    <string name="proxied_apps_mode">模式</string>
     <string name="bypass_apps">略過</string>
-    <string name="bypass_apps_summary">啟用此選項以略過被選取的應用。</string>
     <string name="show_system_apps">顯示系統應用</string>
-    <string name="show_search">顯示搜尋</string>
 
     <string name="auto_connect">自動連線</string>
     <string name="auto_connect_summary">如果 SagerNet 在開機或應用更新前正在運行，啟用 SagerNet。</string>
-    <string name="direct_boot_aware">允許鎖定螢幕切換</string>
+    <string name="direct_boot_aware">允許與解鎖前啓動</string>
     <string name="direct_boot_aware_summary">您選取的設定檔將受到較少的保護。</string>
     <plurals name="hosts_summary">
         <item quantity="one">1 個主機名稱已被設定</item>
         <item quantity="other">%d 個主機名稱已被設定</item>
     </plurals>
-    <string name="udp_dns">透過 UDP 傳送 DNS 請求</string>
-    <string name="udp_dns_summary">需要伺服器支援轉傳 UDP 流量。</string>
-    <string name="udp_fallback">遞補 UDP</string>
 
     <!-- notification category -->
     <string name="service_vpn">VPN 服務</string>
@@ -168,7 +159,6 @@
 
     <!-- alert category -->
     <string name="profile_empty">請選擇一個設定檔</string>
-    <string name="proxy_empty">代理或密碼必須不為空</string>
     <string name="connect">連線</string>
     <string name="clipboard_empty">剪貼簿為空</string>
 
@@ -179,14 +169,14 @@
     <string name="share">分享</string>
     <string name="add_profile">新增設定檔</string>
     <string name="action_profile">設定檔</string>
-    <string name="action_socks">Socks</string>
+    <string name="action_socks">SOCKS</string>
+    <string name="action_http">HTTP</string>
     <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_shadowsocksr">ShadowsocksR</string>
     <string name="action_vmess">VMess</string>
     <string name="action_vless">VLESS</string>
     <string name="action_trojan">Trojan</string>
 
-    <string name="action_group">群組</string>
     <string name="action_create_group">空白群組</string>
     <string name="action_from_link">來自訂閱</string>
 
@@ -240,7 +230,6 @@
     <!-- subscriptions -->
     <string name="subscriptions">訂閱</string>
     <string name="cleartext_http_warning">純文字 HTTP 流量並不安全</string>
-    <string name="fetching_subscription">擷取訂閱中……</string>
     <string name="error_title">錯誤</string>
     <string name="no_proxies_found">此連接不包含任何代理</string>
 
@@ -252,13 +241,12 @@
     <string name="plugin_untrusted">警告：此外掛程式並非來自可靠的可信來源。</string>
     <string name="plugin_auto_connect_unlock_only">此外掛程式可能不支援自動連線</string>
 
-    <string name="proxy_cat">Server Settings</string>
-    <string name="feature_cat">Feature Settings</string>
-    <string name="unsaved_changes_prompt">Changes not saved. Do you want to save?</string>
-    <string name="yes">是</string>
-    <string name="no">否</string>
-    <string name="apply">套用</string>
-
+    <string name="proxy_cat">"伺服器設定"</string>
+    <string name="feature_cat">"功能設定"</string>
+    <string name="unsaved_changes_prompt">"要儲存變更嗎？"</string>
+    <string name="yes">"是"</string>
+    <string name="no">"否"</string>
+    <string name="apply">"套用"</string>
     <string name="license">授權協定</string>
 
 </resources>

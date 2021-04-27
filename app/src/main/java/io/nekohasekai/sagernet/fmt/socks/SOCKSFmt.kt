@@ -36,7 +36,7 @@ fun parseSOCKS(link: String): SOCKSBean {
         }
         url = Base64.decodeStr(url)
         val httpUrl = "http://$url".toHttpUrlOrNull() ?: error("Invalid v2rayN link content: $url")
-        return SOCKSBean.DEFAULT_BEAN.clone().apply {
+        return SOCKSBean().apply {
             serverAddress = httpUrl.host
             serverPort = httpUrl.port
             username = httpUrl.username.takeIf { it != "null" } ?: ""
@@ -58,6 +58,8 @@ fun parseSOCKS(link: String): SOCKSBean {
             password = url.password
             name = url.fragment
             udp = url.queryParameter("udp") == "true"
+            tls = url.queryParameter("tls") == "true"
+            sni = url.queryParameter("sni")
         }
     }
 }
@@ -70,6 +72,12 @@ fun SOCKSBean.toUri(): String {
         .port(serverPort)
     if (!username.isNullOrBlank()) builder.username(username)
     if (!password.isNullOrBlank()) builder.password(password)
+    if (tls) {
+        builder.addQueryParameter("tls", "true")
+        if (sni.isNotBlank()) {
+            builder.addQueryParameter("sni", sni)
+        }
+    }
     if (!name.isNullOrBlank()) builder.encodedFragment(name.urlSafe())
     if (udp) builder.addQueryParameter("udp", "true")
     return builder.build().toString().replaceRange(0..3, "socks")

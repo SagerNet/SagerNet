@@ -1,51 +1,50 @@
 <resources>
     <string name="app_name">SagerNet</string>
-    <string name="app_desc">使用 Kotlin 开发的 Android 端通用代理工具.</string>
+    <string name="app_desc">适用于 Android 之通用代理工具, 由 Kotlin 编写.</string>
 
     <string name="project">项目</string>
     <string name="github">源代码</string>
     <string name="telegram">Telegram 更新频道</string>
-    <string name="oss_licenses">源代码授权协议</string>
+    <string name="oss_licenses">开放源代码协议</string>
 
     <string name="misc">其他</string>
     <string name="app_version">版本</string>
-    <string name="v2ray_version">v2ray-core 版本</string>
-    <string name="logcat">导出日志</string>
-    <string name="logcat_summary">这对修复 BUG 非常有用</string>
+    <string name="v2ray_version">版本 (v2ray-core)</string>
+    <string name="logcat">导出调试信息</string>
+    <string name="logcat_summary">这种非常有用哇</string>
 
     <string name="action_settings">设置</string>
     <string name="menu_configuration">配置</string>
-    <string name="menu_group">分组</string>
+    <string name="menu_group">组</string>
     <string name="menu_about">关于</string>
 
-    <string name="group_default">初始配置</string>
+    <string name="group_default">默认</string>
     <string name="profile_address">127.0.0.1:1080</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">切换</string>
-    <string name="send_email">发送电子邮件</string>
 
     <!-- group -->
     <string name="group_name">分组名</string>
     <string name="group_update">更新</string>
     <string name="group_subscription_link">订阅链接</string>
     <string name="group_name_required">需要分组名称</string>
-    <string name="group_create">创建新分组</string>
-    <string name="group_create_subscription">添加新订阅</string>
+    <string name="group_create">创建分组</string>
+    <string name="group_create_subscription">添加订阅</string>
     <string name="group_edit">编辑</string>
     <string name="group_edit_subscription">编辑订阅</string>
 
-    <string name="group_status_empty">空分组</string>
-    <string name="group_status_empty_subscription">未更新</string>
+    <string name="group_status_empty">空</string>
+    <string name="group_status_empty_subscription">从未更新</string>
     <string name="group_status_proxies">%d 个配置</string>
     <string name="group_status_proxies_subscription">%d 个配置, 最后更新于 %s.</string>
     <string name="group_no_difference">没有变化</string>
     <string name="group_updated">更新了 %d 个节点</string>
     <string name="group_show_diff">变化</string>
-    <string name="group_delete_confirm_prompt">您确定要删除这个分组/订阅吗?</string>
-    <string name="group_added">添加时间: \n%s</string>
-    <string name="group_changed">最后更新时间: \n%s</string>
-    <string name="group_deleted">删除时间: \n%s</string>
+    <string name="group_delete_confirm_prompt">您确定要删除这个分组吗?</string>
+    <string name="group_added">新增: \n%s</string>
+    <string name="group_changed">更新: \n%s</string>
+    <string name="group_deleted">删除: \n%s</string>
 
     <!-- misc -->
     <string name="service_mode">运行模式</string>
@@ -53,18 +52,18 @@
     <string name="service_mode_vpn">VPN</string>
     <string name="service_mode_transproxy">透明代理</string>
     <string name="share_over_lan">LAN 共用</string>
-    <string name="port_proxy">SOCKS5代理端口</string>
-    <string name="port_http">HTTP代理端口</string>
-    <string name="port_local_dns">本地DNS端口</string>
+    <string name="port_proxy">SOCKS5 代理端口</string>
+    <string name="port_http">HTTP 代理端口</string>
+    <string name="port_local_dns">本地 DNS 端口</string>
     <string name="port_transproxy">透明代理端口</string>
     <string name="allow_access">允许来自局域网的连接</string>
-    <string name="allow_access_sum">将 传入服务器绑定至 0.0.0.0</string>
-    <string name="cag_dns">DNS设置</string>
-    <string name="local_dns">启用本地DNS</string>
-    <string name="domestic_dns">国内DNS</string>
+    <string name="allow_access_sum">将传入服务器绑定至 0.0.0.0</string>
+    <string name="cag_dns">DNS 设置</string>
+    <string name="local_dns">启用本地 DNS</string>
+    <string name="domestic_dns">国内 DNS</string>
     <string name="cag_route">路由设置</string>
     <string name="remote_dns">远程DNS</string>
-    <string name="force_ss_rust">不使用 v2ray-core 附带的 shadowsocks</string>
+    <string name="force_ss_rust">不要使用 v2ray 路由 shadowsocks</string>
     <string name="force_ss_sum">强制所有 shadowsocks 节点使用和 Shadowsocks Android 相同的 shadowsocks-rust 后端</string>
     <string name="inbound_settings">入站设置</string>
     <string name="general_settings">软件设置</string>
@@ -73,14 +72,14 @@
     <string name="ws_max_early_data">Max early data</string>
     <string name="ws_browser_forwarding">浏览器转发</string>
     <string name="ws_browser_forwarding_sum">转发相应的 WebSockets 到浏览器.</string>
-    <string name="speed_interval">通知栏网速更新时间间隔</string>
+    <string name="speed_interval">速度通知更新间隔</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="stat_summary">上传: \t\t\t\t\t%3$s\t↑\t%1$s\n下载: \t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_pending">测试连接</string>
     <string name="connection_test_testing">测试中…</string>
-    <string name="connection_test_available">连接成功: HTTP 握手耗时 %dms</string>
+    <string name="connection_test_available">连接成功: HTTPS 握手耗时 %dms</string>
     <string name="connection_test_error">连接失败: %s</string>
     <string name="connection_test_fail">网络不可用</string>
     <string name="connection_test_error_status_code">错误代码: #%d</string>
@@ -93,28 +92,28 @@
     <string name="password_opt">密码 (可选)</string>
     <string name="password">密码</string>
     <string name="server_udp">UDP</string>
-    <string name="udp_summary">转发 UDP 到服务器</string>
+    <string name="udp_summary">路由 UDP 流量到服务器</string>
     <string name="enc_method">加密方式</string>
     <string name="protocol">协议</string>
     <string name="protocol_param">协议参数</string>
     <string name="obfs">混淆</string>
     <string name="obfs_param">混淆参数</string>
     <string name="uuid">用户ID</string>
-    <string name="alter_id">Alter ID</string>
+    <string name="alter_id">替代 ID</string>
     <string name="security">加密方式</string>
     <string name="network">传输协议</string>
     <string name="header_type">伪装类型</string>
     <string name="request_host">请求域名 / QUIC 加密方式</string>
     <string name="path">Path / Key / Seed / ServiceName</string>
     <string name="tls">使用 TLS</string>
-    <string name="sni">SNI</string>
-    <string name="encryption">加密方式</string>
+    <string name="sni">服务器名称指示</string>
+    <string name="encryption">加密</string>
 
     <!-- feature category -->
-    <string name="ipv6">转发 IPv6 流量</string>
-    <string name="ipv6_summary">向服务器转发 IPV6 流量</string>
-    <string name="ipv6_prefer">优先 IPv6</string>
-    <string name="ipv6_prefer_summary">优先使用 IPV6 地址和路由</string>
+    <string name="ipv6">IPv6 路由</string>
+    <string name="ipv6_summary">向服务器重定向 IPv6 流量</string>
+    <string name="ipv6_prefer">IPv6 优先</string>
+    <string name="ipv6_prefer_summary">优先使用 IPv6 地址和路由</string>
 
     <string name="metered">按流量计费</string>
     <string name="metered_summary">让系统认为此 VPN 按流量计费</string>
@@ -123,34 +122,26 @@
     <string name="route_entry_bypass_lan">绕过局域网</string>
     <string name="route_entry_bypass_chn">绕过中国大陆地址</string>
     <string name="route_entry_bypass_lan_chn">绕过局域网和中国大陆地址</string>
-    <string name="route_entry_gfwlist">GFW List</string>
-    <string name="route_entry_chinalist">China List</string>
     <string name="proxied_apps">分应用代理</string>
     <string name="proxied_apps_summary">代理被勾选应用的流量</string>
     <string name="on">打开</string>
     <string name="off">关闭</string>
-    <string name="search_apps">搜索中…</string>
+    <string name="search_apps">搜索…</string>
     <string name="scanning">扫描中…</string>
     <string name="invert_selections">反选</string>
-    <string name="clear_selections">取消选择</string>
+    <string name="clear_selections">清空</string>
 
-    <string name="proxied_apps_mode">模式</string>
-    <string name="bypass_apps">黑名单模式</string>
-    <string name="bypass_apps_summary">打开此选项后,被选中的应用将不会被代理</string>
+    <string name="bypass_apps">绕过</string>
     <string name="show_system_apps">显示系统应用</string>
-    <string name="show_search">显示搜索</string>
 
     <string name="auto_connect">自动连接</string>
-    <string name="auto_connect_summary">SagerNet 将在手机启动或 SagerNet 更新完成后自动重新连接</string>
-    <string name="direct_boot_aware">允许在锁屏界面显示</string>
+    <string name="auto_connect_summary">SagerNet 将在手机启动或更新完成后自动重新连接</string>
+    <string name="direct_boot_aware">允许在解锁前启动</string>
     <string name="direct_boot_aware_summary">您正在使用的服务器可能会受到更少的保护</string>
     <plurals name="hosts_summary">
         <item quantity="one">1 个主机已设置</item>
         <item quantity="other"> %d 个主机已设置 </item>
     </plurals>
-    <string name="udp_dns">通过 UDP 发送 DNS 请求</string>
-    <string name="udp_dns_summary">需要服务器支持转发 UDP 流量</string>
-    <string name="udp_fallback">UDP Fallback</string>
 
     <!-- notification category -->
     <string name="service_vpn">VPN 服务</string>
@@ -168,7 +159,6 @@
 
     <!-- alert category -->
     <string name="profile_empty">请选择一个服务器配置</string>
-    <string name="proxy_empty">代理/密码不能为空</string>
     <string name="connect">连接</string>
     <string name="clipboard_empty">剪切板没有内容</string>
 
@@ -179,18 +169,18 @@
     <string name="share">分享</string>
     <string name="add_profile">添加服务器配置</string>
     <string name="action_profile">服务器配置</string>
-    <string name="action_socks">Socks</string>
+    <string name="action_socks">SOCKS</string>
+    <string name="action_http">HTTP</string>
     <string name="action_shadowsocks">Shadowsocks</string>
     <string name="action_shadowsocksr">ShadowsocksR</string>
     <string name="action_vmess">VMess</string>
     <string name="action_vless">VLESS</string>
     <string name="action_trojan">Trojan</string>
 
-    <string name="action_group">分组</string>
-    <string name="action_create_group">空分组</string>
+    <string name="action_create_group">空组</string>
     <string name="action_from_link">来自订阅</string>
 
-    <string name="action_scan_china_apps">扫描中国软件</string>
+    <string name="action_scan_china_apps">扫描中国应用</string>
     <string name="action_export_more">导出…</string>
     <string name="action_export_file">导出到文件…</string>
     <string name="action_export">导出到剪切板</string>
@@ -240,7 +230,6 @@
     <!-- subscriptions -->
     <string name="subscriptions">订阅</string>
     <string name="cleartext_http_warning">使用纯文字 HTTP 流量传输的订阅并不安全</string>
-    <string name="fetching_subscription">正在获取订阅...</string>
     <string name="error_title">错误</string>
     <string name="no_proxies_found">未在此订阅内找到服务器配置</string>
 
@@ -249,12 +238,12 @@
     <string name="plugin_configure">设置…</string>
     <string name="plugin_disabled">已停用</string>
     <string name="plugin_unknown">未知插件: %s</string>
-    <string name="plugin_untrusted">请注意: 此插件的来源不可靠</string>
+    <string name="plugin_untrusted">请注意: 此插件的不来自可靠的来源.</string>
     <string name="plugin_auto_connect_unlock_only">此插件可能不支持自动连接</string>
 
-    <string name="proxy_cat">服务器设置</string>
-    <string name="feature_cat">软件设置</string>
-    <string name="unsaved_changes_prompt">设置未保存 , 是否需要保存</string>
+    <string name="proxy_cat">"服务器设置"</string>
+    <string name="feature_cat">"功能设置"</string>
+    <string name="unsaved_changes_prompt">"是否要保存修改？"</string>
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="apply">应用</string>

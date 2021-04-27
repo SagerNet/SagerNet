@@ -19,57 +19,31 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.trojan;
-
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
+package io.nekohasekai.sagernet.fmt.http;
 
 import org.jetbrains.annotations.NotNull;
 
-import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class TrojanBean extends AbstractBean {
+public class HttpBean extends AbstractBean {
 
-    public static TrojanBean DEFAULT_BEAN = new TrojanBean() {{
-        name = "";
-        serverAddress = "127.0.0.1";
-        serverPort = 1080;
-        password = "";
-        sni = "";
-    }};
-
+    public String username;
     public String password;
+    public boolean tls;
     public String sni;
 
     @Override
     public void initDefaultValues() {
         super.initDefaultValues();
-
+        if (username == null) username = "";
         if (password == null) password = "";
         if (sni == null) sni = "";
-    }
-
-    @Override
-    public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
-        super.serialize(output);
-        output.writeString(password);
-        output.writeString(sni);
-    }
-
-    @Override
-    public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
-        super.deserialize(input);
-        password = input.readString();
-        sni = input.readString();
     }
 
     @NotNull
     @Override
     public AbstractBean clone() {
-        return KryoConverters.deserialize(new TrojanBean(), KryoConverters.serialize(this));
+        return KryoConverters.deserialize(new HttpBean(), KryoConverters.serialize(this));
     }
 }

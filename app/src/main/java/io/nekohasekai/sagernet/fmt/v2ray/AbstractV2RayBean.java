@@ -41,19 +41,12 @@ public abstract class AbstractV2RayBean extends AbstractBean {
     public String sni;
     public boolean tls;
 
+    @Override
     public void initDefaultValues() {
-        if (StrUtil.isBlank(name)) {
-            name = "";
-        }
-        if (StrUtil.isBlank(serverAddress)) {
-            serverAddress = "127.0.0.1";
-        }
-        if (serverPort == 0) {
-            serverPort = 1080;
-        }
-        if (StrUtil.isBlank(uuid)) {
-            uuid = "";
-        }
+        super.initDefaultValues();
+
+        if (uuid == null) uuid = "";
+
         if (StrUtil.isBlank(network)) {
             network = "tcp";
         }

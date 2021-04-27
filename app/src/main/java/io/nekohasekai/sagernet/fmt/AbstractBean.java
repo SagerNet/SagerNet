@@ -29,13 +29,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 import cn.hutool.core.clone.Cloneable;
+import cn.hutool.core.util.StrUtil;
 
 public abstract class AbstractBean implements Cloneable<AbstractBean> {
 
     public String serverAddress;
     public int serverPort;
-
     public String name;
+
+    public void initDefaultValues() {
+        if (StrUtil.isBlank(serverAddress)) {
+            serverAddress = "127.0.0.1";
+        }
+        if (serverPort == 0) {
+            serverPort = 1080;
+        }
+        if (name == null) name = "";
+    }
 
     public void serialize(ByteBufferOutput output) {
         output.writeString(name);
