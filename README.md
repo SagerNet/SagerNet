@@ -14,7 +14,7 @@ The application is designed to be used whenever possible.
 ### Protocols
 
 * SOCKS
-* HTTP(s) / nativeproxy
+* HTTP(s) / naiveproxy
 * Shadowsocks
 * ShadowsocksR
 * VMess
