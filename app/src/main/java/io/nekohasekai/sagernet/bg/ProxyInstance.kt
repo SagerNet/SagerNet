@@ -100,12 +100,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                 val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
                 PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                     proxyConfig["plugin"] = path
-                    for (opt in opts.toMap()) {
-                        if (opt.key == "mode") {
-                            opts.remove(opt.key)
-                            opts["obfs"] = opt.value
-                        }
-                    }
                     proxyConfig["plugin_opts"] = opts.toString()
                 }
             }

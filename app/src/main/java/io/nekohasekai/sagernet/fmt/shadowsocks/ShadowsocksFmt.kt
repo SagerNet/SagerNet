@@ -48,7 +48,7 @@ fun ShadowsocksBean.fixInvalidParams() {
         pl.pluginsOptions.remove(pl.selected)
         pl.selected = "v2ray-plugin"
 
-        // reslove v2ray plugin
+        // resolve v2ray plugin
 
     }
 
@@ -58,8 +58,16 @@ fun ShadowsocksBean.fixInvalidParams() {
         pl.pluginsOptions.remove(pl.selected)
         pl.selected = "obfs-local"
 
-        // reslove clash obfs
+        // resolve clash obfs
 
+    }
+
+    if (pl.selected ==  "obfs-local") {
+        val options = pl.pluginsOptions["obfs-local"]
+        if (options != null && options.containsKey("mode")) {
+            options["obfs"] = options["mode"]
+            options.remove("mdoe")
+        }
     }
 
     plugin = pl.toString()
@@ -155,18 +163,6 @@ fun ShadowsocksBean.toUri(): String {
     }
 
     return builder.toString().replace("https://", "ss://")
-
-}
-
-fun ShadowsocksBean.toV2rayN(): String {
-
-    var url = "$method:$password@$serverAddress:$serverPort"
-    url = "ss://" + Base64.encodeUrlSafe(url)
-    if (name.isNotBlank()) {
-        url += "#" + name.urlSafe()
-    }
-
-    return url
 
 }
 
