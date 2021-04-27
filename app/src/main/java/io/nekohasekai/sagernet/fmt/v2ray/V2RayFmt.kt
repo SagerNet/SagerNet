@@ -157,7 +157,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                         })
                     if (bean.tls) {
                         streamSettings = StreamSettingsObject().apply {
-                            network = "tls"
+                            network = "tcp"
+                            security = "tls"
                             if (bean.sni.isNotBlank()) {
                                 tlsSettings = TLSObject().apply {
                                     serverName = bean.sni
@@ -186,7 +187,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                         })
                     if (bean.tls) {
                         streamSettings = StreamSettingsObject().apply {
-                            network = "tls"
+                            network = "tcp"
+                            security = "tls"
                             if (bean.sni.isNotBlank()) {
                                 tlsSettings = TLSObject().apply {
                                     serverName = bean.sni
