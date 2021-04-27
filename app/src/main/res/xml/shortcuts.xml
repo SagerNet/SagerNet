@@ -8,7 +8,7 @@
         <intent
             android:action="android.intent.action.MAIN"
             android:targetClass="io.nekohasekai.sagernet.QuickToggleShortcut"
-            android:targetPackage="${applicationId}" />
+            android:targetPackage="io.nekohasekai.sagernet" />
     </shortcut>
     <shortcut
         android:icon="@drawable/ic_qu_camera_launcher"
@@ -18,6 +18,6 @@
         <intent
             android:action="android.intent.action.MAIN"
             android:targetClass="io.nekohasekai.sagernet.ui.ScannerActivity"
-            android:targetPackage="${applicationId}" />
+            android:targetPackage="io.nekohasekai.sagernet" />
     </shortcut>
 </shortcuts>
