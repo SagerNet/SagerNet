@@ -248,6 +248,9 @@ class BaseService {
             // channge the stated
             data.changeState(State.Stopping)
             GlobalScope.launch(Dispatchers.Main.immediate) {
+                data.notification?.destroy()
+                data.notification = null
+
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
                 this@Interface as Service
                 // we use a coroutineScope here to allow clean-up in parallel
@@ -259,9 +262,6 @@ class BaseService {
                         unregisterReceiver(data.closeReceiver)
                         data.closeReceiverRegistered = false
                     }
-
-                    data.notification?.destroy()
-                    data.notification = null
                     data.proxy?.shutdown(this)
                     data.binder.trafficPersisted(listOfNotNull(data.proxy).map { it.profile.id })
                     data.proxy = null
