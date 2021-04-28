@@ -177,7 +177,7 @@ fun RecyclerView.scrollTo(index: Int, force: Boolean = false) {
     if (force) post {
         scrollToPosition(index)
     }
-    post {
+    postDelayed({
         try {
             layoutManager?.startSmoothScroll(object : LinearSmoothScroller(context) {
                 init {
@@ -190,7 +190,7 @@ fun RecyclerView.scrollTo(index: Int, force: Boolean = false) {
             })
         } catch (ignored: IllegalArgumentException) {
         }
-    }
+    }, 300L)
 }
 
 val app get() = SagerNet.application

@@ -131,7 +131,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     val last = layoutManager.findLastVisibleItemPosition()
 
                     if (selectedProfileIndex !in first..last) {
-                        fragment.configurationListView.scrollTo(selectedProfileIndex)
+                        fragment.configurationListView.scrollTo(selectedProfileIndex, true)
                         return@setOnClickListener
                     }
 
@@ -573,20 +573,23 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
                 val newProfiles = SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id)
 
+                var selectedProfileIndex = -1
+
                 if (selected && !scrolled) {
                     scrolled = true
                     val selectedProxy = DataStore.selectedProxy
-                    val selectedProfileIndex = newProfiles.indexOf(selectedProxy)
-
-                    configurationListView.post {
-                        configurationListView.scrollTo(selectedProfileIndex, true)
-                    }
+                    selectedProfileIndex = newProfiles.indexOf(selectedProxy)
                 }
 
                 configurationListView.post {
                     configurationIdList.clear()
                     configurationIdList.addAll(newProfiles)
                     notifyDataSetChanged()
+
+                    if (selectedProfileIndex != -1) {
+                        configurationListView.scrollTo(selectedProfileIndex, true)
+                    }
+
                 }
 
                 if (newProfiles.isEmpty() && proxyGroup.isDefault) {
