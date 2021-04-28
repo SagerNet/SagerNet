@@ -151,11 +151,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                 it["obfs"] = bean.obfs
                 it["obfs_param"] = bean.obfsParam
                 it["ipv6"] = DataStore.ipv6Route
-                if (DataStore.enableLocalDNS) {
-                    it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
-                } else {
-                    it["dns"] = DataStore.remoteDNS
-                }
             }
 
             Logs.d(proxyConfig.toStringPretty())
