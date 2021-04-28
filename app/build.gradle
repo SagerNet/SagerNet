@@ -38,8 +38,8 @@ android {
         applicationId "io.nekohasekai.sagernet"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 6
-        versionName "0.1-beta6"
+        versionCode 7
+        versionName "0.1-beta7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
