@@ -21,7 +21,9 @@
 
 package io.nekohasekai.sagernet.ktx
 
+import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
@@ -29,6 +31,10 @@ import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.v2ray.parseVmess
 import java.util.*
+
+fun formatObject(obj: Any): String {
+    return gson.toJson(obj).let { JSONObject(it).toStringPretty() }
+}
 
 fun parseProxies(text: String): List<AbstractBean> {
     val links = text.split('\n').flatMap { it.trim().split(' ') }

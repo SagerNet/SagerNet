@@ -31,6 +31,8 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.formatObject
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -461,6 +463,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                 rules.add(RoutingObject.RuleObject().apply {
                     type = "field"
                     outboundTag = TAG_DIRECT
+                    Logs.d(formatObject(bean))
                     when {
                         bean.requestHost.isNotBlank() -> domain = listOf(bean.requestHost!!)
                         bean.serverAddress!!.contains("[a-zA-Z]".toRegex()) -> {
