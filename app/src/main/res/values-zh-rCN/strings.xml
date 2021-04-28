@@ -256,5 +256,7 @@
     <string name="dm_linear">线性匹配</string>
     <string name="dm_mph">最小完美散列</string>
     <string name="traffic_sniffing">启用流量探测</string>
+    <string name="disable">禁用</string>
+    <string name="cag_misc">杂项</string>
 
 </resources>
