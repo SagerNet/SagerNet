@@ -33,7 +33,7 @@
             app:title="@string/domain_strategy"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="linear"
+            app:defaultValue="mph"
             app:entries="@array/domain_matcher_entry"
             app:entryValues="@array/domain_matcher_value"
             app:icon="@drawable/ic_baseline_domain_24"
@@ -45,6 +45,17 @@
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="trafficSniffing"
             app:title="@string/traffic_sniffing" />
+        <SwitchPreference
+            app:defaultValue="false"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="enableMux"
+            app:title="@string/enable_mux" />
+        <EditTextPreference
+            app:defaultValue="8"
+            app:icon="@drawable/ic_baseline_low_priority_24"
+            app:key="muxConcurrency"
+            app:title="@string/mux_concurrency"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_misc">
@@ -90,9 +101,7 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="1"
-        app:title="@string/cag_ws">
+    <PreferenceCategory app:title="@string/cag_ws">
         <EditTextPreference
             app:defaultValue="0"
             app:icon="@drawable/ic_baseline_compare_arrows_24"

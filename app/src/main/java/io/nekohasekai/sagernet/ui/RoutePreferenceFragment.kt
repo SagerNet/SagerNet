@@ -47,6 +47,8 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
         val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
         val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
         val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
+        val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
+        val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
 
         val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
         val routeChina = findPreference<Preference>(Key.ROUTE_CHINA)!!
@@ -65,6 +67,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
 
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         wsMaxEarlyData.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+        muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
         val currServiceMode = DataStore.serviceMode
         isProxyApps = findPreference(Key.PROXY_APPS)!!
@@ -83,6 +86,8 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
                 domainStrategy.isEnabled = stopped
                 domainMatcher.isEnabled = stopped
                 trafficSniffing.isEnabled = stopped
+                enableMux.isEnabled = stopped
+                muxConcurrency.isEnabled = stopped
 
                 bypassLan.isEnabled = stopped
                 blockAds.isEnabled = stopped

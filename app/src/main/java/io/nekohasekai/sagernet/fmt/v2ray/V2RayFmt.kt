@@ -420,6 +420,12 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                             )
                         })
                 }
+                if (DataStore.enableMux) {
+                    mux = OutboundObject.MuxObject().apply {
+                        enabled = true
+                        concurrency = DataStore.muxConcurrency
+                    }
+                }
             }
         )
 

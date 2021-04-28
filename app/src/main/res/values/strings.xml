@@ -134,6 +134,8 @@
     <string name="dm_linear">Linear matching</string>
     <string name="dm_mph">Minimal perfect hash</string>
     <string name="traffic_sniffing">Enable traffic sniffing</string>
+    <string name="enable_mux">Enable multiplexer</string>
+    <string name="mux_concurrency">Mux concurrent connections</string>
 
     <string name="proxied_apps">Apps VPN mode</string>
     <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>

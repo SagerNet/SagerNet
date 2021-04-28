@@ -68,7 +68,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
     var domainStrategy by configurationStore.string(Key.PROFILE_NAME) { "AsIs" }
-    var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "linear" }
+    var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "mph" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
@@ -120,7 +120,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var wsMaxEarlyData by configurationStore.stringToInt(Key.WS_MAX_EARLY_DATA) { 0 }
-    var wsBrowserForwarding by configurationStore.boolean(Key.WS_BROWSER_FORWARDING) { false }
+    var wsBrowserForwarding by configurationStore.boolean(Key.WS_BROWSER_FORWARDING)
+    var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
+    var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true

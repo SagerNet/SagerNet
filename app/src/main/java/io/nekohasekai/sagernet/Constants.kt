@@ -63,6 +63,9 @@ object Key {
     const val WS_MAX_EARLY_DATA = "wsMaxEarlyData"
     const val WS_BROWSER_FORWARDING = "wsBrowserForwarding"
 
+    const val ENABLE_MUX = "enableMux"
+    const val MUX_CONCURRENCY = "muxConcurrency"
+
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
     const val PROFILE_NAME = "profileName"
