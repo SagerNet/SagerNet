@@ -13,12 +13,18 @@
             android:title="@string/menu_group" />
 
         <item
+            android:id="@+id/nav_route"
+            android:icon="@drawable/ic_maps_directions"
+            android:title="@string/menu_route" />
+
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_action_settings"
             android:title="@string/settings" />
     </group>
 
-    <group android:id="@+id/misc"
+    <group
+        android:id="@+id/misc"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_about"

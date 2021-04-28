@@ -24,7 +24,10 @@ package io.nekohasekai.sagernet.bg
 import android.content.Context
 import android.os.Build
 import android.os.SystemClock
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
@@ -39,10 +42,10 @@ import io.nekohasekai.sagernet.fmt.v2ray.AbstractV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import libv2ray.Libv2ray
 import libv2ray.V2RayPoint
 import libv2ray.V2RayVPNServiceSupportsSet
@@ -170,21 +173,26 @@ class ProxyInstance(val profile: ProxyEntity) {
         }
 
         runOnDefaultDispatcher {
-            runCatching {
-                v2rayPoint.runLoop(DataStore.preferIpv6)
-
-                if (bean is AbstractV2RayBean) {
-                    if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
+            v2rayPoint.runLoop(DataStore.preferIpv6)
+            val url = "http://127.0.0.1:" + DataStore.socksPort + 11
+            if (bean is AbstractV2RayBean) {
+                if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
+                    onMainDispatcher {
                         wsForwarder = WebView(base as Context)
-                        while (wsForwarder.contentHeight == 0) {
-                            wsForwarder.loadUrl("http://127.0.0.1:" + DataStore.socksPort + 11)
-
-                            delay(1000L)
+                        wsForwarder.loadUrl("http://127.0.0.1:" + DataStore.socksPort + 11)
+                        wsForwarder.webViewClient = object : WebViewClient() {
+                            override fun onReceivedError(
+                                view: WebView?,
+                                request: WebResourceRequest?,
+                                error: WebResourceError?,
+                            ) {
+                                wsForwarder.postDelayed({
+                                    wsForwarder.loadUrl(url)
+                                }, 100L)
+                            }
                         }
                     }
                 }
-            }.onFailure {
-                Logs.w(it)
             }
         }
     }

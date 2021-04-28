@@ -214,16 +214,14 @@
     </string-array>
 
     <string-array name="route_entry">
-        <item>@string/route_entry_all</item>
-        <item>@string/route_entry_bypass_lan</item>
-        <item>@string/route_entry_bypass_chn</item>
-        <item>@string/route_entry_bypass_lan_chn</item>
+        <item>@string/route_proxy</item>
+        <item>@string/route_bypass</item>
+        <item>@string/route_block</item>
     </string-array>
     <string-array name="route_value" translatable="false">
-        <item>all</item>
-        <item>bypass-lan</item>
-        <item>bypass-china</item>
-        <item>bypass-lan-china</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="enc_method_entry_ssr" translatable="false">
@@ -365,19 +363,35 @@
     </string-array>
 
     <string-array name="notifications_entry">
-        <item>Disable</item>
+        <item>@string/disable</item>
         <item>500ms</item>
         <item>1s</item>
         <item>3s</item>
         <item>10s</item>
     </string-array>
 
-    <string-array name="notifications_value">
+    <string-array name="notifications_value" translatable="false">
         <item>0</item>
         <item>500</item>
         <item>1000</item>
         <item>3000</item>
         <item>10000</item>
+    </string-array>
+
+    <string-array name="domain_strategy" translatable="false">
+        <item>AsIs</item>
+        <item>IPIfNonMatch</item>
+        <item>IPOnDemand</item>
+    </string-array>
+
+    <string-array name="domain_matcher_entry">
+        <item>@string/dm_linear</item>
+        <item>@string/dm_mph</item>
+    </string-array>
+
+    <string-array name="domain_matcher_value" translatable="false">
+        <item>linear</item>
+        <item>mph</item>
     </string-array>
 
 </resources>

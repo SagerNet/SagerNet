@@ -94,6 +94,7 @@ public class V2RayConfig {
     public static class RoutingObject {
 
         public String domainStrategy;
+        public String domainMatcher;
         public List<RuleObject> rules;
 
         public static class RuleObject {

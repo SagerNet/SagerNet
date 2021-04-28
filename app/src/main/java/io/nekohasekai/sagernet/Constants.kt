@@ -47,7 +47,13 @@ object Key {
     const val BYPASS_MODE = "bypassMode"
     const val METERED_NETWORK = "meteredNetwork"
 
-    const val ROUTE_MODE = "routeMode"
+    const val DOMAIN_STRATEGY = "domainStrategy"
+    const val DOMAIN_MATCHER = "domainMatcher"
+    const val TRAFFIC_SNIFFING = "trafficSniffing"
+    const val BYPASS_LAN = "bypassLan"
+    const val ROUTE_CHINA = "routeChina"
+    const val BLOCK_ADS = "blockAds"
+
     const val SOCKS_PORT = "socksPort"
     const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"
     const val REQUIRE_HTTP = "requireHttp"
@@ -91,13 +97,6 @@ object Key {
     // vless
     const val SERVER_ENCRYPTION = "serverEncryption"
 
-}
-
-object RouteMode {
-    const val ALL = "all"
-    const val BYPASS_LAN = "bypass-lan"
-    const val BYPASS_CHINA = "bypass-china"
-    const val BYPASS_LAN_CHINA = "bypass-lan-china"
 }
 
 object Action {

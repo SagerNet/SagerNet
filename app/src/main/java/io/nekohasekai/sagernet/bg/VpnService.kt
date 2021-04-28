@@ -34,7 +34,6 @@ import android.system.Os
 import androidx.annotation.RequiresApi
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.Logs
@@ -140,20 +139,17 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         }
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        when (DataStore.routeMode) {
-            RouteMode.BYPASS_LAN, RouteMode.BYPASS_LAN_CHINA -> {
-                resources.getStringArray(R.array.bypass_private_route).forEach {
-                    val subnet = Subnet.fromString(it)!!
-                    builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
-                }
-                builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
-                // https://issuetracker.google.com/issues/149636790
-                if (DataStore.ipv6Route) builder.addRoute("2000::", 3)
+        if (DataStore.bypassLan) {
+            resources.getStringArray(R.array.bypass_private_route).forEach {
+                val subnet = Subnet.fromString(it)!!
+                builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
             }
-            else -> {
-                builder.addRoute("0.0.0.0", 0)
-                if (DataStore.ipv6Route) builder.addRoute("::", 0)
-            }
+            builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
+            // https://issuetracker.google.com/issues/149636790
+            if (DataStore.ipv6Route) builder.addRoute("2000::", 3)
+        } else {
+            builder.addRoute("0.0.0.0", 0)
+            if (DataStore.ipv6Route) builder.addRoute("::", 0)
         }
 
         // https://issuetracker.google.com/issues/149636790

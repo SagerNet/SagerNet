@@ -24,7 +24,6 @@ package io.nekohasekai.sagernet.fmt.v2ray
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.BuildConfig
-import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -40,6 +39,8 @@ const val TAG_SOCKS = "in"
 const val TAG_HTTP = "http"
 const val TAG_AGENT = "out"
 const val TAG_DIRECT = "bypass"
+const val TAG_BLOCK = "block"
+
 const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
@@ -49,7 +50,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
     val remoteDns = DataStore.remoteDNS.split(",")
     val domesticDns = DataStore.domesticDns.split(',')
     val enableLocalDNS = DataStore.enableLocalDNS
-    val routeMode = DataStore.routeMode
+    val routeChina = DataStore.routeChina
+    val trafficSniffing = DataStore.trafficSniffing
 
     val bean = proxy.requireBean()
 
@@ -67,19 +69,15 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                 }
             })
 
-            if (enableLocalDNS) {
-                when (routeMode) {
-                    RouteMode.BYPASS_CHINA, RouteMode.BYPASS_LAN_CHINA -> {
-                        servers.add(DnsObject.StringOrServerObject().apply {
-                            valueY = DnsObject.ServerObject().apply {
-                                address = domesticDns.first()
-                                port = 53
-                                domains = listOf("geosite:cn")
-                                expectIPs = listOf("geoip:cn")
-                            }
-                        })
+            if (routeChina == 1) {
+                servers.add(DnsObject.StringOrServerObject().apply {
+                    valueY = DnsObject.ServerObject().apply {
+                        address = domesticDns.first()
+                        port = 53
+                        domains = listOf("geosite:cn")
+                        expectIPs = listOf("geoip:cn")
                     }
-                }
+                })
             }
         }
 
@@ -113,6 +111,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                         udp = true
                         userLevel = 8
                     })
+                if (trafficSniffing) {
+                    sniffing = InboundObject.SniffingObject().apply {
+                        enabled = true
+                        destOverride = listOf("http", "tls")
+                        metadataOnly = false
+                    }
+                }
             }
         )
 
@@ -129,6 +134,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                         allowTransparent = true
                         userLevel = 8
                     })
+                if (trafficSniffing) {
+                    sniffing = InboundObject.SniffingObject().apply {
+                        enabled = true
+                        destOverride = listOf("http", "tls")
+                        metadataOnly = false
+                    }
+                }
             }
         }
 
@@ -409,6 +421,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                 }
             }
         )
+
         outbounds.add(
             OutboundObject().apply {
                 tag = TAG_DIRECT
@@ -416,69 +429,75 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
             }
         )
 
+        outbounds.add(
+            OutboundObject().apply {
+                tag = TAG_BLOCK
+                protocol = "blackhole"
+
+                settings = LazyOutboundConfigurationObject(
+                    BlackholeOutboundConfigurationObject().apply {
+                        response = BlackholeOutboundConfigurationObject.ResponseObject().apply {
+                            type = "http"
+                        }
+                    }
+                )
+            }
+        )
+
         routing = RoutingObject().apply {
-            domainStrategy = "IPIfNonMatch"
+            domainStrategy = DataStore.domainStrategy
+            domainMatcher = DataStore.domainMatcher
 
             rules = mutableListOf()
+
+            if (DataStore.bypassLan) {
+                rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = TAG_DIRECT
+                    ip = listOf("geoip:private")
+                })
+            }
+
+            if (DataStore.blockAds) {
+                rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = TAG_BLOCK
+                    domain = listOf("geosite:category-ads-all")
+                })
+            }
+
+            if (routeChina > 0) {
+                rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = if (routeChina == 1) TAG_DIRECT else TAG_BLOCK
+                    ip = listOf("geoip:cn")
+                })
+                rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = if (routeChina == 1) TAG_DIRECT else TAG_BLOCK
+                    domain = listOf("geosite:cn")
+                })
+            }
+
+            rules.add(RoutingObject.RuleObject().apply {
+                inboundTag = mutableListOf(TAG_SOCKS)
+
+                if (requireHttp) {
+                    inboundTag.add(TAG_HTTP)
+                }
+
+                outboundTag = TAG_AGENT
+                type = "field"
+            })
 
             rules.add(RoutingObject.RuleObject().apply {
                 type = "field"
                 outboundTag = TAG_AGENT
                 domain = listOf("domain:googleapis.cn")
             })
-
-            when (DataStore.routeMode) {
-                RouteMode.BYPASS_LAN -> {
-                    rules.add(RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        ip = listOf("geoip:private")
-                    })
-                }
-                RouteMode.BYPASS_CHINA -> {
-                    rules.add(RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        ip = listOf("geoip:cn")
-                    })
-                    rules.add(RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        domain = listOf("geosite:cn")
-                    })
-                }
-                RouteMode.BYPASS_LAN_CHINA -> {
-                    rules.add(RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        ip = listOf("geoip:private")
-                    })
-                    rules.add(RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        ip = listOf("geoip:cn")
-                    })
-                    rules.add(RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        domain = listOf("geosite:cn")
-                    })
-                }
-            }
-
-            /* rules.add(RoutingObject.RuleObject().apply {
-                 inboundTag = mutableListOf(TAG_SOCKS)
-
-                 if (requireHttp) {
-                     inboundTag.add(TAG_HTTP)
-                 }
-
-                 outboundTag = TAG_AGENT
-                 type = "field"
-             })*/
         }
 
-        if (DataStore.enableLocalDNS) {
+        if (enableLocalDNS) {
             inbounds.add(
                 InboundObject().apply {
                     tag = TAG_DNS_IN

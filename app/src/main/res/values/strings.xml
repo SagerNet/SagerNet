@@ -73,6 +73,8 @@
     <string name="ws_browser_forwarding">Browser Forwarding</string>
     <string name="ws_browser_forwarding_sum">Forward corresponding WebSockets through the browser.</string>
     <string name="speed_interval">Speed notification update interval</string>
+    <string name="disable">Disable</string>
+    <string name="cag_misc">Misc Settings</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s\nReceived: \t%4$s\t↓\t%2$s</string>
@@ -117,11 +119,22 @@
 
     <string name="metered">Metered Hint</string>
     <string name="metered_summary">Hint system to treat VPN as metered</string>
-    <string name="route_list">Route</string>
-    <string name="route_entry_all">All</string>
-    <string name="route_entry_bypass_lan">Bypass LAN</string>
-    <string name="route_entry_bypass_chn">Bypass mainland China</string>
-    <string name="route_entry_bypass_lan_chn">Bypass LAN &amp; mainland China</string>
+    <string name="menu_route">Route</string>
+
+    <string name="route_proxy">Proxy</string>
+    <string name="route_bypass">Bypass</string>
+    <string name="route_block">Block</string>
+
+    <string name="route_opt_bypass_lan">Bypass LAN</string>
+    <string name="route_opt_block_ads">Block ADs</string>
+    <string name="route_opt_china">Rule for mainland China</string>
+
+    <string name="domain_strategy">Domain resolution strategy</string>
+    <string name="domain_matcher">Domain matching algorithm</string>
+    <string name="dm_linear">Linear matching</string>
+    <string name="dm_mph">Minimal perfect hash</string>
+    <string name="traffic_sniffing">Enable traffic sniffing</string>
+
     <string name="proxied_apps">Apps VPN mode</string>
     <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>
     <string name="on">On</string>

@@ -117,11 +117,7 @@
 
     <string name="metered">按流量计费</string>
     <string name="metered_summary">让系统认为此 VPN 按流量计费</string>
-    <string name="route_list">路由模式</string>
-    <string name="route_entry_all">全局</string>
-    <string name="route_entry_bypass_lan">绕过局域网</string>
-    <string name="route_entry_bypass_chn">绕过中国大陆地址</string>
-    <string name="route_entry_bypass_lan_chn">绕过局域网和中国大陆地址</string>
+    <string name="menu_route">路由</string>
     <string name="proxied_apps">分应用代理</string>
     <string name="proxied_apps_summary">代理被勾选应用的流量</string>
     <string name="on">打开</string>
@@ -249,5 +245,16 @@
     <string name="apply">应用</string>
 
     <string name="license">授权协议</string>
+    <string name="route_proxy">代理</string>
+    <string name="route_bypass">绕过</string>
+    <string name="route_block">屏蔽</string>
+    <string name="route_opt_bypass_lan">绕过局域网地址</string>
+    <string name="route_opt_block_ads">屏蔽广告</string>
+    <string name="route_opt_china">中国大陆规则</string>
+    <string name="domain_strategy">域名解析策略</string>
+    <string name="domain_matcher">域名匹配算法</string>
+    <string name="dm_linear">线性匹配</string>
+    <string name="dm_mph">最小完美散列</string>
+    <string name="traffic_sniffing">启用流量探测</string>
 
 </resources>

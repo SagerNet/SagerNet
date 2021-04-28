@@ -1,138 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:initialExpandedChildrenCount="3">
+    <SwitchPreference
+        app:defaultValue="true"
+        app:icon="@drawable/ic_communication_phonelink_ring"
+        app:key="isAutoConnect"
+        app:summary="@string/auto_connect_summary"
+        app:title="@string/auto_connect" />
+    <SwitchPreference
+        app:icon="@drawable/ic_action_lock"
+        app:key="directBootAware"
+        app:summary="@string/direct_boot_aware_summary"
+        app:title="@string/direct_boot_aware" />
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:defaultValue="vpn"
+        app:entries="@array/service_modes"
+        app:entryValues="@array/service_mode_values"
+        app:icon="@drawable/ic_device_developer_mode"
+        app:key="serviceMode"
+        app:title="@string/service_mode"
+        app:useSimpleSummaryProvider="true" />
+    <SwitchPreference
+        app:icon="@drawable/ic_device_data_usage"
+        app:key="meteredNetwork"
+        app:summary="@string/metered_summary"
+        app:title="@string/metered" />
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:defaultValue="1000"
+        app:entries="@array/notifications_entry"
+        app:entryValues="@array/notifications_value"
+        app:icon="@drawable/ic_baseline_shutter_speed_24"
+        app:key="speedInterval"
+        app:title="@string/speed_interval"
+        app:useSimpleSummaryProvider="true" />
 
-    <PreferenceCategory app:title="@string/general_settings">
-        <SwitchPreference
-            app:icon="@drawable/ic_communication_phonelink_ring"
-            app:key="isAutoConnect"
-            app:summary="@string/auto_connect_summary"
-            app:title="@string/auto_connect" />
-        <SwitchPreference
-            app:icon="@drawable/ic_action_lock"
-            app:key="directBootAware"
-            app:summary="@string/direct_boot_aware_summary"
-            app:title="@string/direct_boot_aware" />
-        <SwitchPreference
-            app:icon="@drawable/ic_device_data_usage"
-            app:key="meteredNetwork"
-            app:summary="@string/metered_summary"
-            app:title="@string/metered" />
+    <SwitchPreference
+        app:icon="@drawable/ic_baseline_nat_24"
+        app:key="allowAccess"
+        app:summary="@string/allow_access_sum"
+        app:title="@string/allow_access" />
+    <EditTextPreference
+        app:icon="@drawable/ic_maps_directions_boat"
+        app:key="socksPort"
+        app:title="@string/port_proxy"
+        app:useSimpleSummaryProvider="true" />
+    <SwitchPreference
+        app:icon="@drawable/ic_baseline_http_24"
+        app:key="requireHttp"
+        app:title="@string/require_http" />
+    <EditTextPreference
+        app:key="httpPort"
+        app:title="@string/port_http"
+        app:useSimpleSummaryProvider="true" />
 
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="1000"
-            app:entries="@array/notifications_entry"
-            app:entryValues="@array/notifications_value"
-            app:icon="@drawable/ic_baseline_shutter_speed_24"
-            app:key="speedInterval"
-            app:title="@string/speed_interval"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="2"
-        app:title="@string/inbound_settings">
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="vpn"
-            app:entries="@array/service_modes"
-            app:entryValues="@array/service_mode_values"
-            app:icon="@drawable/ic_device_developer_mode"
-            app:key="serviceMode"
-            app:title="@string/service_mode"
-            app:useSimpleSummaryProvider="true" />
-
-        <SwitchPreference
-            app:icon="@drawable/ic_navigation_apps"
-            app:key="proxyApps"
-            app:summary="@string/proxied_apps_summary"
-            app:title="@string/proxied_apps" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_nat_24"
-            app:key="allowAccess"
-            app:summary="@string/allow_access_sum"
-            app:title="@string/allow_access" />
-        <EditTextPreference
-            app:icon="@drawable/ic_maps_directions_boat"
-            app:key="socksPort"
-            app:title="@string/port_proxy"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_http_24"
-            app:key="requireHttp"
-            app:title="@string/require_http" />
-        <EditTextPreference
-            app:key="httpPort"
-            app:title="@string/port_http"
-            app:useSimpleSummaryProvider="true" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="2"
-        app:title="@string/cag_route">
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="bypass-lan"
-            app:entries="@array/route_entry"
-            app:entryValues="@array/route_value"
-            app:icon="@drawable/ic_maps_directions"
-            app:key="routeMode"
-            app:title="@string/route_list"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:icon="@drawable/ic_image_looks_6"
-            app:key="ipv6Route"
-            app:summary="@string/ipv6_summary"
-            app:title="@string/ipv6" />
-        <SwitchPreference
-            app:key="preferIpv6"
-            app:summary="@string/ipv6_prefer_summary"
-            app:title="@string/ipv6_prefer" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_airplanemode_active_24"
-            app:key="forceShadowsocksRust"
-            app:summary="@string/force_ss_sum"
-            app:title="@string/force_ss_rust" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="1"
-        app:title="@string/cag_dns">
-        <EditTextPreference
-            app:defaultValue="1.1.1.1"
-            app:icon="@drawable/ic_action_dns"
-            app:key="remoteDns"
-            app:title="@string/remote_dns"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:key="enableLocalDns"
-            app:title="@string/local_dns" />
-        <EditTextPreference
-            app:defaultValue="5450"
-            app:key="portLocalDns"
-            app:title="@string/port_local_dns"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:defaultValue="9.9.9.11"
-            app:key="domesticDns"
-            app:title="@string/domestic_dns"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="1"
-        app:title="@string/cag_ws">
-        <EditTextPreference
-            app:defaultValue="0"
-            app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="wsMaxEarlyData"
-            app:title="@string/ws_max_early_data"
-            app:useSimpleSummaryProvider="true" />
-
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_texture_24"
-            app:key="wsBrowserForwarding"
-            app:summary="@string/ws_browser_forwarding_sum"
-            app:title="@string/ws_browser_forwarding" />
-    </PreferenceCategory>
 
 </PreferenceScreen>

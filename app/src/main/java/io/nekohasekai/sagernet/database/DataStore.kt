@@ -25,7 +25,6 @@ import android.os.Binder
 import android.os.Build
 import androidx.preference.PreferenceDataStore
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
@@ -67,7 +66,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     }
 
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
-    var routeMode by configurationStore.string(Key.ROUTE_MODE) { RouteMode.ALL }
+
+    var domainStrategy by configurationStore.string(Key.PROFILE_NAME) { "AsIs" }
+    var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "linear" }
+    var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
+
+    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
+    var routeChina by configurationStore.stringToInt(Key.ROUTE_CHINA)
+    var blockAds by configurationStore.boolean(Key.BLOCK_ADS) { false }
+
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
@@ -90,7 +97,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         set(value) = saveLocalPort(Key.HTTP_PORT, value)
 
     fun initGlobal() {
-        persistAcrossReboot
         if (configurationStore.getString(Key.SOCKS_PORT) == null) socksPort = socksPort
         if (configurationStore.getString(Key.LOCAL_DNS_PORT) == null) localDNSPort = localDNSPort
         if (configurationStore.getString(Key.HTTP_PORT) == null) httpPort = httpPort

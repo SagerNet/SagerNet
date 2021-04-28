@@ -18,6 +18,12 @@
         tools:layout="@layout/layout_group" />
 
     <fragment
+        android:id="@+id/nav_route"
+        android:name="io.nekohasekai.sagernet.ui.RouteFragment"
+        android:label="@string/menu_route"
+        tools:layout="@layout/layout_settings_activity" />
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="io.nekohasekai.sagernet.ui.SettingsFragment"
         android:label="@string/settings"

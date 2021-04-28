@@ -117,11 +117,7 @@
 
     <string name="metered">計量付費提示</string>
     <string name="metered_summary">提示系統將 VPN 視為計量付費。</string>
-    <string name="route_list">路由</string>
-    <string name="route_entry_all">全域</string>
-    <string name="route_entry_bypass_lan">略過區域網路</string>
-    <string name="route_entry_bypass_chn">略過中國大陸</string>
-    <string name="route_entry_bypass_lan_chn">略過區域網路和中國大陸</string>
+    <string name="menu_route">路由</string>
     <string name="proxied_apps">應用程式 VPN 模式</string>
     <string name="proxied_apps_summary">為被選取的應用程式設定 VPN 模式。</string>
     <string name="on">啟用</string>

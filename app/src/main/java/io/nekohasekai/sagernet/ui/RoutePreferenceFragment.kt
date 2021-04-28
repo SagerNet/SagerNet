@@ -21,7 +21,7 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -32,35 +32,47 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.ktx.remove
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 
-class SettingsPreferenceFragment : PreferenceFragmentCompat() {
+class RoutePreferenceFragment : PreferenceFragmentCompat() {
 
+    private lateinit var isProxyApps: SwitchPreference
     private lateinit var listener: (BaseService.State) -> Unit
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = DataStore.configurationStore
-        DataStore.initGlobal()
-        addPreferencesFromResource(R.xml.global_preferences)
-        val persistAcrossReboot = findPreference<SwitchPreference>(Key.PERSIST_ACROSS_REBOOT)!!
-        val directBootAware = findPreference<SwitchPreference>(Key.DIRECT_BOOT_AWARE)!!
-        val portSocks5 = findPreference<EditTextPreference>(Key.SOCKS_PORT)!!
-        val speedInterval = findPreference<Preference>(Key.SPEED_INTERVAL)!!
-        val serviceMode = findPreference<Preference>(Key.SERVICE_MODE)!!
-        val allowAccess = findPreference<Preference>(Key.ALLOW_ACCESS)!!
-        val requireHttp = findPreference<SwitchPreference>(Key.REQUIRE_HTTP)!!
-        val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
+        addPreferencesFromResource(R.xml.route_preferences)
+        val ipv6Route = findPreference<Preference>(Key.IPV6_ROUTE)!!
+        val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
+        val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
+        val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
+        val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
 
-        portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
-        portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+        val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
+        val routeChina = findPreference<Preference>(Key.ROUTE_CHINA)!!
+        val blockAds = findPreference<Preference>(Key.BLOCK_ADS)!!
+
+        val forceShadowsocksRust =
+            findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
+
+        val remoteDns = findPreference<Preference>(Key.REMOTE_DNS)!!
+        val enableLocalDns = findPreference<SwitchPreference>(Key.ENABLE_LOCAL_DNS)!!
+        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
+        val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
+
+        val wsMaxEarlyData = findPreference<EditTextPreference>(Key.WS_MAX_EARLY_DATA)!!
+        val wsBrowserForwarding = findPreference<SwitchPreference>(Key.WS_BROWSER_FORWARDING)!!
+
+        portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+        wsMaxEarlyData.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
         val currServiceMode = DataStore.serviceMode
-        val metedNetwork = findPreference<Preference>(Key.METERED_NETWORK)!!
-        if (Build.VERSION.SDK_INT >= 28) {
-            metedNetwork.isEnabled = currServiceMode == Key.MODE_VPN
-        } else {
-            metedNetwork.remove()
+        isProxyApps = findPreference(Key.PROXY_APPS)!!
+        isProxyApps.isEnabled = currServiceMode == Key.MODE_VPN
+        isProxyApps.setOnPreferenceChangeListener { _, newValue ->
+            startActivity(Intent(activity, AppManagerActivity::class.java))
+            if (newValue as Boolean) DataStore.dirty = true
+            newValue
         }
 
         listener = {
@@ -68,20 +80,28 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             val sMode = DataStore.serviceMode
 
             runOnMainDispatcher {
-                persistAcrossReboot.isEnabled = stopped
-                directBootAware.isEnabled = stopped
-                serviceMode.isEnabled = stopped
-                speedInterval.isEnabled = stopped
-                portSocks5.isEnabled = stopped
-                requireHttp.isEnabled = stopped
-                portHttp.isEnabled = stopped
+                domainStrategy.isEnabled = stopped
+                domainMatcher.isEnabled = stopped
+                trafficSniffing.isEnabled = stopped
 
-                metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
+                bypassLan.isEnabled = stopped
+                blockAds.isEnabled = stopped
+                routeChina.isEnabled = stopped
 
-                allowAccess.isEnabled = stopped
+                forceShadowsocksRust.isEnabled = stopped
+
+                isProxyApps.isEnabled = sMode == Key.MODE_VPN && stopped
+
+                remoteDns.isEnabled = stopped
+                enableLocalDns.isEnabled = stopped
+                portLocalDns.isEnabled = stopped
+                domesticDns.isEnabled = stopped
+                ipv6Route.isEnabled = stopped
+                preferIpv6.isEnabled = stopped
+                wsMaxEarlyData.isEnabled = stopped
+                wsBrowserForwarding.isEnabled = stopped
             }
         }
-
     }
 
     override fun onResume() {
@@ -90,6 +110,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         if (::listener.isInitialized) {
             MainActivity.stateListener = listener
             listener((activity as MainActivity).state)
+        }
+        if (::isProxyApps.isInitialized) {
+            isProxyApps.isChecked = DataStore.proxyApps
         }
     }
 
