@@ -260,10 +260,11 @@ class AppManagerActivity : AppCompatActivity() {
 
         initProxiedUids()
         list = findViewById(R.id.list)
-        ViewCompat.setOnApplyWindowInsetsListener(list, ListListener)
         list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         list.itemAnimator = DefaultItemAnimator()
         list.adapter = appsAdapter
+
+        ViewCompat.setOnApplyWindowInsetsListener(list.parent as View, ListListener)
 
         search = findViewById(R.id.search)
         search.addTextChangedListener {

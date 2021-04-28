@@ -37,7 +37,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_settings_activity) {
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.settings, RoutePreferenceFragment())
-            .commit()
+            .commitAllowingStateLoss()
     }
 
 }
