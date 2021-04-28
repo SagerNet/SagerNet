@@ -520,8 +520,15 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                 OutboundObject().apply {
                     protocol = "dns"
                     tag = TAG_DNS_OUT
+                    settings = LazyOutboundConfigurationObject(
+                        DNSOutboundConfigurationObject().apply {
+                            network = "tcp"
+                        }
+                    )
+                    proxySettings
                 }
             )
+
             if (!domesticDns.first().startsWith("https")) {
                 routing.rules.add(0, RoutingObject.RuleObject().apply {
                     type = "field"
@@ -538,10 +545,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                     port = "53"
                 })
             }
+
             routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
                 inboundTag = listOf(TAG_DNS_IN)
                 outboundTag = TAG_DNS_OUT
-                type = "field"
             })
         }
 

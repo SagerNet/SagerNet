@@ -177,8 +177,8 @@ class ProxyInstance(val profile: ProxyEntity) {
             base.data.processes!!.start(commands)
         }
 
+        v2rayPoint.runLoop(DataStore.preferIpv6)
         runOnDefaultDispatcher {
-            v2rayPoint.runLoop(DataStore.preferIpv6)
             val url = "http://127.0.0.1:" + DataStore.socksPort + 11
             if (bean is AbstractV2RayBean) {
                 if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
