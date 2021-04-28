@@ -5,6 +5,8 @@
       <w>aead</w>
       <w>blackhole</w>
       <w>downlink</w>
+      <w>geoip</w>
+      <w>geosite</w>
       <w>grpc</w>
       <w>gson</w>
       <w>libev</w>
