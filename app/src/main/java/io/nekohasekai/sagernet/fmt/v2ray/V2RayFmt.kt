@@ -52,6 +52,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
     val enableLocalDNS = DataStore.enableLocalDNS
     val routeChina = DataStore.routeChina
     val trafficSniffing = DataStore.trafficSniffing
+    val wsBrowserForwarding = DataStore.wsBrowserForwarding
 
     val bean = proxy.requireBean()
 
@@ -319,7 +320,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                                         maxEarlyData = wsMaxEarlyData
                                     }
 
-                                    if (DataStore.wsBrowserForwarding) {
+                                    if (wsBrowserForwarding) {
                                         useBrowserForwarding = true
 
                                         browserForwarder = BrowserForwarderObject().apply {
@@ -449,6 +450,20 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
             domainMatcher = DataStore.domainMatcher
 
             rules = mutableListOf()
+
+            if (wsBrowserForwarding && bean is AbstractV2RayBean && bean.network == "ws") {
+                rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    outboundTag = TAG_DIRECT
+                    when {
+                        bean.requestHost.isNotBlank() -> domain = listOf(bean.requestHost!!)
+                        bean.serverAddress!!.contains("[a-zA-Z]".toRegex()) -> {
+                            domain = listOf(bean.serverAddress!!)
+                        }
+                        else -> ip = listOf(bean.serverAddress)
+                    }
+                })
+            }
 
             if (DataStore.bypassLan) {
                 rules.add(RoutingObject.RuleObject().apply {

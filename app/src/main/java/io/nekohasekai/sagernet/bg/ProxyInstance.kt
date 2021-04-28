@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.bg
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.SystemClock
@@ -44,14 +45,17 @@ import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import libv2ray.Libv2ray
 import libv2ray.V2RayPoint
 import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.File
 import java.io.IOException
 import java.util.*
+
 
 class ProxyInstance(val profile: ProxyEntity) {
 
@@ -179,23 +183,37 @@ class ProxyInstance(val profile: ProxyEntity) {
 
         v2rayPoint.runLoop(DataStore.preferIpv6)
         runOnDefaultDispatcher {
-            val url = "http://127.0.0.1:" + DataStore.socksPort + 11
+            val url = "http://127.0.0.1:" + (DataStore.socksPort + 11) + "/"
             if (bean is AbstractV2RayBean) {
                 if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
                     onMainDispatcher {
                         wsForwarder = WebView(base as Context)
-                        wsForwarder.loadUrl("http://127.0.0.1:" + DataStore.socksPort + 11)
+                        @SuppressLint("SetJavaScriptEnabled")
+                        wsForwarder.settings.javaScriptEnabled = true
                         wsForwarder.webViewClient = object : WebViewClient() {
                             override fun onReceivedError(
                                 view: WebView?,
                                 request: WebResourceRequest?,
                                 error: WebResourceError?,
                             ) {
-                                wsForwarder.postDelayed({
+                                Logs.d("WebView load failed: $error")
+
+                                runOnMainDispatcher {
+                                    wsForwarder.loadUrl("about:blank")
+
+                                    delay(1000L)
                                     wsForwarder.loadUrl(url)
-                                }, 100L)
+                                }
+                            }
+
+                            override fun onPageFinished(view: WebView, url: String) {
+                                super.onPageFinished(view, url)
+
+                                Logs.d("WebView loaded: ${view.title}")
+
                             }
                         }
+                        wsForwarder.loadUrl(url)
                     }
                 }
             }
@@ -206,17 +224,8 @@ class ProxyInstance(val profile: ProxyEntity) {
         v2rayPoint.stopLoop()
 
         if (::wsForwarder.isInitialized) {
-            wsForwarder.clearView()
+            wsForwarder.loadUrl("about:blank")
             wsForwarder.destroy()
-        }
-    }
-
-    fun printStats() {
-        val tags = config.outbounds.map { outbound -> outbound.tag.takeIf { !it.isNullOrBlank() } }
-        for (tag in tags) {
-            val uplink = v2rayPoint.queryStats(tag, "uplink")
-            val downlink = v2rayPoint.queryStats(tag, "downlink")
-            println("$tag >> uplink $uplink / downlink $downlink")
         }
     }
 
