@@ -102,8 +102,6 @@
     <string name="alter_id">替代 ID</string>
     <string name="network">網路</string>
     <string name="header_type">標頭類型</string>
-    <string name="request_host">請求主機</string>
-    <string name="path">Path / Key / Seed / ServiceName</string>
     <string name="tls">使用 TLS</string>
     <string name="sni">伺服器名稱指示</string>
     <string name="encryption">加密</string>

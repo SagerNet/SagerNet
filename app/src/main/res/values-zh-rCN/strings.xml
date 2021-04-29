@@ -103,8 +103,6 @@
     <string name="security">传输层加密</string>
     <string name="network">传输协议</string>
     <string name="header_type">伪装类型</string>
-    <string name="request_host">请求域名</string>
-    <string name="path">Path / Key / Seed / ServiceName</string>
     <string name="tls">使用 TLS</string>
     <string name="sni">服务器名称指示</string>
     <string name="encryption">加密</string>
@@ -260,5 +258,14 @@
     <string name="cag_misc">杂项</string>
     <string name="enable_mux">启用多路复用</string>
     <string name="mux_concurrency">复用最大并发</string>
+    <string name="ws_host">WebSocket 主机</string>
+    <string name="ws_path">WebSocket 路径</string>
+    <string name="http_host">HTTP 主机</string>
+    <string name="http_path">HTTP 路径</string>
+    <string name="quic_security">QUIC 加密方式</string>
+    <string name="quic_key">QUIC 密钥</string>
+    <string name="kcp_seed">mKCP 混淆密码</string>
+    <string name="grpc_service_name">gRPC 服务名称</string>
+    <string name="alpn">应用层协议协商</string>
 
 </resources>
