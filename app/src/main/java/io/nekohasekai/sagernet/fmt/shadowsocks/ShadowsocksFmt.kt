@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.fmt.shadowsocks
 import cn.hutool.core.codec.Base64
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
+import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
@@ -106,7 +107,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
         }
 
-        val methodAndPswd = Base64.decodeStr(link.username)
+        val methodAndPswd = link.username.decodeBase64UrlSafe()
 
         return ShadowsocksBean().apply {
 
@@ -130,7 +131,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         if (v2Url.contains("#")) v2Url = v2Url.substringBefore("#")
 
         val link =
-            ("https://" + Base64.decodeStr(v2Url.substringAfter("ss://"))).toHttpUrlOrNull()
+            ("https://" + v2Url.substringAfter("ss://").decodeBase64UrlSafe()).toHttpUrlOrNull()
                 ?: error("invalid v2rayN link $url")
 
         return ShadowsocksBean().apply {

@@ -22,7 +22,6 @@
 package io.nekohasekai.sagernet.database
 
 import android.database.sqlite.SQLiteCantOpenDatabaseException
-import cn.hutool.core.util.CharsetUtil
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -37,6 +36,7 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.parseProxies
 import io.nekohasekai.sagernet.utils.DirectBoot
 import org.json.JSONArray
@@ -236,8 +236,7 @@ object ProfileManager {
     fun parseSubscription(text: String, tryDecode: Boolean = true): Pair<Int, List<AbstractBean>> {
         if (tryDecode) {
             try {
-                return parseSubscription(android.util.Base64.decode(text,
-                    android.util.Base64.URL_SAFE).toString(CharsetUtil.CHARSET_UTF_8), false)
+                return parseSubscription(text.decodeBase64UrlSafe(), false)
             } catch (ignored: Exception) {
             }
         }

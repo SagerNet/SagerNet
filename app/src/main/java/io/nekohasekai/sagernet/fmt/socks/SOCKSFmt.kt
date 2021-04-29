@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.fmt.socks
 
 import cn.hutool.core.codec.Base64
+import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
@@ -34,7 +35,7 @@ fun parseSOCKS(link: String): SOCKSBean {
         if (url.contains("#")) {
             url = url.substringBeforeLast("#")
         }
-        url = Base64.decodeStr(url)
+        url = url.decodeBase64UrlSafe()
         val httpUrl = "http://$url".toHttpUrlOrNull() ?: error("Invalid v2rayN link content: $url")
         return SOCKSBean().apply {
             serverAddress = httpUrl.host

@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.ktx
 
+import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.gson.gson
@@ -34,6 +35,14 @@ import java.util.*
 
 fun formatObject(obj: Any): String {
     return gson.toJson(obj).let { JSONObject(it).toStringPretty() }
+}
+
+fun String.decodeBase64UrlSafe(): String {
+    return Base64.decodeStr(
+        replace(' ', '-')
+            .replace('/', '_')
+            .replace('+', '-')
+            .replace("=", ""))
 }
 
 fun parseProxies(text: String): List<AbstractBean> {

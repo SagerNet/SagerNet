@@ -32,6 +32,7 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.formatObject
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
@@ -742,7 +743,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
 }
 
 fun parseV2RayN(link: String): VMessBean {
-    val result = Base64.decodeStr(link.substringAfter("vmess://"))
+    val result = link.substringAfter("vmess://").decodeBase64UrlSafe()
     if (result.contains("= vmess")) {
         return parseCsvVMess(result)
     }

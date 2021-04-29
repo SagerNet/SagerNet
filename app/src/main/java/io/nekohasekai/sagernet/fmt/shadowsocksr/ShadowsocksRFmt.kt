@@ -22,12 +22,13 @@
 package io.nekohasekai.sagernet.fmt.shadowsocksr
 
 import cn.hutool.core.codec.Base64
+import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.*
 
 fun parseShadowsocksR(url: String): ShadowsocksRBean {
 
-    val params = Base64.decodeStr(url.substringAfter("ssr://")).split(":")
+    val params = url.substringAfter("ssr://").decodeBase64UrlSafe().split(":")
 
     val bean = ShadowsocksRBean().apply {
         serverAddress = params[0]
@@ -35,21 +36,21 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
         protocol = params[2]
         method = params[3]
         obfs = params[4]
-        password = Base64.decodeStr(params[5].substringBefore("/"))
+        password = params[5].substringBefore("/").decodeBase64UrlSafe()
     }
 
     val httpUrl = ("https://localhost" + params[5].substringAfter("/")).toHttpUrl()
 
     runCatching {
-        bean.obfsParam = Base64.decodeStr(httpUrl.queryParameter("obfsparam")!!)
+        bean.obfsParam = httpUrl.queryParameter("obfsparam")!!.decodeBase64UrlSafe()
     }
     runCatching {
-        bean.protocolParam = Base64.decodeStr(httpUrl.queryParameter("protoparam")!!)
+        bean.protocolParam = httpUrl.queryParameter("protoparam")!!.decodeBase64UrlSafe()
     }
 
     val remarks = httpUrl.queryParameter("remarks")
     if (!remarks.isNullOrBlank()) {
-        bean.name = Base64.decodeStr(remarks)
+        bean.name = remarks.decodeBase64UrlSafe()
     }
 
     return bean
