@@ -18,7 +18,7 @@
             app:key="serverPort"
             app:title="@string/server_port"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/enc_method_entry"
             app:entryValues="@array/enc_method_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
