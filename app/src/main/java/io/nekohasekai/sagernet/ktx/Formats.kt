@@ -47,7 +47,7 @@ fun parseProxies(text: String): List<AbstractBean> {
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.matches("(http|https|native\\+https)://.*".toRegex())) {
+        } else if (link.matches("(http|https|naive\\+https)://.*".toRegex())) {
             Logs.d("Try parse http link: $link")
             runCatching {
                 entities.add(parseHttp(link))

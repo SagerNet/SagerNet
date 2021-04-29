@@ -69,14 +69,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
     lateinit var groupPager: ViewPager2
     val selectedGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
 
-    override fun onResume() {
-        super.onResume()
-
-        if (::groupPager.isInitialized && groupPager.size == 0) {
-            adapter.reload()
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar.inflateMenu(R.menu.add_profile_menu)
@@ -333,6 +325,19 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
         lateinit var layoutManager: RecyclerView.LayoutManager
         lateinit var configurationListView: RecyclerView
+
+        override fun onResume() {
+            super.onResume()
+
+            if (::configurationListView.isInitialized && configurationListView.size == 0) {
+                configurationListView.adapter = adapter
+                if (adapter.configurationIdList.isEmpty()) {
+                    runOnDefaultDispatcher {
+                        adapter.reloadProfiles(proxyGroup.id)
+                    }
+                }
+            }
+        }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             if (!::proxyGroup.isInitialized) return
