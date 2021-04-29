@@ -28,28 +28,28 @@
             app:key="serverAlterId"
             app:title="@string/alter_id"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/vmess_encryption_entry"
             app:entryValues="@array/vmess_encryption_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverEncryption"
             app:title="@string/encryption"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/networks_entry"
             app:entryValues="@array/networks_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="serverNetwork"
             app:title="@string/network"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/kcp_quic_headers_entry"
             app:entryValues="@array/kcp_quic_headers_value"
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="serverHeader"
             app:title="@string/header_type"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/quic_security_entry"
             app:entryValues="@array/quic_security_value"
             app:icon="@drawable/ic_baseline_security_24"
@@ -66,7 +66,7 @@
             app:key="serverPath"
             app:title="@string/http_path"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:entries="@array/transport_layer_encryption_entry"
             app:entryValues="@array/transport_layer_encryption_value"
             app:icon="@drawable/ic_baseline_layers_24"
