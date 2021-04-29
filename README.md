@@ -38,7 +38,7 @@ The application is designed to be used whenever possible.
 * Click on the title to scroll to the first proxy or the selected proxy  
 * Proxy list can be dragged by holding the progress bar  
 * The Chinese apps scanner will only scan system apps if "Show system apps" is checked  
-* V2Ray browser forwarding is not yet available, only for developers to debug
+* ~~V2Ray browser forwarding is not yet available, only for developers to debug~~ Fixed
 
 ## XRAY
 
