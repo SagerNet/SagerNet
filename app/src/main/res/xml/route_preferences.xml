@@ -16,7 +16,7 @@
             app:icon="@drawable/ic_baseline_gpp_bad_24"
             app:key="blockAds"
             app:title="@string/route_opt_block_ads" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/route_entry"
             app:entryValues="@array/route_value"
@@ -24,7 +24,7 @@
             app:key="routeChina"
             app:title="@string/route_opt_china"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:defaultValue="IPIfNonMatch"
             app:entries="@array/domain_strategy"
             app:entryValues="@array/domain_strategy"
@@ -32,7 +32,7 @@
             app:key="domainStrategy"
             app:title="@string/domain_strategy"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+        <rikka.preference.SimpleMenuPreference
             app:defaultValue="mph"
             app:entries="@array/domain_matcher_entry"
             app:entryValues="@array/domain_matcher_value"
