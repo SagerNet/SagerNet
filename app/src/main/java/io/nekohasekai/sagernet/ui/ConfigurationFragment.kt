@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.format.Formatter
@@ -34,7 +35,6 @@ import android.widget.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
@@ -42,6 +42,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -432,12 +433,6 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
             private fun getItemAt(index: Int) = getItem(configurationIdList[index])
 
-            init {
-                runOnDefaultDispatcher {
-                    reloadProfiles(proxyGroup.id)
-                }
-            }
-
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int,
@@ -598,11 +593,14 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 }
 
                 if (newProfiles.isEmpty() && proxyGroup.isDefault) {
-                    ProfileManager.createProfile(groupId,
+                    val created = ProfileManager.createProfile(groupId,
                         SOCKSBean().apply {
                             name = "Local tunnel"
                             initDefaultValues()
                         })
+                    if (DataStore.selectedProxy == 0L) {
+                        DataStore.selectedProxy = created.id
+                    }
                 }
             }
 
@@ -632,7 +630,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 val trafficText: TextView = view.findViewById(R.id.traffic_text)
                 val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
                 val editButton: ImageView = view.findViewById(R.id.edit)
-                val shareButton: ImageView = view.findViewById(R.id.share)
+                val shareLayout: LinearLayout = view.findViewById(R.id.share)
+                val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
                 override fun bind(proxyEntity: ProxyEntity) {
 
@@ -686,13 +685,29 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                         }
                     }
 
-                    shareButton.isVisible = proxyGroup.type != 1
-                    shareButton.setOnClickListener {
-                        val popup = PopupMenu(requireContext(), it)
-                        popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
-                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                        popup.show()
-                    }
+                   /* if (BuildConfig.DEBUG && proxyEntity.requireBean()
+                            .isInsecure() == ValidateResult.INSECURE
+                    ) {
+                        shareLayout.setBackgroundColor(Color.RED)
+                        shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                        shareButton.setColorFilter(Color.WHITE)
+
+                        shareButton.setOnClickListener {
+                            // TODO: Alert insecure
+                        }
+                    } else {*/
+                        shareLayout.setBackgroundColor(Color.TRANSPARENT)
+                        shareButton.setImageResource(R.drawable.ic_social_share)
+                        shareButton.setColorFilter(Color.GRAY)
+
+                        shareButton.setOnClickListener {
+                            val popup = PopupMenu(requireContext(), it)
+                            popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                            popup.show()
+                        }
+//                    }
+
 
                     runOnDefaultDispatcher {
                         val selected = DataStore.selectedProxy == proxyEntity.id

@@ -29,9 +29,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 import cn.hutool.core.clone.Cloneable;
+import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import io.nekohasekai.sagernet.fmt.gson.GsonsKt;
 
-public abstract class AbstractBean implements Cloneable<AbstractBean> {
+public abstract class AbstractBean implements Cloneable<AbstractBean>, Comparable<AbstractBean> {
 
     public String serverAddress;
     public int serverPort;
@@ -47,14 +50,22 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
         if (name == null) name = "";
     }
 
-    public void serialize(ByteBufferOutput output) {
+    public void serializeFull(ByteBufferOutput output) {
+        serialize(output);
         output.writeString(name);
+    }
+
+    public void deserializeFull(ByteBufferInput input) {
+        deserialize(input);
+        name = input.readString();
+    }
+
+    public void serialize(ByteBufferOutput output) {
         output.writeString(serverAddress);
         output.writeInt(serverPort);
     }
 
     public void deserialize(ByteBufferInput input) {
-        name = input.readString();
         serverAddress = input.readString();
         serverPort = input.readInt();
     }
@@ -64,15 +75,27 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
     public abstract AbstractBean clone();
 
     @Override
+    public int compareTo(AbstractBean o) {
+        if (this == o) return 0;
+        return HexUtil.encodeHexStr(KryoConverters.serializeWithoutName(this))
+                .compareTo(HexUtil.encodeHexStr(KryoConverters.serializeWithoutName((AbstractBean) o)));
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return Arrays.equals(KryoConverters.serialize(this), KryoConverters.serialize((AbstractBean) o));
+        return Arrays.equals(KryoConverters.serializeWithoutName(this), KryoConverters.serializeWithoutName((AbstractBean) o));
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(KryoConverters.serialize(this));
+        return Arrays.hashCode(KryoConverters.serializeWithoutName(this));
     }
 
+    @NotNull
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " " + JSONUtil.formatJsonStr(GsonsKt.getGson().toJson(this));
+    }
 }

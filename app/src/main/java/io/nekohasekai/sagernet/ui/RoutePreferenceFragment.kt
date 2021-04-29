@@ -62,11 +62,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
         val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
         val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
 
-        val wsMaxEarlyData = findPreference<EditTextPreference>(Key.WS_MAX_EARLY_DATA)!!
-        val wsBrowserForwarding = findPreference<SwitchPreference>(Key.WS_BROWSER_FORWARDING)!!
-
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
-        wsMaxEarlyData.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
         val currServiceMode = DataStore.serviceMode
@@ -103,8 +99,6 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
                 domesticDns.isEnabled = stopped
                 ipv6Route.isEnabled = stopped
                 preferIpv6.isEnabled = stopped
-                wsMaxEarlyData.isEnabled = stopped
-                wsBrowserForwarding.isEnabled = stopped
             }
         }
     }

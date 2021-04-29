@@ -100,10 +100,10 @@
     <string name="obfs_param">混淆参数</string>
     <string name="uuid">用户ID</string>
     <string name="alter_id">替代 ID</string>
-    <string name="security">加密方式</string>
+    <string name="security">传输层加密</string>
     <string name="network">传输协议</string>
     <string name="header_type">伪装类型</string>
-    <string name="request_host">请求域名 / QUIC 加密方式</string>
+    <string name="request_host">请求域名</string>
     <string name="path">Path / Key / Seed / ServiceName</string>
     <string name="tls">使用 TLS</string>
     <string name="sni">服务器名称指示</string>

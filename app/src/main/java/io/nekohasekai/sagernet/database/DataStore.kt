@@ -119,8 +119,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var individual by configurationStore.string("individual")
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
-    var wsMaxEarlyData by configurationStore.stringToInt(Key.WS_MAX_EARLY_DATA) { 0 }
-    var wsBrowserForwarding by configurationStore.boolean(Key.WS_BROWSER_FORWARDING)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
 
@@ -157,6 +155,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverSNI by profileCacheStore.string(Key.SERVER_SNI)
     var serverTLS by profileCacheStore.boolean(Key.SERVER_TLS)
     var serverEncryption by profileCacheStore.string(Key.SERVER_ENCRYPTION)
+    var serverALPN by configurationStore.string(Key.SERVER_ALPN)
+    var serverQuicSecurity by configurationStore.string(Key.SERVER_QUIC_SECURITY)
+    var serverWsMaxEarlyData by configurationStore.stringToInt(Key.SERVER_WS_MAX_EARLY_DATA)
+    var serverWsBrowserForwarding by configurationStore.boolean(Key.SERVER_WS_BROWSER_FORWARDING)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {

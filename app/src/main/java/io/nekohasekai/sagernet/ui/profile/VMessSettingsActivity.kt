@@ -21,69 +21,14 @@
 
 package io.nekohasekai.sagernet.ui.profile
 
-import android.os.Bundle
-import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceFragmentCompat
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 
-class VMessSettingsActivity : ProfileSettingsActivity<VMessBean>() {
+class VMessSettingsActivity : StandardV2RaySettingsActivity() {
 
     override fun createEntity() = VMessBean()
 
     override fun init() {
-        VMessBean.DEFAULT_BEAN.init()
-    }
-
-    override fun VMessBean.init() {
-        DataStore.profileName = name
-        DataStore.serverAddress = serverAddress
-        DataStore.serverPort = serverPort
-        DataStore.serverUserId = uuid
-        DataStore.serverSecurity = security
-        DataStore.serverAlterId = alterId
-        DataStore.serverNetwork = network
-        DataStore.serverHeader = headerType
-        DataStore.serverHost = requestHost
-        DataStore.serverPath = path
-        DataStore.serverSNI = sni
-        DataStore.serverTLS = tls
-    }
-
-    override fun VMessBean.serialize() {
-        name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
-        serverPort = DataStore.serverPort
-        uuid = DataStore.serverUserId
-        security = DataStore.serverSecurity
-        alterId = DataStore.serverAlterId
-        network = DataStore.serverNetwork
-        headerType = DataStore.serverHeader
-        requestHost = DataStore.serverHost
-        path = DataStore.serverPath
-        sni = DataStore.serverSNI
-        tls = DataStore.serverTLS
-    }
-
-
-    override fun PreferenceFragmentCompat.createPreferences(
-        savedInstanceState: Bundle?,
-        rootKey: String?,
-    ) {
-        addPreferencesFromResource(R.xml.vmess_preferences)
-
-        findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
-        }
-        findPreference<EditTextPreference>(Key.SERVER_ALTER_ID)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
-        }
-        findPreference<EditTextPreference>(Key.SERVER_USER_ID)!!.apply {
-            summaryProvider = PasswordSummaryProvider
-        }
+        VMessBean().apply { initDefaultValues() }.init()
     }
 
 }

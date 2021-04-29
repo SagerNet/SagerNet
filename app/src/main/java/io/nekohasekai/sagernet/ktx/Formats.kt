@@ -29,7 +29,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
-import io.nekohasekai.sagernet.fmt.v2ray.parseVmess
+import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import java.util.*
 
 fun formatObject(obj: Any): String {
@@ -54,10 +54,10 @@ fun parseProxies(text: String): List<AbstractBean> {
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.startsWith("vmess://") || link.startsWith("vmess1://")) {
-            Logs.d("Try parse vmess link: $link")
+        } else if (link.startsWith("vmess://") || link.startsWith("vless://")) {
+            Logs.d("Try parse v2ray link: $link")
             runCatching {
-                entities.add(parseVmess(link))
+                entities.add(parseV2Ray(link))
             }.onFailure {
                 Logs.w(it)
             }

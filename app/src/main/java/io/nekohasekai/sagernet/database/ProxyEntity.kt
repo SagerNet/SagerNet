@@ -42,7 +42,7 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.toUri
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
+import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ui.profile.*
 
@@ -147,8 +147,8 @@ data class ProxyEntity(
             0 -> requireSOCKS().toUri()
             1 -> requireSS().toUri()
             2 -> requireSSR().toUri()
-            3 -> requireVMess().toV2rayN()
-            4 -> "目前 VLESS 不支持分享。(https://www.v2fly.org/config/protocols/vless.html)"
+            3 -> requireVMess().toUri(true)
+            4 -> requireVLESS().toUri(true)
             5 -> requireTrojan().toUri()
             6 -> requireHttp().toUri()
             else -> error("Undefined type $type")

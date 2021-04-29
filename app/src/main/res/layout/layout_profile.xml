@@ -82,7 +82,7 @@
                     android:padding="12dp"
                     app:srcCompat="@drawable/ic_image_edit" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <LinearLayout
                     android:id="@+id/share"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -91,8 +91,13 @@
                     android:contentDescription="@string/share"
                     android:focusable="true"
                     android:nextFocusLeft="@+id/container"
-                    android:padding="12dp"
-                    app:srcCompat="@drawable/ic_social_share" />
+                    android:padding="12dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/shareIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_social_share" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

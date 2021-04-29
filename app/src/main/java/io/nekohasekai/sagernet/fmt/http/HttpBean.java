@@ -56,13 +56,7 @@ public class HttpBean extends AbstractBean {
 
     @Override
     public void deserialize(ByteBufferInput input) {
-        try {
-            int version = input.readInt();
-            if (version != 0) throw new IllegalStateException();
-        } catch (Exception e) {
-            initDefaultValues();
-            return;
-        }
+        int version = input.readInt();
         super.deserialize(input);
         username = input.readString();
         password = input.readString();

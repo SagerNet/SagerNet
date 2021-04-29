@@ -100,10 +100,9 @@
     <string name="obfs_param">混淆參數</string>
     <string name="uuid">使用者 ID</string>
     <string name="alter_id">替代 ID</string>
-    <string name="security">安全</string>
     <string name="network">網路</string>
     <string name="header_type">標頭類型</string>
-    <string name="request_host">請求主機 / QUIC 安全</string>
+    <string name="request_host">請求主機</string>
     <string name="path">Path / Key / Seed / ServiceName</string>
     <string name="tls">使用 TLS</string>
     <string name="sni">伺服器名稱指示</string>

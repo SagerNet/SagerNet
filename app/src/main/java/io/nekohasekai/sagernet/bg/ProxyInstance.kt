@@ -39,7 +39,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.v2ray.AbstractV2RayBean
+import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
@@ -151,6 +151,11 @@ class ProxyInstance(val profile: ProxyEntity) {
                 it["obfs"] = bean.obfs
                 it["obfs_param"] = bean.obfsParam
                 it["ipv6"] = DataStore.ipv6Route
+                if (DataStore.enableLocalDNS) {
+                    it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+                } else {
+                    it["dns"] = DataStore.remoteDNS
+                }
             }
 
             Logs.d(proxyConfig.toStringPretty())
@@ -179,8 +184,8 @@ class ProxyInstance(val profile: ProxyEntity) {
         v2rayPoint.runLoop(DataStore.preferIpv6)
         runOnDefaultDispatcher {
             val url = "http://127.0.0.1:" + (DataStore.socksPort + 11) + "/"
-            if (bean is AbstractV2RayBean) {
-                if (bean.network == "ws" && DataStore.wsBrowserForwarding) {
+            if (bean is StandardV2RayBean) {
+                if (bean.type == "ws" && bean.wsUseBrowserForwarder) {
                     onMainDispatcher {
                         wsForwarder = WebView(base as Context)
                         @SuppressLint("SetJavaScriptEnabled")

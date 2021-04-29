@@ -176,12 +176,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             return
                         }
 
+                        val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
                         val nameMap = mapOf(* proxies.map { bean ->
                             (bean.name.takeIf { !it.isNullOrBlank() }
                                 ?: "${bean.serverAddress}:${bean.serverPort}") to bean
                         }.toTypedArray())
-
-                        val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
                         val toDelete = LinkedList<ProxyEntity>()
                         val toReplace = exists.mapNotNull { entity ->
                             val name = entity.displayName()
@@ -191,7 +190,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             }
                         }.toMap()
                         val toUpdate = LinkedList<ProxyEntity>()
-
                         val added = mutableListOf<String>()
                         val updated = mutableMapOf<String, String>()
                         val deleted = toDelete.map { it.displayName() }
@@ -390,12 +388,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
                     if (arg.proxyGroup == null) {
                         proxyGroup = ProfileManager.createGroup(proxyGroup)
+
+                        if (proxyGroup.isSubscription) {
+                            ProfileManager.groupIterator { refreshSubscription(proxyGroup) }
+                        }
                     } else {
                         ProfileManager.updateGroup(proxyGroup)
-                    }
-
-                    if (proxyGroup.isSubscription) {
-                        ProfileManager.groupIterator { refreshSubscription(proxyGroup) }
                     }
                 }
             } else if (which == DialogInterface.BUTTON_NEUTRAL) {

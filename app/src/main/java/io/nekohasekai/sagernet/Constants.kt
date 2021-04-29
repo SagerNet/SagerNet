@@ -60,8 +60,6 @@ object Key {
     const val HTTP_PORT = "httpPort"
     const val ALLOW_ACCESS = "allowAccess"
     const val SPEED_INTERVAL = "speedInterval"
-    const val WS_MAX_EARLY_DATA = "wsMaxEarlyData"
-    const val WS_BROWSER_FORWARDING = "wsBrowserForwarding"
 
     const val ENABLE_MUX = "enableMux"
     const val MUX_CONCURRENCY = "muxConcurrency"
@@ -80,13 +78,11 @@ object Key {
     const val SERVER_PLUGIN = "serverPlugin"
     const val SERVER_PLUGIN_CONFIGURE = "serverPluginConfigure"
 
-    // ssr
     const val SERVER_PROTOCOL = "serverProtocol"
     const val SERVER_PROTOCOL_PARAM = "serverProtocolParam"
     const val SERVER_OBFS = "serverObfs"
     const val SERVER_OBFS_PARAM = "serverObfsParam"
 
-    //vmess
     const val SERVER_USER_ID = "serverUserId"
     const val SERVER_ALTER_ID = "serverAlterId"
     const val SERVER_SECURITY = "serverSecurity"
@@ -96,9 +92,12 @@ object Key {
     const val SERVER_PATH = "serverPath"
     const val SERVER_SNI = "serverSNI"
     const val SERVER_TLS = "serverTLS"
-
-    // vless
     const val SERVER_ENCRYPTION = "serverEncryption"
+    const val SERVER_ALPN = "serverALPN"
+    const val SERVER_QUIC_SECURITY = "serverQuicSecurity"
+    const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
+    const val SERVER_WS_BROWSER_FORWARDING = "serverWsBrowserForwarding"
+    const val SERVER_WS_CATEGORY = "serverWsCategory"
 
 }
 

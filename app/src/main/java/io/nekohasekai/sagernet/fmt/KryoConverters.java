@@ -44,8 +44,7 @@ public class KryoConverters {
 
     private static final byte[] NULL = new byte[0];
 
-    @TypeConverter
-    public static byte[] serialize(AbstractBean bean) {
+    public static byte[] serializeWithoutName(AbstractBean bean) {
         if (bean == null) return NULL;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteBufferOutput buffer = KryosKt.byteBuffer(out);
@@ -55,10 +54,29 @@ public class KryoConverters {
         return out.toByteArray();
     }
 
+    public static <T extends AbstractBean> T deserializeWithoutName(T bean, byte[] bytes) {
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        ByteBufferInput buffer = KryosKt.byteBuffer(input);
+        bean.deserializeFull(buffer);
+        IoUtil.close(buffer);
+        return bean;
+    }
+
+    @TypeConverter
+    public static byte[] serialize(AbstractBean bean) {
+        if (bean == null) return NULL;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteBufferOutput buffer = KryosKt.byteBuffer(out);
+        bean.serializeFull(buffer);
+        IoUtil.flush(buffer);
+        IoUtil.close(buffer);
+        return out.toByteArray();
+    }
+
     public static <T extends AbstractBean> T deserialize(T bean, byte[] bytes) {
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
-        bean.deserialize(buffer);
+        bean.deserializeFull(buffer);
         IoUtil.close(buffer);
         return bean;
     }

@@ -19,44 +19,39 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.v2ray;
+package io.nekohasekai.sagernet.ktx
 
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import com.github.shadowsocks.plugin.PluginConfiguration
+import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 
-import org.jetbrains.annotations.NotNull;
+enum class ValidateResult {
+    INSECURE, DEPRECATED, SECURE
+}
 
-import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.KryoConverters;
+private val ssSecureList = "(gcm|poly1305)".toRegex()
 
-public class VMessBean extends StandardV2RayBean {
-
-    public int alterId;
-
-    @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
-
-        if (StrUtil.isBlank(encryption)) {
-            encryption = "auto";
+fun AbstractBean.isInsecure(): ValidateResult {
+    if (this is ShadowsocksBean) {
+        if (plugin.isBlank() || PluginConfiguration(plugin).selected == "obfs-local") {
+            if (!method.contains(ssSecureList)) {
+                return ValidateResult.INSECURE
+            }
+        }
+    } else if (this is ShadowsocksRBean) {
+        return ValidateResult.DEPRECATED
+    } else if (this is HttpBean) {
+        if (!tls) return ValidateResult.INSECURE
+    } else if (this is SOCKSBean) {
+        if (!tls) return ValidateResult.INSECURE
+    } else if (this is VMessBean) {
+        if (alterId > 0) return ValidateResult.DEPRECATED
+        if (security.isBlank() || security == "none") {
         }
     }
-
-    @Override
-    public void serialize(ByteBufferOutput output) {
-        super.serialize(output);
-        output.writeInt(alterId);
-    }
-
-    @Override
-    public void deserialize(ByteBufferInput input) {
-        super.deserialize(input);
-        alterId = input.readInt();
-    }
-
-    @NotNull
-    @Override
-    public VMessBean clone() {
-        return KryoConverters.deserialize(new VMessBean(), KryoConverters.serialize(this));
-    }
+    return ValidateResult.SECURE
 }

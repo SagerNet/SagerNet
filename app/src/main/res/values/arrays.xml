@@ -321,14 +321,23 @@
         <item>tcp</item>
         <item>kcp</item>
         <item>ws</item>
-        <item>h2</item>
+        <item>http</item>
         <item>quic</item>
         <item>grpc</item>
     </string-array>
 
-    <string-array name="headers_entry" translatable="false">
+    <string-array name="tcp_headers_entry" translatable="false">
         <item>NONE</item>
         <item>HTTP</item>
+    </string-array>
+
+    <string-array name="tcp_headers_value" translatable="false">
+        <item>none</item>
+        <item>http</item>
+    </string-array>
+
+    <string-array name="kcp_quic_headers_entry" translatable="false">
+        <item>NONE</item>
         <item>SRTP</item>
         <item>UTP</item>
         <item>WECHAT-VIDEO</item>
@@ -336,9 +345,8 @@
         <item>WIREGUARD</item>
     </string-array>
 
-    <string-array name="headers_value" translatable="false">
+    <string-array name="kcp_quic_headers_value" translatable="false">
         <item>none</item>
-        <item>http</item>
         <item>srtp</item>
         <item>utp</item>
         <item>wechat-video</item>
@@ -346,7 +354,19 @@
         <item>wireguard</item>
     </string-array>
 
-    <string-array name="securities_entry" translatable="false">
+    <string-array name="quic_security_entry" translatable="false">
+        <item>CHACHA20-POLY1305</item>
+        <item>AES-128-GCM</item>
+        <item>NONE</item>
+    </string-array>
+
+    <string-array name="quic_security_value" translatable="false">
+        <item>chacha20-poly1305</item>
+        <item>aes-128-gcm</item>
+        <item>none</item>
+    </string-array>
+
+    <string-array name="vmess_encryption_entry" translatable="false">
         <item>CHACHA20-POLY1305</item>
         <item>AES-128-GCM</item>
         <item>AUTO</item>
@@ -354,12 +374,30 @@
         <item>ZERO</item>
     </string-array>
 
-    <string-array name="securities_value" translatable="false">
+    <string-array name="vmess_encryption_value" translatable="false">
         <item>chacha20-poly1305</item>
         <item>aes-128-gcm</item>
         <item>auto</item>
         <item>none</item>
         <item>zero</item>
+    </string-array>
+
+    <string-array name="vless_encryption_entry" translatable="false">
+        <item>NONE</item>
+    </string-array>
+
+    <string-array name="vless_encryption_value" translatable="false">
+        <item>none</item>
+    </string-array>
+
+    <string-array name="transport_layer_encryption_entry" translatable="false">
+        <item>NONE</item>
+        <item>TLS</item>
+    </string-array>
+
+    <string-array name="transport_layer_encryption_value" translatable="false">
+        <item>none</item>
+        <item>tls</item>
     </string-array>
 
     <string-array name="notifications_entry">

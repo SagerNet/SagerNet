@@ -22,7 +22,7 @@
 package io.nekohasekai.sagernet.database
 
 import android.database.sqlite.SQLiteCantOpenDatabaseException
-import android.util.Base64
+import cn.hutool.core.util.CharsetUtil
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -39,7 +39,6 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.parseProxies
 import io.nekohasekai.sagernet.utils.DirectBoot
-import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -233,35 +232,12 @@ object ProfileManager {
         }
     }
 
-
-    suspend fun createGroup(response: Response) {
-        /* val proxies =
-         if (proxies.isEmpty()) error(SagerNet.application.getString(R.string.no_proxies_found))
-
-         val newGroup = ProxyGroup(
-             name = "New group",
-             isSubscription = true,
-             subscriptionLinks = mutableListOf(response.request.url.toString()),
-             lastUpdate = SystemClock.elapsedRealtimeNanos(),
-         )
-
-         newGroup.id = SagerDatabase.groupDao.createGroup(newGroup)
-
-         groupIterator { onAdd(newGroup) }
-
-         for (proxy in proxies) {
-             createProfile(newGroup.id, proxy)
-         }
-
-         groupIterator { onAddFinish(proxies.size) }*/
-    }
-
-
     @Suppress("UNCHECKED_CAST")
     fun parseSubscription(text: String, tryDecode: Boolean = true): Pair<Int, List<AbstractBean>> {
         if (tryDecode) {
             try {
-                return parseSubscription(String(Base64.decode(text, Base64.NO_PADDING)), false)
+                return parseSubscription(android.util.Base64.decode(text,
+                    android.util.Base64.URL_SAFE).toString(CharsetUtil.CHARSET_UTF_8), false)
             } catch (ignored: Exception) {
             }
         }
@@ -348,18 +324,19 @@ object ProfileManager {
                                 "uuid" -> bean.uuid = opt.value as String
                                 "alterId" -> bean.alterId = opt.value.toString().toInt()
                                 "cipher" -> bean.security = opt.value as String
-                                "network" -> bean.network = opt.value as String
-                                "tls" -> bean.tls = opt.value?.toString() == "true"
+                                "network" -> bean.type = opt.value as String
+                                "tls" -> bean.security =
+                                    if (opt.value?.toString() == "true") "tls" else ""
                                 "ws-path" -> bean.path = opt.value as String
                                 "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
                                     when (wsOpt.key.toLowerCase()) {
-                                        "host" -> bean.requestHost = wsOpt.value as String
+                                        "host" -> bean.host = wsOpt.value as String
                                     }
                                 }
-                                "servername" -> bean.requestHost = opt.value as String
+                                "servername" -> bean.host = opt.value as String
                                 "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
                                     when (h2Opt.key.toLowerCase()) {
-                                        "host" -> bean.requestHost =
+                                        "host" -> bean.host =
                                             (h2Opt.value as List<String>).first()
                                         "path" -> bean.path = h2Opt.value as String
                                     }

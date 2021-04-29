@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "169dac6b93050881dd3a6ce6751ee5c7",
+    "identityHash": "43a741fb8cb74a9fef7b790cd036a5a9",
     "entities": [
       {
         "tableName": "proxy_groups",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userOrder` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL, `name` TEXT, `isSubscription` INTEGER NOT NULL, `subscriptionLink` TEXT NOT NULL, `lastUpdate` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userOrder` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL, `name` TEXT, `isSubscription` INTEGER NOT NULL, `subscriptionLink` TEXT NOT NULL, `lastUpdate` INTEGER NOT NULL, `type` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -49,6 +49,12 @@
             "columnName": "lastUpdate",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -62,7 +68,7 @@
       },
       {
         "tableName": "proxy_entities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `socksBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `vlessBean` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `vlessBean` BLOB, `trojanBean` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -107,6 +113,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "httpBean",
+            "columnName": "httpBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
             "fieldPath": "ssBean",
             "columnName": "ssBean",
             "affinity": "BLOB",
@@ -127,6 +139,12 @@
           {
             "fieldPath": "vlessBean",
             "columnName": "vlessBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "trojanBean",
+            "columnName": "trojanBean",
             "affinity": "BLOB",
             "notNull": false
           }
@@ -185,7 +203,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '169dac6b93050881dd3a6ce6751ee5c7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '43a741fb8cb74a9fef7b790cd036a5a9')"
     ]
   }
 }

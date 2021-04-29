@@ -102,13 +102,22 @@
     <string name="obfs_param">Obfs Param</string>
     <string name="uuid">User ID</string>
     <string name="alter_id">Alter ID</string>
-    <string name="security">Security</string>
+    <string name="security">Transport layer encryption</string>
     <string name="network">Network</string>
+
     <string name="header_type">Header Type</string>
-    <string name="request_host">Request Host / QUIC Security</string>
-    <string name="path">Path / Key / Seed / ServiceName</string>
+    <string name="ws_host">WebSocket Host</string>
+    <string name="ws_path">WebSocket Path</string>
+    <string name="http_host">HTTP Host</string>
+    <string name="http_path">HTTP Path</string>
+    <string name="quic_security">QUIC Security</string>
+    <string name="quic_key">Quic KEY</string>
+    <string name="kcp_seed">mKCP Seed</string>
+    <string name="grpc_service_name">grpc ServiceName</string>
+
     <string name="tls">Use TLS</string>
     <string name="sni">Server Name Indication</string>
+    <string name="alpn">Application-Layer Protocol Negotiation</string>
     <string name="encryption">Encryption</string>
 
     <!-- feature category -->

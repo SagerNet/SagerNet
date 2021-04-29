@@ -29,11 +29,11 @@
             app:title="@string/alter_id"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/securities_entry"
-            app:entryValues="@array/securities_value"
+            app:entries="@array/vmess_encryption_entry"
+            app:entryValues="@array/vmess_encryption_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
-            app:key="serverSecurity"
-            app:title="@string/security"
+            app:key="serverEncryption"
+            app:title="@string/encryption"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/networks_entry"
@@ -43,32 +43,63 @@
             app:title="@string/network"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/headers_entry"
-            app:entryValues="@array/headers_value"
+            app:entries="@array/kcp_quic_headers_entry"
+            app:entryValues="@array/kcp_quic_headers_value"
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="serverHeader"
             app:title="@string/header_type"
             app:useSimpleSummaryProvider="true" />
-
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/quic_security_entry"
+            app:entryValues="@array/quic_security_value"
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="serverQuicSecurity"
+            app:title="@string/quic_security"
+            app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_airplanemode_active_24"
             app:key="serverHost"
-            app:title="@string/request_host"
+            app:title="@string/http_host"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_format_align_left_24"
             app:key="serverPath"
-            app:title="@string/path"
+            app:title="@string/http_path"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/transport_layer_encryption_entry"
+            app:entryValues="@array/transport_layer_encryption_value"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="serverSecurity"
+            app:title="@string/security"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_action_copyright"
             app:key="serverSNI"
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_legend_toggle_24"
+            app:key="serverALPN"
+            app:title="@string/alpn"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="serverWsCategory"
+        app:title="@string/cag_ws">
+        <EditTextPreference
+            app:defaultValue="0"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="serverWsMaxEarlyData"
+            app:title="@string/ws_max_early_data"
+            app:useSimpleSummaryProvider="true" />
+
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_https_24"
-            app:key="serverTLS"
-            app:title="@string/tls" />
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="serverWsBrowserForwarding"
+            app:summary="@string/ws_browser_forwarding_sum"
+            app:title="@string/ws_browser_forwarding" />
     </PreferenceCategory>
 
 
