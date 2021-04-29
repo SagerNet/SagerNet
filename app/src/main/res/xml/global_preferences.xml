@@ -12,7 +12,7 @@
         app:key="directBootAware"
         app:summary="@string/direct_boot_aware_summary"
         app:title="@string/direct_boot_aware" />
-    <com.takisoft.preferencex.SimpleMenuPreference
+    <rikka.preference.SimpleMenuPreference
         app:defaultValue="vpn"
         app:entries="@array/service_modes"
         app:entryValues="@array/service_mode_values"
@@ -25,7 +25,7 @@
         app:key="meteredNetwork"
         app:summary="@string/metered_summary"
         app:title="@string/metered" />
-    <com.takisoft.preferencex.SimpleMenuPreference
+    <rikka.preference.SimpleMenuPreference
         app:defaultValue="1000"
         app:entries="@array/notifications_entry"
         app:entryValues="@array/notifications_value"
