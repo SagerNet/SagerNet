@@ -774,18 +774,18 @@ fun parseV2RayN(link: String): VMessBean {
     val bean = VMessBean()
     val json = JSONObject(result)
 
-    bean.serverAddress = json.getStr("add")
-    bean.serverPort = json.getInt("port")
-    bean.security = json.getStr("scy")
-    bean.uuid = json.getStr("id")
-    bean.alterId = json.getInt("aid")
-    bean.type = json.getStr("net")
-    bean.headerType = json.getStr("type")
-    bean.host = json.getStr("host")
-    bean.path = json.getStr("path")
-    bean.name = json.getStr("ps")
-    bean.tlsSni = json.getStr("sni")
-    bean.security = json.getStr("tls")
+    bean.serverAddress = json.getStr("add") ?: ""
+    bean.serverPort = json.getInt("port") ?: 1080
+    bean.security = json.getStr("scy") ?: ""
+    bean.uuid = json.getStr("id") ?: ""
+    bean.alterId = json.getInt("aid") ?: 0
+    bean.type = json.getStr("net") ?: ""
+    bean.headerType = json.getStr("type") ?: ""
+    bean.host = json.getStr("host") ?: ""
+    bean.path = json.getStr("path") ?: ""
+    bean.name = json.getStr("ps") ?: ""
+    bean.tlsSni = json.getStr("sni") ?: ""
+    bean.security = json.getStr("tls") ?: ""
 
     if (json.getInt("v", 2) < 2) {
         when (bean.type) {

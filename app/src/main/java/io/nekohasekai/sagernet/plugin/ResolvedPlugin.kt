@@ -19,47 +19,22 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http
+package io.nekohasekai.sagernet.plugin
 
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import android.content.pm.ComponentInfo
+import android.content.pm.ResolveInfo
+import android.graphics.drawable.Drawable
+import android.os.Build
+import com.github.shadowsocks.plugin.PluginManager.loadString
+import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.ktx.signaturesCompat
 
-fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.replace("naive+https://", "https://").toHttpUrlOrNull()
-        ?: error("Invalid http(s) link: $link")
+abstract class ResolvedPlugin(protected val resolveInfo: ResolveInfo) : Plugin() {
+    protected abstract val componentInfo: ComponentInfo
 
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
-
-    return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
-    }
-}
-
-fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
-        .host(serverAddress)
-        .port(serverPort)
-
-    if (username.isNotBlank()) {
-        builder.username(username)
-    }
-    if (password.isNotBlank()) {
-        builder.password(password)
-    }
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
-    }
-
-    return builder.toString()
+    override val id by lazy { componentInfo.loadString(PluginContract.METADATA_KEY_ID)!! }
+    override val label: CharSequence get() = resolveInfo.loadLabel(SagerNet.application.packageManager)
+    override val icon: Drawable get() = resolveInfo.loadIcon(SagerNet.application.packageManager)
+    override val packageName: String get() = componentInfo.packageName
+    override val directBootAware get() = Build.VERSION.SDK_INT < 24 || componentInfo.directBootAware
 }

@@ -19,47 +19,32 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http
+package io.nekohasekai.sagernet.plugin
 
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.widget.Toast
+import io.nekohasekai.sagernet.SagerNet
 
-fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.replace("naive+https://", "https://").toHttpUrlOrNull()
-        ?: error("Invalid http(s) link: $link")
-
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
-
-    return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
-    }
-}
-
-fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
-        .host(serverAddress)
-        .port(serverPort)
-
-    if (username.isNotBlank()) {
-        builder.username(username)
-    }
-    if (password.isNotBlank()) {
-        builder.password(password)
-    }
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+class PluginList : ArrayList<Plugin>() {
+    init {
+        addAll(SagerNet.application.packageManager.queryIntentContentProviders(
+            Intent(PluginContract.ACTION_NATIVE_PLUGIN), PackageManager.GET_META_DATA)
+            .filter { it.providerInfo.exported }.map { NativePlugin(it) })
     }
 
-    return builder.toString()
+    val lookup = mutableMapOf<String, Plugin>().apply {
+        for (plugin in this@PluginList) {
+            fun check(old: Plugin?) {
+                if (old != null && old !== plugin) {
+                    val packages = this@PluginList.filter { it.id == plugin.id }
+                        .joinToString { it.packageName }
+                    val message = "Conflicting plugins found from: $packages"
+                    Toast.makeText(SagerNet.application, message, Toast.LENGTH_LONG).show()
+                    throw IllegalStateException(message)
+                }
+            }
+            check(put(plugin.id, plugin))
+        }
+    }
 }

@@ -3,3 +3,5 @@ rootProject.name = "SagerNet"
 
 include ':shadowsocks'
 include ':shadowsocksr'
+
+include ':plugin'

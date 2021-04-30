@@ -19,47 +19,21 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http
+package io.nekohasekai.sagernet.plugin
 
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+object PluginContract {
 
-fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.replace("naive+https://", "https://").toHttpUrlOrNull()
-        ?: error("Invalid http(s) link: $link")
+    const val ACTION_NATIVE_PLUGIN = "io.nekohasekai.sagernet.ACTION_NATIVE_PLUGIN"
+    const val EXTRA_ENTRY = "io.nekohasekai.sagernet.plugin.EXTRA_ENTRY"
+    const val METADATA_KEY_VERSION = "io.nekohasekai.sagernet.version"
+    const val METADATA_KEY_ID = "io.nekohasekai.sagernet.id"
+    const val METADATA_KEY_ID_ALIASES = "io.nekohasekai.sagernet.id.aliases"
+    const val METADATA_KEY_EXECUTABLE_PATH = "io.nekohasekai.sagernet.executable_path"
+    const val METHOD_GET_EXECUTABLE = "sagernet:getExecutable"
 
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
-
-    return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
-    }
-}
-
-fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
-        .host(serverAddress)
-        .port(serverPort)
-
-    if (username.isNotBlank()) {
-        builder.username(username)
-    }
-    if (password.isNotBlank()) {
-        builder.password(password)
-    }
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
-    }
-
-    return builder.toString()
+    const val RESULT_FALLBACK = 1
+    const val COLUMN_PATH = "path"
+    const val COLUMN_MODE = "mode"
+    const val SCHEME = "plugin"
+    const val AUTHORITY = "io.nekohasekai.sagernet"
 }

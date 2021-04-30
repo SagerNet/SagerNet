@@ -125,6 +125,8 @@ class SagerNet : Application() {
         updateNotificationChannels()
 
         Seq.setContext(applicationContext)
+
+        application.filesDir.mkdirs()
         Libv2ray.setAssetsPath(application.filesDir.absolutePath, "v2ray/")
     }
 

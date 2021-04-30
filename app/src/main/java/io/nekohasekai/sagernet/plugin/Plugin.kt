@@ -19,47 +19,23 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http
+package io.nekohasekai.sagernet.plugin
 
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import android.graphics.drawable.Drawable
 
-fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.replace("naive+https://", "https://").toHttpUrlOrNull()
-        ?: error("Invalid http(s) link: $link")
+abstract class Plugin {
+    abstract val id: String
+    abstract val label: CharSequence
+    open val icon: Drawable? get() = null
+    open val defaultConfig: String? get() = null
+    open val packageName: String get() = ""
+    open val directBootAware: Boolean get() = true
 
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
-
-    return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
-    }
-}
-
-fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
-        .host(serverAddress)
-        .port(serverPort)
-
-    if (username.isNotBlank()) {
-        builder.username(username)
-    }
-    if (password.isNotBlank()) {
-        builder.password(password)
-    }
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return id == (other as Plugin).id
     }
 
-    return builder.toString()
+    override fun hashCode() = id.hashCode()
 }
