@@ -39,6 +39,33 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run libs v2ray
+  xtls:
+    name: Native Build (XTLS)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'xtls-plugin/*' > xtls_status
+      - name: XTLS Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            xtls-plugin/src/main/jniLibs
+          key: ${{ hashFiles('bin/libs/xtls.sh', 'xtls_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run libs xtls
+          ./gradlew xtls-plugin:assembleDebug
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest

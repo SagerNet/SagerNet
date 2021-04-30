@@ -24,6 +24,8 @@ OUTPUT="xrayexec"
 LIB_OUTPUT="lib$OUTPUT.so"
 AAR_OUTPUT="$OUTPUT.aar"
 ROOT="$PROJECT/xtls-plugin/src/main/jniLibs"
+
+git submodule update --init 'xtls-plugin/*'
 cd $PROJECT/xtls-plugin/src/main/go/Xray-core
 
 DIR="$ROOT/armeabi-v7a"
