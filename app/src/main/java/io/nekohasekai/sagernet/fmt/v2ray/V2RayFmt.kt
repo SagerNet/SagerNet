@@ -224,7 +224,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                                                     id = bean.uuid
                                                     alterId = bean.alterId
                                                     security =
-                                                        bean.security.takeIf { it.isNotBlank() }
+                                                        bean.encryption.takeIf { it.isNotBlank() }
                                                             ?: "auto"
                                                     level = 8
                                                 }
@@ -303,8 +303,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                                     header = KcpObject.HeaderObject().apply {
                                         type = bean.headerType
                                     }
-                                    if (bean.path.isNotBlank()) {
-                                        seed = bean.path
+                                    if (bean.mKcpSeed.isNotBlank()) {
+                                        seed = bean.mKcpSeed
                                     }
                                 }
                             }
@@ -345,8 +345,9 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                             }
                             "quic" -> {
                                 quicSettings = QuicObject().apply {
-                                    security = bean.host.takeIf { it.isNotBlank() } ?: "none"
-                                    key = bean.path
+                                    security =
+                                        bean.quicSecurity.takeIf { it.isNotBlank() } ?: "none"
+                                    key = bean.quicKey
                                     header = QuicObject.HeaderObject().apply {
                                         type = bean.headerType.takeIf { it.isNotBlank() } ?: "none"
                                     }
@@ -354,7 +355,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                             }
                             "grpc" -> {
                                 grpcSettings = GrpcObject().apply {
-                                    serviceName = bean.path
+                                    serviceName = bean.grpcServiceName
                                 }
                             }
                         }
@@ -674,7 +675,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             bean.path = url.pathSegments.joinToString("/")
         }
 
-        val protocol = url.queryParameter("type") ?: error("Missing type parameter")
+        val protocol = url.queryParameter("type") ?: "tcp"
         bean.type = protocol
 
         when (url.queryParameter("security")) {
