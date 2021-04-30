@@ -142,7 +142,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.github)
                         .setOnClickAction {
                             requireContext().launchCustomTab(Uri.parse(
-                                "https://github.com/nekohasekai/SagerNet"
+                                "https://github.com/SagerNet/SagerNet"
                             ))
                         }
                         .build()

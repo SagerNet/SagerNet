@@ -362,6 +362,10 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
             deduplicationCard = view.findViewById(R.id.deduplication_card)
             deduplication = view.findViewById(R.id.deduplication)
+            if (!arg.isSubscription) {
+                deduplicationCard.isVisible = false
+            }
+
             if (proxyGroup != null) {
                 deduplication.isChecked = proxyGroup.deduplication
             }
