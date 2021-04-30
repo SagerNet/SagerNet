@@ -38,8 +38,8 @@ android {
         applicationId "io.nekohasekai.sagernet"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 7
-        versionName "0.1-beta7"
+        versionCode 8
+        versionName "0.1-beta8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -121,7 +121,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = outputFileName.replace("app", "SagerNet")
+            outputFileName = outputFileName.replace("app", "SagerNet-" + variant.versionName)
         }
     }
 

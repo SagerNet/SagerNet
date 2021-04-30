@@ -267,5 +267,7 @@
     <string name="kcp_seed">mKCP 混淆密码</string>
     <string name="grpc_service_name">gRPC 服务名称</string>
     <string name="alpn">应用层协议协商</string>
+    <string name="group_duplicate">重复:  %s</string>
+    <string name="deduplication">去重</string>
 
 </resources>

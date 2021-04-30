@@ -31,12 +31,10 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
-import io.nekohasekai.sagernet.ktx.formatObject
-import io.nekohasekai.sagernet.ktx.urlSafe
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 const val TAG_SOCKS = "in"
 const val TAG_HTTP = "http"
@@ -712,12 +710,33 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     bean.mKcpSeed = it
                 }
             }
-            "ws", "http" -> {
+            "http" -> {
                 url.queryParameter("host")?.let {
                     bean.host = it
                 }
                 url.queryParameter("path")?.let {
                     bean.path = it
+                }
+            }
+            "ws" -> {
+                url.queryParameter("host")?.let {
+                    bean.host = it
+                }
+                url.queryParameter("path")?.let { pathFakeUrl ->
+                    var path = pathFakeUrl
+                    if (!path.startsWith("/")) path = "/$path"
+                    val pathUrl = "http://localhost$path".toHttpUrlOrNull()
+                    if (pathUrl != null) {
+                        pathUrl.queryParameter("ed")?.let {
+                            bean.wsMaxEarlyData = it.toInt()
+                        }
+
+                        path = pathUrl.encodedPath
+                    }
+                    bean.path = path
+                }
+                url.queryParameter("ed")?.let {
+                    bean.wsMaxEarlyData = it.toInt()
                 }
             }
             "quic" -> {
@@ -870,6 +889,7 @@ fun StandardV2RayBean.toUri(standard: Boolean): String {
         .host(serverAddress)
         .port(serverPort)
         .addQueryParameter("type", type)
+        .addQueryParameter("encryption", encryption)
 
     when (type) {
         "tcp" -> {
@@ -883,7 +903,7 @@ fun StandardV2RayBean.toUri(standard: Boolean): String {
                     if (standard) {
                         builder.addQueryParameter("path", path)
                     } else {
-                        builder.addPathSegments(path)
+                        builder.encodedPath(path.pathSafe())
                     }
                 }
             }
@@ -904,7 +924,12 @@ fun StandardV2RayBean.toUri(standard: Boolean): String {
                 if (standard) {
                     builder.addQueryParameter("path", path)
                 } else {
-                    builder.addPathSegments(path)
+                    builder.encodedPath(path.pathSafe())
+                }
+            }
+            if (type == "ws") {
+                if (wsMaxEarlyData > 0) {
+                    builder.addQueryParameter("ed", "$wsMaxEarlyData")
                 }
             }
         }
@@ -924,14 +949,16 @@ fun StandardV2RayBean.toUri(standard: Boolean): String {
         }
     }
 
-    builder.addQueryParameter("security", security)
-    when (security) {
-        "tls" -> {
-            if (tlsSni.isNotBlank()) {
-                builder.addQueryParameter("sni", tlsSni)
-            }
-            if (tlsAlpn.isNotBlank()) {
-                builder.addQueryParameter("alpn", tlsAlpn)
+    if (security.isNotBlank() && security != "none") {
+        builder.addQueryParameter("security", security)
+        when (security) {
+            "tls" -> {
+                if (tlsSni.isNotBlank()) {
+                    builder.addQueryParameter("sni", tlsSni)
+                }
+                if (tlsAlpn.isNotBlank()) {
+                    builder.addQueryParameter("alpn", tlsAlpn)
+                }
             }
         }
     }

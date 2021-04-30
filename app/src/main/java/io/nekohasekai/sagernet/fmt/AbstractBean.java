@@ -40,6 +40,14 @@ public abstract class AbstractBean implements Cloneable<AbstractBean>, Comparabl
     public int serverPort;
     public String name;
 
+    public String displayName() {
+        if (StrUtil.isNotBlank(name)) {
+            return name;
+        } else {
+            return serverAddress + ":" + serverPort;
+        }
+    }
+
     public void initDefaultValues() {
         if (StrUtil.isBlank(serverAddress)) {
             serverAddress = "127.0.0.1";
@@ -98,4 +106,8 @@ public abstract class AbstractBean implements Cloneable<AbstractBean>, Comparabl
     public String toString() {
         return getClass().getSimpleName() + " " + JSONUtil.formatJsonStr(GsonsKt.getGson().toJson(this));
     }
+
+    public void applyFeatureSettings(AbstractBean other) {
+    }
+
 }

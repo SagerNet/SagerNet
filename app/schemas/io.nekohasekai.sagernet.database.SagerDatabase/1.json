@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "43a741fb8cb74a9fef7b790cd036a5a9",
+    "identityHash": "41ceeb16c02dd8d5116ed276dd47dfaf",
     "entities": [
       {
         "tableName": "proxy_groups",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userOrder` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL, `name` TEXT, `isSubscription` INTEGER NOT NULL, `subscriptionLink` TEXT NOT NULL, `lastUpdate` INTEGER NOT NULL, `type` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userOrder` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL, `name` TEXT, `isSubscription` INTEGER NOT NULL, `subscriptionLink` TEXT NOT NULL, `lastUpdate` INTEGER NOT NULL, `type` INTEGER NOT NULL, `deduplication` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -53,6 +53,12 @@
           {
             "fieldPath": "type",
             "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deduplication",
+            "columnName": "deduplication",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -203,7 +209,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '43a741fb8cb74a9fef7b790cd036a5a9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41ceeb16c02dd8d5116ed276dd47dfaf')"
     ]
   }
 }

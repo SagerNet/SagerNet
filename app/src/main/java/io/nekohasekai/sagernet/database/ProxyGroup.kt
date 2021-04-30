@@ -38,7 +38,8 @@ data class ProxyGroup(
     var isSubscription: Boolean = false,
     var subscriptionLink: String = "",
     var lastUpdate: Long = 0L,
-    var type: Int = 0
+    var type: Int = 0,
+    var deduplication: Boolean = false
 ) : Parcelable {
 
     fun displayName(): String {

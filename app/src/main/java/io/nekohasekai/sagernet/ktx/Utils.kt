@@ -164,9 +164,23 @@ fun DialogFragment.showAllowingStateLoss(fragmentManager: FragmentManager, tag: 
     if (!fragmentManager.isStateSaved) show(fragmentManager, tag)
 }
 
+private val encoder = URLEncoder().apply {
+
+    addSafeCharacter('*')
+    addSafeCharacter('-')
+    addSafeCharacter('.')
+    addSafeCharacter('_')
+    addSafeCharacter('&')
+    addSafeCharacter('/')
+
+}
+
+fun String.pathSafe(): String {
+    return encoder.encode(this, CharsetUtil.CHARSET_UTF_8)
+}
 
 fun String.urlSafe(): String {
-    return URLEncoder.createDefault().encode(this, CharsetUtil.CHARSET_UTF_8)
+    return URLEncoder.ALL.encode(this, CharsetUtil.CHARSET_UTF_8)
 }
 
 fun String.unUrlSafe(): String {

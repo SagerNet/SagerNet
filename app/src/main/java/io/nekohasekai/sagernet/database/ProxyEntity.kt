@@ -209,7 +209,7 @@ data class ProxyEntity(
     fun requireTrojan() = requireBean() as TrojanBean
     fun requireHttp() = requireBean() as HttpBean
 
-    fun settingIntent(ctx: Context): Intent {
+    fun settingIntent(ctx: Context, isSubscription: Boolean): Intent {
         return Intent(ctx, when (type) {
             0 -> SocksSettingsActivity::class.java
             1 -> ShadowsocksSettingsActivity::class.java
@@ -221,6 +221,7 @@ data class ProxyEntity(
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)
+            putExtra(ProfileSettingsActivity.EXTRA_IS_SUBSCRIPTION, isSubscription)
         }
     }
 

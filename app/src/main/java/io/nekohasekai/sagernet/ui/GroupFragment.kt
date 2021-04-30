@@ -44,9 +44,12 @@ import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.core.date.DateUtil
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
@@ -60,7 +63,10 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashSet
 
 class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItemClickListener {
 
@@ -143,12 +149,25 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         val proxyGroup: ProxyGroup? = null,
     ) : Parcelable
 
+    private val updating = AtomicBoolean()
+
     private suspend fun updateSubscription(
         proxyGroup: ProxyGroup,
         onRefreshStarted: Runnable,
-        onRefreshFinished: Runnable,
+        refreshFinished: Runnable,
     ) {
+        if (updating.get()) return
+
+        synchronized(this) {
+            if (updating.get()) return
+            updating.set(true)
+        }
         onRefreshStarted.run()
+
+        val onRefreshFinished = Runnable {
+            updating.set(false)
+            refreshFinished.run()
+        }
 
         runOnDefaultDispatcher {
             createHttpClient().newCall(Request.Builder()
@@ -164,11 +183,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        val (subType, proxies) = try {
+                        var (subType, proxies) = try {
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())
                         } catch (e: Exception) {
                             runOnMainDispatcher {
+                                updating.set(false)
                                 onRefreshFinished.run()
 
                                 activity.snackbar(e.readableMessage).show()
@@ -177,10 +197,28 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         }
 
                         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
+                        val duplicate = LinkedList<String>()
+                        if (proxyGroup.deduplication) {
+                            val uniqueProxies = LinkedHashSet<AbstractBean>()
+                            val uniqueNames = HashMap<AbstractBean, String>()
+                            for (proxy in proxies) {
+                                if (!uniqueProxies.add(proxy)) {
+                                    if (uniqueNames.containsKey(proxy)) {
+                                        duplicate.add(uniqueNames.remove(proxy)!!)
+                                    }
+                                    duplicate.add(proxy.displayName())
+                                } else {
+                                    uniqueNames[proxy] = proxy.displayName()
+                                }
+                            }
+                            uniqueProxies.retainAll(uniqueNames.keys)
+                            proxies = uniqueProxies.toList()
+                        }
+
                         val nameMap = mapOf(* proxies.map { bean ->
-                            (bean.name.takeIf { !it.isNullOrBlank() }
-                                ?: "${bean.serverAddress}:${bean.serverPort}") to bean
+                            bean.displayName() to bean
                         }.toTypedArray())
+
                         val toDelete = LinkedList<ProxyEntity>()
                         val toReplace = exists.mapNotNull { entity ->
                             val name = entity.displayName()
@@ -199,11 +237,17 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         for ((name, bean) in nameMap.entries) {
                             if (toReplace.contains(name)) {
                                 val entity = toReplace[name]!!
-                                if ((entity.requireBean() != bean).also { if (it) changed++ } || entity.userOrder != userOrder) {
+                                val existsBean = entity.requireBean()
+                                existsBean.applyFeatureSettings(bean)
+                                if (existsBean != bean) {
+                                    changed++
                                     entity.putBean(bean)
-                                    entity.userOrder = userOrder
                                     toUpdate.add(entity)
                                     updated[entity.displayName()] = name
+                                } else if (entity.userOrder != userOrder) {
+                                    entity.putBean(bean)
+                                    toUpdate.add(entity)
+                                    entity.userOrder = userOrder
                                 }
                             } else {
                                 changed++
@@ -231,13 +275,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             onMainDispatcher {
                                 onRefreshFinished.run()
 
-                                if (changed == 0) {
+                                if (changed == 0 && duplicate.isEmpty()) {
                                     activity.snackbar(activity.getString(R.string.group_no_difference))
                                         .show()
                                 } else {
                                     activity.snackbar(activity.getString(R.string.group_updated,
                                         changed)).setAction(R.string.group_show_diff) {
-
 
                                         var status = ""
                                         if (added.isNotEmpty()) {
@@ -255,8 +298,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                             status += activity.getString(R.string.group_deleted,
                                                 deleted.joinToString("\n", postfix = "\n\n"))
                                         }
+                                        if (duplicate.isNotEmpty()) {
+                                            status += activity.getString(R.string.group_duplicate,
+                                                duplicate.joinToString("\n", postfix = "\n\n"))
+                                        }
 
-                                        val dialog = AlertDialog.Builder(activity)
+                                        AlertDialog.Builder(activity)
                                             .setTitle(R.string.group_show_diff)
                                             .setMessage(status.trim())
                                             .setPositiveButton(android.R.string.ok, null)
@@ -277,6 +324,9 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
         lateinit var linkEditText: EditText
         lateinit var linkLayout: TextInputLayout
+
+        lateinit var deduplicationCard: MaterialCardView
+        lateinit var deduplication: MaterialCheckBox
 
         val positive by lazy { (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE) }
 
@@ -308,6 +358,20 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 linkEditText.addTextChangedListener {
                     validate()
                 }
+            }
+
+            deduplicationCard = view.findViewById(R.id.deduplication_card)
+            deduplication = view.findViewById(R.id.deduplication)
+            if (proxyGroup != null) {
+                deduplication.isChecked = proxyGroup.deduplication
+            }
+
+            deduplicationCard.setOnClickListener {
+                deduplication.performClick()
+            }
+
+            deduplication.setOnCheckedChangeListener { _, _ ->
+                validate()
             }
 
             setTitle(if (arg.proxyGroup == null) {
@@ -378,20 +442,17 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         override fun onClick(dialog: DialogInterface?, which: Int) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 runOnDefaultDispatcher {
-                    var proxyGroup =
+                    val proxyGroup =
                         arg.proxyGroup ?: ProxyGroup().apply { isSubscription = arg.isSubscription }
 
                     proxyGroup.name = nameEditText.text.toString()
                     if (proxyGroup.isSubscription) {
                         proxyGroup.subscriptionLink = linkEditText.text.toString()
                     }
+                    proxyGroup.deduplication = deduplication.isChecked
 
                     if (arg.proxyGroup == null) {
-                        proxyGroup = ProfileManager.createGroup(proxyGroup)
-
-                        if (proxyGroup.isSubscription) {
-                            ProfileManager.groupIterator { refreshSubscription(proxyGroup) }
-                        }
+                        ProfileManager.createGroup(proxyGroup)
                     } else {
                         ProfileManager.updateGroup(proxyGroup)
                     }
@@ -509,6 +570,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
             onMainDispatcher {
                 undoManager.flush()
                 notifyItemInserted(groupList.size - 1)
+
+                if (group.isSubscription && group.lastUpdate == 0L) refreshSubscription(group)
             }
         }
 
@@ -549,10 +612,14 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         override suspend fun refreshSubscription(proxyGroup: ProxyGroup) {
-            for (i in 0 until 10) {
-                delay(200L)
-                ((groupListView.findViewHolderForAdapterPosition(groupAdapter.groupList.indexOfFirst { it.id == proxyGroup.id }) as? GroupHolder)
-                    ?: continue).refreshRunnable(true)
+            val index = groupAdapter.groupList.indexOfFirst { it.id == proxyGroup.id }
+            for (i in 0 until 200) {
+                println(i)
+                ((groupListView.findViewHolderForAdapterPosition(index) as? GroupHolder).also {
+                    if (it == null) {
+                        delay(10L)
+                    }
+                } ?: continue).refreshRunnable(true)
                 return
             }
         }

@@ -23,10 +23,8 @@ package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.format.Formatter
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -35,6 +33,7 @@ import android.widget.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
@@ -42,7 +41,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -649,15 +647,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                         }
                     }
 
-
                     profileName.text = proxyEntity.displayName()
-
-                    if (proxyGroup.type == 1) {
-                        profileName.isSingleLine = true
-                        profileName.typeface = Typeface.DEFAULT
-                        profileName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
-                    }
-
                     profileType.text = proxyEntity.displayType()
 
                     var rx = proxyEntity.rx
@@ -670,7 +660,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     }
 
                     val showTraffic = rx + tx != 0L
-                    trafficText.isGone = !showTraffic
+                    trafficText.isVisible = showTraffic
                     if (showTraffic) {
                         trafficText.text = view.context.getString(R.string.traffic,
                             Formatter.formatFileSize(view.context, tx),
@@ -678,34 +668,32 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     }
                     //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
-                    editButton.isGone = proxyGroup.isSubscription
-                    if (!proxyGroup.isSubscription) {
-                        editButton.setOnClickListener {
-                            it.context.startActivity(proxyEntity.settingIntent(it.context))
-                        }
+                    editButton.setOnClickListener {
+                        it.context.startActivity(proxyEntity.settingIntent(it.context,
+                            proxyGroup.isSubscription))
                     }
 
-                   /* if (BuildConfig.DEBUG && proxyEntity.requireBean()
-                            .isInsecure() == ValidateResult.INSECURE
-                    ) {
-                        shareLayout.setBackgroundColor(Color.RED)
-                        shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
-                        shareButton.setColorFilter(Color.WHITE)
+                    /* if (BuildConfig.DEBUG && proxyEntity.requireBean()
+                             .isInsecure() == ValidateResult.INSECURE
+                     ) {
+                         shareLayout.setBackgroundColor(Color.RED)
+                         shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                         shareButton.setColorFilter(Color.WHITE)
 
-                        shareButton.setOnClickListener {
-                            // TODO: Alert insecure
-                        }
-                    } else {*/
-                        shareLayout.setBackgroundColor(Color.TRANSPARENT)
-                        shareButton.setImageResource(R.drawable.ic_social_share)
-                        shareButton.setColorFilter(Color.GRAY)
+                         shareButton.setOnClickListener {
+                             // TODO: Alert insecure
+                         }
+                     } else {*/
+                    shareLayout.setBackgroundColor(Color.TRANSPARENT)
+                    shareButton.setImageResource(R.drawable.ic_social_share)
+                    shareButton.setColorFilter(Color.GRAY)
 
-                        shareButton.setOnClickListener {
-                            val popup = PopupMenu(requireContext(), it)
-                            popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
-                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                            popup.show()
-                        }
+                    shareButton.setOnClickListener {
+                        val popup = PopupMenu(requireContext(), it)
+                        popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                        popup.show()
+                    }
 //                    }
 
 

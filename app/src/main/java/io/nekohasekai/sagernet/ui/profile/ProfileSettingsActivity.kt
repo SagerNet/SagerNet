@@ -85,6 +85,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
     companion object {
         const val EXTRA_PROFILE_ID = "id"
+        const val EXTRA_IS_SUBSCRIPTION = "sub"
     }
 
     abstract fun createEntity(): T
@@ -104,7 +105,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
         if (savedInstanceState == null) {
             val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
-            DataStore.dirty = false
             DataStore.editingId = editingId
             runOnDefaultDispatcher {
                 if (editingId == 0L) {
@@ -130,6 +130,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
                             })
                         .commit()
 
+                    DataStore.dirty = false
                     DataStore.profileCacheStore.registerChangeListener(this@ProfileSettingsActivity)
                 }
             }

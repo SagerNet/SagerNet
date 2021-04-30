@@ -281,4 +281,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         initDefaultValues();
     }
 
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        StandardV2RayBean bean = ((StandardV2RayBean) other);
+        bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
+    }
 }
