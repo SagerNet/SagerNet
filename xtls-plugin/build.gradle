@@ -59,6 +59,15 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude "/META-INF/*.version"
+        exclude "/META-INF/*.kotlin_module"
+        exclude "/META-INF/native-image/**"
+        exclude "/META-INF/INDEX.LIST"
+        exclude "DebugProbesKt.bin"
+        exclude "/kotlin/**"
+    }
+
     splits {
         abi {
             enable true
