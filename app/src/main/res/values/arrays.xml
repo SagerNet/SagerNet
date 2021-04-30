@@ -428,6 +428,7 @@
         <item>XTLS-RPRX-DIRECT</item>
         <item>XTLS-RPRX-DIRECT-UDP443</item>
         <item>XTLS-RPRX-SPLICE</item>
+        <item>XTLS-RPRX-SPLICE-UDP443</item>
     </string-array>
 
     <string-array name="xtls_flow_value" translatable="false">
@@ -436,6 +437,7 @@
         <item>xtls-rprx-direct</item>
         <item>xtls-rprx-direct-udp443</item>
         <item>xtls-rprx-splice</item>
+        <item>xtls-rprx-splice-udp443</item>
     </string-array>
 
     <string-array name="notification_entry">
