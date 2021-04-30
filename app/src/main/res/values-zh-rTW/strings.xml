@@ -9,7 +9,6 @@
 
     <string name="misc">雜項</string>
     <string name="app_version">版本</string>
-    <string name="v2ray_version">版本 (v2ray-core)</string>
     <string name="logcat">匯出 debug 所需資訊</string>
     <string name="logcat_summary">這種非常有用啊(^O^)／</string>
 

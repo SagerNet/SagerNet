@@ -123,7 +123,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                     )
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_airplanemode_active_24)
-                        .text(getString(R.string.version_x, "v2ray-vore"))
+                        .text(getString(R.string.version_x, "v2ray-core"))
                         .subText(Libv2ray.getVersion())
                         .setOnClickAction { }
                         .build()

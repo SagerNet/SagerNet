@@ -9,7 +9,6 @@
 
     <string name="misc">其他</string>
     <string name="app_version">版本</string>
-    <string name="v2ray_version">版本 (v2ray-core)</string>
     <string name="logcat">导出调试信息</string>
     <string name="logcat_summary">这种非常有用哇</string>
 
@@ -269,5 +268,7 @@
     <string name="alpn">应用层协议协商</string>
     <string name="group_duplicate">重复:  %s</string>
     <string name="deduplication">去重</string>
+    <string name="version_x">版本 (%s)</string>
+    <string name="flow">流控</string>
 
 </resources>
