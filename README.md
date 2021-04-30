@@ -20,6 +20,7 @@ The application is designed to be used whenever possible.
 * VMess
 * VLESS
 * Trojan
+* VLESS / Trojan + XTLS ( xtls-plugin )
 
 ### Subscription protocols
 
@@ -46,6 +47,7 @@ The application is designed to be used whenever possible.
     <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks-android</a>: GPL 3.0</li>
     <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">AndroidLibV2rayLite</a>: LGPL 3.0</li>
     <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksr-libev</a>: GPL 3.0</li>
+    <li><a href="https://github.com/XTLS/Xray-core/blob/main/LICENSE">Xray-core</a>: MPL 2.0</li>
 </ul>
 
 ### LICENSE
