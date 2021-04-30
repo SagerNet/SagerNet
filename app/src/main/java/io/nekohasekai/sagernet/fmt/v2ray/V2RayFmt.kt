@@ -255,7 +255,9 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 
                     streamSettings = StreamSettingsObject().apply {
                         network = bean.type
-                        security = bean.security
+                        if (security.isNotBlank()) {
+                            security = bean.security
+                        }
                         if (security == "tls") {
                             tlsSettings = TLSObject().apply {
                                 if (bean.tlsSni.isNotBlank()) {
@@ -585,7 +587,9 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 }
 
 fun parseV2Ray(link: String): StandardV2RayBean {
-    if (!link.contains("@")) return parseV2RayN(link)
+    if (!link.contains("@")) {
+        return parseV2RayN(link)
+    }
 
     val bean = if (!link.startsWith("vless://")) {
         VMessBean()
@@ -781,7 +785,7 @@ fun parseV2RayN(link: String): VMessBean {
     bean.path = json.getStr("path")
     bean.name = json.getStr("ps")
     bean.tlsSni = json.getStr("sni")
-    bean.security = if (json.getStr("tls") == "true") "tls" else ""
+    bean.security = json.getStr("tls")
 
     if (json.getInt("v", 2) < 2) {
         when (bean.type) {
@@ -873,7 +877,7 @@ fun VMessBean.toV2rayN(): String {
         it["host"] = host
         it["type"] = headerType
         it["path"] = path
-        it["tls"] = if (security == "tls") "true" else ""
+        it["tls"] = if (security == "tls") "tls" else ""
         it["sni"] = tlsSni
         it["scy"] = security
 
