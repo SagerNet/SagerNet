@@ -41,7 +41,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import cn.hutool.core.date.DateUtil
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -738,10 +737,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         if (size == 0L) {
                             groupStatus.setText(R.string.group_status_empty_subscription)
                         } else {
+                            val date = Date(group.lastUpdate)
+                            @Suppress("DEPRECATION")
                             groupStatus.text =
                                 app.resources.getString(R.string.group_status_proxies_subscription,
                                     size,
-                                    DateUtil.format(Date(group.lastUpdate), "MM-dd")
+                                    "${date.month}-${date.date}"
                                 )
                         }
                     }
