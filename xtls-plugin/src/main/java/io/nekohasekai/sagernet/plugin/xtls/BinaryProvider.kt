@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-package io.nekohasekai.sagernet.plugin.xray
+package io.nekohasekai.sagernet.plugin.xtls
 
 import android.net.Uri
 import android.os.ParcelFileDescriptor
@@ -29,12 +29,12 @@ import java.io.FileNotFoundException
 
 class BinaryProvider : NativePluginProvider() {
     override fun populateFiles(provider: PathProvider) {
-        provider.addPath("xray", 0b111101101)
+        provider.addPath("xtls-plugin", 0b111101101)
     }
 
     override fun getExecutable() = context!!.applicationInfo.nativeLibraryDir + "/libxrayexec.so"
     override fun openFile(uri: Uri): ParcelFileDescriptor = when (uri.path) {
-        "/xray" -> ParcelFileDescriptor.open(File(getExecutable()),
+        "/xtls-plugin" -> ParcelFileDescriptor.open(File(getExecutable()),
             ParcelFileDescriptor.MODE_READ_ONLY)
         else -> throw FileNotFoundException()
     }

@@ -42,6 +42,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
+import io.nekohasekai.sagernet.fmt.v2ray.buildXrayConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -55,6 +56,7 @@ import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.File
 import java.io.IOException
 import java.util.*
+import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
 
 
 class ProxyInstance(val profile: ProxyEntity) {
@@ -63,6 +65,8 @@ class ProxyInstance(val profile: ProxyEntity) {
     lateinit var config: V2RayConfig
     lateinit var base: BaseService.Interface
     lateinit var wsForwarder: WebView
+    lateinit var xrayPlugin: String
+    lateinit var xrayConfig: String
 
     fun init(service: BaseService.Interface) {
         base = service
@@ -78,6 +82,13 @@ class ProxyInstance(val profile: ProxyEntity) {
         v2rayPoint.configureFileContent = gson.toJson(config).also {
             Logs.d(it)
         }
+
+        if (profile.useXray()) {
+            xrayPlugin = PluginManagerS.init("xtls-plugin")!!.path
+            xrayConfig = gson.toJson(buildXrayConfig(profile)).also {
+                Logs.d(it)
+            }
+        }
     }
 
     var cacheFiles = LinkedList<File>()
@@ -85,100 +96,120 @@ class ProxyInstance(val profile: ProxyEntity) {
     fun start() {
         val bean = profile.requireBean()
 
-        if (profile.useExternalShadowsocks()) {
-            bean as ShadowsocksBean
-            val port = DataStore.socksPort + 10
+        when {
+            profile.useExternalShadowsocks() -> {
+                bean as ShadowsocksBean
+                val port = DataStore.socksPort + 10
 
-            val proxyConfig = JSONObject().also {
-                it["server"] = bean.serverAddress
-                it["server_port"] = bean.serverPort
-                it["method"] = bean.method
-                it["password"] = bean.password
-                it["local_address"] = "127.0.0.1"
-                it["local_port"] = port
-                it["local_udp_address"] = "127.0.0.1"
-                it["local_udp_port"] = port
-                it["mode"] = "tcp_and_udp"
-                if (DataStore.enableLocalDNS) {
-                    it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
-                } else {
-                    it["dns"] = DataStore.remoteDNS
+                val proxyConfig = JSONObject().also {
+                    it["server"] = bean.serverAddress
+                    it["server_port"] = bean.serverPort
+                    it["method"] = bean.method
+                    it["password"] = bean.password
+                    it["local_address"] = "127.0.0.1"
+                    it["local_port"] = port
+                    it["local_udp_address"] = "127.0.0.1"
+                    it["local_udp_port"] = port
+                    it["mode"] = "tcp_and_udp"
+                    if (DataStore.enableLocalDNS) {
+                        it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+                    } else {
+                        it["dns"] = DataStore.remoteDNS
+                    }
+
+                    if (DataStore.ipv6Route && DataStore.preferIpv6) {
+                        it["ipv6_first"] = true
+                    }
                 }
 
-                if (DataStore.ipv6Route && DataStore.preferIpv6) {
-                    it["ipv6_first"] = true
+                if (bean.plugin.isNotBlank()) {
+                    val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
+                    PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                        proxyConfig["plugin"] = path
+                        proxyConfig["plugin_opts"] = opts.toString()
+                    }
                 }
+
+                Logs.d(proxyConfig.toStringPretty())
+
+                val context =
+                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                        SagerNet.application else SagerNet.deviceStorage
+                val configFile =
+                    File(context.noBackupFilesDir,
+                        "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.writeText(proxyConfig.toString())
+                cacheFiles.add(configFile)
+
+                val commands = mutableListOf(
+                    File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                        Executable.SS_LOCAL).absolutePath,
+                    "-c", configFile.absolutePath
+                )
+
+                base.data.processes!!.start(commands)
             }
+            profile.type == 2 -> {
+                bean as ShadowsocksRBean
+                val port = DataStore.socksPort + 10
 
-            if (bean.plugin.isNotBlank()) {
-                val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
-                PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
-                    proxyConfig["plugin"] = path
-                    proxyConfig["plugin_opts"] = opts.toString()
+                val proxyConfig = JSONObject().also {
+
+                    it["server"] = bean.serverAddress
+                    it["server_port"] = bean.serverPort
+                    it["method"] = bean.method
+                    it["password"] = bean.password
+                    it["protocol"] = bean.protocol
+                    it["protocol_param"] = bean.protocolParam
+                    it["obfs"] = bean.obfs
+                    it["obfs_param"] = bean.obfsParam
+                    it["ipv6"] = DataStore.ipv6Route
+                    if (DataStore.enableLocalDNS) {
+                        it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+                    } else {
+                        it["dns"] = DataStore.remoteDNS
+                    }
                 }
+
+                Logs.d(proxyConfig.toStringPretty())
+
+                val context =
+                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                        SagerNet.application else SagerNet.deviceStorage
+
+                val configFile =
+                    File(context.noBackupFilesDir,
+                        "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.writeText(proxyConfig.toString())
+                cacheFiles.add(configFile)
+
+                val commands = mutableListOf(
+                    File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                        Executable.SSR_LOCAL).absolutePath,
+                    "-b", "127.0.0.1",
+                    "-c", configFile.absolutePath,
+                    "-l", "$port"
+                )
+
+                base.data.processes!!.start(commands)
             }
+            profile.useXray() -> {
+                val context =
+                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                        SagerNet.application else SagerNet.deviceStorage
 
-            Logs.d(proxyConfig.toStringPretty())
+                val configFile =
+                    File(context.noBackupFilesDir,
+                        "xray_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.writeText(xrayConfig)
+                cacheFiles.add(configFile)
 
-            val context =
-                if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                    SagerNet.application else SagerNet.deviceStorage
-            val configFile =
-                File(context.noBackupFilesDir,
-                    "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
-            configFile.writeText(proxyConfig.toString())
-            cacheFiles.add(configFile)
+                val commands = mutableListOf(
+                    xrayPlugin,"-c", configFile.absolutePath
+                )
 
-            val commands = mutableListOf(
-                File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                    Executable.SS_LOCAL).absolutePath,
-                "-c", configFile.absolutePath
-            )
-
-            base.data.processes!!.start(commands)
-        } else if (profile.type == 2) {
-            bean as ShadowsocksRBean
-            val port = DataStore.socksPort + 10
-
-            val proxyConfig = JSONObject().also {
-
-                it["server"] = bean.serverAddress
-                it["server_port"] = bean.serverPort
-                it["method"] = bean.method
-                it["password"] = bean.password
-                it["protocol"] = bean.protocol
-                it["protocol_param"] = bean.protocolParam
-                it["obfs"] = bean.obfs
-                it["obfs_param"] = bean.obfsParam
-                it["ipv6"] = DataStore.ipv6Route
-                if (DataStore.enableLocalDNS) {
-                    it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
-                } else {
-                    it["dns"] = DataStore.remoteDNS
-                }
+                base.data.processes!!.start(commands)
             }
-
-            Logs.d(proxyConfig.toStringPretty())
-
-            val context =
-                if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                    SagerNet.application else SagerNet.deviceStorage
-
-            val configFile =
-                File(context.noBackupFilesDir,
-                    "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
-            configFile.writeText(proxyConfig.toString())
-            cacheFiles.add(configFile)
-
-            val commands = mutableListOf(
-                File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                    Executable.SSR_LOCAL).absolutePath,
-                "-b", "127.0.0.1",
-                "-c", configFile.absolutePath,
-                "-l", "$port"
-            )
-
-            base.data.processes!!.start(commands)
         }
 
         v2rayPoint.runLoop(DataStore.preferIpv6)

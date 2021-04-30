@@ -25,14 +25,19 @@ import android.content.pm.ComponentInfo
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
 import android.os.Build
-import com.github.shadowsocks.plugin.PluginManager.loadString
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.ktx.signaturesCompat
+import io.nekohasekai.sagernet.plugin.PluginManager.loadString
 
 abstract class ResolvedPlugin(protected val resolveInfo: ResolveInfo) : Plugin() {
     protected abstract val componentInfo: ComponentInfo
 
     override val id by lazy { componentInfo.loadString(PluginContract.METADATA_KEY_ID)!! }
+    override val version by lazy {
+        SagerNet.application.getPackageInfo(componentInfo.packageName).versionCode
+    }
+    override val versionName by lazy {
+        SagerNet.application.getPackageInfo(componentInfo.packageName).versionName
+    }
     override val label: CharSequence get() = resolveInfo.loadLabel(SagerNet.application.packageManager)
     override val icon: Drawable get() = resolveInfo.loadIcon(SagerNet.application.packageManager)
     override val packageName: String get() = componentInfo.packageName

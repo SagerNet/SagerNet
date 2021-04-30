@@ -132,7 +132,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
      * <p>
      * 省略时复用 remote-host，但不可以为空字符串。
      */
-    public String tlsSni;
+    public String sni;
 
     /**
      * TLS ALPN，对应配置文件中的 alpn 项目。
@@ -143,7 +143,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
      * <p>
      * 必须使用 encodeURIComponent 转义。
      */
-    public String tlsAlpn;
+    public String alpn;
 
     // --------------------------------------- //
 
@@ -152,6 +152,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Boolean wsUseBrowserForwarder;
 
     // --------------------------------------- //
+
+    /**
+     * XTLS 的流控方式。可选值为 xtls-rprx-direct、xtls-rprx-splice 等。
+     * <p>
+     * 若使用 XTLS，此项不可省略，否则无此项。此项不可为空字符串。
+     */
+    public String flow;
 
     @Override
     public void initDefaultValues() {
@@ -168,12 +175,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (StrUtil.isBlank(quicKey)) quicKey = "";
 
         if (StrUtil.isBlank(security)) security = "";
-        if (StrUtil.isBlank(tlsSni)) tlsSni = "";
-        if (StrUtil.isBlank(tlsAlpn)) tlsAlpn = "";
+        if (StrUtil.isBlank(sni)) sni = "";
+        if (StrUtil.isBlank(alpn)) alpn = "";
 
         if (StrUtil.isBlank(grpcServiceName)) grpcServiceName = "";
         if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
         if (wsUseBrowserForwarder == null) wsUseBrowserForwarder = false;
+        if (StrUtil.isBlank(flow)) flow = "";
 
     }
 
@@ -219,11 +227,16 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
         output.writeString(security);
 
-        //noinspection SwitchStatementWithTooFewBranches
         switch (security) {
             case "tls": {
-                output.writeString(tlsSni);
-                output.writeString(tlsAlpn);
+                output.writeString(sni);
+                output.writeString(alpn);
+                break;
+            }
+            case "xtls": {
+                output.writeString(sni);
+                output.writeString(alpn);
+                output.writeString(flow);
                 break;
             }
         }
@@ -269,12 +282,16 @@ public abstract class StandardV2RayBean extends AbstractBean {
         }
 
         security = input.readString();
-        //noinspection SwitchStatementWithTooFewBranches
         switch (security) {
             case "tls": {
-                tlsSni = input.readString();
-                tlsAlpn = input.readString();
+                sni = input.readString();
+                alpn = input.readString();
                 break;
+            }
+            case "xtls": {
+                sni = input.readString();
+                alpn = input.readString();
+                flow = input.readString();
             }
         }
 

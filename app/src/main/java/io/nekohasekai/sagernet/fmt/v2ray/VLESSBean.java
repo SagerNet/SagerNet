@@ -35,6 +35,7 @@ public class VLESSBean extends StandardV2RayBean {
         if (StrUtil.isBlank(encryption)) {
             encryption = "none";
         }
+
     }
 
     @NotNull

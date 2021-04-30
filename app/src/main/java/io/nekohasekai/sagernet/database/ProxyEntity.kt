@@ -111,7 +111,6 @@ data class ProxyEntity(
 
     fun displayType(): String {
         return when (type) {
-            //     2 -> "VMess"
             0 -> "SOCKS5"
             1 -> "Shadowsocks"
             2 -> "ShadowsocksR"
@@ -168,6 +167,15 @@ data class ProxyEntity(
     }
 
     fun useXray(): Boolean {
+        when (val bean = requireBean()) {
+            is VLESSBean -> {
+                if (bean.security == "xtls") return true
+            }
+            is TrojanBean -> {
+                if (bean.security == "xtls") return true
+            }
+        }
+
         return false
     }
 

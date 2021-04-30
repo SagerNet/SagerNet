@@ -85,7 +85,6 @@ class SagerNet : Application() {
             false
         }
 
-
         fun updateNotificationChannels() {
             if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
                 notification.createNotificationChannels(listOf(

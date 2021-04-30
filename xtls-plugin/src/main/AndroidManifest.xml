@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.nekohasekai.sagernet.plugin.xray"
+    package="io.nekohasekai.sagernet.plugin.xtls"
     android:installLocation="internalOnly">
 
     <application
@@ -10,7 +10,7 @@
         android:label="Xray Plugin">
         <provider
             android:name=".BinaryProvider"
-            android:authorities="io.nekohasekai.sagernet.plugin.xray.BinaryProvider"
+            android:authorities="io.nekohasekai.sagernet.plugin.xtls.BinaryProvider"
             android:directBootAware="true"
             android:exported="true"
             tools:ignore="ExportedContentProvider">
@@ -21,17 +21,17 @@
                 <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
                 <data
                     android:host="io.nekohasekai.sagernet"
-                    android:path="/xray"
+                    android:path="/xtls-plugin"
                     android:scheme="plugin" />
             </intent-filter>
-        </provider>
 
-        <meta-data
-            android:name="io.nekohasekai.sagernet.plugin.id"
-            android:value="xray-plugin" />
-        <meta-data
-            android:name="com.github.shadowsocks.plugin.executable_path"
-            android:value="libxrayexec.so" />
+            <meta-data
+                android:name="io.nekohasekai.sagernet.plugin.id"
+                android:value="xtls-plugin" />
+            <meta-data
+                android:name="io.nekohasekai.sagernet.plugin.executable_path"
+                android:value="libxrayexec.so" />
+        </provider>
     </application>
 
 </manifest>

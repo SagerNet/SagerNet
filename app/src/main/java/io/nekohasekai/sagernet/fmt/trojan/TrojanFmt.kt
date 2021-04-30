@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.fmt.trojan
 
 import io.nekohasekai.sagernet.ktx.urlSafe
+import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseTrojan(server: String): TrojanBean {
@@ -39,7 +40,10 @@ fun parseTrojan(server: String): TrojanBean {
             password += ":" + link.password
         }
 
+        security = link.queryParameter("security") ?: "tls"
         sni = link.queryParameter("sni") ?: ""
+        alpn = link.queryParameter("alpn") ?: ""
+        flow = link.queryParameter("flow") ?: ""
         name = link.fragment ?: ""
     }
 
@@ -47,9 +51,32 @@ fun parseTrojan(server: String): TrojanBean {
 
 fun TrojanBean.toUri(): String {
 
-    val params = if (sni.isNotBlank()) "?sni=" + sni.urlSafe() else ""
-    val remark = if (name.isNotBlank()) "#" + name.urlSafe() else ""
+    val builder = HttpUrl.Builder()
+        .scheme("https")
+        .username(password.urlSafe())
+        .host(serverAddress)
+        .port(serverPort)
 
-    return "trojan://" + password.urlSafe() + "@" + serverAddress + ":" + serverPort + params + remark
+    if (sni.isNotBlank()) {
+        builder.addQueryParameter("sni", sni)
+    }
+    if (alpn.isNotBlank()) {
+        builder.addQueryParameter("alpn", alpn)
+    }
+
+    when (security) {
+        "tls" -> {}
+        "xtls" -> {
+            builder.addQueryParameter("security", security)
+            builder.addQueryParameter("flow", flow)
+        }
+    }
+
+    if (name.isNotBlank()) {
+        builder.encodedFragment(name.urlSafe())
+    }
+
+
+    return builder.toString().replace("https://", "trojan://")
 
 }

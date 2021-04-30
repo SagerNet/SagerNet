@@ -86,7 +86,7 @@ public abstract class AbstractBean implements Cloneable<AbstractBean>, Comparabl
     public int compareTo(AbstractBean o) {
         if (this == o) return 0;
         return HexUtil.encodeHexStr(KryoConverters.serializeWithoutName(this))
-                .compareTo(HexUtil.encodeHexStr(KryoConverters.serializeWithoutName((AbstractBean) o)));
+                .compareTo(HexUtil.encodeHexStr(KryoConverters.serializeWithoutName(o)));
     }
 
     @Override

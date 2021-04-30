@@ -24,18 +24,20 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.ktx.app
 
 class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
 
     override fun createEntity() = TrojanBean()
 
     override fun init() {
-        TrojanBean.DEFAULT_BEAN.init()
+        TrojanBean().apply { initDefaultValues() }.init()
     }
 
     override fun TrojanBean.init() {
@@ -43,7 +45,10 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
         DataStore.serverPassword = password
+        DataStore.serverSecurity = security
         DataStore.serverSNI = sni
+        DataStore.serverALPN = alpn
+        DataStore.serverFlow = flow
     }
 
     override fun TrojanBean.serialize() {
@@ -51,8 +56,16 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
+        security = DataStore.serverSecurity
         sni = DataStore.serverSNI
+        alpn = DataStore.serverALPN
+        flow = DataStore.serverFlow
     }
+
+    lateinit var security: SimpleMenuPreference
+    lateinit var tlsSni: EditTextPreference
+    lateinit var tlsAlpn: EditTextPreference
+    lateinit var xtlsFlow: SimpleMenuPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -64,6 +77,36 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+
+        security = findPreference(Key.SERVER_SECURITY)!!
+        tlsSni = findPreference(Key.SERVER_SNI)!!
+        tlsAlpn = findPreference(Key.SERVER_ALPN)!!
+        xtlsFlow = findPreference(Key.SERVER_FLOW)!!
+
+        updateTle(security.value)
+        security.setOnPreferenceChangeListener { _, newValue ->
+            updateTle(newValue as String)
+            true
+        }
+    }
+
+    val xtlsFlowValue = app.resources.getStringArray(R.array.xtls_flow_value)
+
+    fun updateTle(tle: String) {
+        when (tle) {
+            "tls" -> {
+                xtlsFlow.isVisible = false
+            }
+            "xtls" -> {
+                xtlsFlow.isVisible = true
+
+                if (DataStore.serverFlow !in xtlsFlowValue) {
+                    xtlsFlow.value = xtlsFlowValue[0]
+                } else {
+                    xtlsFlow.value = DataStore.serverFlow
+                }
+            }
         }
     }
 

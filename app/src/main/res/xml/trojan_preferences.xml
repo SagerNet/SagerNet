@@ -23,10 +23,29 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/trojan_transport_layer_encryption_entry"
+            app:entryValues="@array/trojan_transport_layer_encryption_value"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="serverSecurity"
+            app:title="@string/security"
+            app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_action_copyright"
             app:key="serverSNI"
             app:title="@string/sni"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_legend_toggle_24"
+            app:key="serverALPN"
+            app:title="@string/alpn"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/xtls_flow_entry"
+            app:entryValues="@array/xtls_flow_value"
+            app:icon="@drawable/ic_baseline_stream_24"
+            app:key="serverFlow"
+            app:title="@string/flow"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 

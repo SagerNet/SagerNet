@@ -32,31 +32,45 @@ import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class TrojanBean extends AbstractBean {
 
-    public static TrojanBean DEFAULT_BEAN = new TrojanBean() {{
-        name = "";
-        serverAddress = "127.0.0.1";
-        serverPort = 1080;
-        password = "";
-        sni = "";
-    }};
-
     public String password;
+
+    public String security;
     public String sni;
+    public String alpn;
+    public String flow;
 
     @Override
     public void initDefaultValues() {
         super.initDefaultValues();
 
         if (password == null) password = "";
+        if (StrUtil.isBlank(security)) security = "tls";
         if (sni == null) sni = "";
+        if (alpn == null) alpn = "";
+        if (flow == null) flow = "";
+
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(password);
-        output.writeString(sni);
+        output.writeString(security);
+
+        switch (security) {
+            case "tls": {
+                output.writeString(sni);
+                output.writeString(alpn);
+                break;
+            }
+            case "xtls": {
+                output.writeString(sni);
+                output.writeString(alpn);
+                output.writeString(flow);
+                break;
+            }
+        }
     }
 
     @Override
@@ -64,7 +78,26 @@ public class TrojanBean extends AbstractBean {
         int version = input.readInt();
         super.deserialize(input);
         password = input.readString();
-        sni = input.readString();
+        if (version == 0) {
+            security = "tls";
+            sni = input.readString();
+
+            initDefaultValues();
+            return;
+        }
+        security = input.readString();
+        switch (security) {
+            case "tls": {
+                sni = input.readString();
+                alpn = input.readString();
+                break;
+            }
+            case "xtls": {
+                sni = input.readString();
+                alpn = input.readString();
+                flow = input.readString();
+            }
+        }
     }
 
     @NotNull

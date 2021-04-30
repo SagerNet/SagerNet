@@ -9,7 +9,7 @@
 
     <string name="misc">Misc</string>
     <string name="app_version">Version</string>
-    <string name="v2ray_version">Version (v2ray-core)</string>
+    <string name="version_x">Version (%s)</string>
     <string name="logcat">Export debug information</string>
     <string name="logcat_summary">Such useful very wow</string>
 
@@ -105,6 +105,7 @@
     <string name="alter_id">Alter ID</string>
     <string name="security">Transport layer encryption</string>
     <string name="network">Network</string>
+    <string name="flow">Flow control algorithm</string>
 
     <string name="header_type">Header Type</string>
     <string name="ws_host">WebSocket Host</string>

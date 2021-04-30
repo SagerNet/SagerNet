@@ -209,7 +209,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                             }
                         }
                     }
-                } else if (bean is StandardV2RayBean) {
+                } else if (bean is StandardV2RayBean && !proxy.useXray()) {
                     if (bean is VMessBean) {
                         protocol = "vmess"
                         settings = LazyOutboundConfigurationObject(
@@ -260,11 +260,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                         }
                         if (security == "tls") {
                             tlsSettings = TLSObject().apply {
-                                if (bean.tlsSni.isNotBlank()) {
-                                    serverName = bean.tlsSni
+                                if (bean.sni.isNotBlank()) {
+                                    serverName = bean.sni
                                 }
-                                if (bean.tlsAlpn.isNotBlank()) {
-                                    alpn = bean.tlsAlpn.split(",")
+                                if (bean.alpn.isNotBlank()) {
+                                    alpn = bean.alpn.split(",")
                                 }
                             }
                         }
@@ -377,7 +377,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                                     }
                             )
                         })
-                } else if (bean is TrojanBean) {
+                } else if (bean is TrojanBean && !proxy.useXray()) {
                     protocol = "trojan"
                     settings = LazyOutboundConfigurationObject(
                         TrojanOutboundConfigurationObject().apply {
@@ -573,6 +573,216 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 
 }
 
+fun buildXrayConfig(proxy: ProxyEntity): V2RayConfig {
+
+    val remoteDns = DataStore.remoteDNS.split(",")
+    val trafficSniffing = DataStore.trafficSniffing
+    val bean = proxy.requireBean()
+
+    return V2RayConfig().apply {
+
+        dns = DnsObject().apply {
+            servers = mutableListOf()
+
+            servers.addAll(remoteDns.map {
+                DnsObject.StringOrServerObject().apply {
+                    valueX = it
+                }
+            })
+        }
+
+        log = LogObject().apply {
+            loglevel = if (BuildConfig.DEBUG) "debug" else "warning"
+        }
+
+        policy = PolicyObject().apply {
+            levels = mapOf("8" to PolicyObject.LevelPolicyObject().apply {
+                connIdle = 300
+                downlinkOnly = 1
+                handshake = 4
+                uplinkOnly = 1
+            })
+            system = PolicyObject.SystemPolicyObject().apply {
+                statsOutboundDownlink = true
+                statsOutboundUplink = true
+            }
+        }
+
+        inbounds = mutableListOf()
+        inbounds.add(
+            InboundObject().apply {
+                tag = TAG_SOCKS
+                listen = "127.0.0.1"
+                port = DataStore.socksPort + 11
+                protocol = "socks"
+                settings = LazyInboundConfigurationObject(
+                    SocksInboundConfigurationObject().apply {
+                        auth = "noauth"
+                        udp = true
+                        userLevel = 8
+                    })
+                if (trafficSniffing) {
+                    sniffing = InboundObject.SniffingObject().apply {
+                        enabled = true
+                        destOverride = listOf("http", "tls")
+                        metadataOnly = false
+                    }
+                }
+            }
+        )
+
+        outbounds = mutableListOf()
+        outbounds.add(
+            OutboundObject().apply {
+                tag = TAG_AGENT
+                if (bean is StandardV2RayBean) {
+                    bean as VLESSBean
+                    protocol = "vless"
+                    settings = LazyOutboundConfigurationObject(
+                        VLESSOutboundConfigurationObject().apply {
+                            vnext = listOf(
+                                VLESSOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    port = bean.serverPort
+                                    users = listOf(
+                                        VLESSOutboundConfigurationObject.ServerObject.UserObject()
+                                            .apply {
+                                                id = bean.uuid
+                                                encryption = bean.encryption
+                                                level = 8
+                                                flow = bean.flow
+                                            }
+                                    )
+                                }
+                            )
+                        })
+
+                    streamSettings = StreamSettingsObject().apply {
+                        network = bean.type
+                        if (bean.security.isNotBlank()) {
+                            security = bean.security
+                        }
+                        when (security) {
+                            "tls" -> {
+                                tlsSettings = TLSObject().apply {
+                                    if (bean.sni.isNotBlank()) {
+                                        serverName = bean.sni
+                                    }
+                                    if (bean.alpn.isNotBlank()) {
+                                        alpn = bean.alpn.split(",")
+                                    }
+                                }
+                            }
+                            "xtls" -> {
+                                xtlsSettings = XTLSObject().apply {
+                                    if (bean.sni.isNotBlank()) {
+                                        serverName = bean.sni
+                                    }
+                                    if (bean.alpn.isNotBlank()) {
+                                        alpn = bean.alpn.split(",")
+                                    }
+                                }
+                            }
+                        }
+
+                        when (network) {
+                            "tcp" -> {
+                                tcpSettings = TcpObject().apply {
+                                    if (bean.headerType == "http") {
+                                        header = TcpObject.HeaderObject().apply {
+                                            type = "http"
+                                            if (bean.host.isNotBlank() || bean.path.isNotBlank()) {
+                                                request = TcpObject.HeaderObject.HTTPRequestObject()
+                                                    .apply {
+                                                        headers = mutableMapOf()
+                                                        if (bean.host.isNotBlank()) {
+                                                            headers["Host"] =
+                                                                bean.host.split(",")
+                                                                    .map { it.trim() }
+                                                        }
+                                                        if (bean.path.isNotBlank()) {
+                                                            path = bean.path.split(",")
+                                                        }
+                                                    }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            "kcp" -> {
+                                kcpSettings = KcpObject().apply {
+                                    mtu = 1350
+                                    tti = 50
+                                    uplinkCapacity = 12
+                                    downlinkCapacity = 100
+                                    congestion = false
+                                    readBufferSize = 1
+                                    writeBufferSize = 1
+                                    header = KcpObject.HeaderObject().apply {
+                                        type = bean.headerType
+                                    }
+                                    if (bean.mKcpSeed.isNotBlank()) {
+                                        seed = bean.mKcpSeed
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                } else if (bean is TrojanBean) {
+                    protocol = "trojan"
+                    settings = LazyOutboundConfigurationObject(
+                        TrojanOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                TrojanOutboundConfigurationObject.ServerObject().apply {
+                                    address = bean.serverAddress
+                                    port = bean.serverPort
+                                    password = bean.password
+                                    flow = bean.flow
+                                    level = 8
+                                }
+                            )
+                        }
+                    )
+                    streamSettings = StreamSettingsObject().apply {
+                        network = "tcp"
+                        security = bean.security
+                        when (security) {
+                            "tls" -> {
+                                tlsSettings = TLSObject().apply {
+                                    if (bean.sni.isNotBlank()) {
+                                        serverName = bean.sni
+                                    }
+                                    if (bean.alpn.isNotBlank()) {
+                                        alpn = bean.alpn.split(",")
+                                    }
+                                }
+                            }
+                            "xtls" -> {
+                                xtlsSettings = XTLSObject().apply {
+                                    if (bean.sni.isNotBlank()) {
+                                        serverName = bean.sni
+                                    }
+                                    if (bean.alpn.isNotBlank()) {
+                                        alpn = bean.alpn.split(",")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (DataStore.enableMux) {
+                    mux = OutboundObject.MuxObject().apply {
+                        enabled = true
+                        concurrency = DataStore.muxConcurrency
+                    }
+                }
+            }
+        )
+
+    }
+}
+
 fun parseV2Ray(link: String): StandardV2RayBean {
     if (!link.contains("@")) {
         return parseV2RayN(link)
@@ -606,7 +816,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
 
             url.queryParameter("tlsServerName")?.let {
                 if (it.isNotBlank()) {
-                    bean.tlsSni = it
+                    bean.sni = it
                 }
             }
         }
@@ -673,10 +883,22 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             "tls" -> {
                 bean.security = "tls"
                 url.queryParameter("sni")?.let {
-                    bean.tlsSni = it
+                    bean.sni = it
                 }
                 url.queryParameter("alpn")?.let {
-                    bean.tlsAlpn = it
+                    bean.alpn = it
+                }
+            }
+            "xtls" -> {
+                bean.security = "xtls"
+                url.queryParameter("sni")?.let {
+                    bean.sni = it
+                }
+                url.queryParameter("alpn")?.let {
+                    bean.alpn = it
+                }
+                url.queryParameter("flow")?.let {
+                    bean.flow = it
                 }
             }
         }
@@ -771,7 +993,7 @@ fun parseV2RayN(link: String): VMessBean {
     bean.host = json.getStr("host") ?: ""
     bean.path = json.getStr("path") ?: ""
     bean.name = json.getStr("ps") ?: ""
-    bean.tlsSni = json.getStr("sni") ?: ""
+    bean.sni = json.getStr("sni") ?: ""
     bean.security = json.getStr("tls") ?: ""
 
     if (json.getInt("v", 2) < 2) {
@@ -865,7 +1087,7 @@ fun VMessBean.toV2rayN(): String {
         it["type"] = headerType
         it["path"] = path
         it["tls"] = if (security == "tls") "tls" else ""
-        it["sni"] = tlsSni
+        it["sni"] = sni
         it["scy"] = security
 
     }.toString().let { Base64.encodeUrlSafe(it) }
@@ -945,11 +1167,22 @@ fun StandardV2RayBean.toUri(standard: Boolean): String {
         builder.addQueryParameter("security", security)
         when (security) {
             "tls" -> {
-                if (tlsSni.isNotBlank()) {
-                    builder.addQueryParameter("sni", tlsSni)
+                if (sni.isNotBlank()) {
+                    builder.addQueryParameter("sni", sni)
                 }
-                if (tlsAlpn.isNotBlank()) {
-                    builder.addQueryParameter("alpn", tlsAlpn)
+                if (alpn.isNotBlank()) {
+                    builder.addQueryParameter("alpn", alpn)
+                }
+            }
+            "xtls" -> {
+                if (sni.isNotBlank()) {
+                    builder.addQueryParameter("sni", sni)
+                }
+                if (alpn.isNotBlank()) {
+                    builder.addQueryParameter("alpn", alpn)
+                }
+                if (flow.isNotBlank()) {
+                    builder.addQueryParameter("flow", flow)
                 }
             }
         }

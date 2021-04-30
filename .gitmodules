@@ -28,6 +28,6 @@
 [submodule "shadowsocksr/src/main/jni/re2"]
 	path = shadowsocksr/src/main/jni/re2
 	url = https://github.com/google/re2
-[submodule "xray-plugin/src/main/go/Xray-core"]
-	path = xray-plugin/src/main/go/Xray-core
+[submodule "xtls-plugin/src/main/go/Xray-core"]
+	path = xtls-plugin/src/main/go/Xray-core
 	url = https://github.com/XTLS/Xray-core

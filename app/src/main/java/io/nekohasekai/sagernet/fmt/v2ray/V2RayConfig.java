@@ -554,6 +554,7 @@ public class V2RayConfig {
                 public String id;
                 public String encryption;
                 public Integer level;
+                public String flow;
 
             }
 
@@ -572,6 +573,7 @@ public class V2RayConfig {
             public String password;
             public String email;
             public Integer level;
+            public String flow;
 
         }
 
@@ -603,6 +605,7 @@ public class V2RayConfig {
         public String network;
         public String security;
         public TLSObject tlsSettings;
+        public XTLSObject xtlsSettings;
         public TcpObject tcpSettings;
         public KcpObject kcpSettings;
         public WebSocketObject wsSettings;
@@ -629,6 +632,31 @@ public class V2RayConfig {
         public List<String> alpn;
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
+
+        public static class CertificateObject {
+
+            public String usage;
+            public String certificateFile;
+            public String keyFile;
+            public List<String> certificate;
+            public List<String> key;
+
+        }
+
+    }
+
+    public static class XTLSObject {
+
+        public String serverName;
+        public Boolean allowInsecure;
+        public List<String> alpn;
+        public String minVersion;
+        public String maxVersion;
+        public Boolean preferServerCipherSuites;
+        public String cipherSuites;
+        public List<CertificateObject> certificates;
+        public Boolean disableSystemRoot;
+        public Boolean enableSessionResumption;
 
         public static class CertificateObject {
 

@@ -23,8 +23,8 @@ export GOOS=android
 OUTPUT="xrayexec"
 LIB_OUTPUT="lib$OUTPUT.so"
 AAR_OUTPUT="$OUTPUT.aar"
-ROOT="$PROJECT/xray-plugin/src/main/jniLibs"
-cd $PROJECT/xray-plugin/src/main/go/Xray-core
+ROOT="$PROJECT/xtls-plugin/src/main/jniLibs"
+cd $PROJECT/xtls-plugin/src/main/go/Xray-core
 
 DIR="$ROOT/armeabi-v7a"
 mkdir -p $DIR

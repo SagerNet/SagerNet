@@ -17,7 +17,7 @@
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/shadowsocks" />
             <option value="$PROJECT_DIR$/shadowsocksr" />
-            <option value="$PROJECT_DIR$/xray-plugin" />
+            <option value="$PROJECT_DIR$/xtls-plugin" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

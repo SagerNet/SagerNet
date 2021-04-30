@@ -43,6 +43,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
@@ -131,7 +132,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
                         .commit()
 
                     DataStore.dirty = false
-                    DataStore.profileCacheStore.registerChangeListener(this@ProfileSettingsActivity)
                 }
             }
 
@@ -185,6 +185,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
+            Logs.d("Chnaged $key")
             DataStore.dirty = true
         }
     }
@@ -209,6 +210,8 @@ abstract class ProfileSettingsActivity<T : AbstractBean> : AppCompatActivity(),
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             activity.apply {
                 createPreferences(savedInstanceState, rootKey)
+
+                DataStore.profileCacheStore.registerChangeListener(this)
             }
         }
 
