@@ -98,6 +98,8 @@ public class TrojanBean extends AbstractBean {
                 flow = input.readString();
             }
         }
+
+        initDefaultValues();
     }
 
     @NotNull
