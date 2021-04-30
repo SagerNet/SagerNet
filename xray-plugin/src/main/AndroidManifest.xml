@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.nekohasekai.sagernet.plugin.xray"
+    android:installLocation="internalOnly">
+
+    <application
+        android:allowBackup="false"
+        android:extractNativeLibs="true"
+        android:label="Xray Plugin">
+        <provider
+            android:name=".BinaryProvider"
+            android:authorities="io.nekohasekai.sagernet.plugin.xray.BinaryProvider"
+            android:directBootAware="true"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider">
+            <intent-filter>
+                <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+                <data
+                    android:host="io.nekohasekai.sagernet"
+                    android:path="/xray"
+                    android:scheme="plugin" />
+            </intent-filter>
+        </provider>
+
+        <meta-data
+            android:name="io.nekohasekai.sagernet.plugin.id"
+            android:value="xray-plugin" />
+        <meta-data
+            android:name="com.github.shadowsocks.plugin.executable_path"
+            android:value="libxrayexec.so" />
+    </application>
+
+</manifest>

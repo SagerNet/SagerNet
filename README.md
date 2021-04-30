@@ -40,10 +40,6 @@ The application is designed to be used whenever possible.
 * The Chinese apps scanner will only scan system apps if "Show system apps" is checked  
 * ~~V2Ray browser forwarding is not yet available, only for developers to debug~~ Fixed
 
-## XRAY
-
-SagerNet is a V2Ray client, not an Xray client. For that, please use the official X-flutter client.
-
 ## OPEN SOURCE LICENSES
 
 <ul>

@@ -5,3 +5,4 @@ include ':shadowsocks'
 include ':shadowsocksr'
 
 include ':plugin'
+include ':xray-plugin'
