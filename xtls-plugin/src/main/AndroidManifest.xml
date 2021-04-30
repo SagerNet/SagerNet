@@ -7,7 +7,7 @@
     <application
         android:allowBackup="false"
         android:extractNativeLibs="true"
-        android:label="Xray Plugin">
+        android:label="XTLS Plugin">
         <provider
             android:name=".BinaryProvider"
             android:authorities="io.nekohasekai.sagernet.plugin.xtls.BinaryProvider"

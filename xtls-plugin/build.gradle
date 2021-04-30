@@ -38,7 +38,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "v1.4.2"
+        versionName "1.4.2"
     }
 
     signingConfigs {
@@ -68,7 +68,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = outputFileName.replace("app", "xtls-plugin-" + variant.versionName)
+            outputFileName = outputFileName.replace("xtls-plugin", "xtls-plugin-" + variant.versionName)
         }
     }
 

@@ -134,7 +134,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                 addItem(MaterialAboutActionItem.Builder()
                                     .icon(R.drawable.ic_baseline_nfc_24)
                                     .text(getString(R.string.version_x, plugin.id))
-                                    .subText(plugin.versionName)
+                                    .subText("v" + plugin.versionName)
                                     .setOnClickAction {
                                         startActivity(Intent().apply {
                                             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
