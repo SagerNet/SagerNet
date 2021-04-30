@@ -15,3 +15,4 @@ build/
 local.properties
 /app/libs/
 /app/src/main/assets/v2ray
+/service_account_credentials.json

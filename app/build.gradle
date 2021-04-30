@@ -6,6 +6,9 @@ plugins {
     id "com.mikepenz.aboutlibraries.plugin"
 }
 
+def verCode = 10
+def verName = "0.1-beta10"
+
 def keystorePwd = null
 def alias = null
 def pwd = null
@@ -30,6 +33,28 @@ keystorePwd = keystorePwd ?: System.getenv("KEYSTORE_PASS")
 alias = alias ?: System.getenv("ALIAS_NAME")
 pwd = pwd ?: System.getenv("ALIAS_PASS")
 
+def serviceAccountCredentialsFile = rootProject.file("service_account_credentials.json")
+def beta = verName.contains("beta")
+if (serviceAccountCredentialsFile.isFile()) {
+    setupPlay(beta)
+    play.serviceAccountCredentials = serviceAccountCredentialsFile
+} else if (System.getenv().containsKey("ANDROID_PUBLISHER_CREDENTIALS")) {
+    setupPlay(beta)
+}
+
+void setupPlay(boolean beta) {
+    apply plugin: "com.github.triplet.play"
+    play {
+        track = "beta"
+    //    track = beta ? "beta" : "production"
+        defaultToAppBundles = true
+    }
+}
+
+configurations {
+    compile.exclude module: "support-v4"
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -38,8 +63,8 @@ android {
         applicationId "io.nekohasekai.sagernet"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 9
-        versionName "0.1-beta9"
+        versionCode verCode
+        versionName verName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
