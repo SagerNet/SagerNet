@@ -68,7 +68,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
             service else null), false)
-        if (profile.useExternalShadowsocks() || profile.type == 2) {
+        if (profile.useExternalShadowsocks() || profile.useXray() || profile.type == 2) {
             v2rayPoint.domainName = "127.0.0.1:${DataStore.socksPort + 10}"
         } else {
             v2rayPoint.domainName =

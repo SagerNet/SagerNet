@@ -167,6 +167,10 @@ data class ProxyEntity(
         return false
     }
 
+    fun useXray(): Boolean {
+        return false
+    }
+
     fun putBean(bean: AbstractBean) {
         when (bean) {
             is SOCKSBean -> {

@@ -38,7 +38,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "io.nekohasekai.sagernet.plugin.xray"
+        versionName "v1.4.2"
     }
 
     signingConfigs {

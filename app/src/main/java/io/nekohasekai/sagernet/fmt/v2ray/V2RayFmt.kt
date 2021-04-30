@@ -255,7 +255,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 
                     streamSettings = StreamSettingsObject().apply {
                         network = bean.type
-                        if (security.isNotBlank()) {
+                        if (bean.security.isNotBlank()) {
                             security = bean.security
                         }
                         if (security == "tls") {
@@ -363,33 +363,20 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                         }
 
                     }
-                } else if (bean is ShadowsocksBean) {
-                    if (!proxy.useExternalShadowsocks()) {
-                        protocol = "shadowsocks"
-                        settings = LazyOutboundConfigurationObject(
-                            ShadowsocksOutboundConfigurationObject().apply {
-                                servers = listOf(
-                                    ShadowsocksOutboundConfigurationObject.ServerObject()
-                                        .apply {
-                                            address = bean.serverAddress
-                                            port = bean.serverPort
-                                            method = bean.method
-                                            password = bean.password
-                                        }
-                                )
-                            })
-                    } else {
-                        protocol = "socks"
-                        settings = LazyOutboundConfigurationObject(
-                            SocksOutboundConfigurationObject().apply {
-                                servers = listOf(
-                                    SocksOutboundConfigurationObject.ServerObject().apply {
-                                        address = "127.0.0.1"
-                                        port = DataStore.socksPort + 10
+                } else if (bean is ShadowsocksBean && !proxy.useExternalShadowsocks()) {
+                    protocol = "shadowsocks"
+                    settings = LazyOutboundConfigurationObject(
+                        ShadowsocksOutboundConfigurationObject().apply {
+                            servers = listOf(
+                                ShadowsocksOutboundConfigurationObject.ServerObject()
+                                    .apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        method = bean.method
+                                        password = bean.password
                                     }
-                                )
-                            })
-                    }
+                            )
+                        })
                 } else if (bean is TrojanBean) {
                     protocol = "trojan"
                     settings = LazyOutboundConfigurationObject(
