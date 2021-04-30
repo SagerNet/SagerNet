@@ -93,6 +93,7 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     var cacheFiles = LinkedList<File>()
 
+    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     fun start() {
         val bean = profile.requireBean()
 
@@ -138,6 +139,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                 val configFile =
                     File(context.noBackupFilesDir,
                         "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.parentFile.mkdirs()
                 configFile.writeText(proxyConfig.toString())
                 cacheFiles.add(configFile)
 
@@ -180,6 +182,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                 val configFile =
                     File(context.noBackupFilesDir,
                         "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.parentFile.mkdirs()
                 configFile.writeText(proxyConfig.toString())
                 cacheFiles.add(configFile)
 
@@ -201,11 +204,12 @@ class ProxyInstance(val profile: ProxyEntity) {
                 val configFile =
                     File(context.noBackupFilesDir,
                         "xray_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.parentFile.mkdirs()
                 configFile.writeText(xrayConfig)
                 cacheFiles.add(configFile)
 
                 val commands = mutableListOf(
-                    xrayPlugin,"-c", configFile.absolutePath
+                    xrayPlugin, "-c", configFile.absolutePath
                 )
 
                 base.data.processes!!.start(commands)
