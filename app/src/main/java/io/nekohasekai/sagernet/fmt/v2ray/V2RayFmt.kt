@@ -584,11 +584,22 @@ fun buildXrayConfig(proxy: ProxyEntity): V2RayConfig {
         dns = DnsObject().apply {
             servers = mutableListOf()
 
-            servers.addAll(remoteDns.map {
-                DnsObject.StringOrServerObject().apply {
-                    valueX = it
-                }
-            })
+            if (!DataStore.enableLocalDNS) {
+                servers.addAll(remoteDns.map {
+                    DnsObject.StringOrServerObject().apply {
+                        valueX = it
+                    }
+                })
+            } else {
+                servers.add(
+                    DnsObject.StringOrServerObject().apply {
+                        valueY = DnsObject.ServerObject().apply {
+                            address = "127.0.0.1"
+                            port = DataStore.localDNSPort
+                        }
+                    }
+                )
+            }
         }
 
         log = LogObject().apply {
@@ -613,7 +624,7 @@ fun buildXrayConfig(proxy: ProxyEntity): V2RayConfig {
             InboundObject().apply {
                 tag = TAG_SOCKS
                 listen = "127.0.0.1"
-                port = DataStore.socksPort + 11
+                port = DataStore.socksPort + 10
                 protocol = "socks"
                 settings = LazyInboundConfigurationObject(
                     SocksInboundConfigurationObject().apply {
@@ -971,6 +982,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             }
         }
     }
+
+    Logs.d(formatObject(bean))
 
     return bean
 }

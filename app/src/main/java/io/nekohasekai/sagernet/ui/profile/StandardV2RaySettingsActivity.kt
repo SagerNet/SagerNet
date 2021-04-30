@@ -169,11 +169,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             true
         }
 
-        val tlev = resources.getStringArray(R.array.transport_layer_encryption_value)
-        if (security.value !in tlev) {
-            security.value = tlev[0]
-        }
-        updateTle(security.value)
         security.setOnPreferenceChangeListener { _, newValue ->
             updateTle(newValue as String)
             true
@@ -190,13 +185,30 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 "tcp", "kcp" -> {
                     security.setEntries(R.array.transport_layer_encryption_xray_entry)
                     security.setEntryValues(R.array.transport_layer_encryption_xray_value)
+                    security.value = DataStore.serverSecurity
+
+                    val tlev =
+                        resources.getStringArray(R.array.transport_layer_encryption_xray_value)
+                    if (security.value !in tlev) {
+                        security.value = tlev[0]
+                    }
                 }
                 else -> {
                     security.setEntries(R.array.transport_layer_encryption_entry)
                     security.setEntryValues(R.array.transport_layer_encryption_value)
+                    security.value = DataStore.serverSecurity
+
+                    val tlev =
+                        resources.getStringArray(R.array.transport_layer_encryption_value)
+                    if (security.value !in tlev) {
+                        security.value = tlev[0]
+                    }
                 }
             }
         }
+
+        updateTle(security.value)
+
         when (network) {
             "tcp" -> {
                 header.setEntries(R.array.tcp_headers_entry)

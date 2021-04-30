@@ -217,7 +217,7 @@ data class ProxyEntity(
     fun requireSS() = requireBean() as ShadowsocksBean
     fun requireSSR() = requireBean() as ShadowsocksRBean
     fun requireVMess() = requireBean() as VMessBean
-    fun requireVLESS() = requireBean() as VMessBean
+    fun requireVLESS() = requireBean() as VLESSBean
     fun requireTrojan() = requireBean() as TrojanBean
     fun requireHttp() = requireBean() as HttpBean
 
