@@ -6,4 +6,5 @@
 -keep class org.yaml.snakeyaml.** { *; }
 -keep class org.yaml.snakeyaml.** { *; }
 
--keepattributes SourceFile
+-keepattributes SourceFile, LineNumberTable
+-dontobfuscate

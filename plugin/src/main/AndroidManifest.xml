@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.nekohasekai.sagernet.plugin"
-    android:installLocation="internalOnly"
-    android:sharedUserId="io.nekohasekai.sagernet">
-
-    <application>
-        <meta-data
-            android:name="io.nekohasekai.sagernet.plugin.version"
-            android:value="1.0" />
-    </application>
-
-</manifest>
+    android:installLocation="internalOnly" />
