@@ -1,4 +1,4 @@
-name: XTLS Plugin Release Build
+name: Trojan-Go Plugin Release Build
 on:
   workflow_dispatch:
     inputs:

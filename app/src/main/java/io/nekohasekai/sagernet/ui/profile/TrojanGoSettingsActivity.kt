@@ -98,13 +98,12 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         type = DataStore.serverNetwork
         host = DataStore.serverHost
         path = DataStore.serverPath
-        when (val security = DataStore.serverEncryption) {
+        encryption = when (val security = DataStore.serverEncryption) {
             "ss" -> {
-                DataStore.serverEncryption =
-                    "ss;" + DataStore.serverMethod + ":" + DataStore.serverPassword1
+                "ss;" + DataStore.serverMethod + ":" + DataStore.serverPassword1
             }
             else -> {
-                encryption = security
+                security
             }
         }
         plugin = DataStore.serverPlugin

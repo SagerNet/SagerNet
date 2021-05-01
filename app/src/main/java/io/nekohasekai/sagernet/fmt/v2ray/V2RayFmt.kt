@@ -412,7 +412,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                             )
                         })
                 }
-                if (DataStore.enableMux) {
+                if (DataStore.enableMux && !(proxy.useXray() || proxy.type == 7)) {
                     mux = OutboundObject.MuxObject().apply {
                         enabled = true
                         concurrency = DataStore.muxConcurrency

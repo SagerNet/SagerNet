@@ -96,6 +96,7 @@ data class ProxyEntity(
             4 -> vlessBean = KryoConverters.vlessDeserialize(byteArray)
             5 -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
             6 -> httpBean = KryoConverters.httpDeserialize(byteArray)
+            7 -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
         }
     }
 
