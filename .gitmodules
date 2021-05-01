@@ -31,3 +31,6 @@
 [submodule "xtls-plugin/src/main/go/Xray-core"]
 	path = xtls-plugin/src/main/go/Xray-core
 	url = https://github.com/XTLS/Xray-core
+[submodule "trojan-go-plugin/src/main/go/trojan-go"]
+	path = trojan-go-plugin/src/main/go/trojan-go
+	url = https://github.com/p4gefau1t/trojan-go

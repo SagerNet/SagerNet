@@ -45,3 +45,21 @@ fi
 if [ $(command -v go) ]; then
   export PATH=$PATH:$(go env GOPATH)/bin
 fi
+
+DEPS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
+
+export ANDROID_ARM_CC=$DEPS/armv7a-linux-androideabi16-clang
+export ANDROID_ARM_STRIP=$DEPS/arm-linux-androideabi-strip
+
+export ANDROID_ARM64_CC=$DEPS/aarch64-linux-android21-clang
+export ANDROID_ARM64_STRIP=$DEPS/aarch64-linux-android-strip
+
+export ANDROID_X86_CC=$DEPS/i686-linux-android16-clang
+export ANDROID_X86_STRIP=$DEPS/i686-linux-android-strip
+
+export ANDROID_X86_64_CC=$DEPS/x86_64-linux-android21-clang
+export ANDROID_X86_64_STRIP=$DEPS/x86_64-linux-android-strip
+
+export GO111MOD=on
+export CGO_ENABLED=1
+export GOOS=android

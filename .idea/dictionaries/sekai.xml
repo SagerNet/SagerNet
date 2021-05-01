@@ -11,6 +11,7 @@
       <w>grpc</w>
       <w>gson</w>
       <w>libev</w>
+      <w>libtrojan</w>
       <w>nativeproxy</w>
       <w>nekohasekai</w>
       <w>obfs</w>

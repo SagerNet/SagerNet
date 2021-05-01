@@ -34,11 +34,11 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "io.nekohasekai.sagernet.plugin.xtls"
+        applicationId "io.nekohasekai.sagernet.plugin.trojan_go"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "1.4.2"
+        versionName "0.8.3"
     }
 
     signingConfigs {

@@ -6,3 +6,4 @@ include ':shadowsocksr'
 
 include ':plugin'
 include ':xtls-plugin'
+include ':trojan-go-plugin'
