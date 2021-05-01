@@ -262,7 +262,7 @@ object ProfileManager {
         } catch (ignored: JSONException) {
         }
 
-        if (text.contains("proxies:\n")) {
+        if (text.contains("proxies:")) {
 
             // clash
             for (proxy in (Yaml().loadAs(text,
