@@ -325,7 +325,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
         private fun isProfileEditable(id: Long) =
             (activity as MainActivity).state == BaseService.State.Stopped || id != DataStore.selectedProxy
 
-        lateinit var layoutManager: RecyclerView.LayoutManager
+        lateinit var layoutManager: LinearLayoutManager
         lateinit var configurationListView: RecyclerView
 
         override fun onResume() {
@@ -356,6 +356,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             ProfileManager.addListener(adapter)
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
+            addOverScrollListener(configurationListView)
 
             undoManager =
                 UndoSnackbarManager(activity as MainActivity, adapter)
@@ -703,7 +704,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     runOnDefaultDispatcher {
                         val selected = DataStore.selectedProxy == proxyEntity.id
                         onMainDispatcher {
-                            selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                            selectedView.visibility =
+                                if (selected) View.VISIBLE else View.INVISIBLE
                         }
                     }
 
@@ -739,7 +741,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                     runOnDefaultDispatcher {
                         val selected = DataStore.selectedProxy == proxyEntity.id
                         onMainDispatcher {
-                            selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                            selectedView.visibility =
+                                if (selected) View.VISIBLE else View.INVISIBLE
                         }
                     }
 

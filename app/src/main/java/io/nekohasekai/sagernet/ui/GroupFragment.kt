@@ -742,7 +742,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             groupStatus.text =
                                 app.resources.getString(R.string.group_status_proxies_subscription,
                                     size,
-                                    "${date.month + 1}-${date.date}"
+                                    "${date.month + 1} - ${date.date}"
                                 )
                         }
                     }
