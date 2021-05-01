@@ -91,6 +91,7 @@
                     android:focusable="true"
                     android:nextFocusLeft="@+id/container"
                     android:padding="12dp">
+
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/shareIcon"
                         android:layout_width="wrap_content"

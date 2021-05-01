@@ -688,11 +688,11 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                              // TODO: Alert insecure
                          }
                      } else {*/
-                    shareLayout.setBackgroundColor(Color.TRANSPARENT)
+                    // shareLayout.setBackgroundColor(Color.TRANSPARENT)
                     shareButton.setImageResource(R.drawable.ic_social_share)
                     shareButton.setColorFilter(Color.GRAY)
 
-                    shareButton.setOnClickListener {
+                    shareLayout.setOnClickListener {
                         val popup = PopupMenu(requireContext(), it)
                         popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
