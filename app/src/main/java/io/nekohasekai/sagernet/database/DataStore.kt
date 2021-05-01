@@ -136,6 +136,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverPort by profileCacheStore.stringToInt(Key.SERVER_PORT)
     var serverUsername by profileCacheStore.string(Key.SERVER_USERNAME)
     var serverPassword by profileCacheStore.string(Key.SERVER_PASSWORD)
+    var serverPassword1 by profileCacheStore.string(Key.SERVER_PASSWORD1)
     var serverUdp by profileCacheStore.boolean(Key.SERVER_UDP)
     var serverMethod by profileCacheStore.string(Key.SERVER_METHOD)
     var serverPlugin by profileCacheStore.string(Key.SERVER_PLUGIN)

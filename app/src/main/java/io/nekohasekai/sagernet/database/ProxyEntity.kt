@@ -40,6 +40,8 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.toUri
+import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
+import io.nekohasekai.sagernet.fmt.trojan_go.toUri
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
@@ -64,6 +66,7 @@ data class ProxyEntity(
     var vmessBean: VMessBean? = null,
     var vlessBean: VLESSBean? = null,
     var trojanBean: TrojanBean? = null,
+    var trojanGoBean: TrojanGoBean? = null,
 ) : Parcelable {
 
     @Ignore
@@ -118,6 +121,7 @@ data class ProxyEntity(
             4 -> "VLESS"
             5 -> "Trojan"
             6 -> if (requireHttp().tls) "HTTPS" else "HTTP"
+            7 -> "Trojan-Go"
             else -> "Undefined type $type"
         }
     }
@@ -137,6 +141,7 @@ data class ProxyEntity(
             4 -> vlessBean ?: error("Null vless node")
             5 -> trojanBean ?: error("Null trojan node")
             6 -> httpBean ?: error("Null http node")
+            7 -> trojanGoBean ?: error("Null trojan-go node")
             else -> error("Undefined type $type")
         }
     }
@@ -150,6 +155,7 @@ data class ProxyEntity(
             4 -> requireVLESS().toUri(true)
             5 -> requireTrojan().toUri()
             6 -> requireHttp().toUri()
+            7 -> requireTrojanGo().toUri()
             else -> error("Undefined type $type")
         }
     }
@@ -209,6 +215,10 @@ data class ProxyEntity(
                 type = 5
                 trojanBean = bean
             }
+            is TrojanGoBean -> {
+                type = 7
+                trojanGoBean = bean
+            }
             else -> error("Undefined type $type")
         }
     }
@@ -220,6 +230,7 @@ data class ProxyEntity(
     fun requireVLESS() = requireBean() as VLESSBean
     fun requireTrojan() = requireBean() as TrojanBean
     fun requireHttp() = requireBean() as HttpBean
+    fun requireTrojanGo() = requireBean() as TrojanGoBean
 
     fun settingIntent(ctx: Context, isSubscription: Boolean): Intent {
         return Intent(ctx, when (type) {
@@ -230,6 +241,7 @@ data class ProxyEntity(
             4 -> VLESSSettingsActivity::class.java
             5 -> TrojanSettingsActivity::class.java
             6 -> HttpSettingsActivity::class.java
+            7 -> TrojanGoSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)

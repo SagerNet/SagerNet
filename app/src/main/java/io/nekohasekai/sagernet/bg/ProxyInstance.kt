@@ -29,9 +29,11 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
@@ -65,8 +67,8 @@ class ProxyInstance(val profile: ProxyEntity) {
     lateinit var config: V2RayConfig
     lateinit var base: BaseService.Interface
     lateinit var wsForwarder: WebView
-    lateinit var xrayPlugin: String
-    lateinit var xrayConfig: String
+    lateinit var plugin: String
+    lateinit var pluginConfig: String
 
     fun init(service: BaseService.Interface) {
         base = service
@@ -84,10 +86,79 @@ class ProxyInstance(val profile: ProxyEntity) {
         }
 
         if (profile.useXray()) {
-            xrayPlugin = PluginManagerS.init("xtls-plugin")!!.path
-            xrayConfig = gson.toJson(buildXrayConfig(profile)).also {
+            plugin = PluginManagerS.init("xtls-plugin")!!.path
+            pluginConfig = gson.toJson(buildXrayConfig(profile)).also {
                 Logs.d(it)
             }
+        } else if (profile.type == 7) {
+            val bean = profile.requireTrojanGo()
+            plugin = PluginManagerS.init("trojan-go-plugin")!!.path
+            pluginConfig = JSONObject().also { conf ->
+                conf["run_type"] = "client"
+                conf["local_addr"] = "127.0.0.1"
+                conf["local_port"] = DataStore.socksPort + 10
+                conf["remote_addr"] = bean.serverAddress
+                conf["remote_port"] = bean.serverPort
+                conf["password"] = JSONArray().apply {
+                    add(bean.password)
+                }
+                conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
+                if (DataStore.enableMux) {
+                    conf["mux"] = JSONObject().also {
+                        it["enabled"] = true
+                        it["concurrency"] = DataStore.muxConcurrency
+                    }
+                }
+                if (!DataStore.preferIpv6) {
+                    conf["tcp"] = JSONObject().also {
+                        it["prefer_ipv4"] = true
+                    }
+                }
+
+                when (bean.type) {
+                    "original" -> {
+                    }
+                    "ws" -> {
+                        conf["websocket"] = JSONObject().also {
+                            it["enabled"] = true
+                            it["host"] = bean.host
+                            it["path"] = bean.path
+                        }
+                    }
+                }
+
+                if (bean.sni.isNotBlank()) {
+                    conf["ssl"] = JSONObject().also {
+                        it["sni"] = bean.sni
+                    }
+                }
+
+                when {
+                    bean.encryption == "none" -> {
+                    }
+                    bean.encryption.startsWith("ss;") -> {
+                        conf["shadowsocks"] = JSONObject().also {
+                            it["enabled"] = true
+                            it["method"] = bean.encryption.substringAfter(";").substringBefore(":")
+                            it["password"] = bean.encryption.substringAfter(":")
+                        }
+                    }
+                }
+
+                if (bean.plugin.isNotBlank()) {
+                    val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
+                    PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                        conf["transport_plugin"] = JSONObject().also {
+                            it["enabled"] = true
+                            it["type"] = "shadowsocks"
+                            it["command"] = path
+                            it["option"] = opts.toString()
+                        }
+                    }
+                }
+            }.also {
+                Logs.d(it.toStringPretty())
+            }.toString()
         }
     }
 
@@ -205,16 +276,35 @@ class ProxyInstance(val profile: ProxyEntity) {
                     File(context.noBackupFilesDir,
                         "xray_" + SystemClock.elapsedRealtime() + ".json")
                 configFile.parentFile.mkdirs()
-                configFile.writeText(xrayConfig)
+                configFile.writeText(pluginConfig)
                 cacheFiles.add(configFile)
 
                 val commands = mutableListOf(
-                    xrayPlugin, "-c", configFile.absolutePath
+                    plugin, "-c", configFile.absolutePath
+                )
+
+                base.data.processes!!.start(commands)
+            }
+            profile.type == 7 -> {
+                val context =
+                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                        SagerNet.application else SagerNet.deviceStorage
+
+                val configFile =
+                    File(context.noBackupFilesDir,
+                        "trojan_go_" + SystemClock.elapsedRealtime() + ".json")
+                configFile.parentFile.mkdirs()
+                configFile.writeText(pluginConfig)
+                cacheFiles.add(configFile)
+
+                val commands = mutableListOf(
+                    plugin, "-config", configFile.absolutePath
                 )
 
                 base.data.processes!!.start(commands)
             }
         }
+
 
         v2rayPoint.runLoop(DataStore.preferIpv6)
         runOnDefaultDispatcher {

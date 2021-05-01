@@ -206,6 +206,9 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
             R.id.action_new_trojan -> {
                 startActivity(Intent(requireActivity(), TrojanSettingsActivity::class.java))
             }
+            R.id.action_new_trojan_go -> {
+                startActivity(Intent(requireActivity(), TrojanGoSettingsActivity::class.java))
+            }
         }
         return true
     }

@@ -202,6 +202,7 @@
     <string name="action_vmess">VMess</string>
     <string name="action_vless">VLESS</string>
     <string name="action_trojan">Trojan</string>
+    <string name="action_trojan_go">Trojan Go</string>
 
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
@@ -269,6 +270,7 @@
     <string name="plugin_auto_connect_unlock_only">This plugin might not work with Auto Connect</string>
 
     <string name="proxy_cat">Server Settings</string>
+    <string name="ss_cat">Shadowsocks Settings</string>
     <string name="feature_cat">Feature Settings</string>
     <string name="unsaved_changes_prompt">Changes not saved. Do you want to save?</string>
     <string name="yes">Yes</string>

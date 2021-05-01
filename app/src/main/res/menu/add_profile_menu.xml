@@ -40,6 +40,9 @@
                     <item
                         android:id="@+id/action_new_trojan"
                         android:title="@string/action_trojan" />
+                    <item
+                        android:id="@+id/action_new_trojan_go"
+                        android:title="@string/action_trojan_go" />
                 </menu>
             </item>
 

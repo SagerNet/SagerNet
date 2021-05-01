@@ -24,6 +24,7 @@
       <w>uplink</w>
       <w>vless</w>
       <w>vmess</w>
+      <w>websocket</w>
       <w>xray</w>
       <w>xtls</w>
     </words>

@@ -11,6 +11,7 @@
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/pcre" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/re2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/shadowsocks-libev" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/trojan-go-plugin/src/main/go/trojan-go" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/v2ray" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/xtls-plugin/src/main/go/Xray-core" vcs="Git" />
   </component>

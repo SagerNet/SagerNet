@@ -326,9 +326,35 @@
         <item>grpc</item>
     </string-array>
 
+    <string-array name="trojan_go_networks_entry" translatable="false">
+        <item>NONE</item>
+        <item>WS</item>
+    </string-array>
+
+    <string-array name="trojan_go_networks_value" translatable="false">
+        <item>none</item>
+        <item>ws</item>
+    </string-array>
+
     <string-array name="tcp_headers_entry" translatable="false">
         <item>NONE</item>
         <item>HTTP</item>
+    </string-array>
+
+    <string-array name="trojan_go_security_entry">
+        <item>NONE</item>
+        <item>SHADOWSOCKS</item>
+    </string-array>
+
+    <string-array name="trojan_go_security_value">
+        <item>none</item>
+        <item>ss</item>
+    </string-array>
+
+    <string-array name="trojan_go_methods">
+        <item>AES-128-GCM</item>
+        <item>AES-256-GCM</item>
+        <item>CHACHA20-IETF-POLY1305</item>
     </string-array>
 
     <string-array name="tcp_headers_value" translatable="false">

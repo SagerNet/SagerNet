@@ -29,16 +29,19 @@ import androidx.preference.EditTextPreferenceDialogFragmentCompat
 import androidx.preference.PreferenceDialogFragmentCompat
 import com.github.shadowsocks.plugin.PluginContract
 import com.github.shadowsocks.plugin.PluginManager
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity
 
 class PluginConfigurationDialogFragment : EditTextPreferenceDialogFragmentCompat() {
     companion object {
         private const val PLUGIN_ID_FRAGMENT_TAG =
-                "com.github.shadowsocks.preference.PluginConfigurationDialogFragment.PLUGIN_ID"
+            "com.github.shadowsocks.preference.PluginConfigurationDialogFragment.PLUGIN_ID"
     }
 
     fun setArg(key: String, plugin: String) {
-        arguments = bundleOf(PreferenceDialogFragmentCompat.ARG_KEY to key, PLUGIN_ID_FRAGMENT_TAG to plugin)
+        arguments = bundleOf(PreferenceDialogFragmentCompat.ARG_KEY to key,
+            PLUGIN_ID_FRAGMENT_TAG to plugin)
     }
 
     private lateinit var editText: EditText
@@ -46,10 +49,20 @@ class PluginConfigurationDialogFragment : EditTextPreferenceDialogFragmentCompat
     override fun onPrepareDialogBuilder(builder: AlertDialog.Builder) {
         super.onPrepareDialogBuilder(builder)
         val intent = PluginManager.buildIntent(arguments?.getString(PLUGIN_ID_FRAGMENT_TAG)!!,
-                PluginContract.ACTION_HELP)
-        val activity = activity as ShadowsocksSettingsActivity
-        if (intent.resolveActivity(activity.packageManager) != null) builder.setNeutralButton("?") { _, _ ->
-            activity.pluginHelp.launch(intent.putExtra(PluginContract.EXTRA_OPTIONS, editText.text.toString()))
+            PluginContract.ACTION_HELP)
+        val activity = activity
+        if (activity is ShadowsocksSettingsActivity) {
+            if (intent.resolveActivity(app.packageManager) != null) builder.setNeutralButton("?") { _, _ ->
+                activity.pluginHelp.launch(intent.putExtra(PluginContract.EXTRA_OPTIONS,
+                    editText.text.toString()))
+            }
+        } else {
+            activity as TrojanGoSettingsActivity
+            if (intent.resolveActivity(app.packageManager) != null) builder.setNeutralButton(
+                "?") { _, _ ->
+                activity.pluginHelp.launch(intent.putExtra(PluginContract.EXTRA_OPTIONS,
+                    editText.text.toString()))
+            }
         }
     }
 

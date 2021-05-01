@@ -77,6 +77,7 @@ object Key {
     const val SERVER_METHOD = "serverMethod"
     const val SERVER_PLUGIN = "serverPlugin"
     const val SERVER_PLUGIN_CONFIGURE = "serverPluginConfigure"
+    const val SERVER_PASSWORD1 = "serverPassword1"
 
     const val SERVER_PROTOCOL = "serverProtocol"
     const val SERVER_PROTOCOL_PARAM = "serverProtocolParam"
@@ -99,6 +100,7 @@ object Key {
     const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
     const val SERVER_WS_BROWSER_FORWARDING = "serverWsBrowserForwarding"
     const val SERVER_WS_CATEGORY = "serverWsCategory"
+    const val SERVER_SS_CATEGORY = "serverSsCategory"
 
 }
 
