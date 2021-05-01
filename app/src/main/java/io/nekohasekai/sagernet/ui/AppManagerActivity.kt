@@ -69,6 +69,7 @@ import org.jf.dexlib2.dexbacked.DexBackedDexFile
 import org.jf.dexlib2.iface.DexFile
 import java.io.File
 import java.util.*
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import kotlin.coroutines.coroutineContext
 
@@ -425,48 +426,56 @@ class AppManagerActivity : AppCompatActivity() {
                                 .joinToString("\n", postfix = "\n")).trim()
                 }
 
-                val dex = File(app.applicationInfo.publicSourceDir)
-                val zipFile = ZipFile(dex)
-                var dexFile: DexFile
+                try {
 
-                for (entry in zipFile.entries()) {
-                    if (entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
-                        val input = zipFile.getInputStream(entry).readBytes()
-                        dexFile = try {
-                            DexBackedDexFile.fromInputStream(null, input.inputStream())
-                        } catch (e: Exception) {
-                            Logs.w(e)
-                            break
-                        }
-                        for (clazz in dexFile.classes) {
-                            val clazzName = clazz.type.substring(1, clazz.type.length - 1)
-                                .replace("/", ".")
-                                .replace("$", ".")
+                    val dex = File(app.applicationInfo.publicSourceDir)
+                    val zipFile = ZipFile(dex)
+                    var dexFile: DexFile
 
-                            if (clazzName.matches(chinaRegex)) {
-                                chinaApps.add(app to app.applicationInfo.loadLabel(packageManager)
-                                    .toString())
-                                zipFile.closeQuietly()
+                    for (entry in zipFile.entries()) {
+                        if (entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
+                            val input = zipFile.getInputStream(entry).readBytes()
+                            dexFile = try {
+                                DexBackedDexFile.fromInputStream(null, input.inputStream())
+                            } catch (e: Exception) {
+                                Logs.w(e)
+                                break
+                            }
+                            for (clazz in dexFile.classes) {
+                                val clazzName = clazz.type.substring(1, clazz.type.length - 1)
+                                    .replace("/", ".")
+                                    .replace("$", ".")
 
-                                if (bypass) {
-                                    changed = !proxiedUids[app.applicationInfo.uid]
-                                    proxiedUids[app.applicationInfo.uid] = true
-                                } else {
-                                    proxiedUids.delete(app.applicationInfo.uid)
+                                if (clazzName.matches(chinaRegex)) {
+                                    chinaApps.add(app to app.applicationInfo.loadLabel(
+                                        packageManager)
+                                        .toString())
+                                    zipFile.closeQuietly()
+
+                                    if (bypass) {
+                                        changed = !proxiedUids[app.applicationInfo.uid]
+                                        proxiedUids[app.applicationInfo.uid] = true
+                                    } else {
+                                        proxiedUids.delete(app.applicationInfo.uid)
+                                    }
+
+                                    continue@scan
                                 }
-
-                                continue@scan
                             }
                         }
                     }
-                }
-                zipFile.closeQuietly()
+                    zipFile.closeQuietly()
 
-                if (bypass) {
-                    proxiedUids.delete(app.applicationInfo.uid)
-                } else {
-                    changed = !proxiedUids[index]
-                    proxiedUids[app.applicationInfo.uid] = true
+                    if (bypass) {
+                        proxiedUids.delete(app.applicationInfo.uid)
+                    } else {
+                        changed = !proxiedUids[index]
+                        proxiedUids[app.applicationInfo.uid] = true
+                    }
+
+                } catch (e: ZipException) {
+                    Logs.w("Error in pkg ${app.packageName}:${app.versionName}", e)
+                    continue
                 }
 
             }
