@@ -39,6 +39,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.github.shadowsocks.plugin.*
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
+import com.github.shadowsocks.plugin.showAllowingStateLoss
 import com.github.shadowsocks.preference.PluginConfigurationDialogFragment
 import com.github.shadowsocks.preference.PluginPreference
 import com.github.shadowsocks.preference.PluginPreferenceDialogFragment
@@ -49,10 +50,8 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ktx.Empty
-import io.nekohasekai.sagernet.ktx.listenForPackageChanges
-import io.nekohasekai.sagernet.ktx.readableMessage
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -164,10 +163,17 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         initPlugins()
     }
 
-    fun updateNetwork(network: String) {
-        when (network) {
+    val trojanGoMethods = app.resources.getStringArray(R.array.trojan_go_methods)
+    val trojanGoNetworks = app.resources.getStringArray(R.array.trojan_go_networks_value)
+
+    fun updateNetwork(newNet: String) {
+        when (newNet) {
             "ws" -> {
                 wsCategory.isVisible = true
+
+                if (network.value !in trojanGoNetworks) {
+                    method.value = trojanGoNetworks[0]
+                }
             }
             else -> {
                 wsCategory.isVisible = false
@@ -179,6 +185,10 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         when (encryption) {
             "ss" -> {
                 ssCategory.isVisible = true
+
+                if (method.value !in trojanGoMethods) {
+                    method.value = trojanGoMethods[0]
+                }
             }
             else -> {
                 ssCategory.isVisible = false

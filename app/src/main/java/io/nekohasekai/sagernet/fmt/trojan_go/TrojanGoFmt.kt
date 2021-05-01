@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.fmt.trojan_go
 
+import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
@@ -56,6 +57,9 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         link.queryParameter("plugin")?.let {
             plugin = it
         }
+        link.fragment.takeIf { !it.isNullOrBlank() }?.let {
+            name = it
+        }
     }
 }
 
@@ -87,6 +91,10 @@ fun TrojanGoBean.toUri(): String {
     }
     if (plugin.isNotBlank()) {
         builder.addQueryParameter("plugin", plugin)
+    }
+
+    if (name.isNotBlank()) {
+        builder.encodedFragment(name.urlSafe())
     }
 
     return builder.toString().replace("https://", "trojan-go://")

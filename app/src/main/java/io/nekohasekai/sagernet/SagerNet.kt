@@ -124,8 +124,9 @@ class SagerNet : Application() {
         updateNotificationChannels()
 
         Seq.setContext(this)
-        application.filesDir.mkdirs()
-        Libv2ray.setAssetsPath(application.filesDir.absolutePath, "v2ray/")
+        val externalAssets = getExternalFilesDir(null) ?: filesDir
+        externalAssets.mkdirs()
+        Libv2ray.setAssetsPath(externalAssets.absolutePath, "v2ray/")
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,
