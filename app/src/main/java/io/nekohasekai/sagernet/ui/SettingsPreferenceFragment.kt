@@ -51,6 +51,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val allowAccess = findPreference<Preference>(Key.ALLOW_ACCESS)!!
         val requireHttp = findPreference<SwitchPreference>(Key.REQUIRE_HTTP)!!
         val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
+        val showStopButton = findPreference<SwitchPreference>(Key.SHOW_STOP_BUTTON)!!
+        if (Build.VERSION.SDK_INT < 24) {
+            showStopButton.isVisible = false
+        }
 
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -75,6 +79,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 portSocks5.isEnabled = stopped
                 requireHttp.isEnabled = stopped
                 portHttp.isEnabled = stopped
+                showStopButton.isEnabled = stopped
 
                 metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
 

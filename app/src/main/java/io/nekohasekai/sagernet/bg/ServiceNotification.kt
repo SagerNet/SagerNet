@@ -98,7 +98,7 @@ class ServiceNotification(
                 0)).apply {
             setShowsUserInterface(false)
         }.build()
-        if (Build.VERSION.SDK_INT < 24) builder.addAction(closeAction) else builder.addInvisibleAction(
+        if (Build.VERSION.SDK_INT < 24 || DataStore.showStopButton) builder.addAction(closeAction) else builder.addInvisibleAction(
             closeAction)
         updateCallback(service.getSystemService<PowerManager>()?.isInteractive != false)
         service.registerReceiver(this, IntentFilter().apply {

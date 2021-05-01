@@ -76,6 +76,8 @@
     <string name="speed_interval">Speed notification update interval</string>
     <string name="disable">Disable</string>
     <string name="cag_misc">Misc Settings</string>
+    <string name="show_stop">Show stop button</string>
+    <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s\nReceived: \t%4$s\t↓\t%2$s</string>
@@ -195,14 +197,14 @@
     <string name="share">Share</string>
     <string name="add_profile">Add Profile</string>
     <string name="action_profile">Profile</string>
-    <string name="action_socks">SOCKS</string>
-    <string name="action_http">HTTP</string>
-    <string name="action_shadowsocks">Shadowsocks</string>
-    <string name="action_shadowsocksr">ShadowsocksR</string>
-    <string name="action_vmess">VMess</string>
-    <string name="action_vless">VLESS</string>
-    <string name="action_trojan">Trojan</string>
-    <string name="action_trojan_go">Trojan Go</string>
+    <string name="action_socks" translatable="false">SOCKS</string>
+    <string name="action_http" translatable="false">HTTP</string>
+    <string name="action_shadowsocks" translatable="false">Shadowsocks</string>
+    <string name="action_shadowsocksr" translatable="false">ShadowsocksR</string>
+    <string name="action_vmess" translatable="false">VMess</string>
+    <string name="action_vless" translatable="false">VLESS</string>
+    <string name="action_trojan" translatable="false">Trojan</string>
+    <string name="action_trojan_go" translatable="false">Trojan Go</string>
 
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>

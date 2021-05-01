@@ -123,8 +123,7 @@ class SagerNet : Application() {
         DataStore.init()
         updateNotificationChannels()
 
-        Seq.setContext(applicationContext)
-
+        Seq.setContext(this)
         application.filesDir.mkdirs()
         Libv2ray.setAssetsPath(application.filesDir.absolutePath, "v2ray/")
     }

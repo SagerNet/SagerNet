@@ -121,6 +121,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
+    var showStopButton by configurationStore.boolean(Key.SHOW_STOP_BUTTON)
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true

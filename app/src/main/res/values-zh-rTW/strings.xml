@@ -161,13 +161,6 @@
     <string name="share">分享</string>
     <string name="add_profile">新增設定檔</string>
     <string name="action_profile">設定檔</string>
-    <string name="action_socks">SOCKS</string>
-    <string name="action_http">HTTP</string>
-    <string name="action_shadowsocks">Shadowsocks</string>
-    <string name="action_shadowsocksr">ShadowsocksR</string>
-    <string name="action_vmess">VMess</string>
-    <string name="action_vless">VLESS</string>
-    <string name="action_trojan">Trojan</string>
 
     <string name="action_create_group">空白群組</string>
     <string name="action_from_link">來自訂閱</string>

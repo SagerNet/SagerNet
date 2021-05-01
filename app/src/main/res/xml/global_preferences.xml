@@ -33,6 +33,11 @@
         app:key="speedInterval"
         app:title="@string/speed_interval"
         app:useSimpleSummaryProvider="true" />
+    <SwitchPreference
+        app:icon="@drawable/ic_baseline_multiple_stop_24"
+        app:key="showStopButton"
+        app:summary="@string/show_stop_sum"
+        app:title="@string/show_stop" />
 
     <SwitchPreference
         app:icon="@drawable/ic_baseline_nat_24"
