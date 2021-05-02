@@ -353,38 +353,51 @@ class ProxyInstance(val profile: ProxyEntity) {
         }
     }
 
-    fun stats(direct: String): Long {
+    fun stats(tag: String, direct: String): Long {
         if (!::v2rayPoint.isInitialized) {
             return 0L
         }
-        return v2rayPoint.queryStats("out", direct)
+        return v2rayPoint.queryStats(tag, direct)
     }
 
-    val uplink
-        get() = stats("uplink").also {
-            uplinkTotal += it
+    val uplinkProxy
+        get() = stats("out","uplink").also {
+            uplinkTotalProxy += it
         }
 
-    val downlink
-        get() = stats("downlink").also {
-            downlinkTotal += it
+    val downlinkProxy
+        get() = stats("out","downlink").also {
+            downlinkTotalProxy += it
         }
 
-    var uplinkTotal = 0L
-    var downlinkTotal = 0L
+    val uplinkDirect
+        get() = stats("bypass","uplink").also {
+            uplinkTotalDirect += it
+        }
+
+    val downlinkDirect
+        get() = stats("bypass","downlink").also {
+            downlinkTotalDirect += it
+        }
+
+
+    var uplinkTotalProxy = 0L
+    var downlinkTotalProxy = 0L
+    var uplinkTotalDirect = 0L
+    var downlinkTotalDirect = 0L
 
     fun persistStats() {
         try {
-            uplink
-            downlink
-            profile.tx += uplinkTotal
-            profile.rx += downlinkTotal
+            uplinkProxy
+            downlinkProxy
+            profile.tx += uplinkTotalProxy
+            profile.rx += downlinkTotalProxy
             SagerDatabase.proxyDao.updateProxy(profile)
         } catch (e: IOException) {
             if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot
             val profile = DirectBoot.getDeviceProfile()!!
-            profile.tx += uplinkTotal
-            profile.rx += downlinkTotal
+            profile.tx += uplinkTotalProxy
+            profile.rx += downlinkTotalProxy
             profile.dirty = true
             DirectBoot.update(profile)
             DirectBoot.listenForUnlock()

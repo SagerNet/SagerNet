@@ -74,6 +74,7 @@
     <string name="speed_interval">速度通知更新間隔</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
+    <string name="speed_detail">代理： %1$s↑ %2$s↓\n直連： %3$s↑ %4$s↓</string>
     <string name="stat_summary">送出：\t\t\t\t\t%3$s\t↑\t%1$s\n接收：\t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_pending">檢查連線能力</string>

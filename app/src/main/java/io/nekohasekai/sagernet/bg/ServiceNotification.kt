@@ -60,11 +60,27 @@ class ServiceNotification(
             override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
                 if (profileId == 0L) return
                 builder.apply {
-                    setContentText((service as Context).getString(R.string.traffic,
+                    val speedDetail = (service as Context).getString(R.string.speed_detail,
                         service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.txRate)),
+                            Formatter.formatFileSize(service, stats.txrateProxy)),
                         service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.rxRate))))
+                            Formatter.formatFileSize(service, stats.rxrateProxy)),
+                        service.getString(R.string.speed,
+                            Formatter.formatFileSize(service, stats.txrateDirect)),
+                        service.getString(R.string.speed,
+                            Formatter.formatFileSize(service, stats.rxrateDirect))
+                    )
+                    val speedSimple = (service as Context).getString(R.string.traffic,
+                        service.getString(R.string.speed,
+                            Formatter.formatFileSize(service, stats.txrateProxy)),
+                        service.getString(R.string.speed,
+                            Formatter.formatFileSize(service, stats.rxrateProxy)))
+                    if (DataStore.showDirectSpeed) {
+                        setStyle(NotificationCompat.BigTextStyle().bigText(speedDetail))
+                        setContentText(speedDetail)
+                    } else {
+                        setContentText(speedSimple)
+                    }
                     setSubText(service.getString(R.string.traffic,
                         Formatter.formatFileSize(service, stats.txTotal),
                         Formatter.formatFileSize(service, stats.rxTotal)))
