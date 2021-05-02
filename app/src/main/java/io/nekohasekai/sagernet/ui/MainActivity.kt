@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
         if (profileId != 0L) this@MainActivity.stats.updateTraffic(
-            stats.txRate, stats.rxRate)
+            stats.txrateProxy, stats.rxrateProxy)
         runOnDefaultDispatcher {
             ProfileManager.postTrafficUpdated(profileId, stats)
         }

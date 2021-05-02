@@ -64,6 +64,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             showStopButton.isVisible = false
         }
         val securityAdvisory = findPreference<SwitchPreference>(Key.SECURITY_ADVISORY)!!
+        val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
 
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -90,6 +91,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 portHttp.isEnabled = stopped
                 showStopButton.isEnabled = stopped
                 securityAdvisory.isEnabled = stopped
+                showDirectSpeed.isEnabled = stopped
 
                 metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
 

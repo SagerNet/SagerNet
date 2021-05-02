@@ -78,8 +78,11 @@
     <string name="cag_misc">Misc Settings</string>
     <string name="show_stop">Show stop button</string>
     <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
+    <string name="show_direct_speed">Show direct speed</string>
+    <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as well</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
+    <string name="speed_detail">Proxy： %1$s↑ %2$s↓\nDirect： %3$s↑ %4$s↓</string>
     <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s\nReceived: \t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_pending">Check Connectivity</string>

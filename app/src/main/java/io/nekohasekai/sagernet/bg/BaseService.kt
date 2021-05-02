@@ -131,14 +131,18 @@ class BaseService {
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime).toDouble() / 1000L
                 val proxy = data?.proxy ?: continue
                 lastQueryTime = queryTime
-                val up = proxy.uplink
-                val down = proxy.downlink
-                if (up + down == 0L) continue
+                val upProxy = proxy.uplinkProxy;
+                val downProxy = proxy.downlinkProxy;
+                val upDirect = proxy.uplinkDirect;
+                val downDirect = proxy.downlinkDirect;
+                // if (up_proxy+down_proxy+up_direct+down_direct == 0L) continue
                 val stats = TrafficStats(
-                    (up / sinceLastQueryInSeconds).toLong(),
-                    (down / sinceLastQueryInSeconds).toLong(),
-                    proxy.uplinkTotal,
-                    proxy.downlinkTotal
+                    (upProxy / sinceLastQueryInSeconds).toLong(),
+                    (downProxy / sinceLastQueryInSeconds).toLong(),
+                    (upDirect / sinceLastQueryInSeconds).toLong(),
+                    (downDirect / sinceLastQueryInSeconds).toLong(),
+                    proxy.uplinkTotalProxy,
+                    proxy.downlinkTotalProxy
                 )
                 if (data?.state == State.Connected && bandwidthListeners.isNotEmpty()) {
                     broadcast { item ->

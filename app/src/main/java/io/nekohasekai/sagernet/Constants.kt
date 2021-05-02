@@ -60,6 +60,7 @@ object Key {
     const val HTTP_PORT = "httpPort"
     const val ALLOW_ACCESS = "allowAccess"
     const val SPEED_INTERVAL = "speedInterval"
+    const val SHOW_DIRECT_SPEED = "showDirectSpeed"
 
     const val ENABLE_MUX = "enableMux"
     const val MUX_CONCURRENCY = "muxConcurrency"
