@@ -26,6 +26,7 @@ import android.content.Intent
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
+import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
@@ -130,6 +131,15 @@ data class ProxyEntity(
     fun displayName(): String {
         return requireBean().name.takeIf { !it.isNullOrBlank() }
             ?: "${requireBean().serverAddress}:${requireBean().serverPort}"
+    }
+
+    fun urlFixed(): String {
+        val bean = requireBean()
+        return if (Validator.isIpv6(bean.serverAddress)) {
+            "[${bean.serverAddress}]:${bean.serverPort}"
+        } else {
+            "${bean.serverAddress}:${bean.serverPort}"
+        }
     }
 
     fun requireBean(): AbstractBean {

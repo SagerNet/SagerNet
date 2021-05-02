@@ -77,8 +77,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         if (profile.useExternalShadowsocks() || profile.useXray() || profile.type == 2) {
             v2rayPoint.domainName = "127.0.0.1:${DataStore.socksPort + 10}"
         } else {
-            v2rayPoint.domainName =
-                profile.requireBean().serverAddress + ":" + profile.requireBean().serverPort
+            v2rayPoint.domainName = profile.urlFixed()
         }
         config = buildV2RayConfig(profile)
         v2rayPoint.configureFileContent = gson.toJson(config).also {
