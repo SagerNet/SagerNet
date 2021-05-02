@@ -149,28 +149,26 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         val proxyGroup: ProxyGroup? = null,
     ) : Parcelable
 
-    private val updating = AtomicBoolean()
+    @Transient
+    private val updating = HashMap<Long, Boolean>()
 
     private suspend fun updateSubscription(
         proxyGroup: ProxyGroup,
         onRefreshStarted: Runnable,
         refreshFinished: Runnable,
     ) {
-        if (updating.get()) return
-
         synchronized(this) {
-            if (updating.get()) return
-            updating.set(true)
+            if (updating[proxyGroup.id] == true) return
+            updating[proxyGroup.id] = true
         }
         onRefreshStarted.run()
 
         val onRefreshFinished = Runnable {
-            updating.set(false)
             refreshFinished.run()
+            updating[proxyGroup.id] = false
         }
 
         runOnDefaultDispatcher {
-            val updated = AtomicBoolean()
             createHttpClient().newCall(Request.Builder()
                 .url(proxyGroup.subscriptionLink)
                 .build())
@@ -184,19 +182,15 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        if (updated.get()) return
-                        synchronized(this) {
-                            if (updated.get()) return
-                            updated.set(true)
+                        synchronized(this@GroupFragment) {
+                            if (updating[proxyGroup.id] == true) return
                         }
                         var (subType, proxies) = try {
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())
                         } catch (e: Exception) {
                             runOnMainDispatcher {
-                                updating.set(false)
                                 onRefreshFinished.run()
-
                                 activity.snackbar(e.readableMessage).show()
                             }
                             return

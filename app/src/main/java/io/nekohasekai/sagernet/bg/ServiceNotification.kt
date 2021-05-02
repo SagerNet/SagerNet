@@ -54,31 +54,33 @@ class ServiceNotification(
     private val service: BaseService.Interface, profileName: String,
     channel: String, visible: Boolean = false,
 ) : BroadcastReceiver() {
+    val showDirectSpeed = DataStore.showDirectSpeed
+
     private val callback: IShadowsocksServiceCallback by lazy {
         object : IShadowsocksServiceCallback.Stub() {
             override fun stateChanged(state: Int, profileName: String?, msg: String?) {}   // ignore
             override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
                 if (profileId == 0L) return
                 builder.apply {
-                    val speedDetail = (service as Context).getString(R.string.speed_detail,
-                        service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.txrateProxy)),
-                        service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.rxrateProxy)),
-                        service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.txrateDirect)),
-                        service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.rxrateDirect))
-                    )
-                    val speedSimple = (service as Context).getString(R.string.traffic,
-                        service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.txrateProxy)),
-                        service.getString(R.string.speed,
-                            Formatter.formatFileSize(service, stats.rxrateProxy)))
-                    if (DataStore.showDirectSpeed) {
+                    if (showDirectSpeed) {
+                        val speedDetail = (service as Context).getString(R.string.speed_detail,
+                            service.getString(R.string.speed,
+                                Formatter.formatFileSize(service, stats.txRateProxy)),
+                            service.getString(R.string.speed,
+                                Formatter.formatFileSize(service, stats.rxRateProxy)),
+                            service.getString(R.string.speed,
+                                Formatter.formatFileSize(service, stats.txRateDirect)),
+                            service.getString(R.string.speed,
+                                Formatter.formatFileSize(service, stats.rxRateDirect))
+                        )
                         setStyle(NotificationCompat.BigTextStyle().bigText(speedDetail))
                         setContentText(speedDetail)
                     } else {
+                        val speedSimple = (service as Context).getString(R.string.traffic,
+                            service.getString(R.string.speed,
+                                Formatter.formatFileSize(service, stats.txRateProxy)),
+                            service.getString(R.string.speed,
+                                Formatter.formatFileSize(service, stats.rxRateProxy)))
                         setContentText(speedSimple)
                     }
                     setSubText(service.getString(R.string.traffic,
