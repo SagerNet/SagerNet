@@ -124,6 +124,9 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
     lateinit var ssCategory: PreferenceCategory
     lateinit var method: SimpleMenuPreference
 
+    val trojanGoMethods = app.resources.getStringArray(R.array.trojan_go_methods)
+    val trojanGoNetworks = app.resources.getStringArray(R.array.trojan_go_networks_value)
+
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
@@ -143,6 +146,11 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         method = findPreference(Key.SERVER_METHOD)!!
 
         network = findPreference(Key.SERVER_NETWORK)!!
+
+        if (network.value !in trojanGoNetworks) {
+            network.value = trojanGoNetworks[0]
+        }
+
         updateNetwork(network.value)
         network.setOnPreferenceChangeListener { _, newValue ->
             updateNetwork(newValue as String)
@@ -163,17 +171,10 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         initPlugins()
     }
 
-    val trojanGoMethods = app.resources.getStringArray(R.array.trojan_go_methods)
-    val trojanGoNetworks = app.resources.getStringArray(R.array.trojan_go_networks_value)
-
     fun updateNetwork(newNet: String) {
         when (newNet) {
             "ws" -> {
                 wsCategory.isVisible = true
-
-                if (network.value !in trojanGoNetworks) {
-                    method.value = trojanGoNetworks[0]
-                }
             }
             else -> {
                 wsCategory.isVisible = false

@@ -1,0 +1,1 @@
+This configuration (ShadowsocksR) has questionable tamper resistance, questionable stealth, questionable security, and the upstream client shadowsocksr-libev has no longer been maintained for almost 5 years.

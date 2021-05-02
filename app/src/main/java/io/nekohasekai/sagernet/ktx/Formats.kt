@@ -79,7 +79,7 @@ fun parseProxies(text: String): List<AbstractBean> {
                 Logs.w(it)
             }
         } else if (link.startsWith("trojan-go://")) {
-            Logs.d("Try parse trojan-gp link: $link")
+            Logs.d("Try parse trojan-go link: $link")
             runCatching {
                 entities.add(parseTrojanGo(link))
             }.onFailure {

@@ -6,8 +6,8 @@ plugins {
     id "com.mikepenz.aboutlibraries.plugin"
 }
 
-def verCode = 16
-def verName = "0.1-beta16"
+def verCode = 17
+def verName = "0.1-beta17"
 
 def keystorePwd = null
 def alias = null

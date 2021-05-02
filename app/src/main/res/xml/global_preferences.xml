@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:initialExpandedChildrenCount="3">
+    app:initialExpandedChildrenCount="5">
     <SwitchPreference
         app:defaultValue="true"
         app:icon="@drawable/ic_communication_phonelink_ring"
@@ -25,6 +25,11 @@
         app:key="meteredNetwork"
         app:summary="@string/metered_summary"
         app:title="@string/metered" />
+    <SwitchPreference
+        app:icon="@drawable/ic_baseline_security_24"
+        app:key="securityAdvisory"
+        app:summary="@string/insecure_warn_sum"
+        app:title="@string/insecure_warn" />
     <com.takisoft.preferencex.SimpleMenuPreference
         app:defaultValue="1000"
         app:entries="@array/notification_entry"

@@ -63,6 +63,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         if (Build.VERSION.SDK_INT < 24) {
             showStopButton.isVisible = false
         }
+        val securityAdvisory = findPreference<SwitchPreference>(Key.SECURITY_ADVISORY)!!
 
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -88,6 +89,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 requireHttp.isEnabled = stopped
                 portHttp.isEnabled = stopped
                 showStopButton.isEnabled = stopped
+                securityAdvisory.isEnabled = stopped
 
                 metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
 
@@ -107,7 +109,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     override fun onDestroy() {
-        MainActivity.stateListener = null
+        if (MainActivity.stateListener == listener) {
+            MainActivity.stateListener = null
+        }
         super.onDestroy()
     }
 }

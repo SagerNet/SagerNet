@@ -125,7 +125,9 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
     }
 
     override fun onDestroy() {
-        MainActivity.stateListener = null
+        if (MainActivity.stateListener == listener) {
+            MainActivity.stateListener = null
+        }
         super.onDestroy()
     }
 }

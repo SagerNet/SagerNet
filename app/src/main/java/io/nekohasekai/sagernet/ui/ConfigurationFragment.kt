@@ -25,11 +25,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.format.Formatter
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
@@ -333,10 +336,8 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
 
             if (::configurationListView.isInitialized && configurationListView.size == 0) {
                 configurationListView.adapter = adapter
-                if (adapter.configurationIdList.isEmpty()) {
-                    runOnDefaultDispatcher {
-                        adapter.reloadProfiles(proxyGroup.id)
-                    }
+                runOnDefaultDispatcher {
+                    adapter.reloadProfiles(proxyGroup.id)
                 }
             }
         }
@@ -633,6 +634,7 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                 val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
                 val editButton: ImageView = view.findViewById(R.id.edit)
                 val shareLayout: LinearLayout = view.findViewById(R.id.share)
+                val shareLayer: LinearLayout = view.findViewById(R.id.share_layer)
                 val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
                 override fun bind(proxyEntity: ProxyEntity) {
@@ -677,38 +679,80 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                             proxyGroup.isSubscription))
                     }
 
-                    /* if (BuildConfig.DEBUG && proxyEntity.requireBean()
-                             .isInsecure() == ValidateResult.INSECURE
-                     ) {
-                         shareLayout.setBackgroundColor(Color.RED)
-                         shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
-                         shareButton.setColorFilter(Color.WHITE)
-
-                         shareButton.setOnClickListener {
-                             // TODO: Alert insecure
-                         }
-                     } else {*/
-                    // shareLayout.setBackgroundColor(Color.TRANSPARENT)
-                    shareButton.setImageResource(R.drawable.ic_social_share)
-                    shareButton.setColorFilter(Color.GRAY)
-
-                    shareLayout.setOnClickListener {
-                        val popup = PopupMenu(requireContext(), it)
-                        popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
-                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                        popup.show()
-                    }
-//                    }
-
-
                     runOnDefaultDispatcher {
                         val selected = DataStore.selectedProxy == proxyEntity.id
                         onMainDispatcher {
                             selectedView.visibility =
                                 if (selected) View.VISIBLE else View.INVISIBLE
                         }
-                    }
 
+                        when (val validateResult = if (DataStore.securityAdvisory) {
+                            proxyEntity.requireBean().isInsecure()
+                        } else ResultLocal) {
+                            is ResultInsecure -> onMainDispatcher {
+                                shareLayer.setBackgroundColor(Color.RED)
+                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                shareButton.setColorFilter(Color.WHITE)
+
+                                shareLayout.setOnClickListener {
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle(R.string.insecure)
+                                        .setMessage(resources.openRawResource(validateResult.textRes)
+                                            .bufferedReader().use { it.readText() })
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            val popup = PopupMenu(requireContext(), it)
+                                            popup.menuInflater.inflate(R.menu.socks_share_menu,
+                                                popup.menu)
+                                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                                            popup.show()
+                                        }
+                                        .show().apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
+                                            }
+                                        }
+                                }
+                            }
+                            is ResultDeprecated -> onMainDispatcher {
+                                shareLayer.setBackgroundColor(Color.YELLOW)
+                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                shareButton.setColorFilter(Color.GRAY)
+
+                                shareLayout.setOnClickListener {
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle(R.string.deprecated)
+                                        .setMessage(resources.openRawResource(validateResult.textRes)
+                                            .bufferedReader().use { it.readText() })
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            val popup = PopupMenu(requireContext(), it)
+                                            popup.menuInflater.inflate(R.menu.socks_share_menu,
+                                                popup.menu)
+                                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                                            popup.show()
+                                        }
+                                        .show().apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
+                                            }
+                                        }
+                                }
+                            }
+                            else -> onMainDispatcher {
+                                shareLayer.setBackgroundColor(Color.TRANSPARENT)
+                                shareButton.setImageResource(R.drawable.ic_social_share)
+                                shareButton.setColorFilter(Color.GRAY)
+
+                                shareLayout.setOnClickListener {
+                                    val popup = PopupMenu(requireContext(), it)
+                                    popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                                    popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                                    popup.show()
+                                }
+                            }
+                        }
+                    }
                 }
 
             }

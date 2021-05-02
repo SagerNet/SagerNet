@@ -89,14 +89,22 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/share"
                     android:focusable="true"
-                    android:nextFocusLeft="@+id/container"
-                    android:padding="12dp">
+                    android:nextFocusLeft="@+id/container">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/shareIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_social_share" />
+                    <LinearLayout
+                        android:id="@+id/share_layer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="12dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/shareIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_social_share" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
             </LinearLayout>
 

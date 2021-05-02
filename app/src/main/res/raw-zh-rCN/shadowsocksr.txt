@@ -1,0 +1,1 @@
+该配置 (ShadowsocksR) 抗篡改能力存疑, 隐蔽性存疑, 安全性存疑, 且上游客户端 shadowsocksr-libev 已停止维护近 5 年.

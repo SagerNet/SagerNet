@@ -34,7 +34,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import io.nekohasekai.sagernet.fmt.gson.GsonsKt;
 
-public abstract class AbstractBean implements Cloneable<AbstractBean>, Comparable<AbstractBean> {
+public abstract class AbstractBean implements Cloneable<AbstractBean> {
 
     public String serverAddress;
     public int serverPort;
@@ -81,13 +81,6 @@ public abstract class AbstractBean implements Cloneable<AbstractBean>, Comparabl
     @NotNull
     @Override
     public abstract AbstractBean clone();
-
-    @Override
-    public int compareTo(AbstractBean o) {
-        if (this == o) return 0;
-        return HexUtil.encodeHexStr(KryoConverters.serializeWithoutName(this))
-                .compareTo(HexUtil.encodeHexStr(KryoConverters.serializeWithoutName(o)));
-    }
 
     @Override
     public boolean equals(Object o) {

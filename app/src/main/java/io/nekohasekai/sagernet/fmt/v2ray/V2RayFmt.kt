@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.fmt.v2ray
 
 import cn.hutool.core.codec.Base64
+import cn.hutool.core.lang.Validator
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.database.DataStore
@@ -455,11 +456,14 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                     outboundTag = TAG_DIRECT
                     Logs.d(formatObject(bean))
                     when {
-                        bean.host.isNotBlank() -> domain = listOf(bean.host)
-                        bean.serverAddress!!.contains("[a-zA-Z]".toRegex()) -> {
-                            domain = listOf(bean.serverAddress)
+                        Validator.isIpv4(bean.host) || Validator.isIpv6(bean.host) -> {
+                            ip = listOf(bean.host)
                         }
-                        else -> ip = listOf(bean.serverAddress)
+                        bean.host.isNotBlank() -> domain = listOf(bean.host)
+                        Validator.isIpv4(bean.serverAddress) || Validator.isIpv6(bean.serverAddress) -> {
+                            ip = listOf(bean.serverAddress)
+                        }
+                        else -> domain = listOf(bean.serverAddress)
                     }
                 })
             }
@@ -479,6 +483,12 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
                     domain = listOf("geosite:category-ads-all")
                 })
             }
+
+            rules.add(RoutingObject.RuleObject().apply {
+                type = "field"
+                outboundTag = TAG_AGENT
+                domain = listOf("domain:googleapis.cn")
+            })
 
             if (routeChina > 0) {
                 rules.add(RoutingObject.RuleObject().apply {
@@ -502,12 +512,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2RayConfig {
 
                 outboundTag = TAG_AGENT
                 type = "field"
-            })
-
-            rules.add(RoutingObject.RuleObject().apply {
-                type = "field"
-                outboundTag = TAG_AGENT
-                domain = listOf("domain:googleapis.cn")
             })
         }
 

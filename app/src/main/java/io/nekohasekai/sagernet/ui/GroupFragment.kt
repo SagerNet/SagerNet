@@ -170,6 +170,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         runOnDefaultDispatcher {
+            val updated = AtomicBoolean()
             createHttpClient().newCall(Request.Builder()
                 .url(proxyGroup.subscriptionLink)
                 .build())
@@ -183,6 +184,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     }
 
                     override fun onResponse(call: Call, response: Response) {
+                        if (updated.get()) return
+                        synchronized(this) {
+                            if (updated.get()) return
+                            updated.set(true)
+                        }
                         var (subType, proxies) = try {
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())
@@ -203,10 +209,15 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             val uniqueNames = HashMap<AbstractBean, String>()
                             for (proxy in proxies) {
                                 if (!uniqueProxies.add(proxy)) {
+                                    val index = uniqueProxies.indexOf(proxy)
                                     if (uniqueNames.containsKey(proxy)) {
-                                        duplicate.add(uniqueNames.remove(proxy)!!)
+                                        val name = uniqueNames[proxy]!!
+                                        if (name.isNotBlank()) {
+                                            duplicate.add("$name ($index)")
+                                            uniqueNames[proxy] = ""
+                                        }
                                     }
-                                    duplicate.add(proxy.displayName())
+                                    duplicate.add(proxy.displayName() + " ($index)")
                                 } else {
                                     uniqueNames[proxy] = proxy.displayName()
                                 }

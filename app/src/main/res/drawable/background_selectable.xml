@@ -8,5 +8,5 @@
             </item>
         </selector>
     </item>
-    <item android:drawable="?android:attr/selectableItemBackground"/>
+    <item android:drawable="?android:attr/selectableItemBackgroundBorderless"/>
 </layer-list>

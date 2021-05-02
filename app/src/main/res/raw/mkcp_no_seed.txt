@@ -1,0 +1,1 @@
+This configuration (mKCP + no seed) can be accurately identified packet by packet at a very low cost.

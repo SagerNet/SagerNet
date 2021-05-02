@@ -273,5 +273,9 @@
     <string name="show_stop">显示停止按钮</string>
     <string name="show_stop_sum">如果您不想使用快捷图块</string>
     <string name="ss_cat">Shadowsocks 设置</string>
+    <string name="insecure">不安全</string>
+    <string name="deprecated">已废弃</string>
+    <string name="insecure_warn">安全建议</string>
+    <string name="insecure_warn_sum">由 Qv2ray 开发者社区提供</string>
 
 </resources>

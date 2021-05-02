@@ -243,6 +243,10 @@
         <item quantity="other">%d proxies added</item>
     </plurals>
     <string name="undo">Undo</string>
+    <string name="insecure_warn">Security Advisory</string>
+    <string name="insecure_warn_sum">Provided by the Qv2ray Developer Community</string>
+    <string name="insecure">Insecure</string>
+    <string name="deprecated">Deprecated</string>
 
     <!-- tasker -->
     <string name="toggle_service_state">Start the service</string>
