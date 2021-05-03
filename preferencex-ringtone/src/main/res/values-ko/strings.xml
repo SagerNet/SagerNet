@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">기본 벨소리</string>
+    <string name="ringtone_silent">없음</string>
+    <string name="ringtone_picker_title">벨소리</string>
+    <string name="notification_sound_default">기본 알림 소리</string>
+    <string name="alarm_sound_default">기본 알람 소리</string>
+    <string name="add_ringtone_text">벨소리 추가</string>
+    <string name="unable_to_add_ringtone">맞춤 벨소리를 추가할 수 없습니다.</string>
+</resources>

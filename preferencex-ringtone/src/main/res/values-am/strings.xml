@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ነባሪ የስልክ ላይ ጥሪ</string>
+    <string name="ringtone_silent">ምንም</string>
+    <string name="ringtone_picker_title">ጥሪ ድምፆች</string>
+    <string name="notification_sound_default">ነባሪ የማሳወቂያ ድምጽ</string>
+    <string name="alarm_sound_default">ነባሪ የማንቂያ ድምፅ</string>
+    <string name="add_ringtone_text">የጥሪ ቅላጼ አክል</string>
+    <string name="unable_to_add_ringtone">ብጁ የጥሪ ቅላጼን ማከል አልተቻለም</string>
+</resources>

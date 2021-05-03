@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Iringithoni emisiwe</string>
+    <string name="ringtone_silent">Akunalutho</string>
+    <string name="ringtone_picker_title">Amaringithoni</string>
+    <string name="notification_sound_default">Umsindo wesaziso ozenzakalelayo</string>
+    <string name="alarm_sound_default">Umsindo we-alamu ozenzakalelayo</string>
+    <string name="add_ringtone_text">Engeza ithoni yokukhala</string>
+    <string name="unable_to_add_ringtone">Ayikwazi ukwengeza ithoni yokukhala yangokwezifiso</string>
+</resources>

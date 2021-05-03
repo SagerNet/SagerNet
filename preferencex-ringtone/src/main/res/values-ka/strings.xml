@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ნაგულისხმევი ზარი</string>
+    <string name="ringtone_silent">არც ერთი</string>
+    <string name="ringtone_picker_title">ზარები</string>
+    <string name="notification_sound_default">შეტყობინებების ნაგულისხმევი ხმა</string>
+    <string name="alarm_sound_default">მაღვიძარას ნაგულისხმევი ხმა</string>
+    <string name="add_ringtone_text">ზარის დამატება</string>
+    <string name="unable_to_add_ringtone">მორგებული ზარის დამატება შეუძლებელია</string>
+</resources>

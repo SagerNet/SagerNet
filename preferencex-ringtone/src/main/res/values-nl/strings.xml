@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Standaardbeltoon</string>
+    <string name="ringtone_silent">Geen</string>
+    <string name="ringtone_picker_title">Beltonen</string>
+    <string name="notification_sound_default">Standaard meldingsgeluid</string>
+    <string name="alarm_sound_default">Standaard alarmgeluid</string>
+    <string name="add_ringtone_text">Beltoon toevoegen</string>
+    <string name="unable_to_add_ringtone">Toevoegen van aangepaste beltoon is mislukt</string>
+</resources>

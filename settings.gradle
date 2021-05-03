@@ -7,3 +7,8 @@ include ':shadowsocksr'
 include ':plugin'
 include ':xtls-plugin'
 include ':trojan-go-plugin'
+
+include ':preferencex'
+include ':preferencex-ringtone'
+include ':preferencex-simplemenu'
+include ':preferencex-colorpicker'

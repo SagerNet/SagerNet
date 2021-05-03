@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ಡಿಫಾಲ್ಟ್ ರಿಂಗ್‌ಟೋನ್</string>
+    <string name="ringtone_silent">ಯಾವುದೂ ಇಲ್ಲ</string>
+    <string name="ringtone_picker_title">ರಿಂಗ್‌ಟೋನ್‌ಗಳು</string>
+    <string name="notification_sound_default">ಡಿಫಾಲ್ಟ್ ಅಧಿಸೂಚನೆ ಧ್ವನಿ</string>
+    <string name="alarm_sound_default">ಡಿಫಾಲ್ಟ್ ಅಲಾರಮ್ ಧ್ವನಿ</string>
+    <string name="add_ringtone_text">ರಿಂಗ್‌ಟೋನ್ ಸೇರಿಸಿ</string>
+    <string name="unable_to_add_ringtone">ಕಸ್ಟಮ್ ರಿಂಗ್‌ಟೋನ್ ಸೇರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ</string>
+</resources>

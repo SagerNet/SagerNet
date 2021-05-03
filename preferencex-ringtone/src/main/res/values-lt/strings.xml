@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Numatytasis skambėjimo tonas</string>
+    <string name="ringtone_silent">Nėra</string>
+    <string name="ringtone_picker_title">Skambėjimo tonai</string>
+    <string name="notification_sound_default">Numatytasis pranešimo garsas</string>
+    <string name="alarm_sound_default">Numatytasis signalo garsas</string>
+    <string name="add_ringtone_text">Pridėti skambėjimo toną</string>
+    <string name="unable_to_add_ringtone">Nepavyksta pridėti tinkinto skambėjimo tono</string>
+</resources>

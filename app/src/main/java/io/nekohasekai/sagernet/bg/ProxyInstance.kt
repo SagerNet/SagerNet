@@ -78,152 +78,153 @@ class ProxyInstance(val profile: ProxyEntity) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
             service else null), false)
-        if (profile.useExternalShadowsocks() || profile.useXray() || profile.type == 2) {
-            v2rayPoint.domainName = "127.0.0.1:${DataStore.socksPort + 10}"
-        } else {
-            v2rayPoint.domainName = profile.urlFixed()
-        }
+        v2rayPoint.domainName = "127.0.0.1:1080"
         config = buildV2RayConfig(profile)
         v2rayPoint.configureFileContent = gson.toJson(config.config).also {
             Logs.d(it)
         }
 
         for ((index, profile) in config.index.entries) {
-            if (profile.useExternalShadowsocks()) {
-                val bean = profile.requireSS()
-                val port = DataStore.socksPort + 10 + index
+            when {
+                profile.useExternalShadowsocks() -> {
+                    val bean = profile.requireSS()
+                    val port = DataStore.socksPort + 10 + index
 
-                val proxyConfig = JSONObject().also {
-                    it["server"] = bean.serverAddress
-                    it["server_port"] = bean.serverPort
-                    it["method"] = bean.method
-                    it["password"] = bean.password
-                    it["local_address"] = "127.0.0.1"
-                    it["local_port"] = port
-                    it["local_udp_address"] = "127.0.0.1"
-                    it["local_udp_port"] = port
-                    it["mode"] = "tcp_and_udp"
-                    if (DataStore.enableLocalDNS) {
-                        it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
-                    } else {
-                        it["dns"] = DataStore.remoteDNS
-                    }
-
-                    if (DataStore.ipv6Route && DataStore.preferIpv6) {
-                        it["ipv6_first"] = true
-                    }
-                }
-
-                if (bean.plugin.isNotBlank()) {
-                    val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
-                    PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
-                        proxyConfig["plugin"] = path
-                        proxyConfig["plugin_opts"] = opts.toString()
-                    }
-                }
-
-                pluginConfigs[index] = proxyConfig.toStringPretty().also {
-                    Logs.d(it)
-                }
-            } else if (profile.type == 2) {
-                val bean = profile.requireSSR()
-
-                val proxyConfig = JSONObject().also {
-
-                    it["server"] = bean.serverAddress
-                    it["server_port"] = bean.serverPort
-                    it["method"] = bean.method
-                    it["password"] = bean.password
-                    it["protocol"] = bean.protocol
-                    it["protocol_param"] = bean.protocolParam
-                    it["obfs"] = bean.obfs
-                    it["obfs_param"] = bean.obfsParam
-                    it["ipv6"] = DataStore.ipv6Route
-                    if (DataStore.enableLocalDNS) {
-                        it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
-                    } else {
-                        it["dns"] = DataStore.remoteDNS
-                    }
-                }
-
-                pluginConfigs[index] = proxyConfig.toStringPretty().also {
-                    Logs.d(it)
-                }
-            } else if (profile.useXray()) {
-                initPlugin("xtls-plugin")
-                pluginConfigs[index] = gson.toJson(buildXrayConfig(profile)).also {
-                    Logs.d(it)
-                }
-            } else if (profile.type == 7) {
-                val bean = profile.requireTrojanGo()
-                initPlugin("trojan-go-plugin")
-                pluginConfigs[index] = JSONObject().also { conf ->
-                    conf["run_type"] = "client"
-                    conf["local_addr"] = "127.0.0.1"
-                    conf["local_port"] = DataStore.socksPort + 10
-                    conf["remote_addr"] = bean.serverAddress
-                    conf["remote_port"] = bean.serverPort
-                    conf["password"] = JSONArray().apply {
-                        add(bean.password)
-                    }
-                    conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
-                    if (DataStore.enableMux) {
-                        conf["mux"] = JSONObject().also {
-                            it["enabled"] = true
-                            it["concurrency"] = DataStore.muxConcurrency
+                    val proxyConfig = JSONObject().also {
+                        it["server"] = bean.serverAddress
+                        it["server_port"] = bean.serverPort
+                        it["method"] = bean.method
+                        it["password"] = bean.password
+                        it["local_address"] = "127.0.0.1"
+                        it["local_port"] = port
+                        it["local_udp_address"] = "127.0.0.1"
+                        it["local_udp_port"] = port
+                        it["mode"] = "tcp_and_udp"
+                        if (DataStore.enableLocalDNS) {
+                            it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+                        } else {
+                            it["dns"] = DataStore.remoteDNS
                         }
-                    }
-                    if (!DataStore.preferIpv6) {
-                        conf["tcp"] = JSONObject().also {
-                            it["prefer_ipv4"] = true
-                        }
-                    }
 
-                    when (bean.type) {
-                        "original" -> {
-                        }
-                        "ws" -> {
-                            conf["websocket"] = JSONObject().also {
-                                it["enabled"] = true
-                                it["host"] = bean.host
-                                it["path"] = bean.path
-                            }
-                        }
-                    }
-
-                    if (bean.sni.isNotBlank()) {
-                        conf["ssl"] = JSONObject().also {
-                            it["sni"] = bean.sni
-                        }
-                    }
-
-                    when {
-                        bean.encryption == "none" -> {
-                        }
-                        bean.encryption.startsWith("ss;") -> {
-                            conf["shadowsocks"] = JSONObject().also {
-                                it["enabled"] = true
-                                it["method"] =
-                                    bean.encryption.substringAfter(";").substringBefore(":")
-                                it["password"] = bean.encryption.substringAfter(":")
-                            }
+                        if (DataStore.ipv6Route && DataStore.preferIpv6) {
+                            it["ipv6_first"] = true
                         }
                     }
 
                     if (bean.plugin.isNotBlank()) {
                         val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
-                        PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
-                            conf["transport_plugin"] = JSONObject().also {
-                                it["enabled"] = true
-                                it["type"] = "shadowsocks"
-                                it["command"] = path
-                                it["option"] = opts.toString()
-                            }
+                        PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
+                            proxyConfig["plugin"] = path
+                            proxyConfig["plugin_opts"] = opts.toString()
                         }
                     }
-                }.also {
-                    Logs.d(it.toStringPretty())
-                }.toString()
+
+                    pluginConfigs[index] = proxyConfig.toStringPretty().also {
+                        Logs.d(it)
+                    }
+                }
+                profile.type == 2 -> {
+                    val bean = profile.requireSSR()
+
+                    val proxyConfig = JSONObject().also {
+
+                        it["server"] = bean.serverAddress
+                        it["server_port"] = bean.serverPort
+                        it["method"] = bean.method
+                        it["password"] = bean.password
+                        it["protocol"] = bean.protocol
+                        it["protocol_param"] = bean.protocolParam
+                        it["obfs"] = bean.obfs
+                        it["obfs_param"] = bean.obfsParam
+                        it["ipv6"] = DataStore.ipv6Route
+                        if (DataStore.enableLocalDNS) {
+                            it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+                        } else {
+                            it["dns"] = DataStore.remoteDNS
+                        }
+                    }
+
+                    pluginConfigs[index] = proxyConfig.toStringPretty().also {
+                        Logs.d(it)
+                    }
+                }
+                profile.useXray() -> {
+                    initPlugin("xtls-plugin")
+                    pluginConfigs[index] = gson.toJson(buildXrayConfig(profile)).also {
+                        Logs.d(it)
+                    }
+                }
+                profile.type == 7 -> {
+                    val bean = profile.requireTrojanGo()
+                    initPlugin("trojan-go-plugin")
+                    pluginConfigs[index] = JSONObject().also { conf ->
+                        conf["run_type"] = "client"
+                        conf["local_addr"] = "127.0.0.1"
+                        conf["local_port"] = DataStore.socksPort + 10
+                        conf["remote_addr"] = bean.serverAddress
+                        conf["remote_port"] = bean.serverPort
+                        conf["password"] = JSONArray().apply {
+                            add(bean.password)
+                        }
+                        conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
+                        if (DataStore.enableMux) {
+                            conf["mux"] = JSONObject().also {
+                                it["enabled"] = true
+                                it["concurrency"] = DataStore.muxConcurrency
+                            }
+                        }
+                        if (!DataStore.preferIpv6) {
+                            conf["tcp"] = JSONObject().also {
+                                it["prefer_ipv4"] = true
+                            }
+                        }
+
+                        when (bean.type) {
+                            "original" -> {
+                            }
+                            "ws" -> {
+                                conf["websocket"] = JSONObject().also {
+                                    it["enabled"] = true
+                                    it["host"] = bean.host
+                                    it["path"] = bean.path
+                                }
+                            }
+                        }
+
+                        if (bean.sni.isNotBlank()) {
+                            conf["ssl"] = JSONObject().also {
+                                it["sni"] = bean.sni
+                            }
+                        }
+
+                        when {
+                            bean.encryption == "none" -> {
+                            }
+                            bean.encryption.startsWith("ss;") -> {
+                                conf["shadowsocks"] = JSONObject().also {
+                                    it["enabled"] = true
+                                    it["method"] =
+                                        bean.encryption.substringAfter(";").substringBefore(":")
+                                    it["password"] = bean.encryption.substringAfter(":")
+                                }
+                            }
+                        }
+
+                        if (bean.plugin.isNotBlank()) {
+                            val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
+                            PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                                conf["transport_plugin"] = JSONObject().also {
+                                    it["enabled"] = true
+                                    it["type"] = "shadowsocks"
+                                    it["command"] = path
+                                    it["option"] = opts.toString()
+                                }
+                            }
+                        }
+                    }.also {
+                        Logs.d(it.toStringPretty())
+                    }.toString()
+                }
             }
         }
     }

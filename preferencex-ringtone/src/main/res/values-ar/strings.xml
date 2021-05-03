@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">نغمة الرنين الافتراضية</string>
+    <string name="ringtone_silent">لا شيء</string>
+    <string name="ringtone_picker_title">نغمات الرنين</string>
+    <string name="notification_sound_default">صوت الإشعار التلقائي</string>
+    <string name="alarm_sound_default">صوت التنبيه الافتراضي</string>
+    <string name="add_ringtone_text">إضافة نغمة رنين</string>
+    <string name="unable_to_add_ringtone">يتعذر إضافة نغمة رنين مخصصة</string>
+</resources>

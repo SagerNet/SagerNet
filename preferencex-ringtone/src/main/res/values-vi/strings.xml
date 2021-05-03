@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Nhạc chuông mặc định</string>
+    <string name="ringtone_silent">Không</string>
+    <string name="ringtone_picker_title">Nhạc chuông</string>
+    <string name="notification_sound_default">Âm thanh thông báo mặc định</string>
+    <string name="alarm_sound_default">Âm thanh báo thức mặc định</string>
+    <string name="add_ringtone_text">Thêm nhạc chuông</string>
+    <string name="unable_to_add_ringtone">Không thể thêm nhạc chuông tùy chỉnh</string>
+</resources>

@@ -36,7 +36,7 @@ import androidx.lifecycle.whenCreated
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
-import androidx.preference.PreferenceFragmentCompat
+import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.github.shadowsocks.plugin.*
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.github.shadowsocks.plugin.showAllowingStateLoss

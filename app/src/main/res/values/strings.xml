@@ -199,6 +199,7 @@
     <string name="edit">Edit</string>
     <string name="share">Share</string>
     <string name="add_profile">Add Profile</string>
+    <string name="select_profile">Select Profile</string>
     <string name="action_profile">Profile</string>
     <string name="action_socks" translatable="false">SOCKS</string>
     <string name="action_http" translatable="false">HTTP</string>
@@ -208,6 +209,10 @@
     <string name="action_vless" translatable="false">VLESS</string>
     <string name="action_trojan" translatable="false">Trojan</string>
     <string name="action_trojan_go" translatable="false">Trojan Go</string>
+    <string name="proxy_chain">Proxy Chain</string>
+    <string name="chain_settings">Chain Settings</string>
+    <string name="circular_reference">Circular reference</string>
+    <string name="circular_reference_sum">The route cannot contain itself.</string>
 
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>

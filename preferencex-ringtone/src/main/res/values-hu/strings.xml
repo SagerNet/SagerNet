@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Alapértelmezett csengőhang</string>
+    <string name="ringtone_silent">Egyik sem</string>
+    <string name="ringtone_picker_title">Csengőhangok</string>
+    <string name="notification_sound_default">Alapértelmezett értesítési hang</string>
+    <string name="alarm_sound_default">Alapértelmezett ébresztési hang</string>
+    <string name="add_ringtone_text">Csengőhang hozzáadása</string>
+    <string name="unable_to_add_ringtone">Nem sikerült hozzáadni az egyéni csengőhangot</string>
+</resources>

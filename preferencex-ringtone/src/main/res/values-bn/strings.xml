@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ডিফল্ট রিংটোন</string>
+    <string name="ringtone_silent">কোনো কিছুই নয়</string>
+    <string name="ringtone_picker_title">রিংটোনগুলি</string>
+    <string name="notification_sound_default">ডিফল্ট বিজ্ঞপ্তি শব্দ</string>
+    <string name="alarm_sound_default">ডিফল্ট অ্যালার্মের শব্দ</string>
+    <string name="add_ringtone_text">রিংটোন যোগ করুন</string>
+    <string name="unable_to_add_ringtone">কাস্টম রিংটোন যোগ করা গেল না</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">डीफॉल्ट रिंगटोन</string>
+    <string name="ringtone_silent">काहीही नाही</string>
+    <string name="ringtone_picker_title">रिंगटोन</string>
+    <string name="notification_sound_default">डीफॉल्ट सूचना ध्वनी</string>
+    <string name="alarm_sound_default">डीफॉल्ट अलार्म ध्वनी</string>
+    <string name="add_ringtone_text">रिंगटोन जोडा</string>
+    <string name="unable_to_add_ringtone">सानुकूल रिंगटोन जोडण्यात अक्षम</string>
+</resources>

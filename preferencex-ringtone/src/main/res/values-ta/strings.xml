@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">இயல்புநிலை ரிங்டோன்</string>
+    <string name="ringtone_silent">ஏதுமில்லை</string>
+    <string name="ringtone_picker_title">ரிங்டோன்கள்</string>
+    <string name="notification_sound_default">இயல்பு அறிவிப்பு ஒலி</string>
+    <string name="alarm_sound_default">இயல்பு அலார ஒலி</string>
+    <string name="add_ringtone_text">ரிங்டோனைச் சேர்</string>
+    <string name="unable_to_add_ringtone">தனிப்பயன் ரிங்டோனைச் சேர்க்க முடியவில்லை</string>
+</resources>

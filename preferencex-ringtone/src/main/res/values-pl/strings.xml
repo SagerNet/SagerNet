@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Dzwonek domyślny</string>
+    <string name="ringtone_silent">Brak</string>
+    <string name="ringtone_picker_title">Dzwonki</string>
+    <string name="notification_sound_default">Domyślny dźwięk powiadomienia</string>
+    <string name="alarm_sound_default">Domyślny dźwięk alarmu</string>
+    <string name="add_ringtone_text">Dodaj dzwonek</string>
+    <string name="unable_to_add_ringtone">Nie można dodać dzwonka niestandardowego</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">សំឡេង​រោទ៍​លំនាំដើម</string>
+    <string name="ringtone_silent">គ្មាន</string>
+    <string name="ringtone_picker_title">សំឡេង​រោទ៍</string>
+    <string name="notification_sound_default">សំឡេង​ជូន​ដំណឹង​លំនាំដើម</string>
+    <string name="alarm_sound_default">សំឡេងម៉ោងរោទិ៍លំនាំដើម</string>
+    <string name="add_ringtone_text">បន្ថែម​សំឡេង​រោទ៍</string>
+    <string name="unable_to_add_ringtone">មិន​អាច​បន្ថែម​សំឡេង​រោទ៍​ផ្ទាល់ខ្លួន​បាន</string>
+</resources>

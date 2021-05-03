@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Noklusējuma zvana signāls</string>
+    <string name="ringtone_silent">Nav</string>
+    <string name="ringtone_picker_title">Zvana signāli</string>
+    <string name="notification_sound_default">Paziņojuma noklusējuma skaņa</string>
+    <string name="alarm_sound_default">Signāla noklusējuma skaņa</string>
+    <string name="add_ringtone_text">Pievienot zvana signālu</string>
+    <string name="unable_to_add_ringtone">Nevar pievienot pielāgotu zvana signālu</string>
+</resources>

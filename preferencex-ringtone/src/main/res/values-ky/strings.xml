@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Демейки шыңгыр</string>
+    <string name="ringtone_silent">Эч бир</string>
+    <string name="ringtone_picker_title">Шыңгырлар</string>
+    <string name="notification_sound_default">Демейки эскертме үнү</string>
+    <string name="alarm_sound_default">Ойготкучтун демейки үнү</string>
+    <string name="add_ringtone_text">Шыңгыр кошуу</string>
+    <string name="unable_to_add_ringtone">Жеке рингтон кошулбай жатат</string>
+</resources>

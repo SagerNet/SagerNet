@@ -34,3 +34,4 @@ fun runOnMainDispatcher(block: suspend CoroutineScope.() -> Unit) =
 
 suspend fun onMainDispatcher(block: suspend CoroutineScope.() -> Unit) =
     withContext(Dispatchers.Main.immediate, block = block)
+

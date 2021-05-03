@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Sonnerie par défaut</string>
+    <string name="ringtone_silent">Aucun(e)</string>
+    <string name="ringtone_picker_title">Sonneries</string>
+    <string name="notification_sound_default">Son de notification par défaut</string>
+    <string name="alarm_sound_default">Son de l\'alarme par défaut</string>
+    <string name="add_ringtone_text">Ajouter une sonnerie</string>
+    <string name="unable_to_add_ringtone">Impossible d\'ajouter une sonnerie personnalisée</string>
+</resources>

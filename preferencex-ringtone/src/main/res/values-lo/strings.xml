@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ຣິງໂທນເລີ່ມຕົ້ນ</string>
+    <string name="ringtone_silent">ບໍ່ມີ</string>
+    <string name="ringtone_picker_title">ຣິງໂທນ</string>
+    <string name="notification_sound_default">ສຽງແຈ້ງເຕືອນເລີ່ມຕົ້ນ</string>
+    <string name="alarm_sound_default">ສຽງໂມງປຸກຕາມຄ່າເລີ່ມຕົ້ນ</string>
+    <string name="add_ringtone_text">ເພີ່ມຣິງໂທນ</string>
+    <string name="unable_to_add_ringtone">Unable to add custom ringtone</string>
+</resources>

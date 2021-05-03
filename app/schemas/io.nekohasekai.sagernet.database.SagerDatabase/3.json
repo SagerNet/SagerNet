@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "04057157172a4366b794bf6c1edd77d7",
+    "identityHash": "69f4787b90c290dce09994b13682e792",
     "entities": [
       {
         "tableName": "proxy_groups",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "proxy_entities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `vlessBean` BLOB, `trojanBean` BLOB, `trojanGoBean` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `vlessBean` BLOB, `trojanBean` BLOB, `trojanGoBean` BLOB, `chainBean` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -157,6 +157,12 @@
           {
             "fieldPath": "trojanGoBean",
             "columnName": "trojanGoBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "chainBean",
+            "columnName": "chainBean",
             "affinity": "BLOB",
             "notNull": false
           }
@@ -307,7 +313,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '04057157172a4366b794bf6c1edd77d7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '69f4787b90c290dce09994b13682e792')"
     ]
   }
 }

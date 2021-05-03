@@ -280,5 +280,10 @@
     <string name="insecure_warn_sum">由 Qv2ray 开发者社区提供</string>
     <string name="show_direct_speed">显示直连速度</string>
     <string name="show_direct_speed_sum">在通知中也显示不经过代理的流量速度</string>
+    <string name="select_profile">选择配置</string>
+    <string name="proxy_chain">链式代理</string>
+    <string name="chain_settings">链设置</string>
+    <string name="circular_reference">循环引用</string>
+    <string name="circular_reference_sum">路由中不能包含自己.</string>
 
 </resources>

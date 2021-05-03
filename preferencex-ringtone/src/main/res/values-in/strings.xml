@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Nada dering default</string>
+    <string name="ringtone_silent">Tidak Ada</string>
+    <string name="ringtone_picker_title">Nada dering</string>
+    <string name="notification_sound_default">Suara notifikasi default</string>
+    <string name="alarm_sound_default">Suara alarm default</string>
+    <string name="add_ringtone_text">Tambahkan nada dering</string>
+    <string name="unable_to_add_ringtone">Tidak dapat menambahkan nada dering khusus</string>
+</resources>

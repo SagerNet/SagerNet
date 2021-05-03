@@ -15,6 +15,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/plugin" />
+            <option value="$PROJECT_DIR$/preferencex" />
+            <option value="$PROJECT_DIR$/preferencex-colorpicker" />
+            <option value="$PROJECT_DIR$/preferencex-ringtone" />
+            <option value="$PROJECT_DIR$/preferencex-simplemenu" />
             <option value="$PROJECT_DIR$/shadowsocks" />
             <option value="$PROJECT_DIR$/shadowsocksr" />
             <option value="$PROJECT_DIR$/trojan-go-plugin" />

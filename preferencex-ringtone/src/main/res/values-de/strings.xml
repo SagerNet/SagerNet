@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Standard-Klingelton</string>
+    <string name="ringtone_silent">Ohne</string>
+    <string name="ringtone_picker_title">Klingeltöne</string>
+    <string name="notification_sound_default">Standard-Benachrichtigungston</string>
+    <string name="alarm_sound_default">Standard-Weckton</string>
+    <string name="add_ringtone_text">Klingelton hinzufügen</string>
+    <string name="unable_to_add_ringtone">Benutzerdefinierter Klingelton konnte nicht hinzugefügt werden</string>
+</resources>

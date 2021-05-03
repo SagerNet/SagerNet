@@ -22,6 +22,7 @@ The application is designed to be used whenever possible.
 * Trojan
 * VLESS / Trojan + XTLS ( xtls-plugin )
 * Trojan-Go ( trojan-go-plugin )
+* Proxy Chain
 
 ### Subscription protocols
 

@@ -50,10 +50,10 @@ const val TAG_BLOCK = "block"
 const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
-fun resolveChain(proxy: ProxyEntity): List<ProxyEntity> {
+fun resolveChain(proxy: ProxyEntity): MutableList<ProxyEntity> {
     val bean = proxy.requireBean()
-    if (bean !is ChainBean) return listOf(proxy)
-    val beans = SagerDatabase.proxyDao.getEntities(* bean.proxies.toLongArray())
+    if (bean !is ChainBean) return mutableListOf(proxy)
+    val beans = SagerDatabase.proxyDao.getEntities(bean.proxies)
     val beansMap = beans.map { it.id to it }.toMap()
     val beanList = LinkedList<ProxyEntity>()
     for (proxyId in bean.proxies) {
@@ -335,7 +335,7 @@ fun beanToOutbound(proxy: ProxyEntity, index: Int): OutboundObject {
 class V2rayBuildResult(
     var config: V2RayConfig,
     var index: HashMap<Int, ProxyEntity>,
-    var requireWs: Boolean
+    var requireWs: Boolean,
 )
 
 fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
@@ -441,18 +441,18 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
         outbounds = mutableListOf()
 
-        val lastIndex = proxies.size - 1
+        val lastProxy = proxies.size - 1
 
         proxies.forEachIndexed { index, proxyEntity ->
             indexMap[index] = proxyEntity
 
             outbounds.add(
                 beanToOutbound(proxyEntity, index).apply {
-
-                    tag = if (index == 0) TAG_AGENT else "${proxyEntity.id}"
-                    if (index != lastIndex && lastIndex != 0) {
+                    tag = if (index == lastProxy) TAG_AGENT else "${proxyEntity.id}"
+                    if (index != 0 && lastProxy != 0) {
                         proxySettings = OutboundObject.ProxySettingsObject().apply {
-                            tag = "${proxies[index + 1].id}"
+                            tag = "${indexMap[index - 1]!!.id}"
+                            transportLayer = true
                         }
                     }
                     if (streamSettings?.wsSettings?.useBrowserForwarding == true) {
@@ -630,11 +630,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
         stats = emptyMap()
 
-    }.let { V2rayBuildResult(
-        it,
-        indexMap,
-        requireWs
-    ) }
+    }.let {
+        V2rayBuildResult(
+            it,
+            indexMap,
+            requireWs
+        )
+    }
 
 }
 

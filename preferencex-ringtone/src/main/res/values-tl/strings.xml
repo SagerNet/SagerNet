@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Default na ringtone</string>
+    <string name="ringtone_silent">Wala</string>
+    <string name="ringtone_picker_title">Mga Ringtone</string>
+    <string name="notification_sound_default">Default na tunog ng notification</string>
+    <string name="alarm_sound_default">Default na tunog ng alarm</string>
+    <string name="add_ringtone_text">Magdagdag ng ringtone</string>
+    <string name="unable_to_add_ringtone">Hindi maidagdag ang custom na ringtone</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">డిఫాల్ట్ రింగ్‌టోన్</string>
+    <string name="ringtone_silent">ఏదీ వద్దు</string>
+    <string name="ringtone_picker_title">రింగ్‌టోన్‌లు</string>
+    <string name="notification_sound_default">డిఫాల్ట్ నోటిఫికేషన్ ధ్వని</string>
+    <string name="alarm_sound_default">డిఫాల్ట్ అలారం ధ్వని</string>
+    <string name="add_ringtone_text">రింగ్‌టోన్‌ను జోడించు</string>
+    <string name="unable_to_add_ringtone">అనుకూల రింగ్‌టోన్‌ను జోడించలేకపోయింది</string>
+</resources>

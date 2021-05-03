@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorPickerPreference">
+        <attr name="pref_currentColor" format="reference" />
+
+        <attr name="pref_colors" format="reference" />
+
+        <attr name="pref_sortColors" format="boolean|reference" />
+
+        <attr name="pref_colorDescriptions" format="reference" />
+
+        <attr name="pref_columns" format="integer|reference" />
+
+        <attr name="pref_size" format="enum|reference">
+            <enum name="large" value="1" />
+            <enum name="small" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

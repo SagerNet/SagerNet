@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Стандартны рынгтон</string>
+    <string name="ringtone_silent">Няма</string>
+    <string name="ringtone_picker_title">Рынгтоны</string>
+    <string name="notification_sound_default">Стандартны сігнал апавяшчэння</string>
+    <string name="alarm_sound_default">Стандартны сігнал будзільніка</string>
+    <string name="add_ringtone_text">Дадаць рынгтон</string>
+    <string name="unable_to_add_ringtone">Немагчыма дадаць карыстальніцкі рынгтон</string>
+</resources>

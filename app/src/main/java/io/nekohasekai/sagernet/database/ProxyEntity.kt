@@ -27,6 +27,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
 import cn.hutool.core.lang.Validator
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
@@ -48,6 +49,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(tableName = "proxy_entities", indices = [
@@ -116,6 +118,10 @@ data class ProxyEntity(
         parcel.writeByteArray(byteArray)
     }
 
+    companion object {
+        val chainName by lazy { app.getString(R.string.proxy_chain) }
+    }
+
     fun displayType(): String {
         return when (type) {
             0 -> "SOCKS5"
@@ -126,14 +132,13 @@ data class ProxyEntity(
             5 -> "Trojan"
             6 -> if (requireHttp().tls) "HTTPS" else "HTTP"
             7 -> "Trojan-Go"
-            8 -> "Chain"
+            8 -> chainName
             else -> "Undefined type $type"
         }
     }
 
     fun displayName(): String {
-        return requireBean().name.takeIf { !it.isNullOrBlank() }
-            ?: "${requireBean().serverAddress}:${requireBean().serverPort}"
+        return requireBean().displayName()
     }
 
     fun urlFixed(): String {
@@ -262,6 +267,7 @@ data class ProxyEntity(
             5 -> TrojanSettingsActivity::class.java
             6 -> HttpSettingsActivity::class.java
             7 -> TrojanGoSettingsActivity::class.java
+            8 -> ChainSettingsActivity::class.java
             else -> throw IllegalArgumentException()
         }).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)
@@ -278,8 +284,8 @@ data class ProxyEntity(
         @Query("SELECT * FROM proxy_entities WHERE groupId = :groupId ORDER BY userOrder")
         fun getByGroup(groupId: Long): List<ProxyEntity>
 
-        @Query("SELECT * FROM proxy_entities WHERE id in (:proxyId)")
-        fun getEntities(vararg proxyId: Long): List<ProxyEntity>
+        @Query("SELECT * FROM proxy_entities WHERE id in (:proxyIds)")
+        fun getEntities(proxyIds: List<Long>): List<ProxyEntity>
 
         @Query("SELECT COUNT(*) FROM proxy_entities WHERE groupId = :groupId")
         fun countByGroup(groupId: Long): Long
@@ -315,7 +321,7 @@ data class ProxyEntity(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<ProxyEntity> {
+    object CREATOR : Parcelable.Creator<ProxyEntity> {
         override fun createFromParcel(parcel: Parcel): ProxyEntity {
             return ProxyEntity(parcel)
         }

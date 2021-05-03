@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">רינגטון ברירת מחדל</string>
+    <string name="ringtone_silent">ללא</string>
+    <string name="ringtone_picker_title">רינגטונים</string>
+    <string name="notification_sound_default">צליל ברירת המחדל לתזכורת</string>
+    <string name="alarm_sound_default">צליל ברירת המחדל להתראה</string>
+    <string name="add_ringtone_text">רינגטון חדש</string>
+    <string name="unable_to_add_ringtone">לא ניתן להוסיף רינגטון מותאם אישית</string>
+</resources>

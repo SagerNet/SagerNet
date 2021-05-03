@@ -1,0 +1,370 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2021 by nekohasekai <sekai@neko.services>                    *
+ * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
+ * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ *  (at your option) any later version.                                       *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
+ *                                                                            *
+ ******************************************************************************/
+
+package io.nekohasekai.sagernet.ui.profile
+
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Color
+import android.os.Bundle
+import android.text.format.Formatter
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.activity.result.component1
+import androidx.activity.result.component2
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.takisoft.preferencex.PreferenceFragmentCompat
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProfileManager
+import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.fmt.chain.ChainBean
+import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ui.ProfileSelectActivity
+import java.util.*
+
+class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
+    R.layout.layout_chain_settings
+) {
+
+    override fun createEntity() = ChainBean()
+
+    override fun init() {
+        ChainBean().apply { initDefaultValues() }.init()
+    }
+
+    val proxyList = LinkedList<ProxyEntity>()
+
+    override fun ChainBean.init() {
+        DataStore.profileName = name
+        DataStore.serverProtocol = proxies.joinToString(",")
+    }
+
+    override fun ChainBean.serialize() {
+        name = DataStore.profileName
+        proxies = proxyList.map { it.id }
+        initDefaultValues()
+    }
+
+    override fun PreferenceFragmentCompat.createPreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
+        addPreferencesFromResource(R.xml.chain_preferences)
+    }
+
+    lateinit var configurationList: RecyclerView
+    lateinit var configurationAdapter: ProxiesAdapter
+    lateinit var layoutManager: LinearLayoutManager
+
+    @SuppressLint("InlinedApi")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        supportActionBar!!.setTitle(R.string.chain_settings)
+        configurationList = findViewById(R.id.configuration_list)
+        layoutManager = FixedLinearLayoutManager(this)
+        configurationList.layoutManager = layoutManager
+        configurationAdapter = ProxiesAdapter()
+        configurationList.adapter = configurationAdapter
+
+        ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.START) {
+            override fun getSwipeDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+            ) = if (viewHolder is ProfileHolder) {
+                super.getSwipeDirs(recyclerView, viewHolder)
+            } else 0
+
+            override fun getDragDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+            ) = if (viewHolder is ProfileHolder) {
+                super.getDragDirs(recyclerView, viewHolder)
+            } else 0
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                return if (target !is ProfileHolder) false else {
+                    configurationAdapter.move(viewHolder.adapterPosition, target.adapterPosition)
+                    true
+                }
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                configurationAdapter.remove(viewHolder.adapterPosition)
+            }
+
+        }).attachToRecyclerView(configurationList)
+    }
+
+    override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
+        view.rootView.findViewById<RecyclerView>(R.id.recycler_view).apply {
+            (layoutParams ?: LinearLayout.LayoutParams(-1, -2)).apply {
+                height = -2
+                layoutParams = this
+            }
+        }
+
+        runOnDefaultDispatcher {
+            configurationAdapter.reload()
+        }
+    }
+
+    inner class ProxiesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        suspend fun reload() {
+            val idList = DataStore.serverProtocol.split(",")
+                .mapNotNull { it.takeIf { it.isNotBlank() }?.toLong() }
+            if (idList.isNotEmpty()) {
+                val profiles = ProfileManager.getProfiles(idList).map { it.id to it }.toMap()
+                for (id in idList) {
+                    proxyList.add(profiles[id] ?: continue)
+                }
+            }
+            onMainDispatcher {
+                notifyDataSetChanged()
+            }
+        }
+
+        fun move(from: Int, to: Int) {
+            val toMove = proxyList[to - 1]
+            proxyList[to - 1] = proxyList[from - 1]
+            proxyList[from - 1] = toMove
+            notifyItemMoved(from, to)
+            DataStore.dirty = true
+        }
+
+        fun remove(index: Int) {
+            proxyList.removeAt(index - 1)
+            notifyItemRemoved(index)
+            DataStore.dirty = true
+        }
+
+        override fun getItemId(position: Int): Long {
+            return if (position == 0) 0 else proxyList[position - 1].id
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            return if (position == 0) 0 else 1
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return if (viewType == 0) {
+                AddHolder(layoutInflater.inflate(R.layout.layout_add_entity, parent, false))
+            } else {
+                ProfileHolder(layoutInflater.inflate(R.layout.layout_profile, parent, false))
+            }
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (holder is AddHolder) {
+                holder.bind()
+            } else if (holder is ProfileHolder) {
+                holder.bind(proxyList[position - 1])
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return proxyList.size + 1
+        }
+
+    }
+
+    fun testProfileAllowed(profile: ProxyEntity): Boolean {
+        if (profile.id == DataStore.editingId) return false
+
+        for (entity in proxyList) {
+            if (testProfileContains(entity, profile)) return false
+        }
+
+        return true
+    }
+
+    fun testProfileContains(profile: ProxyEntity, anotherProfile: ProxyEntity): Boolean {
+        if (profile.type != 8 || anotherProfile.type != 8) return false
+        if (profile.id == anotherProfile.id) return true
+        val proxies = profile.requireChain().proxies
+        if (proxies.contains(anotherProfile.id)) return true
+        if (proxies.isNotEmpty()) {
+            for (entity in ProfileManager.getProfiles(proxies)) {
+                if (testProfileContains(entity, anotherProfile)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+
+    val selectProfileForAdd = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
+        if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
+            DataStore.dirty = true
+
+            val profile =
+                ProfileManager.getProfile(data!!.getLongExtra(ProfileSelectActivity.EXTRA_PROFILE_ID,
+                    0))!!
+
+            if (!testProfileAllowed(profile)) {
+                onMainDispatcher {
+                    AlertDialog.Builder(this@ChainSettingsActivity)
+                        .setTitle(R.string.circular_reference)
+                        .setMessage(R.string.circular_reference_sum)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+                }
+            } else {
+                configurationList.post {
+                    proxyList.add(profile)
+                    configurationAdapter.notifyItemInserted(proxyList.size)
+                }
+            }
+        }
+    }
+
+    inner class AddHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        fun bind() {
+            view.setOnClickListener {
+                selectProfileForAdd.launch(Intent(this@ChainSettingsActivity,
+                    ProfileSelectActivity::class.java))
+            }
+        }
+    }
+
+    inner class ProfileHolder(val view: View) : RecyclerView.ViewHolder(view) {
+
+        val profileName: TextView = view.findViewById(R.id.profile_name)
+        val profileType: TextView = view.findViewById(R.id.profile_type)
+        val profileAddress: TextView = view.findViewById(R.id.profile_address)
+        val trafficText: TextView = view.findViewById(R.id.traffic_text)
+        val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
+        val editButton: ImageView = view.findViewById(R.id.edit)
+        val shareLayout: LinearLayout = view.findViewById(R.id.share)
+        val shareLayer: LinearLayout = view.findViewById(R.id.share_layer)
+        val shareButton: ImageView = view.findViewById(R.id.shareIcon)
+
+        fun bind(proxyEntity: ProxyEntity) {
+
+            view.setOnClickListener {
+            }
+
+            profileName.text = proxyEntity.displayName()
+            profileType.text = proxyEntity.displayType()
+
+            var rx = proxyEntity.rx
+            var tx = proxyEntity.tx
+
+            val stats = proxyEntity.stats
+            if (stats != null) {
+                rx += stats.rxTotal
+                tx += stats.txTotal
+            }
+
+            val showTraffic = rx + tx != 0L
+            trafficText.isVisible = showTraffic
+            if (showTraffic) {
+                trafficText.text = view.context.getString(R.string.traffic,
+                    Formatter.formatFileSize(view.context, tx),
+                    Formatter.formatFileSize(view.context, rx))
+            }
+
+            editButton.isVisible = false
+            shareLayout.isVisible = false
+
+            if (proxyEntity.type != 8) runOnDefaultDispatcher {
+
+                val validateResult =
+                    if (DataStore.securityAdvisory) {
+                        proxyEntity.requireBean().isInsecure()
+                    } else ResultLocal
+
+                when (validateResult) {
+                    is ResultInsecure -> onMainDispatcher {
+                        shareLayout.isVisible = true
+
+                        shareLayer.setBackgroundColor(Color.RED)
+                        shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                        shareButton.setColorFilter(Color.WHITE)
+
+                        shareLayout.setOnClickListener {
+                            AlertDialog.Builder(this@ChainSettingsActivity)
+                                .setTitle(R.string.insecure)
+                                .setMessage(resources.openRawResource(validateResult.textRes)
+                                    .bufferedReader().use { it.readText() })
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show().apply {
+                                    findViewById<TextView>(android.R.id.message)?.apply {
+                                        Linkify.addLinks(this, Linkify.WEB_URLS)
+                                        movementMethod =
+                                            LinkMovementMethod.getInstance()
+                                    }
+                                }
+                        }
+                    }
+                    is ResultDeprecated -> onMainDispatcher {
+                        shareLayout.isVisible = true
+
+                        shareLayer.setBackgroundColor(Color.YELLOW)
+                        shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                        shareButton.setColorFilter(Color.GRAY)
+
+                        shareLayout.setOnClickListener {
+                            AlertDialog.Builder(this@ChainSettingsActivity)
+                                .setTitle(R.string.deprecated)
+                                .setMessage(resources.openRawResource(validateResult.textRes)
+                                    .bufferedReader().use { it.readText() })
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show().apply {
+                                    findViewById<TextView>(android.R.id.message)?.apply {
+                                        Linkify.addLinks(this, Linkify.WEB_URLS)
+                                        movementMethod =
+                                            LinkMovementMethod.getInstance()
+                                    }
+                                }
+                        }
+                    }
+                    else -> onMainDispatcher {
+                        shareLayout.isVisible = false
+                    }
+                }
+            }
+        }
+
+    }
+
+}

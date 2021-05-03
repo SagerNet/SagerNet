@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Suoneria predefinita</string>
+    <string name="ringtone_silent">Nessuna</string>
+    <string name="ringtone_picker_title">Suonerie</string>
+    <string name="notification_sound_default">Suono di notifica predefinito</string>
+    <string name="alarm_sound_default">Suono sveglia predefinito</string>
+    <string name="add_ringtone_text">Aggiungi suoneria</string>
+    <string name="unable_to_add_ringtone">Impossibile aggiungere suoneria personalizzata</string>
+</resources>

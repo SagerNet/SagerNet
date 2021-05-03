@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">पूर्वनिर्धारित रिङटोन</string>
+    <string name="ringtone_silent">कुनै पनि होइन</string>
+    <string name="ringtone_picker_title">रिङटोनहरू</string>
+    <string name="notification_sound_default">सूचनाका लागि पूर्वनिर्धारित ध्वनि</string>
+    <string name="alarm_sound_default">अलार्मका लागि पूर्वनिर्धारित ध्वनि</string>
+    <string name="add_ringtone_text">रिङटोन थप्नुहोस्</string>
+    <string name="unable_to_add_ringtone">आफू अनुकूल रिङटोन थप्न सकिएन</string>
+</resources>

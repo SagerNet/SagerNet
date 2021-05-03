@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Әдепкі рингтон</string>
+    <string name="ringtone_silent">Ешқандай</string>
+    <string name="ringtone_picker_title">Қоңырау әуендері</string>
+    <string name="notification_sound_default">Әдепкі хабарландыру дыбысы</string>
+    <string name="alarm_sound_default">Әдепкі дабыл дыбысы</string>
+    <string name="add_ringtone_text">Рингтон енгізу</string>
+    <string name="unable_to_add_ringtone">Арнаулы рингтонды енгізу мүмкін емес</string>
+</resources>

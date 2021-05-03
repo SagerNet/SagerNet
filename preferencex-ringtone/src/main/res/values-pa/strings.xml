@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ਪੂਰਵ-ਨਿਰਧਾਰਤ ਰਿੰਗਟੋਨ</string>
+    <string name="ringtone_silent">ਕੋਈ ਨਹੀਂ</string>
+    <string name="ringtone_picker_title">ਰਿੰਗਟੋਨਾਂ</string>
+    <string name="notification_sound_default">ਪੂਰਵ-ਨਿਰਧਾਰਤ ਸੂਚਨਾ ਧੁਨੀ</string>
+    <string name="alarm_sound_default">ਪੂਰਵ-ਨਿਰਧਾਰਤ ਅਲਾਰਮ ਧੁਨੀ</string>
+    <string name="add_ringtone_text">ਰਿੰਗਟੋਨ ਸ਼ਾਮਲ ਕਰੋ</string>
+    <string name="unable_to_add_ringtone">ਵਿਸ਼ੇਸ਼-ਵਿਉਂਤੀ ਰਿੰਗਟੋਨ ਨੂੰ ਸ਼ਾਮਲ ਕਰਨ ਦੇ ਅਯੋਗ</string>
+</resources>

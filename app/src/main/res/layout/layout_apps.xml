@@ -137,13 +137,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:scrollbarSize="0dp"
         android:visibility="gone"
         app:fastScrollAutoHide="true"
-        app:fastScrollThumbInactiveColor="?colorPrimary"
-        app:fastScrollThumbColor="?colorPrimary"
-        app:fastScrollTrackColor="?colorOnPrimarySurface"
         app:fastScrollPopupBgColor="?colorOnPrimarySurface"
         app:fastScrollPopupTextColor="?colorPrimary"
+        app:fastScrollThumbColor="?colorPrimary"
+        app:fastScrollThumbInactiveColor="?colorPrimary"
+        app:fastScrollTrackColor="?colorOnPrimarySurface"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/layout_apps_item" />
 

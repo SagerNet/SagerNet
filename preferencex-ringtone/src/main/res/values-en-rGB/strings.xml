@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Default ringtone</string>
+    <string name="ringtone_silent">None</string>
+    <string name="ringtone_picker_title">Ringtones</string>
+    <string name="notification_sound_default">Default notification sound</string>
+    <string name="alarm_sound_default">Default alarm sound</string>
+    <string name="add_ringtone_text">Add ringtone</string>
+    <string name="unable_to_add_ringtone">Unable to add customised ringtone</string>
+</resources>

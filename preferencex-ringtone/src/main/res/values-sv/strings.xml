@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Standardringsignal</string>
+    <string name="ringtone_silent">Ingen</string>
+    <string name="ringtone_picker_title">Ringsignaler</string>
+    <string name="notification_sound_default">Standardljud för aviseringar</string>
+    <string name="alarm_sound_default">Standardljud för alarm</string>
+    <string name="add_ringtone_text">Lägg till ringsignal</string>
+    <string name="unable_to_add_ringtone">Det gick inte att lägga till en egen ringsignal</string>
+</resources>

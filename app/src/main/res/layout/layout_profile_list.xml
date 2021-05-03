@@ -8,7 +8,7 @@
     android:padding="4dp"
     android:scrollbarSize="0dp"
     app:fastScrollAutoHide="true"
-    app:fastScrollThumbInactiveColor="?colorPrimary"
     app:fastScrollThumbColor="?colorPrimary"
+    app:fastScrollThumbInactiveColor="?colorPrimary"
     app:fastScrollTrackColor="?colorOnPrimarySurface"
     tools:listitem="@layout/layout_profile" />

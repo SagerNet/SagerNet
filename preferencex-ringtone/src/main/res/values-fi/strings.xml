@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Oletussoittoääni</string>
+    <string name="ringtone_silent">Ei mitään</string>
+    <string name="ringtone_picker_title">Soittoäänet</string>
+    <string name="notification_sound_default">Ilmoituksen oletusääni</string>
+    <string name="alarm_sound_default">Herätyksen oletusääni</string>
+    <string name="add_ringtone_text">Lisää soittoääni</string>
+    <string name="unable_to_add_ringtone">Muokatun soittoäänen lisääminen epäonnistui.</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Мелодия по умолчанию</string>
+    <string name="ringtone_silent">Без звука</string>
+    <string name="ringtone_picker_title">Мелодии</string>
+    <string name="notification_sound_default">Звук уведомления по умолчанию</string>
+    <string name="alarm_sound_default">Звук будильника по умолчанию</string>
+    <string name="add_ringtone_text">Добавить рингтон</string>
+    <string name="unable_to_add_ringtone">Не удалось добавить рингтон</string>
+</resources>

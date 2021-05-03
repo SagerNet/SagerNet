@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">සුපුරුදු රින්ටෝනය සකසන්න</string>
+    <string name="ringtone_silent">කිසිවක් නැත</string>
+    <string name="ringtone_picker_title">රිගින්ටෝන</string>
+    <string name="notification_sound_default">පෙරනිමි දැනුම්දීම් හඬ</string>
+    <string name="alarm_sound_default">පෙරනිමි එලාම හඬ</string>
+    <string name="add_ringtone_text">නාද රිද්මය එක් කරන්න</string>
+    <string name="unable_to_add_ringtone">අභිරුචි නාද රිද්මය එක් කළ නොහැකිය</string>
+</resources>

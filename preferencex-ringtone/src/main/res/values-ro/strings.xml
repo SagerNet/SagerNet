@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Ton de apel prestabilit</string>
+    <string name="ringtone_silent">Niciunul</string>
+    <string name="ringtone_picker_title">Tonuri de apel</string>
+    <string name="notification_sound_default">Sunet de notificare prestabilit</string>
+    <string name="alarm_sound_default">Sunet de alarmă prestabilit</string>
+    <string name="add_ringtone_text">Adăugați un ton de sonerie</string>
+    <string name="unable_to_add_ringtone">Nu se poate adăuga tonul de sonerie personalizat</string>
+</resources>

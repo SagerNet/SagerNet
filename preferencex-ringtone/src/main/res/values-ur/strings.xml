@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ڈیفالٹ رنگ ٹون</string>
+    <string name="ringtone_silent">کوئی نہیں</string>
+    <string name="ringtone_picker_title">رنگ ٹونز</string>
+    <string name="notification_sound_default">اطلاع کی ڈیفالٹ آواز</string>
+    <string name="alarm_sound_default">الارم کی ڈیفالٹ آواز</string>
+    <string name="add_ringtone_text">رنگ ٹون شامل کریں</string>
+    <string name="unable_to_add_ringtone">حسب ضرورت رنگ ٹون شامل کرنے سے قاصر ہے</string>
+</resources>

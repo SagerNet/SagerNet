@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="preference_simple_menu_background" tools:ignore="MissingDefaultResource">#FAFAFA
-    </color>
-</resources>

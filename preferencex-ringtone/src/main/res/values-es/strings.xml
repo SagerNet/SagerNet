@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Tono por defecto</string>
+    <string name="ringtone_silent">Ninguno</string>
+    <string name="ringtone_picker_title">Tonos</string>
+    <string name="notification_sound_default">Sonido de notificación predeterminado</string>
+    <string name="alarm_sound_default">Sonido de alarma predeterminado</string>
+    <string name="add_ringtone_text">Añadir tono de llamada</string>
+    <string name="unable_to_add_ringtone">No se ha podido añadir un tono de llamada personalizado</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Мелодія за умовчанням</string>
+    <string name="ringtone_silent">Немає</string>
+    <string name="ringtone_picker_title">Мелодії</string>
+    <string name="notification_sound_default">Сигнал сповіщень за умовчанням</string>
+    <string name="alarm_sound_default">Сигнал будильника за умовчанням</string>
+    <string name="add_ringtone_text">Додати сигнал дзвінка</string>
+    <string name="unable_to_add_ringtone">Не вдалося додати користувацький сигнал дзвінка</string>
+</resources>

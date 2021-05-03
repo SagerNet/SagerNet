@@ -182,9 +182,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        synchronized(this@GroupFragment) {
-                            if (updating[proxyGroup.id] == true) return
-                        }
                         var (subType, proxies) = try {
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())

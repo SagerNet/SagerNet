@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Varsayılan zil sesi</string>
+    <string name="ringtone_silent">Yok</string>
+    <string name="ringtone_picker_title">Zil sesleri</string>
+    <string name="notification_sound_default">Varsayılan bildirim sesi</string>
+    <string name="alarm_sound_default">Varsayılan alarm sesi</string>
+    <string name="add_ringtone_text">Zil sesi ekle</string>
+    <string name="unable_to_add_ringtone">Özel zil sesi eklenemiyor</string>
+</resources>

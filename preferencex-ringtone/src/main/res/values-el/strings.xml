@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Προεπιλεγμένος ήχος κλήσης</string>
+    <string name="ringtone_silent">Κανένας</string>
+    <string name="ringtone_picker_title">Ήχοι κλήσης</string>
+    <string name="notification_sound_default">Προεπιλεγμένος ήχος ειδοποίησης</string>
+    <string name="alarm_sound_default">Προεπιλεγμένος ήχος ειδοποίησης</string>
+    <string name="add_ringtone_text">Προσθήκη ήχου κλήσης</string>
+    <string name="unable_to_add_ringtone">Δεν είναι δυνατή η προσθήκη προσαρμοσμένου ήχου κλήσης</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Стандардна мелодија</string>
+    <string name="ringtone_silent">Ниедна</string>
+    <string name="ringtone_picker_title">Мелодии</string>
+    <string name="notification_sound_default">Стандарден звук за известување</string>
+    <string name="alarm_sound_default">Стандарден звук за аларм</string>
+    <string name="add_ringtone_text">Додај мелодија</string>
+    <string name="unable_to_add_ringtone">Не може да се додаде приспособена мелодија</string>
+</resources>

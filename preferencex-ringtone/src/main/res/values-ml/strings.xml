@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">ഡിഫോൾട്ട് റിംഗ്‌ടോൺ</string>
+    <string name="ringtone_silent">ഒന്നും വേണ്ട</string>
+    <string name="ringtone_picker_title">റിംഗ്ടോണുകൾ</string>
+    <string name="notification_sound_default">ഡിഫോൾട്ട് അറിയിപ്പ് ശബ്‌ദം</string>
+    <string name="alarm_sound_default">ഡിഫോൾട്ട് അലാറം ശബ്ദം</string>
+    <string name="add_ringtone_text">റിംഗ്‌ടോൺ ചേർക്കുക</string>
+    <string name="unable_to_add_ringtone">ഇഷ്ടാനുസൃത റിംഗ്‌ടോൺ ചേർക്കാനാവില്ല</string>
+</resources>

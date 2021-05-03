@@ -1,0 +1,30 @@
+<resources>
+
+    <style name="Preference.SimpleMenuPreference" parent="@style/Preference.Material">
+        <item name="android:layout">@layout/preference_simplemenu</item>
+        <item name="pref_popupStyle">@style/Preference.SimpleMenuPreference.Popup</item>
+    </style>
+
+    <style name="Preference.SimpleMenuPreference.Popup">
+        <item name="android:popupBackground">@drawable/simple_menu_background</item>
+
+        <item name="pref_listMarginHorizontal">@dimen/simple_menu_margin</item>
+        <item name="pref_listMarginVertical">8dp</item>
+        <item name="pref_listItemPadding">16dp</item>
+        <item name="pref_listElevation">4dp</item>
+
+        <item name="pref_dialogMarginHorizontal">16dp</item>
+        <item name="pref_dialogMarginVertical">24dp</item>
+        <item name="pref_dialogItemPadding">24dp</item>
+        <item name="pref_dialogElevation">24dp</item>
+        <item name="pref_dialogMaxWidth">@dimen/simple_menu_dialog_max_width</item>
+
+        <item name="pref_unit">@dimen/simple_menu_unit</item>
+        <item name="pref_maxUnits">@integer/simple_menu_max_units</item>
+    </style>
+
+    <style name="Animation.SimpleMenuCenter" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/abc_shrink_fade_out_center</item>
+    </style>
+</resources>

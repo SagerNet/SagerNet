@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Standardringetone</string>
+    <string name="ringtone_silent">Ingen</string>
+    <string name="ringtone_picker_title">Ringetoner</string>
+    <string name="notification_sound_default">Standardlyd for underretninger</string>
+    <string name="alarm_sound_default">Standardlyd for alarmer</string>
+    <string name="add_ringtone_text">Tilføj ringetone</string>
+    <string name="unable_to_add_ringtone">Den tilpassede ringetone kunne ikke tilføjes</string>
+</resources>

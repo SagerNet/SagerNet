@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Standard ringetone</string>
+    <string name="ringtone_silent">Ingen</string>
+    <string name="ringtone_picker_title">Ringelyder</string>
+    <string name="notification_sound_default">Standard varsellyd</string>
+    <string name="alarm_sound_default">Standard alarmlyd</string>
+    <string name="add_ringtone_text">Legg til ringelyd</string>
+    <string name="unable_to_add_ringtone">Kan ikke legge til egendefinert ringelyd</string>
+</resources>

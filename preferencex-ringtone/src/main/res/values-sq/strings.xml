@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Zile e paracaktuar.</string>
+    <string name="ringtone_silent">Asnjë</string>
+    <string name="ringtone_picker_title">Zilet</string>
+    <string name="notification_sound_default">Tingulli i parazgjedhur i njoftimit</string>
+    <string name="alarm_sound_default">Tingulli i parazgjedhur i alarmit</string>
+    <string name="add_ringtone_text">Shto zile</string>
+    <string name="unable_to_add_ringtone">Nuk mund të shtojë ton zileje të personalizuar</string>
+</resources>

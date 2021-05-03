@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Tonu lehenetsia</string>
+    <string name="ringtone_silent">Bat ere ez</string>
+    <string name="ringtone_picker_title">Tonuak</string>
+    <string name="notification_sound_default">Jakinarazpenen soinu lehenetsia</string>
+    <string name="alarm_sound_default">Alarmaren soinu lehenetsia</string>
+    <string name="add_ringtone_text">Gehitu tonua</string>
+    <string name="unable_to_add_ringtone">Ezin da gehitu tonu pertsonalizatua</string>
+</resources>

@@ -230,12 +230,13 @@ fun View.crossFadeFrom(other: View) {
 
 fun Fragment.snackbar(text: CharSequence) = (requireActivity() as MainActivity).snackbar(text)
 fun Fragment.addOverScrollListener(recyclerView: RecyclerView) {
+    if (activity !is MainActivity) return
     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
     val adapter = recyclerView.adapter!!
     recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            if (layoutManager.findFirstVisibleItemPosition() > 0 && layoutManager.findLastVisibleItemPosition() >= adapter.itemCount - 1) {
+            if (dy > 0 && layoutManager.findFirstVisibleItemPosition() > 0 && layoutManager.findLastVisibleItemPosition() >= adapter.itemCount-1) {
                 (activity as MainActivity?)?.fab?.apply {
                     if (isShown) hide()
                 }

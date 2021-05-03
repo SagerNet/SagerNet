@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Podrazumevani zvuk zvona</string>
+    <string name="ringtone_silent">Bez zvuka</string>
+    <string name="ringtone_picker_title">Zvukovi zvona</string>
+    <string name="notification_sound_default">Podrazumevani zvuk obaveštenja</string>
+    <string name="alarm_sound_default">Podrazumevani zvuk alarma</string>
+    <string name="add_ringtone_text">Dodaj melodiju zvona</string>
+    <string name="unable_to_add_ringtone">Dodavanje prilagođene melodije zvona nije uspelo</string>
+</resources>

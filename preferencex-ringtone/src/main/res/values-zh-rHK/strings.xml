@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">預設鈴聲</string>
+    <string name="ringtone_silent">無</string>
+    <string name="ringtone_picker_title">鈴聲</string>
+    <string name="notification_sound_default">預設通知音效</string>
+    <string name="alarm_sound_default">預設鬧鐘音效</string>
+    <string name="add_ringtone_text">加入鈴聲</string>
+    <string name="unable_to_add_ringtone">無法加入自訂鈴聲</string>
+</resources>

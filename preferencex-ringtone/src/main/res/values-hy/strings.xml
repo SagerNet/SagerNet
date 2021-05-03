@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Կանխադրված զանգերանգ</string>
+    <string name="ringtone_silent">Ոչ մեկը</string>
+    <string name="ringtone_picker_title">Զանգերանգներ</string>
+    <string name="notification_sound_default">Ծանուցման կանխադրված ձայնը</string>
+    <string name="alarm_sound_default">Զարթուցիչի կանխադրված ձայնը</string>
+    <string name="add_ringtone_text">Ավելացնել զանգերանգ</string>
+    <string name="unable_to_add_ringtone">Հնարավոր չէ հատուկ զանգերանգ ավելացնել</string>
+</resources>

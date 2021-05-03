@@ -190,6 +190,18 @@ object ProfileManager {
         }
     }
 
+    fun getProfiles(profileIds: List<Long>): List<ProxyEntity> {
+        if (profileIds.isEmpty()) return listOf()
+        return try {
+            SagerDatabase.proxyDao.getEntities(profileIds)
+        } catch (ex: SQLiteCantOpenDatabaseException) {
+            throw IOException(ex)
+        } catch (ex: SQLException) {
+            Logs.w(ex)
+            listOf()
+        }
+    }
+
     suspend fun postUpdate(profileId: Long) {
         postUpdate(getProfile(profileId) ?: return)
     }

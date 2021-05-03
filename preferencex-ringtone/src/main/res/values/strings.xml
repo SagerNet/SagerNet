@@ -1,0 +1,13 @@
+<resources>
+    <string name="ringtone_default">Default ringtone</string>
+    <string name="ringtone_silent">None</string>
+    <string name="ringtone_picker_title">Ringtones</string>
+    <string name="notification_sound_default">Default notification sound</string>
+    <string name="alarm_sound_default">Default alarm sound</string>
+
+    <!-- Text for the RingtonePicker item that allows adding a new ringtone. -->
+    <string name="add_ringtone_text">Add ringtone</string>
+
+    <!-- Text for the Toast displayed when adding a custom ringtone fails. -->
+    <string name="unable_to_add_ringtone">Unable to add custom ringtone</string>
+</resources>

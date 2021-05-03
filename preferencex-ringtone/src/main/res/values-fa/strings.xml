@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">آهنگ زنگ پیش‌فرض</string>
+    <string name="ringtone_silent">هیچ‌کدام</string>
+    <string name="ringtone_picker_title">آهنگ‌های زنگ</string>
+    <string name="notification_sound_default">صدای اعلان پیش‌فرض</string>
+    <string name="alarm_sound_default">صدای زنگ پیش‌فرض</string>
+    <string name="add_ringtone_text">افزودن آهنگ زنگ</string>
+    <string name="unable_to_add_ringtone">افزودن آهنگ زنگ سفارشی ممکن نیست</string>
+</resources>

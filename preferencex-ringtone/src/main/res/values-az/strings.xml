@@ -1,0 +1,9 @@
+<resources>
+    <string name="ringtone_default">Defolt rinqton</string>
+    <string name="ringtone_silent">Heç biri</string>
+    <string name="ringtone_picker_title">Zəng səsləri</string>
+    <string name="notification_sound_default">Varsayılan bildiriş səsi</string>
+    <string name="alarm_sound_default">Defolt siqnal səsi</string>
+    <string name="add_ringtone_text">Zəng səsi daxil edin</string>
+    <string name="unable_to_add_ringtone">Fərdi zəng səsi əlavə etmək mümkün deyil</string>
+</resources>
