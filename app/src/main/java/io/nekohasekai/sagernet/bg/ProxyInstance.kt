@@ -39,16 +39,15 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.gson.gson
-import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
-import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
+import io.nekohasekai.sagernet.fmt.v2ray.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.buildXrayConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import io.nekohasekai.sagernet.plugin.PluginManager.InitResult
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -64,11 +63,16 @@ import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
 class ProxyInstance(val profile: ProxyEntity) {
 
     lateinit var v2rayPoint: V2RayPoint
-    lateinit var config: V2RayConfig
+    lateinit var config: V2rayBuildResult
     lateinit var base: BaseService.Interface
     lateinit var wsForwarder: WebView
-    lateinit var plugin: String
-    lateinit var pluginConfig: String
+
+    val pluginPath = hashMapOf<String, InitResult>()
+    fun initPlugin(name: String): InitResult {
+        return pluginPath.getOrPut(name) { PluginManagerS.init(name)!! }
+    }
+
+    val pluginConfigs = hashMapOf<Int, String>()
 
     fun init(service: BaseService.Interface) {
         base = service
@@ -80,97 +84,14 @@ class ProxyInstance(val profile: ProxyEntity) {
             v2rayPoint.domainName = profile.urlFixed()
         }
         config = buildV2RayConfig(profile)
-        v2rayPoint.configureFileContent = gson.toJson(config).also {
+        v2rayPoint.configureFileContent = gson.toJson(config.config).also {
             Logs.d(it)
         }
 
-        if (profile.useXray()) {
-            plugin = PluginManagerS.init("xtls-plugin")!!.path
-            pluginConfig = gson.toJson(buildXrayConfig(profile)).also {
-                Logs.d(it)
-            }
-        } else if (profile.type == 7) {
-            val bean = profile.requireTrojanGo()
-            plugin = PluginManagerS.init("trojan-go-plugin")!!.path
-            pluginConfig = JSONObject().also { conf ->
-                conf["run_type"] = "client"
-                conf["local_addr"] = "127.0.0.1"
-                conf["local_port"] = DataStore.socksPort + 10
-                conf["remote_addr"] = bean.serverAddress
-                conf["remote_port"] = bean.serverPort
-                conf["password"] = JSONArray().apply {
-                    add(bean.password)
-                }
-                conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
-                if (DataStore.enableMux) {
-                    conf["mux"] = JSONObject().also {
-                        it["enabled"] = true
-                        it["concurrency"] = DataStore.muxConcurrency
-                    }
-                }
-                if (!DataStore.preferIpv6) {
-                    conf["tcp"] = JSONObject().also {
-                        it["prefer_ipv4"] = true
-                    }
-                }
-
-                when (bean.type) {
-                    "original" -> {
-                    }
-                    "ws" -> {
-                        conf["websocket"] = JSONObject().also {
-                            it["enabled"] = true
-                            it["host"] = bean.host
-                            it["path"] = bean.path
-                        }
-                    }
-                }
-
-                if (bean.sni.isNotBlank()) {
-                    conf["ssl"] = JSONObject().also {
-                        it["sni"] = bean.sni
-                    }
-                }
-
-                when {
-                    bean.encryption == "none" -> {
-                    }
-                    bean.encryption.startsWith("ss;") -> {
-                        conf["shadowsocks"] = JSONObject().also {
-                            it["enabled"] = true
-                            it["method"] = bean.encryption.substringAfter(";").substringBefore(":")
-                            it["password"] = bean.encryption.substringAfter(":")
-                        }
-                    }
-                }
-
-                if (bean.plugin.isNotBlank()) {
-                    val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
-                    PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
-                        conf["transport_plugin"] = JSONObject().also {
-                            it["enabled"] = true
-                            it["type"] = "shadowsocks"
-                            it["command"] = path
-                            it["option"] = opts.toString()
-                        }
-                    }
-                }
-            }.also {
-                Logs.d(it.toStringPretty())
-            }.toString()
-        }
-    }
-
-    var cacheFiles = LinkedList<File>()
-
-    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    fun start() {
-        val bean = profile.requireBean()
-
-        when {
-            profile.useExternalShadowsocks() -> {
-                bean as ShadowsocksBean
-                val port = DataStore.socksPort + 10
+        for ((index, profile) in config.index.entries) {
+            if (profile.useExternalShadowsocks()) {
+                val bean = profile.requireSS()
+                val port = DataStore.socksPort + 10 + index
 
                 val proxyConfig = JSONObject().also {
                     it["server"] = bean.serverAddress
@@ -195,35 +116,17 @@ class ProxyInstance(val profile: ProxyEntity) {
 
                 if (bean.plugin.isNotBlank()) {
                     val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
-                    PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                    PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
                         proxyConfig["plugin"] = path
                         proxyConfig["plugin_opts"] = opts.toString()
                     }
                 }
 
-                Logs.d(proxyConfig.toStringPretty())
-
-                val context =
-                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                        SagerNet.application else SagerNet.deviceStorage
-                val configFile =
-                    File(context.noBackupFilesDir,
-                        "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
-                configFile.parentFile.mkdirs()
-                configFile.writeText(proxyConfig.toString())
-                cacheFiles.add(configFile)
-
-                val commands = mutableListOf(
-                    File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                        Executable.SS_LOCAL).absolutePath,
-                    "-c", configFile.absolutePath
-                )
-
-                base.data.processes!!.start(commands)
-            }
-            profile.type == 2 -> {
-                bean as ShadowsocksRBean
-                val port = DataStore.socksPort + 10
+                pluginConfigs[index] = proxyConfig.toStringPretty().also {
+                    Logs.d(it)
+                }
+            } else if (profile.type == 2) {
+                val bean = profile.requireSSR()
 
                 val proxyConfig = JSONObject().also {
 
@@ -243,102 +146,215 @@ class ProxyInstance(val profile: ProxyEntity) {
                     }
                 }
 
-                Logs.d(proxyConfig.toStringPretty())
+                pluginConfigs[index] = proxyConfig.toStringPretty().also {
+                    Logs.d(it)
+                }
+            } else if (profile.useXray()) {
+                initPlugin("xtls-plugin")
+                pluginConfigs[index] = gson.toJson(buildXrayConfig(profile)).also {
+                    Logs.d(it)
+                }
+            } else if (profile.type == 7) {
+                val bean = profile.requireTrojanGo()
+                initPlugin("trojan-go-plugin")
+                pluginConfigs[index] = JSONObject().also { conf ->
+                    conf["run_type"] = "client"
+                    conf["local_addr"] = "127.0.0.1"
+                    conf["local_port"] = DataStore.socksPort + 10
+                    conf["remote_addr"] = bean.serverAddress
+                    conf["remote_port"] = bean.serverPort
+                    conf["password"] = JSONArray().apply {
+                        add(bean.password)
+                    }
+                    conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
+                    if (DataStore.enableMux) {
+                        conf["mux"] = JSONObject().also {
+                            it["enabled"] = true
+                            it["concurrency"] = DataStore.muxConcurrency
+                        }
+                    }
+                    if (!DataStore.preferIpv6) {
+                        conf["tcp"] = JSONObject().also {
+                            it["prefer_ipv4"] = true
+                        }
+                    }
 
-                val context =
-                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                        SagerNet.application else SagerNet.deviceStorage
+                    when (bean.type) {
+                        "original" -> {
+                        }
+                        "ws" -> {
+                            conf["websocket"] = JSONObject().also {
+                                it["enabled"] = true
+                                it["host"] = bean.host
+                                it["path"] = bean.path
+                            }
+                        }
+                    }
 
-                val configFile =
-                    File(context.noBackupFilesDir,
-                        "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
-                configFile.parentFile.mkdirs()
-                configFile.writeText(proxyConfig.toString())
-                cacheFiles.add(configFile)
+                    if (bean.sni.isNotBlank()) {
+                        conf["ssl"] = JSONObject().also {
+                            it["sni"] = bean.sni
+                        }
+                    }
 
-                val commands = mutableListOf(
-                    File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                        Executable.SSR_LOCAL).absolutePath,
-                    "-b", "127.0.0.1",
-                    "-c", configFile.absolutePath,
-                    "-l", "$port"
-                )
+                    when {
+                        bean.encryption == "none" -> {
+                        }
+                        bean.encryption.startsWith("ss;") -> {
+                            conf["shadowsocks"] = JSONObject().also {
+                                it["enabled"] = true
+                                it["method"] =
+                                    bean.encryption.substringAfter(";").substringBefore(":")
+                                it["password"] = bean.encryption.substringAfter(":")
+                            }
+                        }
+                    }
 
-                base.data.processes!!.start(commands)
+                    if (bean.plugin.isNotBlank()) {
+                        val pluginConfiguration = PluginConfiguration(bean.plugin ?: "")
+                        PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                            conf["transport_plugin"] = JSONObject().also {
+                                it["enabled"] = true
+                                it["type"] = "shadowsocks"
+                                it["command"] = path
+                                it["option"] = opts.toString()
+                            }
+                        }
+                    }
+                }.also {
+                    Logs.d(it.toStringPretty())
+                }.toString()
             }
-            profile.useXray() -> {
-                val context =
-                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                        SagerNet.application else SagerNet.deviceStorage
+        }
+    }
 
-                val configFile =
-                    File(context.noBackupFilesDir,
-                        "xray_" + SystemClock.elapsedRealtime() + ".json")
-                configFile.parentFile.mkdirs()
-                configFile.writeText(pluginConfig)
-                cacheFiles.add(configFile)
+    var cacheFiles = LinkedList<File>()
 
-                val commands = mutableListOf(
-                    plugin, "-c", configFile.absolutePath
-                )
+    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    fun start() {
 
-                base.data.processes!!.start(commands)
-            }
-            profile.type == 7 -> {
-                val context =
-                    if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                        SagerNet.application else SagerNet.deviceStorage
+        for ((index, profile) in config.index.entries) {
+            val bean = profile.requireBean()
+            val config = pluginConfigs[index] ?: continue
 
-                val configFile =
-                    File(context.noBackupFilesDir,
-                        "trojan_go_" + SystemClock.elapsedRealtime() + ".json")
-                configFile.parentFile.mkdirs()
-                configFile.writeText(pluginConfig)
-                cacheFiles.add(configFile)
+            when {
+                profile.useExternalShadowsocks() -> {
 
-                val commands = mutableListOf(
-                    plugin, "-config", configFile.absolutePath
-                )
+                    val context =
+                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                            SagerNet.application else SagerNet.deviceStorage
+                    val configFile =
+                        File(context.noBackupFilesDir,
+                            "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
+                    configFile.parentFile.mkdirs()
+                    configFile.writeText(config)
+                    cacheFiles.add(configFile)
 
-                base.data.processes!!.start(commands)
+                    val commands = mutableListOf(
+                        File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                            Executable.SS_LOCAL).absolutePath,
+                        "-c", configFile.absolutePath
+                    )
+
+                    base.data.processes!!.start(commands)
+                }
+                profile.type == 2 -> {
+                    bean as ShadowsocksRBean
+                    val port = DataStore.socksPort + 10 + index
+
+                    val context =
+                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                            SagerNet.application else SagerNet.deviceStorage
+
+                    val configFile =
+                        File(context.noBackupFilesDir,
+                            "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
+                    configFile.parentFile.mkdirs()
+                    configFile.writeText(config)
+                    cacheFiles.add(configFile)
+
+                    val commands = mutableListOf(
+                        File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                            Executable.SSR_LOCAL).absolutePath,
+                        "-b", "127.0.0.1",
+                        "-c", configFile.absolutePath,
+                        "-l", "$port"
+                    )
+
+                    base.data.processes!!.start(commands)
+                }
+                profile.useXray() -> {
+                    val context =
+                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                            SagerNet.application else SagerNet.deviceStorage
+
+                    val configFile =
+                        File(context.noBackupFilesDir,
+                            "xray_" + SystemClock.elapsedRealtime() + ".json")
+                    configFile.parentFile.mkdirs()
+                    configFile.writeText(config)
+                    cacheFiles.add(configFile)
+
+                    val commands = mutableListOf(
+                        initPlugin("xtls-plugin").path, "-c", configFile.absolutePath
+                    )
+
+                    base.data.processes!!.start(commands)
+                }
+                profile.type == 7 -> {
+                    val context =
+                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                            SagerNet.application else SagerNet.deviceStorage
+
+                    val configFile =
+                        File(context.noBackupFilesDir,
+                            "trojan_go_" + SystemClock.elapsedRealtime() + ".json")
+                    configFile.parentFile.mkdirs()
+                    configFile.writeText(config)
+                    cacheFiles.add(configFile)
+
+                    val commands = mutableListOf(
+                        initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
+                    )
+
+                    base.data.processes!!.start(commands)
+                }
             }
         }
 
-
         v2rayPoint.runLoop(DataStore.preferIpv6)
-        runOnDefaultDispatcher {
-            val url = "http://127.0.0.1:" + (DataStore.socksPort + 11) + "/"
-            if (bean is StandardV2RayBean) {
-                if (bean.type == "ws" && bean.wsUseBrowserForwarder) {
-                    onMainDispatcher {
-                        wsForwarder = WebView(base as Context)
-                        @SuppressLint("SetJavaScriptEnabled")
-                        wsForwarder.settings.javaScriptEnabled = true
-                        wsForwarder.webViewClient = object : WebViewClient() {
-                            override fun onReceivedError(
-                                view: WebView?,
-                                request: WebResourceRequest?,
-                                error: WebResourceError?,
-                            ) {
-                                Logs.d("WebView load failed: $error")
 
-                                runOnMainDispatcher {
-                                    wsForwarder.loadUrl("about:blank")
+        if (config.requireWs) {
+            runOnDefaultDispatcher {
+                val url = "http://127.0.0.1:" + (DataStore.socksPort + 1) + "/"
+                onMainDispatcher {
+                    wsForwarder = WebView(base as Context)
+                    @SuppressLint("SetJavaScriptEnabled")
+                    wsForwarder.settings.javaScriptEnabled = true
+                    wsForwarder.webViewClient = object : WebViewClient() {
+                        override fun onReceivedError(
+                            view: WebView?,
+                            request: WebResourceRequest?,
+                            error: WebResourceError?,
+                        ) {
+                            Logs.d("WebView load failed: $error")
 
-                                    delay(1000L)
-                                    wsForwarder.loadUrl(url)
-                                }
-                            }
+                            runOnMainDispatcher {
+                                wsForwarder.loadUrl("about:blank")
 
-                            override fun onPageFinished(view: WebView, url: String) {
-                                super.onPageFinished(view, url)
-
-                                Logs.d("WebView loaded: ${view.title}")
-
+                                delay(1000L)
+                                wsForwarder.loadUrl(url)
                             }
                         }
-                        wsForwarder.loadUrl(url)
+
+                        override fun onPageFinished(view: WebView, url: String) {
+                            super.onPageFinished(view, url)
+
+                            Logs.d("WebView loaded: ${view.title}")
+
+                        }
                     }
+                    wsForwarder.loadUrl(url)
                 }
             }
         }
@@ -361,22 +377,22 @@ class ProxyInstance(val profile: ProxyEntity) {
     }
 
     val uplinkProxy
-        get() = stats("out","uplink").also {
+        get() = stats("out", "uplink").also {
             uplinkTotalProxy += it
         }
 
     val downlinkProxy
-        get() = stats("out","downlink").also {
+        get() = stats("out", "downlink").also {
             downlinkTotalProxy += it
         }
 
     val uplinkDirect
-        get() = stats("bypass","uplink").also {
+        get() = stats("bypass", "uplink").also {
             uplinkTotalDirect += it
         }
 
     val downlinkDirect
-        get() = stats("bypass","downlink").also {
+        get() = stats("bypass", "downlink").also {
             downlinkTotalDirect += it
         }
 

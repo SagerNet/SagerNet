@@ -240,6 +240,7 @@ class AppManagerActivity : AppCompatActivity() {
         ListHolderListener.setup(this)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        toolbar.setTitle(R.string.proxied_apps)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (!DataStore.proxyApps) {

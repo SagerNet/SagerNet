@@ -30,6 +30,7 @@ import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
+import io.nekohasekai.sagernet.fmt.chain.ChainBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
@@ -68,6 +69,7 @@ data class ProxyEntity(
     var vlessBean: VLESSBean? = null,
     var trojanBean: TrojanBean? = null,
     var trojanGoBean: TrojanGoBean? = null,
+    var chainBean: ChainBean? = null,
 ) : Parcelable {
 
     @Ignore
@@ -77,7 +79,6 @@ data class ProxyEntity(
     @Ignore
     @Transient
     var stats: TrafficStats? = null
-
 
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
@@ -98,6 +99,7 @@ data class ProxyEntity(
             5 -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
             6 -> httpBean = KryoConverters.httpDeserialize(byteArray)
             7 -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
+            7 -> chainBean = KryoConverters.chainDeserialize(byteArray)
         }
     }
 
@@ -124,6 +126,7 @@ data class ProxyEntity(
             5 -> "Trojan"
             6 -> if (requireHttp().tls) "HTTPS" else "HTTP"
             7 -> "Trojan-Go"
+            8 -> "Chain"
             else -> "Undefined type $type"
         }
     }
@@ -153,6 +156,7 @@ data class ProxyEntity(
             5 -> trojanBean ?: error("Null trojan node")
             6 -> httpBean ?: error("Null http node")
             7 -> trojanGoBean ?: error("Null trojan-go node")
+            8 -> chainBean ?: error("Null chain bean")
             else -> error("Undefined type $type")
         }
     }
@@ -230,6 +234,10 @@ data class ProxyEntity(
                 type = 7
                 trojanGoBean = bean
             }
+            is ChainBean -> {
+                type = 8
+                chainBean = bean
+            }
             else -> error("Undefined type $type")
         }
     }
@@ -242,6 +250,7 @@ data class ProxyEntity(
     fun requireTrojan() = requireBean() as TrojanBean
     fun requireHttp() = requireBean() as HttpBean
     fun requireTrojanGo() = requireBean() as TrojanGoBean
+    fun requireChain() = requireBean() as ChainBean
 
     fun settingIntent(ctx: Context, isSubscription: Boolean): Intent {
         return Intent(ctx, when (type) {
@@ -268,6 +277,9 @@ data class ProxyEntity(
 
         @Query("SELECT * FROM proxy_entities WHERE groupId = :groupId ORDER BY userOrder")
         fun getByGroup(groupId: Long): List<ProxyEntity>
+
+        @Query("SELECT * FROM proxy_entities WHERE id in (:proxyId)")
+        fun getEntities(vararg proxyId: Long): List<ProxyEntity>
 
         @Query("SELECT COUNT(*) FROM proxy_entities WHERE groupId = :groupId")
         fun countByGroup(groupId: Long): Long

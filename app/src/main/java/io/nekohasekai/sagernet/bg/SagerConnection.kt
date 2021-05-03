@@ -27,11 +27,11 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.RemoteException
+import io.nekohasekai.sagernet.Action
+import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.aidl.IShadowsocksService
 import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
-import io.nekohasekai.sagernet.Action
-import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.database.DataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

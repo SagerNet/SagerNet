@@ -679,76 +679,85 @@ class ConfigurationFragment : ToolbarFragment(R.layout.layout_group_list),
                             proxyGroup.isSubscription))
                     }
 
-                    runOnDefaultDispatcher {
-                        val selected = DataStore.selectedProxy == proxyEntity.id
-                        onMainDispatcher {
-                            selectedView.visibility =
-                                if (selected) View.VISIBLE else View.INVISIBLE
-                        }
+                    if (proxyEntity.type == 8) {
+                        shareButton.isVisible = false
+                    } else {
+                        shareButton.isVisible = true
 
-                        when (val validateResult = if (DataStore.securityAdvisory) {
-                            proxyEntity.requireBean().isInsecure()
-                        } else ResultLocal) {
-                            is ResultInsecure -> onMainDispatcher {
-                                shareLayer.setBackgroundColor(Color.RED)
-                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
-                                shareButton.setColorFilter(Color.WHITE)
-
-                                shareLayout.setOnClickListener {
-                                    AlertDialog.Builder(requireContext())
-                                        .setTitle(R.string.insecure)
-                                        .setMessage(resources.openRawResource(validateResult.textRes)
-                                            .bufferedReader().use { it.readText() })
-                                        .setPositiveButton(android.R.string.ok) { _, _ ->
-                                            val popup = PopupMenu(requireContext(), it)
-                                            popup.menuInflater.inflate(R.menu.socks_share_menu,
-                                                popup.menu)
-                                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                                            popup.show()
-                                        }
-                                        .show().apply {
-                                            findViewById<TextView>(android.R.id.message)?.apply {
-                                                Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                movementMethod = LinkMovementMethod.getInstance()
-                                            }
-                                        }
-                                }
+                        runOnDefaultDispatcher {
+                            val selected = DataStore.selectedProxy == proxyEntity.id
+                            onMainDispatcher {
+                                selectedView.visibility =
+                                    if (selected) View.VISIBLE else View.INVISIBLE
                             }
-                            is ResultDeprecated -> onMainDispatcher {
-                                shareLayer.setBackgroundColor(Color.YELLOW)
-                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
-                                shareButton.setColorFilter(Color.GRAY)
 
-                                shareLayout.setOnClickListener {
-                                    AlertDialog.Builder(requireContext())
-                                        .setTitle(R.string.deprecated)
-                                        .setMessage(resources.openRawResource(validateResult.textRes)
-                                            .bufferedReader().use { it.readText() })
-                                        .setPositiveButton(android.R.string.ok) { _, _ ->
-                                            val popup = PopupMenu(requireContext(), it)
-                                            popup.menuInflater.inflate(R.menu.socks_share_menu,
-                                                popup.menu)
-                                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                                            popup.show()
-                                        }
-                                        .show().apply {
-                                            findViewById<TextView>(android.R.id.message)?.apply {
-                                                Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                movementMethod = LinkMovementMethod.getInstance()
+                            when (val validateResult = if (DataStore.securityAdvisory) {
+                                proxyEntity.requireBean().isInsecure()
+                            } else ResultLocal) {
+                                is ResultInsecure -> onMainDispatcher {
+                                    shareLayer.setBackgroundColor(Color.RED)
+                                    shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                    shareButton.setColorFilter(Color.WHITE)
+
+                                    shareLayout.setOnClickListener {
+                                        AlertDialog.Builder(requireContext())
+                                            .setTitle(R.string.insecure)
+                                            .setMessage(resources.openRawResource(validateResult.textRes)
+                                                .bufferedReader().use { it.readText() })
+                                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                                val popup = PopupMenu(requireContext(), it)
+                                                popup.menuInflater.inflate(R.menu.socks_share_menu,
+                                                    popup.menu)
+                                                popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                                                popup.show()
                                             }
-                                        }
+                                            .show().apply {
+                                                findViewById<TextView>(android.R.id.message)?.apply {
+                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                    movementMethod =
+                                                        LinkMovementMethod.getInstance()
+                                                }
+                                            }
+                                    }
                                 }
-                            }
-                            else -> onMainDispatcher {
-                                shareLayer.setBackgroundColor(Color.TRANSPARENT)
-                                shareButton.setImageResource(R.drawable.ic_social_share)
-                                shareButton.setColorFilter(Color.GRAY)
+                                is ResultDeprecated -> onMainDispatcher {
+                                    shareLayer.setBackgroundColor(Color.YELLOW)
+                                    shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                    shareButton.setColorFilter(Color.GRAY)
 
-                                shareLayout.setOnClickListener {
-                                    val popup = PopupMenu(requireContext(), it)
-                                    popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
-                                    popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                                    popup.show()
+                                    shareLayout.setOnClickListener {
+                                        AlertDialog.Builder(requireContext())
+                                            .setTitle(R.string.deprecated)
+                                            .setMessage(resources.openRawResource(validateResult.textRes)
+                                                .bufferedReader().use { it.readText() })
+                                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                                val popup = PopupMenu(requireContext(), it)
+                                                popup.menuInflater.inflate(R.menu.socks_share_menu,
+                                                    popup.menu)
+                                                popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                                                popup.show()
+                                            }
+                                            .show().apply {
+                                                findViewById<TextView>(android.R.id.message)?.apply {
+                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                    movementMethod =
+                                                        LinkMovementMethod.getInstance()
+                                                }
+                                            }
+                                    }
+                                }
+                                else -> onMainDispatcher {
+                                    shareLayer.setBackgroundColor(Color.TRANSPARENT)
+                                    shareButton.setImageResource(R.drawable.ic_social_share)
+                                    shareButton.setColorFilter(Color.GRAY)
+
+                                    shareLayout.setOnClickListener {
+                                        val popup = PopupMenu(requireContext(), it)
+                                        popup.menuInflater.inflate(R.menu.socks_share_menu,
+                                            popup.menu)
+                                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                                        popup.show()
+                                    }
                                 }
                             }
                         }
