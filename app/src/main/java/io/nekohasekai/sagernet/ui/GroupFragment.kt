@@ -62,7 +62,6 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -89,6 +88,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         groupAdapter = GroupAdapter()
         ProfileManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter
+
+        addOverScrollListener(groupListView)
 
         undoManager =
             UndoSnackbarManager(activity, groupAdapter)
@@ -193,126 +194,171 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             return
                         }
 
-                        val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
-                        val duplicate = LinkedList<String>()
-                        if (proxyGroup.deduplication) {
-                            val uniqueProxies = LinkedHashSet<AbstractBean>()
-                            val uniqueNames = HashMap<AbstractBean, String>()
-                            for (proxy in proxies) {
-                                if (!uniqueProxies.add(proxy)) {
-                                    val index = uniqueProxies.indexOf(proxy)
-                                    if (uniqueNames.containsKey(proxy)) {
-                                        val name = uniqueNames[proxy]!!
-                                        if (name.isNotBlank()) {
-                                            duplicate.add("$name ($index)")
-                                            uniqueNames[proxy] = ""
+                        while (true) {
+
+                            val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
+                            val duplicate = LinkedList<String>()
+                            if (proxyGroup.deduplication) {
+
+                                Logs.d("Before deduplication: ${proxies.size}")
+
+                                val uniqueProxies = LinkedHashSet<AbstractBean>()
+                                val uniqueNames = HashMap<AbstractBean, String>()
+                                for (proxy in proxies) {
+                                    if (!uniqueProxies.add(proxy)) {
+                                        val index = uniqueProxies.indexOf(proxy)
+                                        if (uniqueNames.containsKey(proxy)) {
+                                            val name = uniqueNames[proxy]!!
+                                            if (name.isNotBlank()) {
+                                                duplicate.add("$name ($index)")
+                                                uniqueNames[proxy] = ""
+                                            }
+                                        }
+                                        duplicate.add(proxy.displayName() + " ($index)")
+                                    } else {
+                                        uniqueNames[proxy] = proxy.displayName()
+                                    }
+                                }
+                                uniqueProxies.retainAll(uniqueNames.keys)
+                                proxies = uniqueProxies.toList()
+                            }
+
+                            Logs.d("New profiles: ${proxies.size}")
+
+                            val nameMap = proxies.map { bean ->
+                                bean.displayName() to bean
+                            }.toMap()
+
+                            Logs.d("Unique profiles: ${nameMap.size}")
+
+                            val toDelete = LinkedList<ProxyEntity>()
+                            val toReplace = exists.mapNotNull { entity ->
+                                val name = entity.displayName()
+                                if (nameMap.contains(name)) name to entity else let {
+                                    toDelete.add(entity)
+                                    null
+                                }
+                            }.toMap()
+
+                            Logs.d("toDelete profiles: ${toDelete.size}")
+                            Logs.d("toReplace profiles: ${toReplace.size}")
+
+                            val toUpdate = LinkedList<ProxyEntity>()
+                            val added = mutableListOf<String>()
+                            val updated = mutableMapOf<String, String>()
+                            val deleted = toDelete.map { it.displayName() }
+
+                            var userOrder = 1L
+                            var changed = toDelete.size
+                            for ((name, bean) in nameMap.entries) {
+                                if (toReplace.contains(name)) {
+                                    val entity = toReplace[name]!!
+                                    val existsBean = entity.requireBean()
+                                    existsBean.applyFeatureSettings(bean)
+                                    when {
+                                        existsBean != bean -> {
+                                            changed++
+                                            entity.putBean(bean)
+                                            toUpdate.add(entity)
+                                            updated[entity.displayName()] = name
+
+                                            Logs.d("Updated profile: $name")
+                                        }
+                                        entity.userOrder != userOrder -> {
+                                            entity.putBean(bean)
+                                            toUpdate.add(entity)
+                                            entity.userOrder = userOrder
+
+                                            Logs.d("Reordered profile: $name")
+                                        }
+                                        else -> {
+                                            Logs.d("Ignored profile: $name")
                                         }
                                     }
-                                    duplicate.add(proxy.displayName() + " ($index)")
                                 } else {
-                                    uniqueNames[proxy] = proxy.displayName()
-                                }
-                            }
-                            uniqueProxies.retainAll(uniqueNames.keys)
-                            proxies = uniqueProxies.toList()
-                        }
-
-                        val nameMap = mapOf(* proxies.map { bean ->
-                            bean.displayName() to bean
-                        }.toTypedArray())
-
-                        val toDelete = LinkedList<ProxyEntity>()
-                        val toReplace = exists.mapNotNull { entity ->
-                            val name = entity.displayName()
-                            if (nameMap.contains(name)) name to entity else let {
-                                toDelete.add(entity)
-                                null
-                            }
-                        }.toMap()
-                        val toUpdate = LinkedList<ProxyEntity>()
-                        val added = mutableListOf<String>()
-                        val updated = mutableMapOf<String, String>()
-                        val deleted = toDelete.map { it.displayName() }
-
-                        var userOrder = 1L
-                        var changed = toDelete.size
-                        for ((name, bean) in nameMap.entries) {
-                            if (toReplace.contains(name)) {
-                                val entity = toReplace[name]!!
-                                val existsBean = entity.requireBean()
-                                existsBean.applyFeatureSettings(bean)
-                                if (existsBean != bean) {
                                     changed++
-                                    entity.putBean(bean)
-                                    toUpdate.add(entity)
-                                    updated[entity.displayName()] = name
-                                } else if (entity.userOrder != userOrder) {
-                                    entity.putBean(bean)
-                                    toUpdate.add(entity)
-                                    entity.userOrder = userOrder
+                                    SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                                        groupId = proxyGroup.id,
+                                        userOrder = userOrder
+                                    ).apply {
+                                        putBean(bean)
+                                    })
+                                    added.add(name)
+                                    Logs.d("Inserted profile: $name")
                                 }
-                            } else {
-                                changed++
-                                SagerDatabase.proxyDao.addProxy(ProxyEntity(
-                                    groupId = proxyGroup.id,
-                                    userOrder = userOrder
-                                ).apply {
-                                    putBean(bean)
+                                userOrder++
+                            }
+
+                            SagerDatabase.proxyDao.updateProxy(* toUpdate.toTypedArray()).also {
+                                Logs.d("Updated profiles: $it")
+                            }
+
+                            SagerDatabase.proxyDao.deleteProxy(* toDelete.toTypedArray()).also {
+                                Logs.d("Deleted profiles: $it")
+                            }
+
+                            val existCount =
+                                SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
+
+                            if (existCount != proxies.size) {
+
+                                Logs.e("Exist profiles: $existCount, new profiles: ${proxies.size}")
+
+                                SagerDatabase.proxyDao.deleteAll(proxyGroup.id)
+
+                                continue
+
+                            }
+
+                            runBlocking {
+                                ProfileManager.updateGroup(proxyGroup.apply {
+                                    lastUpdate = System.currentTimeMillis()
+                                    type = subType
                                 })
-                                added.add(name)
-                            }
-                            userOrder++
-                        }
 
-                        SagerDatabase.proxyDao.updateProxy(* toUpdate.toTypedArray())
-                        SagerDatabase.proxyDao.deleteProxy(* toDelete.toTypedArray())
+                                ProfileManager.postReload(proxyGroup.id)
+                                onMainDispatcher {
+                                    onRefreshFinished.run()
 
-                        runBlocking {
-                            ProfileManager.updateGroup(proxyGroup.apply {
-                                lastUpdate = System.currentTimeMillis()
-                                type = subType
-                            })
-
-                            ProfileManager.postReload(proxyGroup.id)
-                            onMainDispatcher {
-                                onRefreshFinished.run()
-
-                                if (changed == 0 && duplicate.isEmpty()) {
-                                    activity.snackbar(activity.getString(R.string.group_no_difference))
-                                        .show()
-                                } else {
-                                    activity.snackbar(activity.getString(R.string.group_updated,
-                                        changed)).setAction(R.string.group_show_diff) {
-
-                                        var status = ""
-                                        if (added.isNotEmpty()) {
-                                            status += activity.getString(R.string.group_added,
-                                                added.joinToString("\n", postfix = "\n\n"))
-                                        }
-                                        if (updated.isNotEmpty()) {
-                                            status += activity.getString(R.string.group_changed,
-                                                updated.map { it }
-                                                    .joinToString("\n", postfix = "\n\n") {
-                                                        if (it.key == it.value) it.key else "${it.key} => ${it.value}"
-                                                    })
-                                        }
-                                        if (deleted.isNotEmpty()) {
-                                            status += activity.getString(R.string.group_deleted,
-                                                deleted.joinToString("\n", postfix = "\n\n"))
-                                        }
-                                        if (duplicate.isNotEmpty()) {
-                                            status += activity.getString(R.string.group_duplicate,
-                                                duplicate.joinToString("\n", postfix = "\n\n"))
-                                        }
-
-                                        AlertDialog.Builder(activity)
-                                            .setTitle(R.string.group_show_diff)
-                                            .setMessage(status.trim())
-                                            .setPositiveButton(android.R.string.ok, null)
+                                    if (changed == 0 && duplicate.isEmpty()) {
+                                        activity.snackbar(activity.getString(R.string.group_no_difference))
                                             .show()
-                                    }.show()
+                                    } else {
+                                        activity.snackbar(activity.getString(R.string.group_updated,
+                                            changed)).setAction(R.string.group_show_diff) {
+
+                                            var status = ""
+                                            if (added.isNotEmpty()) {
+                                                status += activity.getString(R.string.group_added,
+                                                    added.joinToString("\n", postfix = "\n\n"))
+                                            }
+                                            if (updated.isNotEmpty()) {
+                                                status += activity.getString(R.string.group_changed,
+                                                    updated.map { it }
+                                                        .joinToString("\n", postfix = "\n\n") {
+                                                            if (it.key == it.value) it.key else "${it.key} => ${it.value}"
+                                                        })
+                                            }
+                                            if (deleted.isNotEmpty()) {
+                                                status += activity.getString(R.string.group_deleted,
+                                                    deleted.joinToString("\n", postfix = "\n\n"))
+                                            }
+                                            if (duplicate.isNotEmpty()) {
+                                                status += activity.getString(R.string.group_duplicate,
+                                                    duplicate.joinToString("\n", postfix = "\n\n"))
+                                            }
+
+                                            AlertDialog.Builder(activity)
+                                                .setTitle(R.string.group_show_diff)
+                                                .setMessage(status.trim())
+                                                .setPositiveButton(android.R.string.ok, null)
+                                                .show()
+                                        }.show()
+                                    }
                                 }
                             }
+
+                            break
                         }
                     }
                 })

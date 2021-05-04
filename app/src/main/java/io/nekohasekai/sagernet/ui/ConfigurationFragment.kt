@@ -723,19 +723,22 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                     //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
-                    editButton.isGone = select
-
                     editButton.setOnClickListener {
                         it.context.startActivity(proxyEntity.settingIntent(it.context,
                             proxyGroup.isSubscription))
                     }
 
-                    shareLayout.isVisible = false
+                    shareLayout.isGone = select
+
+                    if (select) {
+                        editButton.isVisible = false
+                    }
 
                     runOnDefaultDispatcher {
                         if (!select) {
                             val selected = DataStore.selectedProxy == proxyEntity.id
                             onMainDispatcher {
+                                editButton.isEnabled = !selected
                                 selectedView.visibility =
                                     if (selected) View.VISIBLE else View.INVISIBLE
                             }

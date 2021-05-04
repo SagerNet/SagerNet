@@ -233,6 +233,7 @@ object ProfileManager {
 
     suspend fun deleteGroup(groupId: Long) {
         SagerDatabase.groupDao.deleteById(groupId)
+        SagerDatabase.proxyDao.deleteByGroup(groupId)
         groupIterator { onRemoved(groupId) }
     }
 
