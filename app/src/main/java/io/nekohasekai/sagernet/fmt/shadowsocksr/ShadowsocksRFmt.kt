@@ -22,6 +22,8 @@
 package io.nekohasekai.sagernet.fmt.shadowsocksr
 
 import cn.hutool.core.codec.Base64
+import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.*
@@ -65,4 +67,23 @@ fun ShadowsocksRBean.toUri(): String {
         Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)),
         Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)),
         Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, name ?: ""))))
+}
+
+fun ShadowsocksRBean.buildShadowsocksRConfig(): String{
+    return JSONObject().also {
+        it["server"] = serverAddress
+        it["server_port"] = serverPort
+        it["method"] = method
+        it["password"] = password
+        it["protocol"] = protocol
+        it["protocol_param"] = protocolParam
+        it["obfs"] = obfs
+        it["obfs_param"] = obfsParam
+        it["ipv6"] = DataStore.ipv6Route
+        if (DataStore.enableLocalDNS) {
+            it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+        } else {
+            it["dns"] = DataStore.remoteDNS
+        }
+    }.toStringPretty()
 }

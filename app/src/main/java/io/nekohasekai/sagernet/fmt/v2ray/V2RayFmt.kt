@@ -311,6 +311,8 @@ fun beanToOutbound(proxy: ProxyEntity, index: Int): OutboundObject {
                     }
                 }
             }
+        } else if (index > 0) {
+            error("Not supported")
         } else {
             protocol = "socks"
             settings = LazyOutboundConfigurationObject(
@@ -323,7 +325,7 @@ fun beanToOutbound(proxy: ProxyEntity, index: Int): OutboundObject {
                     )
                 })
         }
-        if (DataStore.enableMux && !(proxy.useXray() || proxy.type == 7)) {
+        if (index == 0 && DataStore.enableMux && !(proxy.useXray() || proxy.type == 7)) {
             mux = OutboundObject.MuxObject().apply {
                 enabled = true
                 concurrency = DataStore.muxConcurrency
@@ -441,6 +443,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
         outbounds = mutableListOf()
 
+        outbounds.add(
+            OutboundObject().apply {
+                tag = TAG_DIRECT
+                protocol = "freedom"
+            }
+        )
+
         val lastProxy = proxies.size - 1
 
         proxies.forEachIndexed { index, proxyEntity ->
@@ -468,13 +477,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 listenPort = DataStore.socksPort + 1
             }
         }
-
-        outbounds.add(
-            OutboundObject().apply {
-                tag = TAG_DIRECT
-                protocol = "freedom"
-            }
-        )
 
         outbounds.add(
             OutboundObject().apply {
@@ -524,6 +526,14 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
 
             rules.addAll(wsRules.values)
+
+            if (proxies.size > 0) {
+                rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    inboundTag = listOf("${proxies[0].id}")
+                    outboundTag = TAG_DIRECT
+                })
+            }
 
             if (DataStore.bypassLan) {
                 rules.add(RoutingObject.RuleObject().apply {

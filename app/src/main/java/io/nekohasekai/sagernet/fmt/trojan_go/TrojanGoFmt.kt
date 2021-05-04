@@ -21,6 +21,12 @@
 
 package io.nekohasekai.sagernet.fmt.trojan_go
 
+import cn.hutool.json.JSONArray
+import cn.hutool.json.JSONObject
+import com.github.shadowsocks.plugin.PluginConfiguration
+import com.github.shadowsocks.plugin.PluginManager
+import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -98,4 +104,72 @@ fun TrojanGoBean.toUri(): String {
     }
 
     return builder.toString().replace("https://", "trojan-go://")
+}
+
+fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
+    return JSONObject().also { conf ->
+        conf["run_type"] = "client"
+        conf["local_addr"] = "127.0.0.1"
+        conf["local_port"] = port
+        conf["remote_addr"] = serverAddress
+        conf["remote_port"] = serverPort
+        conf["password"] = JSONArray().apply {
+            add(password)
+        }
+        conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
+        if (DataStore.enableMux) {
+            conf["mux"] = JSONObject().also {
+                it["enabled"] = true
+                it["concurrency"] = DataStore.muxConcurrency
+            }
+        }
+        if (!DataStore.preferIpv6) {
+            conf["tcp"] = JSONObject().also {
+                it["prefer_ipv4"] = true
+            }
+        }
+
+        when (type) {
+            "original" -> {
+            }
+            "ws" -> {
+                conf["websocket"] = JSONObject().also {
+                    it["enabled"] = true
+                    it["host"] = host
+                    it["path"] = path
+                }
+            }
+        }
+
+        if (sni.isNotBlank()) {
+            conf["ssl"] = JSONObject().also {
+                it["sni"] = sni
+            }
+        }
+
+        when {
+            encryption == "none" -> {
+            }
+            encryption.startsWith("ss;") -> {
+                conf["shadowsocks"] = JSONObject().also {
+                    it["enabled"] = true
+                    it["method"] =
+                        encryption.substringAfter(";").substringBefore(":")
+                    it["password"] = encryption.substringAfter(":")
+                }
+            }
+        }
+
+        if (plugin.isNotBlank()) {
+            val pluginConfiguration = PluginConfiguration(plugin ?: "")
+            PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                conf["transport_plugin"] = JSONObject().also {
+                    it["enabled"] = true
+                    it["type"] = "shadowsocks"
+                    it["command"] = path
+                    it["option"] = opts.toString()
+                }
+            }
+        }
+    }.toStringPretty()
 }

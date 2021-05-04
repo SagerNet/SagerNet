@@ -23,13 +23,16 @@ package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
 import com.github.shadowsocks.plugin.PluginConfiguration
+import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONObject
+import cn.hutool.json.JSONObject as HSONObject
 
 val methodsV2fly = arrayOf(
     "none",
@@ -190,4 +193,37 @@ fun parseShadowsocks(ssObj: JSONObject): ShadowsocksBean {
 
         fixInvalidParams()
     }
+}
+
+fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
+    val proxyConfig = HSONObject().also {
+        it["server"] = serverAddress
+        it["server_port"] = serverPort
+        it["method"] = method
+        it["password"] = password
+        it["local_address"] = "127.0.0.1"
+        it["local_port"] = port
+        it["local_udp_address"] = "127.0.0.1"
+        it["local_udp_port"] = port
+        it["mode"] = "tcp_and_udp"
+        if (DataStore.enableLocalDNS) {
+            it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
+        } else {
+            it["dns"] = DataStore.remoteDNS
+        }
+
+        if (DataStore.ipv6Route && DataStore.preferIpv6) {
+            it["ipv6_first"] = true
+        }
+    }
+
+    if (plugin.isNotBlank()) {
+        val pluginConfiguration = PluginConfiguration(plugin ?: "")
+        PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
+            proxyConfig["plugin"] = path
+            proxyConfig["plugin_opts"] = opts.toString()
+        }
+    }
+
+    return proxyConfig.toStringPretty()
 }
