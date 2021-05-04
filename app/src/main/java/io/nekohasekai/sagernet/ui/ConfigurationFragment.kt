@@ -374,9 +374,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 runOnDefaultDispatcher {
                     adapter.reloadProfiles(proxyGroup.id)
                 }
-            } /*else if (!::configurationListView.isInitialized) {
+            } else if (!::configurationListView.isInitialized) {
                 onViewCreated(requireView(), null)
-            }*/
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
