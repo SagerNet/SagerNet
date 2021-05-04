@@ -359,6 +359,8 @@ class ProxyInstance(val profile: ProxyEntity) {
                 }
             }
         }
+
+        DataStore.startedProxy = profile.id
     }
 
     fun stop() {
@@ -368,6 +370,8 @@ class ProxyInstance(val profile: ProxyEntity) {
             wsForwarder.loadUrl("about:blank")
             wsForwarder.destroy()
         }
+
+        DataStore.startedProxy = 0L
     }
 
     fun stats(tag: String, direct: String): Long {

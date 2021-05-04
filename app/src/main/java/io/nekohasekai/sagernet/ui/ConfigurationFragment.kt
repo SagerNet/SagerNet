@@ -729,16 +729,14 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
 
                     shareLayout.isGone = select
-
-                    if (select) {
-                        editButton.isVisible = false
-                    }
+                    editButton.isGone = select
 
                     runOnDefaultDispatcher {
                         if (!select) {
                             val selected = DataStore.selectedProxy == proxyEntity.id
+                            val started = DataStore.startedProxy == proxyEntity.id
                             onMainDispatcher {
-                                editButton.isEnabled = !selected
+                                editButton.isEnabled = !started
                                 selectedView.visibility =
                                     if (selected) View.VISIBLE else View.INVISIBLE
                             }
