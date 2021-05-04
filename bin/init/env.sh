@@ -59,7 +59,3 @@ export ANDROID_X86_STRIP=$DEPS/i686-linux-android-strip
 
 export ANDROID_X86_64_CC=$DEPS/x86_64-linux-android21-clang
 export ANDROID_X86_64_STRIP=$DEPS/x86_64-linux-android-strip
-
-export GO111MOD=on
-export CGO_ENABLED=1
-export GOOS=android

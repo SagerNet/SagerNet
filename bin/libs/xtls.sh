@@ -2,6 +2,10 @@
 
 source "bin/init/env.sh"
 
+export GO111MOD=on
+export CGO_ENABLED=1
+export GOOS=android
+
 OUTPUT="xrayexec"
 LIB_OUTPUT="lib$OUTPUT.so"
 AAR_OUTPUT="$OUTPUT.aar"

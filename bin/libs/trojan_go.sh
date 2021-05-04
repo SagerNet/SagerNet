@@ -2,6 +2,10 @@
 
 source "bin/init/env.sh"
 
+export GO111MOD=on
+export CGO_ENABLED=1
+export GOOS=android
+
 OUTPUT="trojan-go"
 LIB_OUTPUT="lib$OUTPUT.so"
 AAR_OUTPUT="$OUTPUT.aar"
