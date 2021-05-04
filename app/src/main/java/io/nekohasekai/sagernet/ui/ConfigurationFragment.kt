@@ -759,6 +759,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         AlertDialog.Builder(requireContext())
+                                            .setCancelable(false)
                                             .setTitle(R.string.insecure)
                                             .setMessage(resources.openRawResource(validateResult.textRes)
                                                 .bufferedReader().use { it.readText() })
@@ -787,6 +788,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         AlertDialog.Builder(requireContext())
+                                            .setCancelable(false)
                                             .setTitle(R.string.deprecated)
                                             .setMessage(resources.openRawResource(validateResult.textRes)
                                                 .bufferedReader().use { it.readText() })
