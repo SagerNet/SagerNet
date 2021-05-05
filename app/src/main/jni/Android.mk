@@ -126,3 +126,39 @@ LOCAL_LDLIBS := -ldl -llog
 LOCAL_SRC_FILES := $(addprefix badvpn/, $(TUN2SOCKS_SOURCES))
 
 include $(BUILD_SHARED_EXECUTABLE)
+
+
+########################################################
+## libproxychains4
+########################################################
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE:= libproxychains4
+
+LOCAL_C_INCLUDES:= $(LOCAL_PATH)/proxychains/src
+
+PROXYCHAINS_SOURCES := allocator_thread.c common.c core.c debug.c hash.c hostsreader.c \
+                       libproxychains.c main.c nameinfo.c rdns.c version.c
+
+LOCAL_SRC_FILES := $(addprefix proxychains/src/, $(PROXYCHAINS_SOURCES))
+
+LOCAL_CFLAGS :=  	-fPIC -pthread -ldl -Wl,--no-as-needed -Wl,-soname=libproxychains4.so \
+									-DANDROID \
+									-O0 -g \
+									-I$(LOCAL_PATH)/include/proxychains \
+									-I$(LOCAL_PATH)/proxychains/src \
+									-I$(LOCAL_PATH)/libancillary \
+									-DLIB_DIR=\"/data/data/io.nekohasekai.sagernet\" \
+									-DINSTALL_PREFIX=\"/data/data/io.nekohasekai.sagernet/\" \
+									-DDLL_NAME=\"libproxychains4.so\" \
+									-DSYSCONFDIR=\"/data/data/io.nekohasekai.sagernet/\"
+
+LOCAL_STATIC_LIBRARIES := libancillary
+
+LOCAL_LDLIBS := -ldl -llog
+
+include $(BUILD_SHARED_LIBRARY)
+
+# Import cpufeatures
+$(call import-module,android/cpufeatures)
