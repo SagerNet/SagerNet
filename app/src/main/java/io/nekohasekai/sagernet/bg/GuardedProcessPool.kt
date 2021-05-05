@@ -46,7 +46,7 @@ class GuardedProcessPool(private val onFatal: suspend (IOException) -> Unit) : C
         }
     }
 
-    private inner class Guard(private val cmd: List<String>) {
+    private inner class Guard(private val cmd: List<String>, private val env: Map<String, String> = mapOf()) {
         private lateinit var process: Process
 
         private fun streamLogger(input: InputStream, logger: (String) -> Unit) = try {
@@ -55,7 +55,9 @@ class GuardedProcessPool(private val onFatal: suspend (IOException) -> Unit) : C
         }    // ignore
 
         fun start() {
-            process = ProcessBuilder(cmd).directory(SagerNet.deviceStorage.noBackupFilesDir).start()
+            process = ProcessBuilder(cmd).directory(SagerNet.deviceStorage.noBackupFilesDir).apply {
+                environment().putAll(env)
+            }.start()
         }
 
         suspend fun looper(onRestartCallback: (suspend () -> Unit)?) {
@@ -115,9 +117,9 @@ class GuardedProcessPool(private val onFatal: suspend (IOException) -> Unit) : C
     override val coroutineContext = Dispatchers.Main.immediate + Job()
 
     @MainThread
-    fun start(cmd: List<String>, onRestartCallback: (suspend () -> Unit)? = null) {
+    fun start(cmd: List<String>,env: Map<String,String> = mapOf(), onRestartCallback: (suspend () -> Unit)? = null) {
         Logs.i("start process: ${Commandline.toString(cmd)}")
-        Guard(cmd).apply {
+        Guard(cmd, env).apply {
             start() // if start fails, IOException will be thrown directly
             launch { looper(onRestartCallback) }
         }

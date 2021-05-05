@@ -187,6 +187,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())
                         } catch (e: Exception) {
+                            Logs.w(e)
                             runOnMainDispatcher {
                                 onRefreshFinished.run()
                                 activity.snackbar(e.readableMessage).show()

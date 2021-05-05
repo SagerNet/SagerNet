@@ -106,7 +106,7 @@ fun TrojanGoBean.toUri(): String {
     return builder.toString().replace("https://", "trojan-go://")
 }
 
-fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
+fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean): String {
     return JSONObject().also { conf ->
         conf["run_type"] = "client"
         conf["local_addr"] = "127.0.0.1"
@@ -169,6 +169,14 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
                     it["command"] = path
                     it["option"] = opts.toString()
                 }
+            }
+        }
+
+        if (chain) {
+            conf["forward_proxy"] = JSONObject().also {
+                it["enabled"] = true
+                it["proxy_addr"] = "127.0.0.1"
+                it["proxy_port"] = port + 1
             }
         }
     }.toStringPretty()

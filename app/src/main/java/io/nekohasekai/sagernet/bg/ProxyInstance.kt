@@ -92,10 +92,11 @@ class ProxyInstance(val profile: ProxyEntity) {
         }
 
         for ((index, profile) in config.index.entries) {
+            val port = socksPort + index
+            val needChain = index == config.index.size - 1
             when {
                 profile.useExternalShadowsocks() -> {
                     val bean = profile.requireSS()
-                    val port = socksPort + index
                     pluginConfigs[index] = bean.buildShadowsocksConfig(port).also {
                         Logs.d(it)
                     }
@@ -107,15 +108,15 @@ class ProxyInstance(val profile: ProxyEntity) {
                 }
                 profile.useXray() -> {
                     initPlugin("xtls-plugin")
-                    pluginConfigs[index] = gson.toJson(buildXrayConfig(profile)).also {
-                        Logs.d(it)
-                    }
+                    pluginConfigs[index] =
+                        gson.toJson(buildXrayConfig(profile, port, needChain)).also {
+                            Logs.d(it)
+                        }
                 }
                 profile.type == 7 -> {
                     val bean = profile.requireTrojanGo()
                     initPlugin("trojan-go-plugin")
-                    val port = socksPort + index
-                    pluginConfigs[index] = bean.buildTrojanGoConfig(port).also {
+                    pluginConfigs[index] = bean.buildTrojanGoConfig(port, needChain).also {
                         Logs.d(it)
                     }
                 }
@@ -131,6 +132,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         val socksPort = DataStore.socksPort + 10
         for ((index, profile) in config.index.entries) {
             val bean = profile.requireBean()
+            val needChain = index != config.index.size - 1
             val config = pluginConfigs[index] ?: continue
 
             when {
@@ -142,7 +144,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                     val configFile =
                         File(context.noBackupFilesDir,
                             "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
-                    configFile.parentFile.mkdirs()
                     configFile.writeText(config)
                     cacheFiles.add(configFile)
 
@@ -152,7 +153,21 @@ class ProxyInstance(val profile: ProxyEntity) {
                         "-c", configFile.absolutePath
                     )
 
-                    base.data.processes!!.start(commands)
+                    val env = mutableMapOf<String, String>()
+
+                    if (needChain) {
+                        val proxychainsConfigFile =
+                            File(context.noBackupFilesDir,
+                                "proxychains_ss_" + SystemClock.elapsedRealtime() + ".json")
+                        proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${socksPort + index + 1}")
+                        cacheFiles.add(proxychainsConfigFile)
+
+                        env["LD_PRELOAD"] = File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                            Executable.PROXYCHAINS).absolutePath
+                        env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                    }
+
+                    base.data.processes!!.start(commands, env)
                 }
                 profile.type == 2 -> {
                     bean as ShadowsocksRBean
@@ -165,7 +180,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                     val configFile =
                         File(context.noBackupFilesDir,
                             "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
-                    configFile.parentFile.mkdirs()
+
                     configFile.writeText(config)
                     cacheFiles.add(configFile)
 
@@ -177,7 +192,21 @@ class ProxyInstance(val profile: ProxyEntity) {
                         "-l", "$port"
                     )
 
-                    base.data.processes!!.start(commands)
+                    val env = mutableMapOf<String, String>()
+
+                    if (needChain) {
+                        val proxychainsConfigFile =
+                            File(context.noBackupFilesDir,
+                                "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json")
+                        proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
+                        cacheFiles.add(proxychainsConfigFile)
+
+                        env["LD_PRELOAD"] = File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                            Executable.PROXYCHAINS).absolutePath
+                        env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                    }
+
+                    base.data.processes!!.start(commands, env)
                 }
                 profile.useXray() -> {
                     val context =

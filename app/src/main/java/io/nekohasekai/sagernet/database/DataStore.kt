@@ -69,7 +69,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
-    var domainStrategy by configurationStore.string(Key.PROFILE_NAME) { "AsIs" }
+    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
     var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "mph" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
 

@@ -33,6 +33,7 @@ object Executable {
     const val SS_LOCAL = "libsslocal.so"
     const val SSR_LOCAL = "libssr-local.so"
     const val TUN2SOCKS = "libtun2socks.so"
+    const val PROXYCHAINS = "libproxychains4.so"
 
     private val EXECUTABLES = setOf(SS_LOCAL, SSR_LOCAL, TUN2SOCKS)
 

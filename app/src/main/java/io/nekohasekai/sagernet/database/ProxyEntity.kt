@@ -180,6 +180,20 @@ data class ProxyEntity(
         }
     }
 
+    fun needExternal(): Boolean {
+        return when (type) {
+            0 -> false
+            1 -> useExternalShadowsocks()
+            2 -> true
+            3 -> false
+            4 -> useXray()
+            5 -> useXray()
+            6 -> false
+            7 -> true
+            else -> error("Undefined type $type")
+        }
+    }
+
     fun useExternalShadowsocks(): Boolean {
         if (type != 1) return false
         if (DataStore.forceShadowsocksRust) return true

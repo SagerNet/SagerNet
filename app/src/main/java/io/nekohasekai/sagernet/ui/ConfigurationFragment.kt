@@ -728,7 +728,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                             proxyGroup.isSubscription))
                     }
 
-                    shareLayout.isGone = select
+                    shareLayout.isGone = select || proxyEntity.type == 8
                     editButton.isGone = select
 
                     runOnDefaultDispatcher {
