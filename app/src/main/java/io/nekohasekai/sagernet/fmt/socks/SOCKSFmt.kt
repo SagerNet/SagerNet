@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt.socks
 
 import cn.hutool.core.codec.Base64
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
+import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
@@ -81,7 +82,7 @@ fun SOCKSBean.toUri(): String {
     }
     if (!name.isNullOrBlank()) builder.encodedFragment(name.urlSafe())
     if (udp) builder.addQueryParameter("udp", "true")
-    return builder.build().toString().replaceRange(0..3, "socks")
+    return builder.toLink("socks")
 
 }
 

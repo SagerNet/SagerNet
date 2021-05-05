@@ -1251,8 +1251,7 @@ fun VMessBean.toV2rayN(): String {
 fun StandardV2RayBean.toUri(standard: Boolean): String {
     if (this is VMessBean && alterId > 0) return toV2rayN()
 
-    val builder = HttpUrl.Builder()
-        .scheme("https")
+    val builder = linkBuilder()
         .username(uuid)
         .host(serverAddress)
         .port(serverPort)
@@ -1346,6 +1345,6 @@ fun StandardV2RayBean.toUri(standard: Boolean): String {
         builder.encodedFragment(name.urlSafe())
     }
 
-    return builder.toString()
-        .replace("https://", if (this is VMessBean) "vmess://" else "vless://")
+    return builder.toLink(if (this is VMessBean) "vmess" else "vless")
+
 }

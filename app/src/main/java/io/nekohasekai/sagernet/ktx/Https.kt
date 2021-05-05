@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ui.MainActivity
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -42,4 +43,20 @@ fun Fragment.createHttpClient(): OkHttpClient {
     return okHttpClient.newBuilder()
         .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort)))
         .build()
+}
+
+fun linkBuilder() = HttpUrl.Builder().scheme("https")
+
+fun HttpUrl.Builder.toLink(scheme: String): String {
+    var url = build()
+    val defaultPort = HttpUrl.defaultPort(url.scheme)
+    var replace = false
+    if (url.port == defaultPort) {
+        url = url.newBuilder().port(14514).build()
+        replace = true
+    }
+    return url.toString()
+        .replace("${url.scheme}://", "$scheme://").let {
+            if (replace) it.replace("${url.host}:14514", "${url.host}:$defaultPort") else it
+        }
 }

@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.trojan
 
+import io.nekohasekai.sagernet.ktx.linkBuilder
+import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -51,8 +53,7 @@ fun parseTrojan(server: String): TrojanBean {
 
 fun TrojanBean.toUri(): String {
 
-    val builder = HttpUrl.Builder()
-        .scheme("https")
+    val builder = linkBuilder()
         .username(password.urlSafe())
         .host(serverAddress)
         .port(serverPort)
@@ -77,6 +78,6 @@ fun TrojanBean.toUri(): String {
     }
 
 
-    return builder.toString().replace("https://", "trojan://")
+    return builder.toLink("trojan")
 
 }

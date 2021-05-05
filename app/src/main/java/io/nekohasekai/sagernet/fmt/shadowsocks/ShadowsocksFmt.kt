@@ -26,10 +26,7 @@ import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
-import io.nekohasekai.sagernet.ktx.unUrlSafe
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONObject
 import cn.hutool.json.JSONObject as HSONObject
@@ -158,8 +155,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
 fun ShadowsocksBean.toUri(): String {
 
-    val builder = HttpUrl.Builder()
-        .scheme("https")
+    val builder = linkBuilder()
         .username(Base64.encodeUrlSafe("$method:$password"))
         .host(serverAddress)
         .port(serverPort)
@@ -172,7 +168,7 @@ fun ShadowsocksBean.toUri(): String {
         builder.encodedFragment(name.urlSafe())
     }
 
-    return builder.toString().replace("https://", "ss://")
+    return builder.toLink("ss")
 
 }
 

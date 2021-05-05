@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/main/jni/badvpn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/main/jni/libancillary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/src/main/jni/proxychains" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libsodium" vcs="Git" />

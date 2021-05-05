@@ -27,6 +27,8 @@ import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.linkBuilder
+import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -70,8 +72,7 @@ fun parseTrojanGo(server: String): TrojanGoBean {
 }
 
 fun TrojanGoBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme("https")
+    val builder = linkBuilder()
         .username(password)
         .host(serverAddress)
         .port(serverPort)
@@ -103,7 +104,7 @@ fun TrojanGoBean.toUri(): String {
         builder.encodedFragment(name.urlSafe())
     }
 
-    return builder.toString().replace("https://", "trojan-go://")
+    return builder.toLink("trojan-go")
 }
 
 fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean): String {
