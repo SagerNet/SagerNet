@@ -93,7 +93,7 @@ class ProxyInstance(val profile: ProxyEntity) {
 
         for ((index, profile) in config.index.entries) {
             val port = socksPort + index
-            val needChain = index == config.index.size - 1
+            val needChain = index != config.index.size - 1
             when {
                 profile.useExternalShadowsocks() -> {
                     val bean = profile.requireSS()
@@ -162,8 +162,9 @@ class ProxyInstance(val profile: ProxyEntity) {
                         proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${socksPort + index + 1}")
                         cacheFiles.add(proxychainsConfigFile)
 
-                        env["LD_PRELOAD"] = File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                            Executable.PROXYCHAINS).absolutePath
+                        env["LD_PRELOAD"] =
+                            File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.PROXYCHAINS).absolutePath
                         env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
                     }
 
@@ -201,8 +202,9 @@ class ProxyInstance(val profile: ProxyEntity) {
                         proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
                         cacheFiles.add(proxychainsConfigFile)
 
-                        env["LD_PRELOAD"] = File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                            Executable.PROXYCHAINS).absolutePath
+                        env["LD_PRELOAD"] =
+                            File(SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.PROXYCHAINS).absolutePath
                         env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
                     }
 

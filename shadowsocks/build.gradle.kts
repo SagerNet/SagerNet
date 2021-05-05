@@ -24,6 +24,7 @@ cargo {
     featureSpec.noDefaultBut(arrayOf(
         "local",
         "stream-cipher",
+        "aead-cipher-extra",
         "logging"))
     exec = { spec, toolchain ->
         spec.environment("RUST_ANDROID_GRADLE_LINKER_WRAPPER_PY",
