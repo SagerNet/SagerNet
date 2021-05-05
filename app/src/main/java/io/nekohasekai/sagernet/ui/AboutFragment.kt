@@ -75,10 +75,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
     class AboutContent : MaterialAboutFragment() {
 
-        fun checkUpdate() {
-            // TODO: check update
-        }
-
         fun exportLog() {
             val context = requireContext()
 
@@ -122,7 +118,11 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .icon(R.drawable.ic_baseline_update_24)
                         .text(R.string.app_version)
                         .subText(BuildConfig.VERSION_NAME)
-                        .setOnClickAction { checkUpdate() }
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(Uri.parse(
+                                "https://github.com/SagerNet/SagerNet/releases"
+                            ))
+                        }
                         .build()
                     )
                     .addItem(MaterialAboutActionItem.Builder()
