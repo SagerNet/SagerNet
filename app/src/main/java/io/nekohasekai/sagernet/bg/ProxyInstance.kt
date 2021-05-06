@@ -77,14 +77,10 @@ class ProxyInstance(val profile: ProxyEntity) {
         v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
             service else null), false)
         val socksPort = DataStore.socksPort + 10
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            v2rayPoint.domainName = "127.0.0.1:1080"
+        if (profile.needExternal()) {
+            v2rayPoint.domainName = "127.0.0.1:$socksPort"
         } else {
-            if (profile.useExternalShadowsocks() || profile.useXray() || profile.type == 2) {
-                v2rayPoint.domainName = "127.0.0.1:$socksPort"
-            } else {
-                v2rayPoint.domainName = profile.urlFixed()
-            }
+            v2rayPoint.domainName = profile.urlFixed()
         }
         config = buildV2RayConfig(profile)
         v2rayPoint.configureFileContent = gson.toJson(config.config).also {
