@@ -40,6 +40,8 @@ import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.ktx.checkMT
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
@@ -127,6 +129,8 @@ class SagerNet : Application() {
         val externalAssets = getExternalFilesDir(null) ?: filesDir
         externalAssets.mkdirs()
         Libv2ray.setAssetsPath(externalAssets.absolutePath, "v2ray/")
+
+        runOnMainDispatcher { checkMT() }
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,
