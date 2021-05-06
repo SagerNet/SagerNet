@@ -339,7 +339,9 @@ class ConfigurationFragment @JvmOverloads constructor(
         override fun onSaveInstanceState(outState: Bundle) {
             super.onSaveInstanceState(outState)
 
-            outState.putParcelable("proxyGroup", proxyGroup)
+            if (::proxyGroup.isInitialized) {
+                outState.putParcelable("proxyGroup", proxyGroup)
+            }
         }
 
         override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -347,6 +349,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             savedInstanceState?.getParcelable<ProxyGroup>("proxyGroup")?.also {
                 proxyGroup = it
+                onViewCreated(requireView(), null)
             }
         }
 
