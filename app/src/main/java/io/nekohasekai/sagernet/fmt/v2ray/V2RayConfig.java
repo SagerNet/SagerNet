@@ -620,6 +620,7 @@ public class V2RayConfig {
             public Integer mark;
             public Boolean tcpFastOpen;
             public String tproxy;
+            public Integer tcpKeepAliveInterval;
 
         }
 

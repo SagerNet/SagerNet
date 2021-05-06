@@ -62,6 +62,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
         val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
         val enableMuxForAll = findPreference<Preference>(Key.ENABLE_MUX_FOR_ALL)!!
         val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
+        val tcpKeepAliveInterval = findPreference<EditTextPreference>(Key.TCP_KEEP_ALIVE_INTERVAL)!!
 
         val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
         val routeChina = findPreference<Preference>(Key.ROUTE_CHINA)!!
@@ -99,6 +100,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
                 enableMux.isEnabled = stopped
                 enableMuxForAll.isEnabled = stopped
                 muxConcurrency.isEnabled = stopped
+                tcpKeepAliveInterval.isEnabled = stopped
 
                 bypassLan.isEnabled = stopped
                 blockAds.isEnabled = stopped

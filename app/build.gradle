@@ -161,7 +161,7 @@ android {
             outputFileName = outputFileName
                     .replace("app", "SN-" + variant.versionName)
                     .replace("-release", "")
-                    .replace("-debug", "")
+                    .replace("-oss", "")
         }
     }
 

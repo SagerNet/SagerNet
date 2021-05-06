@@ -155,6 +155,7 @@
     <string name="mux_concurrency">Mux concurrent connections</string>
     <string name="mux_for_all">Enable Mux for all possible supported protocols</string>
     <string name="mux_for_all_sum">If the server does not support Mux, we will not be able to connect to it.</string>
+    <string name="tcp_keep_alive_interval">TCP keep active packet delivery interval</string>
 
     <string name="proxied_apps">Apps VPN mode</string>
     <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>

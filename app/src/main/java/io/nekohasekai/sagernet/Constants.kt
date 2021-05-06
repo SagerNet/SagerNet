@@ -67,6 +67,7 @@ object Key {
     const val MUX_CONCURRENCY = "muxConcurrency"
     const val SHOW_STOP_BUTTON = "showStopButton"
     const val SECURITY_ADVISORY = "securityAdvisory"
+    const val TCP_KEEP_ALIVE_INTERVAL = "tcpKeepAliveInterval"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"

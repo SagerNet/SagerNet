@@ -72,6 +72,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
     var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "mph" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
+    var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
     var routeChina by configurationStore.stringToInt(Key.ROUTE_CHINA)
