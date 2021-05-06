@@ -36,8 +36,8 @@ object ListHolderListener : OnApplyWindowInsetsListener {
             statusBarInsets.bottom)
         return WindowInsetsCompat.Builder(insets).apply {
             setInsets(WindowInsetsCompat.Type.statusBars(), Insets.NONE)
-            setInsets(WindowInsetsCompat.Type.navigationBars(),
-                insets.getInsets(WindowInsetsCompat.Type.navigationBars()))
+            /*setInsets(WindowInsetsCompat.Type.navigationBars(),
+                insets.getInsets(WindowInsetsCompat.Type.navigationBars()))*/
         }.build()
     }
 
