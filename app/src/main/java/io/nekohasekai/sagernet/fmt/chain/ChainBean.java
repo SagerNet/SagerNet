@@ -42,7 +42,7 @@ public class ChainBean extends AbstractBean {
         if (StrUtil.isNotBlank(name)) {
             return name;
         } else {
-            return "Chain " + hashCode();
+            return "Chain " + Math.abs(hashCode());
         }
     }
 

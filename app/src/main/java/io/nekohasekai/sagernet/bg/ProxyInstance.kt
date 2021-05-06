@@ -83,9 +83,13 @@ class ProxyInstance(val profile: ProxyEntity) {
             v2rayPoint.domainName = profile.urlFixed()
         }
         config = buildV2RayConfig(profile)
-        v2rayPoint.configureFileContent = gson.toJson(config.config).also {
+
+        val jsonContent = gson.toJson(config.config).also {
             Logs.d(it)
         }
+
+        Libv2ray.testConfig(jsonContent)
+        v2rayPoint.configureFileContent = jsonContent
 
         for ((index, profile) in config.index.entries) {
             val port = socksPort + index
