@@ -6,8 +6,8 @@ plugins {
     id "com.mikepenz.aboutlibraries.plugin"
 }
 
-def verCode = 21
-def verName = "0.1-beta21"
+def verCode = 22
+def verName = "0.1-beta22"
 
 def keystorePwd = null
 def alias = null
@@ -112,7 +112,7 @@ android {
 
     productFlavors {
         expert {
-            applicationIdSuffix ".expert"
+            // applicationIdSuffix ".expert"
         }
         oss {
         }

@@ -797,77 +797,16 @@ fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean, index: I
                     })
 
                 streamSettings = StreamSettingsObject().apply {
-                    network = bean.type
-                    if (bean.security.isNotBlank()) {
-                        security = bean.security
-                    }
-                    when (security) {
-                        "tls" -> {
-                            tlsSettings = TLSObject().apply {
-                                if (bean.sni.isNotBlank()) {
-                                    serverName = bean.sni
-                                }
-                                if (bean.alpn.isNotBlank()) {
-                                    alpn = bean.alpn.split(",")
-                                }
-                            }
+                    network = "tcp"
+                    security = "xtls"
+                    xtlsSettings = XTLSObject().apply {
+                        if (bean.sni.isNotBlank()) {
+                            serverName = bean.sni
                         }
-                        "xtls" -> {
-                            xtlsSettings = XTLSObject().apply {
-                                if (bean.sni.isNotBlank()) {
-                                    serverName = bean.sni
-                                }
-                                if (bean.alpn.isNotBlank()) {
-                                    alpn = bean.alpn.split(",")
-                                }
-                            }
+                        if (bean.alpn.isNotBlank()) {
+                            alpn = bean.alpn.split(",")
                         }
                     }
-
-                    when (network) {
-                        "tcp" -> {
-                            tcpSettings = TcpObject().apply {
-                                if (bean.headerType == "http") {
-                                    header = TcpObject.HeaderObject().apply {
-                                        type = "http"
-                                        if (bean.host.isNotBlank() || bean.path.isNotBlank()) {
-                                            request =
-                                                TcpObject.HeaderObject.HTTPRequestObject()
-                                                    .apply {
-                                                        headers = mutableMapOf()
-                                                        if (bean.host.isNotBlank()) {
-                                                            headers["Host"] =
-                                                                bean.host.split(",")
-                                                                    .map { it.trim() }
-                                                        }
-                                                        if (bean.path.isNotBlank()) {
-                                                            path = bean.path.split(",")
-                                                        }
-                                                    }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        "kcp" -> {
-                            kcpSettings = KcpObject().apply {
-                                mtu = 1350
-                                tti = 50
-                                uplinkCapacity = 12
-                                downlinkCapacity = 100
-                                congestion = false
-                                readBufferSize = 1
-                                writeBufferSize = 1
-                                header = KcpObject.HeaderObject().apply {
-                                    type = bean.headerType
-                                }
-                                if (bean.mKcpSeed.isNotBlank()) {
-                                    seed = bean.mKcpSeed
-                                }
-                            }
-                        }
-                    }
-
                 }
             } else if (bean is TrojanBean) {
                 protocol = "trojan"
@@ -886,27 +825,13 @@ fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean, index: I
                 )
                 streamSettings = StreamSettingsObject().apply {
                     network = "tcp"
-                    security = bean.security
-                    when (security) {
-                        "tls" -> {
-                            tlsSettings = TLSObject().apply {
-                                if (bean.sni.isNotBlank()) {
-                                    serverName = bean.sni
-                                }
-                                if (bean.alpn.isNotBlank()) {
-                                    alpn = bean.alpn.split(",")
-                                }
-                            }
+                    security = "xtls"
+                    xtlsSettings = XTLSObject().apply {
+                        if (bean.sni.isNotBlank()) {
+                            serverName = bean.sni
                         }
-                        "xtls" -> {
-                            xtlsSettings = XTLSObject().apply {
-                                if (bean.sni.isNotBlank()) {
-                                    serverName = bean.sni
-                                }
-                                if (bean.alpn.isNotBlank()) {
-                                    alpn = bean.alpn.split(",")
-                                }
-                            }
+                        if (bean.alpn.isNotBlank()) {
+                            alpn = bean.alpn.split(",")
                         }
                     }
                 }
@@ -986,8 +911,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
 
         when (protocol) {
             "tcp" -> {
-                url.queryParameter("type")?.let {
-                    if (it == "http") {
+                url.queryParameter("type")?.let { type ->
+                    if (type == "http") {
                         bean.headerType = "http"
                         url.queryParameter("host")?.let {
                             bean.host = it

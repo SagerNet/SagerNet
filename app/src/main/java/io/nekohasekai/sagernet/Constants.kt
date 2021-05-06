@@ -63,6 +63,7 @@ object Key {
     const val SHOW_DIRECT_SPEED = "showDirectSpeed"
 
     const val ENABLE_MUX = "enableMux"
+    const val ENABLE_MUX_FOR_ALL = "enableMuxForAll"
     const val MUX_CONCURRENCY = "muxConcurrency"
     const val SHOW_STOP_BUTTON = "showStopButton"
     const val SECURITY_ADVISORY = "securityAdvisory"

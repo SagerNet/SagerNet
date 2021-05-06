@@ -123,6 +123,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
+    var enableMuxForAll by configurationStore.boolean(Key.ENABLE_MUX_FOR_ALL)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
     var showStopButton by configurationStore.boolean(Key.SHOW_STOP_BUTTON)
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED)

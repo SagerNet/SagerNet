@@ -60,6 +60,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
 
         val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
         val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
+        val enableMuxForAll = findPreference<Preference>(Key.ENABLE_MUX_FOR_ALL)!!
         val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
 
         val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
@@ -96,6 +97,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
                 domainMatcher.isEnabled = stopped
                 trafficSniffing.isEnabled = stopped
                 enableMux.isEnabled = stopped
+                enableMuxForAll.isEnabled = stopped
                 muxConcurrency.isEnabled = stopped
 
                 bypassLan.isEnabled = stopped

@@ -285,5 +285,8 @@
     <string name="chain_settings">链设置</string>
     <string name="circular_reference">循环引用</string>
     <string name="circular_reference_sum">路由中不能包含自己.</string>
+    <string name="mux_sum">多路复用是为了减少 TCP 的握手延迟而设计, 而非提高连接的吞吐量. 用于看视频、下载或者测速通常都有反效果</string>
+    <string name="mux_for_all">为所有可能支持的协议启用多路复用</string>
+    <string name="mux_for_all_sum">如果服务器不支持, 则将无法连接</string>
 
 </resources>

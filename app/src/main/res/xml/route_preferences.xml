@@ -49,7 +49,14 @@
             app:defaultValue="false"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="enableMux"
+            app:summary="@string/mux_sum"
             app:title="@string/enable_mux" />
+        <SwitchPreference
+            app:defaultValue="false"
+            app:icon="@drawable/ic_baseline_multiline_chart_24"
+            app:key="enableMuxForAll"
+            app:summary="@string/mux_for_all_sum"
+            app:title="@string/mux_for_all" />
         <EditTextPreference
             app:defaultValue="8"
             app:icon="@drawable/ic_baseline_low_priority_24"

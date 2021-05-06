@@ -151,7 +151,10 @@
     <string name="dm_mph">Minimal perfect hash</string>
     <string name="traffic_sniffing">Enable traffic sniffing</string>
     <string name="enable_mux">Enable multiplexer</string>
+    <string name="mux_sum">Mux is designed to reduce TCP handshake latency, not to increase connection throughput. Using Mux to watch videos, download or speed test is usually counter productive</string>
     <string name="mux_concurrency">Mux concurrent connections</string>
+    <string name="mux_for_all">Enable Mux for all possible supported protocols</string>
+    <string name="mux_for_all_sum">If the server does not support Mux, we will not be able to connect to it.</string>
 
     <string name="proxied_apps">Apps VPN mode</string>
     <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>

@@ -45,12 +45,12 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.toUri
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.toUri
+import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(tableName = "proxy_entities", indices = [
@@ -204,24 +204,34 @@ data class ProxyEntity(
         }
     }
 
+    fun isV2RayNetworkTcp(): Boolean {
+        val bean = requireBean() as StandardV2RayBean
+        return when (bean.type) {
+            "tcp", "ws", "http" -> true
+            else -> false
+        }
+    }
+
     fun needCoreMux(): Boolean {
+        val enableMuxForAll by lazy { DataStore.enableMuxForAll }
         return when (type) {
-            0 -> isExpert
-            1 -> isExpert && useExternalShadowsocks()
-            2 -> isExpert
-            3 -> true
+            0 -> enableMuxForAll
+            1 -> enableMuxForAll
+            2 -> enableMuxForAll
+            3 -> isV2RayNetworkTcp()
             4 -> !useXray()
-            5 -> isExpert && !useXray()
-            6 -> isExpert
+            5 -> enableMuxForAll && !useXray()
+            6 -> enableMuxForAll
             7 -> false
             else -> error("Undefined type $type")
         }
     }
 
     fun needXrayMux(): Boolean {
+        val enableMuxForAll by lazy { DataStore.enableMuxForAll }
         return when (type) {
-            4 -> true
-            5 -> isExpert
+            4 -> isV2RayNetworkTcp()
+            5 -> enableMuxForAll
             else -> error("Undefined type $type")
         }
     }
@@ -241,7 +251,10 @@ data class ProxyEntity(
     fun useXray(): Boolean {
         when (val bean = requireBean()) {
             is VLESSBean -> {
-                if (bean.security == "xtls") return true
+                if (bean.security != "xtls") return false
+                if (bean.type != "tcp") return false
+                if (bean.headerType.isNotBlank()) return false
+                return true
             }
             is TrojanBean -> {
                 if (bean.security == "xtls") return true
