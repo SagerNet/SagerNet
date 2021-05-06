@@ -65,7 +65,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     private lateinit var receiver: BroadcastReceiver
 
     override fun init() {
-        ShadowsocksBean.DEFAULT_BEAN.init()
+        ShadowsocksBean().apply { initDefaultValues() }.init()
     }
 
     override fun ShadowsocksBean.init() {

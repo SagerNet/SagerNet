@@ -35,7 +35,7 @@ class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>()
     override fun createEntity() = ShadowsocksRBean()
 
     override fun init() {
-        ShadowsocksRBean.DEFAULT_BEAN.init()
+        ShadowsocksRBean().apply { initDefaultValues() }.init()
     }
 
     override fun ShadowsocksRBean.init() {

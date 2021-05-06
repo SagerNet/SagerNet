@@ -143,6 +143,14 @@ data class ProxyEntity(
 
     fun urlFixed(): String {
         val bean = requireBean()
+        if (bean is ChainBean) {
+            if (bean.proxies.isNotEmpty()) {
+                val firstEntity = ProfileManager.getProfile(bean.proxies[0])
+                if (firstEntity != null) {
+                    return firstEntity.urlFixed();
+                }
+            }
+        }
         return if (Validator.isIpv6(bean.serverAddress)) {
             "[${bean.serverAddress}]:${bean.serverPort}"
         } else {
@@ -190,6 +198,7 @@ data class ProxyEntity(
             5 -> useXray()
             6 -> false
             7 -> true
+            8 -> false
             else -> error("Undefined type $type")
         }
     }
