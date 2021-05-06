@@ -35,7 +35,6 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.*
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.*
@@ -691,7 +690,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
 }
 
-fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean): V2RayConfig {
+fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean, index: Int): V2RayConfig {
 
     val remoteDns = DataStore.remoteDNS.split(",")
     val trafficSniffing = DataStore.trafficSniffing
@@ -900,7 +899,7 @@ fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean): V2RayCo
                     }
                 }
             }
-            if (DataStore.enableMux) {
+            if (index == 0 && DataStore.enableMux) {
                 mux = OutboundObject.MuxObject().apply {
                     enabled = true
                     concurrency = DataStore.muxConcurrency

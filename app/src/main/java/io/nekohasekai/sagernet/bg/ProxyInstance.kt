@@ -105,14 +105,14 @@ class ProxyInstance(val profile: ProxyEntity) {
                 profile.useXray() -> {
                     initPlugin("xtls-plugin")
                     pluginConfigs[index] =
-                        gson.toJson(buildXrayConfig(profile, port, needChain)).also {
+                        gson.toJson(buildXrayConfig(profile, port, needChain, index)).also {
                             Logs.d(it)
                         }
                 }
                 profile.type == 7 -> {
                     val bean = profile.requireTrojanGo()
                     initPlugin("trojan-go-plugin")
-                    pluginConfigs[index] = bean.buildTrojanGoConfig(port, needChain).also {
+                    pluginConfigs[index] = bean.buildTrojanGoConfig(port, needChain, index).also {
                         Logs.d(it)
                     }
                 }
