@@ -191,7 +191,14 @@ fun parseShadowsocks(ssObj: JSONObject): ShadowsocksBean {
     }
 }
 
+// https://github.com/shadowsocks/shadowsocks-android/blob/39f784a9d0cd191e9b8616b0b95bb2176b0fc798/core/src/main/java/com/github/shadowsocks/bg/ProxyInstance.kt#L58
+val deprecatedCiphers = arrayOf("aes-192-gcm", "chacha20", "salsa20")
+
 fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
+    if (method in deprecatedCiphers) {
+        throw IllegalArgumentException("Cipher $method is deprecated.")
+    }
+
     val proxyConfig = HSONObject().also {
         it["server"] = serverAddress
         it["server_port"] = serverPort
