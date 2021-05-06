@@ -49,6 +49,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.core.net.URLDecoder
 import cn.hutool.core.net.URLEncoder
 import cn.hutool.core.util.CharsetUtil
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +62,6 @@ import java.net.HttpURLConnection
 import java.net.InetAddress
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-
 
 inline fun <T> Iterable<T>.forEachTry(action: (T) -> Unit) {
     var result: Exception? = null
@@ -248,3 +248,5 @@ fun Fragment.addOverScrollListener(recyclerView: RecyclerView) {
         }
     })
 }
+
+const val isExpert = BuildConfig.FLAVOR == "expert"

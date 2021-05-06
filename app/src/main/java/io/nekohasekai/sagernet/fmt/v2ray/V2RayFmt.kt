@@ -149,7 +149,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         val requireHttp = DataStore.requireHttp
 
         if (requireHttp) {
-            InboundObject().apply {
+            inbounds.add(InboundObject().apply {
                 tag = TAG_HTTP
                 listen = bind
                 port = DataStore.httpPort
@@ -166,7 +166,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         metadataOnly = false
                     }
                 }
-            }
+            })
         }
 
         outbounds = mutableListOf()
@@ -534,7 +534,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                             }
                         }
                     }
-                    if (index == 0 && DataStore.enableMux && !proxyEntity.needExternal()) {
+                    if (index == 0 && proxyEntity.needCoreMux() && DataStore.enableMux) {
                         mux = OutboundObject.MuxObject().apply {
                             enabled = true
                             concurrency = DataStore.muxConcurrency

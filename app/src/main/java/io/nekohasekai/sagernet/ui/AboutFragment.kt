@@ -111,13 +111,18 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
         override fun getMaterialAboutList(activityContext: Context): MaterialAboutList {
 
+            var versionName = BuildConfig.VERSION_NAME
+            if (BuildConfig.FLAVOR != "oss") {
+                versionName += "-${BuildConfig.FLAVOR}"
+            }
+
             return MaterialAboutList.Builder()
                 .addCard(MaterialAboutCard.Builder()
                     .outline(false)
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_update_24)
                         .text(R.string.app_version)
-                        .subText(BuildConfig.VERSION_NAME)
+                        .subText(versionName)
                         .setOnClickAction {
                             requireContext().launchCustomTab(Uri.parse(
                                 "https://github.com/SagerNet/SagerNet/releases"

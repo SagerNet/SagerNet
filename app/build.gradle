@@ -108,6 +108,16 @@ android {
         }
     }
 
+    flavorDimensions "version"
+
+    productFlavors {
+        expert {
+            applicationIdSuffix ".expert"
+        }
+        oss {
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -148,7 +158,10 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = outputFileName.replace("app", "SagerNet-" + variant.versionName)
+            outputFileName = outputFileName
+                    .replace("app", "SN-" + variant.versionName)
+                    .replace("-release", "")
+                    .replace("-debug", "")
         }
     }
 

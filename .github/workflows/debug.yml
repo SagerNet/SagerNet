@@ -186,4 +186,4 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run update_assets
-          ./gradlew app:assembleDebug
+          ./gradlew app:assembleOssDebug

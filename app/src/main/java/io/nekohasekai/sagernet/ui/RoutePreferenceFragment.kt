@@ -34,6 +34,7 @@ import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.addOverScrollListener
+import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 
 class RoutePreferenceFragment : PreferenceFragmentCompat() {
@@ -55,6 +56,8 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
         val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
         val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
         val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
+        domainMatcher.isVisible = isExpert
+
         val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
         val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
         val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
@@ -65,6 +68,7 @@ class RoutePreferenceFragment : PreferenceFragmentCompat() {
 
         val forceShadowsocksRust =
             findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
+        forceShadowsocksRust.isVisible = isExpert
 
         val remoteDns = findPreference<Preference>(Key.REMOTE_DNS)!!
         val enableLocalDns = findPreference<SwitchPreference>(Key.ENABLE_LOCAL_DNS)!!

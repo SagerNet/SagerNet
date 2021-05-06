@@ -50,6 +50,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(tableName = "proxy_entities", indices = [
@@ -199,6 +200,20 @@ data class ProxyEntity(
             6 -> false
             7 -> true
             8 -> false
+            else -> error("Undefined type $type")
+        }
+    }
+
+    fun needCoreMux(): Boolean {
+        return when (type) {
+            0 -> false
+            1 -> isExpert && useExternalShadowsocks()
+            2 -> isExpert
+            3 -> true
+            4 -> !useXray()
+            5 -> false
+            6 -> false
+            7 -> false
             else -> error("Undefined type $type")
         }
     }
