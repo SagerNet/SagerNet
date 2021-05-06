@@ -206,14 +206,22 @@ data class ProxyEntity(
 
     fun needCoreMux(): Boolean {
         return when (type) {
-            0 -> false
+            0 -> isExpert
             1 -> isExpert && useExternalShadowsocks()
             2 -> isExpert
             3 -> true
             4 -> !useXray()
-            5 -> false
-            6 -> false
+            5 -> isExpert && !useXray()
+            6 -> isExpert
             7 -> false
+            else -> error("Undefined type $type")
+        }
+    }
+
+    fun needXrayMux(): Boolean {
+        return when (type) {
+            4 -> true
+            5 -> isExpert
             else -> error("Undefined type $type")
         }
     }
