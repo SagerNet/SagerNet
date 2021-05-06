@@ -731,6 +731,7 @@ public class V2RayConfig {
         public String path;
         public Map<String, String> headers;
         public Integer maxEarlyData;
+        public String earlyDataHeaderName;
         public Boolean useBrowserForwarding;
 
     }

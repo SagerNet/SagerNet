@@ -458,6 +458,18 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
                                         if (bean.wsMaxEarlyData > 0) {
                                             maxEarlyData = bean.wsMaxEarlyData
+
+                                            val pathUrl = "http://localhost$path".toHttpUrlOrNull()
+                                            if (pathUrl != null) {
+                                                pathUrl.queryParameter("ed")?.let {
+                                                    path = pathUrl.newBuilder()
+                                                        .removeAllQueryParameters("ed")
+                                                        .build()
+                                                        .toString()
+                                                        .substringAfter("http://localhost")
+                                                    earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                                                }
+                                            }
                                         }
 
                                         if (bean.wsUseBrowserForwarder) {
@@ -1096,7 +1108,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                             bean.wsMaxEarlyData = it.toInt()
                         }
 
-                        path = pathUrl.encodedPath
+//                        path = pathUrl.encodedPath
                     }
                     bean.path = path
                 }
