@@ -98,21 +98,29 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         writer.println()
                     }
                 }
-                startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND)
-                    .setType("text/x-log")
-                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    .putExtra(Intent.EXTRA_STREAM,
-                        FileProvider.getUriForFile(context,
-                            app.packageName + ".log",
-                            logFile)),
-                    context.getString(R.string.abc_shareactionprovider_share_with)))
+                startActivity(
+                    Intent.createChooser(
+                        Intent(Intent.ACTION_SEND)
+                            .setType("text/x-log")
+                            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            .putExtra(
+                                Intent.EXTRA_STREAM,
+                                FileProvider.getUriForFile(
+                                    context,
+                                    app.packageName + ".log",
+                                    logFile
+                                )
+                            ),
+                        context.getString(R.string.abc_shareactionprovider_share_with)
+                    )
+                )
             }
         }
 
         override fun getMaterialAboutList(activityContext: Context): MaterialAboutList {
 
             var versionName = BuildConfig.VERSION_NAME
-            if (BuildConfig.FLAVOR != "oss") {
+            if (BuildConfig.FLAVOR == "expert") {
                 versionName += "-${BuildConfig.FLAVOR}"
             }
 
@@ -124,9 +132,11 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.app_version)
                         .subText(versionName)
                         .setOnClickAction {
-                            requireContext().launchCustomTab(Uri.parse(
-                                "https://github.com/SagerNet/SagerNet/releases"
-                            ))
+                            requireContext().launchCustomTab(
+                                Uri.parse(
+                                    "https://github.com/SagerNet/SagerNet/releases"
+                                )
+                            )
                         }
                         .build()
                     )
@@ -148,7 +158,11 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                         startActivity(Intent().apply {
                                             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                                             data =
-                                                Uri.fromParts("package", plugin.packageName, null)
+                                                Uri.fromParts(
+                                                    "package",
+                                                    plugin.packageName,
+                                                    null
+                                                )
                                         })
                                     }
                                     .build()
@@ -174,9 +188,11 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .icon(R.drawable.ic_baseline_sanitizer_24)
                         .text(R.string.github)
                         .setOnClickAction {
-                            requireContext().launchCustomTab(Uri.parse(
-                                "https://github.com/SagerNet/SagerNet"
-                            ))
+                            requireContext().launchCustomTab(
+                                Uri.parse(
+                                    "https://github.com/SagerNet/SagerNet"
+                                )
+                            )
                         }
                         .build()
                     )
@@ -184,9 +200,11 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .icon(R.drawable.ic_qu_shadowsocks_foreground)
                         .text(R.string.telegram)
                         .setOnClickAction {
-                            requireContext().launchCustomTab(Uri.parse(
-                                "https://t.me/SagerNet"
-                            ))
+                            requireContext().launchCustomTab(
+                                Uri.parse(
+                                    "https://t.me/SagerNet"
+                                )
+                            )
                         }
                         .build())
                     .addItem(MaterialAboutActionItem.Builder()

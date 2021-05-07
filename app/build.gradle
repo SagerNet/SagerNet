@@ -6,8 +6,8 @@ plugins {
     id "com.mikepenz.aboutlibraries.plugin"
 }
 
-def verCode = 22
-def verName = "0.1-beta22"
+def verCode = 24
+def verName = "0.1-beta23"
 
 def keystorePwd = null
 def alias = null
@@ -115,6 +115,9 @@ android {
             // applicationIdSuffix ".expert"
         }
         oss {
+        }
+        play {
+            versionCode verCode - 1
         }
     }
 

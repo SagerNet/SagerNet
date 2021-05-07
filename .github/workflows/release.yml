@@ -254,5 +254,5 @@ jobs:
           cat > service_account_credentials.json << EOF
           ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
           EOF
-          ./gradlew app:publishOssRelease
+          ./gradlew app:publishPlayRelease
           echo "APK=$APK" >> $GITHUB_ENV
