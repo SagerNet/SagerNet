@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.fmt.shadowsocksr
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.*
@@ -61,15 +62,18 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
 
 fun ShadowsocksRBean.toUri(): String {
 
-    return "ssr://" + Base64.encodeUrlSafe("%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
-        Locale.ENGLISH, serverAddress, serverPort, protocol, method, obfs,
-        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, password)),
-        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)),
-        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)),
-        Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, name ?: ""))))
+    return "ssr://" + Base64.encodeUrlSafe(
+        "%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
+            Locale.ENGLISH, serverAddress, serverPort, protocol, method, obfs,
+            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, password)),
+            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)),
+            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)),
+            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, name ?: ""))
+        )
+    )
 }
 
-fun ShadowsocksRBean.buildShadowsocksRConfig(): String{
+fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
     return JSONObject().also {
         it["server"] = serverAddress
         it["server_port"] = serverPort
@@ -86,4 +90,18 @@ fun ShadowsocksRBean.buildShadowsocksRConfig(): String{
             it["dns"] = DataStore.remoteDNS
         }
     }.toStringPretty()
+}
+
+fun JSONObject.parseShadowsocksR(): ShadowsocksRBean {
+    return ShadowsocksRBean().applyDefaultValues().apply {
+        serverAddress = getStr("server", serverAddress)
+        serverPort = getInt("server_port", serverPort)
+        method = getStr("method", method)
+        password = getStr("password", password)
+        protocol = getStr("protocol", protocol)
+        protocolParam = getStr("protocol_param", protocolParam)
+        obfs = getStr("obfs", obfs)
+        obfsParam = getStr("obfs_param", obfsParam)
+        name = getStr("remarks", name)
+    }
 }

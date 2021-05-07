@@ -43,7 +43,8 @@ fun String.decodeBase64UrlSafe(): String {
         replace(' ', '-')
             .replace('/', '_')
             .replace('+', '-')
-            .replace("=", ""))
+            .replace("=", "")
+    )
 }
 
 fun parseProxies(text: String): List<AbstractBean> {
@@ -103,4 +104,9 @@ fun parseProxies(text: String): List<AbstractBean> {
     }
     entities.forEach { it.initDefaultValues() }
     return entities
+}
+
+fun <T : AbstractBean> T.applyDefaultValues(): T {
+    initDefaultValues()
+    return this
 }

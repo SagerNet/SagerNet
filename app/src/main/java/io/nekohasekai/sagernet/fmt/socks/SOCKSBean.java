@@ -33,7 +33,6 @@ public class SOCKSBean extends AbstractBean {
 
     public String username;
     public String password;
-    public boolean udp;
     public boolean tls;
     public String sni;
 
@@ -48,11 +47,10 @@ public class SOCKSBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(username);
         output.writeString(password);
-        output.writeBoolean(udp);
         output.writeBoolean(tls);
         output.writeString(sni);
     }
@@ -63,8 +61,10 @@ public class SOCKSBean extends AbstractBean {
         super.deserialize(input);
         username = input.readString();
         password = input.readString();
-        udp = input.readBoolean();
-        if (version > 0) {
+        if (version <= 1) {
+            input.readBoolean();
+        }
+        if (version >= 1) {
             tls = input.readBoolean();
             sni = input.readString();
         } else {

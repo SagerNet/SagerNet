@@ -217,6 +217,8 @@
     <string name="chain_settings">Chain Settings</string>
     <string name="circular_reference">Circular reference</string>
     <string name="circular_reference_sum">The route cannot contain itself.</string>
+    <string name="profile_file">Profile File</string>
+
 
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
@@ -226,8 +228,8 @@
     <string name="action_export_file">Export to file…</string>
     <string name="action_export">Export to Clipboard</string>
     <string name="action_import">Import from Clipboard</string>
-    <string name="action_import_file">Import from file…</string>
-    <string name="action_replace_file">Replace from file…</string>
+    <string name="action_import_file">Import from file</string>
+    <string name="action_replace_file">Replace from file</string>
     <string name="action_export_msg">Successfully export!</string>
     <string name="action_export_err">Failed to export.</string>
     <string name="action_import_msg">Successfully import!</string>
@@ -277,6 +279,8 @@
     <string name="cleartext_http_warning">Cleartext HTTP traffic is insecure</string>
     <string name="error_title">Error</string>
     <string name="no_proxies_found">No proxies found in the link</string>
+    <string name="no_proxies_found_in_file">No proxies found in the file</string>
+    <string name="no_proxies_found_in_clipboard">No proxies found in the clipboard</string>
     <string name="deduplication">Deduplication</string>
 
     <!-- plugin -->

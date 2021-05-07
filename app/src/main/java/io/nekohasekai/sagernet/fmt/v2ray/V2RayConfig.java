@@ -21,13 +21,15 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.gson.InstanceCreator;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonToken;
 
-import java.lang.reflect.Type;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ObjectOutput;
 import java.util.List;
 import java.util.Map;
 
@@ -159,7 +161,7 @@ public class V2RayConfig {
 
     public List<InboundObject> inbounds;
 
-    public static class InboundObject implements InstanceCreator<InboundObject.LazyInboundConfigurationObject> {
+    public static class InboundObject {
 
         public String listen;
         public Integer port;
@@ -169,6 +171,12 @@ public class V2RayConfig {
         public String tag;
         public SniffingObject sniffing;
         public AllocateObject allocate;
+
+        public void init() {
+            if (settings != null) {
+                settings.init(this);
+            }
+        }
 
         public static class SniffingObject {
 
@@ -186,43 +194,44 @@ public class V2RayConfig {
 
         }
 
-        @Override
-        public LazyInboundConfigurationObject createInstance(Type type) {
-            return new LazyInboundConfigurationObject();
+    }
+
+    public static class LazyInboundConfigurationObject extends JsonLazyInterface<InboundConfigurationObject> {
+
+        public LazyInboundConfigurationObject() {
         }
 
-        public class LazyInboundConfigurationObject extends JsonLazyInterface<InboundConfigurationObject> {
+        public LazyInboundConfigurationObject(InboundObject ctx, InboundConfigurationObject value) {
+            super(value);
+            init(ctx);
+        }
 
-            public LazyInboundConfigurationObject() {
+        public InboundObject ctx;
+        public void init(InboundObject ctx) {
+            this.ctx = ctx;
+        }
+
+        @Nullable
+        @Override
+        protected Class<? extends InboundConfigurationObject> getType() {
+            switch (ctx.protocol.toLowerCase()) {
+                case "dokodemo-door":
+                    return DokodemoDoorInboundConfigurationObject.class;
+                case "http":
+                    return HTTPInboundConfigurationObject.class;
+                case "socks":
+                    return SocksInboundConfigurationObject.class;
+                case "vmess":
+                    return VMessInboundConfigurationObject.class;
+                case "vless":
+                    return VLESSInboundConfigurationObject.class;
+                case "shadowsocks":
+                    return ShadowsocksInboundConfigurationObject.class;
+                case "trojan":
+                    return TrojanInboundConfigurationObject.class;
+
             }
-
-            public LazyInboundConfigurationObject(InboundConfigurationObject value) {
-                super(value);
-            }
-
-            @Nullable
-            @Override
-            protected Class<? extends InboundConfigurationObject> getType() {
-                switch (protocol.toLowerCase()) {
-                    case "dokodemo-door":
-                        return DokodemoDoorInboundConfigurationObject.class;
-                    case "http":
-                        return HTTPInboundConfigurationObject.class;
-                    case "socks":
-                        return SocksInboundConfigurationObject.class;
-                    case "vmess":
-                        return VMessInboundConfigurationObject.class;
-                    case "vless":
-                        return VLESSInboundConfigurationObject.class;
-                    case "shadowsocks":
-                        return ShadowsocksInboundConfigurationObject.class;
-                    case "trojan":
-                        return TrojanInboundConfigurationObject.class;
-
-                }
-                return null;
-            }
-
+            return null;
         }
 
     }
@@ -379,41 +388,9 @@ public class V2RayConfig {
         public ProxySettingsObject proxySettings;
         public MuxObject mux;
 
-        public class LazyOutboundConfigurationObject extends JsonLazyInterface<OutboundConfigurationObject> {
-
-            public LazyOutboundConfigurationObject() {
-            }
-
-            public LazyOutboundConfigurationObject(OutboundConfigurationObject value) {
-                super(value);
-            }
-
-            @Nullable
-            @Override
-            protected Class<? extends OutboundConfigurationObject> getType() {
-                switch (protocol.toLowerCase()) {
-                    case "blackhole":
-                        return BlackholeOutboundConfigurationObject.class;
-                    case "dns":
-                        return DNSOutboundConfigurationObject.class;
-                    case "freedom":
-                        return FreedomOutboundConfigurationObject.class;
-                    case "http":
-                        return HTTPOutboundConfigurationObject.class;
-                    case "socks":
-                        return SocksOutboundConfigurationObject.class;
-                    case "vmess":
-                        return VMessOutboundConfigurationObject.class;
-                    case "vless":
-                        return VLESSOutboundConfigurationObject.class;
-                    case "shadowsocks":
-                        return ShadowsocksOutboundConfigurationObject.class;
-                    case "trojan":
-                        return TrojanOutboundConfigurationObject.class;
-                    case "loopback":
-                        return LoopbackOutboundConfigurationObject.class;
-                }
-                return null;
+        public void init() {
+            if (settings != null) {
+                settings.init(this);
             }
         }
 
@@ -431,6 +408,50 @@ public class V2RayConfig {
 
         }
 
+    }
+
+    public static class LazyOutboundConfigurationObject extends JsonLazyInterface<OutboundConfigurationObject> {
+
+        public LazyOutboundConfigurationObject() {
+        }
+
+        public LazyOutboundConfigurationObject(OutboundObject ctx,OutboundConfigurationObject value) {
+            super(value);
+            init(ctx);
+        }
+
+        private OutboundObject ctx;
+        public void init(OutboundObject ctx) {
+            this.ctx = ctx;
+        }
+
+        @Nullable
+        @Override
+        protected Class<? extends OutboundConfigurationObject> getType() {
+            switch (ctx.protocol.toLowerCase()) {
+                case "blackhole":
+                    return BlackholeOutboundConfigurationObject.class;
+                case "dns":
+                    return DNSOutboundConfigurationObject.class;
+                case "freedom":
+                    return FreedomOutboundConfigurationObject.class;
+                case "http":
+                    return HTTPOutboundConfigurationObject.class;
+                case "socks":
+                    return SocksOutboundConfigurationObject.class;
+                case "vmess":
+                    return VMessOutboundConfigurationObject.class;
+                case "vless":
+                    return VLESSOutboundConfigurationObject.class;
+                case "shadowsocks":
+                    return ShadowsocksOutboundConfigurationObject.class;
+                case "trojan":
+                    return TrojanOutboundConfigurationObject.class;
+                case "loopback":
+                    return LoopbackOutboundConfigurationObject.class;
+            }
+            return null;
+        }
     }
 
     public interface OutboundConfigurationObject {
@@ -688,7 +709,7 @@ public class V2RayConfig {
                 public String version;
                 public String method;
                 public List<String> path;
-                public Map<String, List<String>> headers;
+                public Map<String, StringOrListObject> headers;
 
             }
 
@@ -697,8 +718,14 @@ public class V2RayConfig {
                 public String version;
                 public String status;
                 public String reason;
-                public Map<String, List<String>> headers;
+                public Map<String, StringOrListObject> headers;
 
+            }
+
+            public static class StringOrListObject extends JsonOr<String, List<String>> {
+                public StringOrListObject() {
+                    super(JsonToken.STRING, JsonToken.BEGIN_ARRAY);
+                }
             }
 
         }
@@ -782,6 +809,15 @@ public class V2RayConfig {
         public String listenAddr;
         public Integer listenPort;
 
+    }
+
+    public void init() {
+        if (inbounds != null) {
+            for (InboundObject inbound : inbounds) inbound.init();
+        }
+        if (outbounds != null) {
+            for (OutboundObject outbound : outbounds) outbound.init();
+        }
     }
 
 }

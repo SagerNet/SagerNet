@@ -32,6 +32,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
@@ -49,6 +50,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.profile.*
@@ -156,46 +158,73 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     fun snackbar(text: String) = (activity as MainActivity).snackbar(text)
 
+    val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        runOnDefaultDispatcher {
+            try {
+                val fileText =
+                    requireContext().contentResolver.openInputStream(it)!!.bufferedReader()
+                        .readText()
+                val proxies = ProfileManager.parseSubscription(fileText)?.second
+                if (proxies.isNullOrEmpty()) onMainDispatcher {
+                    snackbar(getString(R.string.no_proxies_found_in_file)).show()
+                } else import(proxies)
+            } catch (e: Exception) {
+                Logs.w(e)
+
+                onMainDispatcher {
+                    Toast.makeText(app, e.readableMessage, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    suspend fun import(proxies: List<AbstractBean>) {
+        val selectedGroup = selectedGroup
+        var targetIndex by Delegates.notNull<Int>()
+        val targetId = if (!selectedGroup.isSubscription) {
+            selectedGroup.id
+        } else {
+            targetIndex = adapter.groupList.indexOfFirst { !it.isSubscription }
+            adapter.groupList[targetIndex].id
+        }
+
+        for (proxy in proxies) {
+            ProfileManager.createProfile(targetId, proxy)
+        }
+        onMainDispatcher {
+            if (selectedGroup.id != targetId) {
+                tabLayout.getTabAt(targetIndex)?.select()
+            }
+
+            snackbar(
+                requireContext().resources.getQuantityString(
+                    R.plurals.added,
+                    proxies.size,
+                    proxies.size
+                )
+            ).show()
+        }
+
+    }
+
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_scan_qr_code -> {
                 startActivity(Intent(context, ScannerActivity::class.java))
-                true
             }
             R.id.action_import_clipboard -> {
                 val text = SagerNet.getClipboardText()
                 if (text.isBlank()) {
                     snackbar(getString(R.string.clipboard_empty)).show()
                 } else runOnDefaultDispatcher {
-                    val proxies = parseProxies(text)
-                    if (proxies.isEmpty()) onMainDispatcher {
-                        snackbar(getString(R.string.action_import_err)).show()
-                    } else {
-                        val selectedGroup = selectedGroup
-                        var targetIndex by Delegates.notNull<Int>()
-                        val targetId = if (!selectedGroup.isSubscription) {
-                            selectedGroup.id
-                        } else {
-                            targetIndex = adapter.groupList.indexOfFirst { !it.isSubscription }
-                            adapter.groupList[targetIndex].id
-                        }
-
-                        for (proxy in proxies) {
-                            ProfileManager.createProfile(targetId, proxy)
-                        }
-                        onMainDispatcher {
-                            if (selectedGroup.id != targetId) {
-                                tabLayout.getTabAt(targetIndex)?.select()
-                            }
-
-                            snackbar(requireContext().resources.getQuantityString(
-                                R.plurals.added,
-                                proxies.size,
-                                proxies.size
-                            )).show()
-                        }
-                    }
+                    val proxies = ProfileManager.parseSubscription(text)?.second
+                    if (proxies.isNullOrEmpty()) onMainDispatcher {
+                        snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
+                    } else import(proxies)
                 }
+            }
+            R.id.action_import_file -> {
+                importFile.launch("*/*")
             }
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
@@ -405,8 +434,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                     UndoSnackbarManager(activity as MainActivity, adapter)
 
                 ItemTouchHelper(object :
-                    ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                        ItemTouchHelper.START) {
+                    ItemTouchHelper.SimpleCallback(
+                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                        ItemTouchHelper.START
+                    ) {
                     override fun getSwipeDirs(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -482,9 +513,11 @@ class ConfigurationFragment @JvmOverloads constructor(
             ): ConfigurationHolder {
                 return ConfigurationHolder(
                     LayoutInflater.from(parent.context)
-                        .inflate(if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
+                        .inflate(
+                            if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
                             parent,
-                            false)
+                            false
+                        )
                 )
             }
 
@@ -509,8 +542,10 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun move(from: Int, to: Int) {
                 val first = getItemAt(from)
                 var previousOrder = first.userOrder
-                val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1,
-                    to + 1 downTo from)
+                val (step, range) = if (from < to) Pair(1, from until to) else Pair(
+                    -1,
+                    to + 1 downTo from
+                )
                 for (i in range) {
                     val next = getItemAt(i + step)
                     val order = next.userOrder
@@ -686,7 +721,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                     if (select) {
                         view.setOnClickListener {
                             (requireActivity() as ProfileSelectActivity).returnProfile(
-                                proxyEntity.id)
+                                proxyEntity.id
+                            )
                         }
                     } else {
                         view.setOnClickListener {
@@ -720,15 +756,21 @@ class ConfigurationFragment @JvmOverloads constructor(
                     val showTraffic = rx + tx != 0L
                     trafficText.isVisible = showTraffic
                     if (showTraffic) {
-                        trafficText.text = view.context.getString(R.string.traffic,
+                        trafficText.text = view.context.getString(
+                            R.string.traffic,
                             Formatter.formatFileSize(view.context, tx),
-                            Formatter.formatFileSize(view.context, rx))
+                            Formatter.formatFileSize(view.context, rx)
+                        )
                     }
                     //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
                     editButton.setOnClickListener {
-                        it.context.startActivity(proxyEntity.settingIntent(it.context,
-                            proxyGroup.isSubscription))
+                        it.context.startActivity(
+                            proxyEntity.settingIntent(
+                                it.context,
+                                proxyGroup.isSubscription
+                            )
+                        )
                     }
 
                     shareLayout.isGone = select || proxyEntity.type == 8
@@ -767,8 +809,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                                                 .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(R.menu.socks_share_menu,
-                                                    popup.menu)
+                                                popup.menuInflater.inflate(
+                                                    R.menu.socks_share_menu,
+                                                    popup.menu
+                                                )
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
                                             }
@@ -795,8 +839,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                                                 .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(R.menu.socks_share_menu,
-                                                    popup.menu)
+                                                popup.menuInflater.inflate(
+                                                    R.menu.socks_share_menu,
+                                                    popup.menu
+                                                )
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
                                             }
@@ -816,8 +862,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         val popup = PopupMenu(requireContext(), it)
-                                        popup.menuInflater.inflate(R.menu.socks_share_menu,
-                                            popup.menu)
+                                        popup.menuInflater.inflate(
+                                            R.menu.socks_share_menu,
+                                            popup.menu
+                                        )
                                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                         popup.show()
                                     }

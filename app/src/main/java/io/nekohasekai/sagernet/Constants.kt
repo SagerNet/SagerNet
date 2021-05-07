@@ -79,7 +79,6 @@ object Key {
     const val SERVER_PORT = "serverPort"
     const val SERVER_USERNAME = "serverUsername"
     const val SERVER_PASSWORD = "serverPassword"
-    const val SERVER_UDP = "serverUdp"
     const val SERVER_METHOD = "serverMethod"
     const val SERVER_PLUGIN = "serverPlugin"
     const val SERVER_PLUGIN_CONFIGURE = "serverPluginConfigure"

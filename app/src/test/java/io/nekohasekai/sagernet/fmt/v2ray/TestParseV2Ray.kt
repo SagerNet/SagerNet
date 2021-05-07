@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray
 
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import junit.framework.TestCase
 
 class TestParseV2Ray : TestCase() {
@@ -76,7 +77,7 @@ class TestParseV2Ray : TestCase() {
         assertEquals(comment, vmess.name)
 
         vmess.initDefaultValues()
-        assertEquals(parseV2RayN(vmess.toV2rayN()).apply { initDefaultValues() }, vmess)
+        assertEquals(parseV2RayN(vmess.toV2rayN()).applyDefaultValues(), vmess)
 
     }
 
@@ -92,7 +93,7 @@ class TestParseV2Ray : TestCase() {
         assertEquals(vless.grpcServiceName, "FuckGFW")
 
         vless.initDefaultValues()
-        assertEquals(parseV2Ray(vless.toUri(true)).apply { initDefaultValues() }, vless)
+        assertEquals(parseV2Ray(vless.toUri(true)).applyDefaultValues(), vless)
     }
 
 }

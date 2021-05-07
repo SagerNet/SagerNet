@@ -167,12 +167,11 @@
     <string name="action_from_link">來自訂閱</string>
 
     <string name="action_scan_china_apps">掃描中國應用程式</string>
-    <string name="action_export_more">匯出……</string>
-    <string name="action_export_file">匯出至檔案……</string>
-    <string name="action_export">匯出至剪貼簿……</string>
-    <string name="action_import">自剪貼簿匯入……</string>
-    <string name="action_import_file">自檔案匯入……</string>
-    <string name="action_replace_file">自檔案替換……</string>
+    <string name="action_export_more">匯出</string>
+    <string name="action_export_file">匯出至檔案</string>
+    <string name="action_export">匯出至剪貼簿</string>
+    <string name="action_import">自剪貼簿匯入</string>
+    <string name="action_import_file">自檔案匯入</string>
     <string name="action_export_msg">匯出成功！</string>
     <string name="action_export_err">匯出失敗。</string>
     <string name="action_import_msg">匯入成功！</string>

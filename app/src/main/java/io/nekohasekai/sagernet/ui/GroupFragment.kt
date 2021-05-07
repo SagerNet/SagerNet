@@ -186,6 +186,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         var (subType, proxies) = try {
                             ProfileManager.parseSubscription((response.body
                                 ?: error("Empty response")).string())
+                                ?: error(getString(R.string.no_proxies_found))
                         } catch (e: Exception) {
                             Logs.w(e)
                             runOnMainDispatcher {

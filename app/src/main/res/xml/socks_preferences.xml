@@ -29,11 +29,6 @@
             app:key="serverPassword"
             app:title="@string/password_opt" />
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_radio_button_checked_24"
-            app:key="serverUdp"
-            app:summary="@string/udp_summary"
-            app:title="@string/server_udp" />
-        <SwitchPreference
             app:icon="@drawable/ic_baseline_https_24"
             app:key="serverTLS"
             app:title="@string/tls" />

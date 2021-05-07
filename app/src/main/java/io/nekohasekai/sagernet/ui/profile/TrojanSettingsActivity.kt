@@ -31,13 +31,14 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
 
     override fun createEntity() = TrojanBean()
 
     override fun init() {
-        TrojanBean().apply { initDefaultValues() }.init()
+        TrojanBean().applyDefaultValues().init()
     }
 
     override fun TrojanBean.init() {

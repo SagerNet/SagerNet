@@ -25,12 +25,14 @@ import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
+import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseTrojanGo(server: String): TrojanGoBean {
@@ -133,31 +135,25 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
         when (type) {
             "original" -> {
             }
-            "ws" -> {
-                conf["websocket"] = JSONObject().also {
-                    it["enabled"] = true
-                    it["host"] = host
-                    it["path"] = path
-                }
+            "ws" -> conf["websocket"] = JSONObject().also {
+                it["enabled"] = true
+                it["host"] = host
+                it["path"] = path
             }
         }
 
-        if (sni.isNotBlank()) {
-            conf["ssl"] = JSONObject().also {
-                it["sni"] = sni
-            }
+        if (sni.isNotBlank()) conf["ssl"] = JSONObject().also {
+            it["sni"] = sni
         }
 
         when {
             encryption == "none" -> {
             }
-            encryption.startsWith("ss;") -> {
-                conf["shadowsocks"] = JSONObject().also {
-                    it["enabled"] = true
-                    it["method"] =
-                        encryption.substringAfter(";").substringBefore(":")
-                    it["password"] = encryption.substringAfter(":")
-                }
+            encryption.startsWith("ss;") -> conf["shadowsocks"] = JSONObject().also {
+                it["enabled"] = true
+                it["method"] =
+                    encryption.substringAfter(";").substringBefore(":")
+                it["password"] = encryption.substringAfter(":")
             }
         }
 
@@ -173,12 +169,67 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
             }
         }
 
-        if (chain) {
-            conf["forward_proxy"] = JSONObject().also {
-                it["enabled"] = true
-                it["proxy_addr"] = "127.0.0.1"
-                it["proxy_port"] = port + 1
-            }
+        if (chain) conf["forward_proxy"] = JSONObject().also {
+            it["enabled"] = true
+            it["proxy_addr"] = "127.0.0.1"
+            it["proxy_port"] = port + 1
         }
     }.toStringPretty()
+}
+
+fun JSONObject.parseTrojanGo(): TrojanGoBean {
+    return TrojanGoBean().applyDefaultValues().apply {
+        serverAddress = getStr("remote_addr", serverAddress)
+        serverPort = getInt("remote_port", serverPort)
+        when (val pass = get("password")) {
+            is String -> {
+                password = pass
+            }
+            is List<*> -> {
+                password = pass[0] as String
+            }
+        }
+        getJSONObject("ssl")?.apply {
+            sni = getStr("sni", sni)
+        }
+        getJSONObject("websocket")?.apply {
+            if (getBool("enabled", false)) {
+                type = "ws"
+                host = getStr("host", host)
+                path = getStr("path", path)
+            }
+        }
+        getJSONObject("shadowsocks")?.apply {
+            if (getBool("enabled", false)) {
+                encryption = "ss;${getStr("method", "")}:${getStr("password", "")}"
+            }
+        }
+        getJSONObject("transport_plugin")?.apply {
+            if (getBool("enabled", false)) {
+                when (type) {
+                    "shadowsocks" -> {
+                        val pl = PluginConfiguration()
+                        pl.selected = getStr("command")
+                        getJSONArray("arg")?.also {
+                            pl.pluginsOptions[pl.selected] = PluginOptions().also { opts ->
+                                var key = ""
+                                it.forEachIndexed { index, param ->
+                                    if (index % 2 != 0) {
+                                        key = param.toString()
+                                    } else {
+                                        opts[key] = param.toString()
+                                    }
+                                }
+                            }
+                        }
+                        getStr("option")?.also {
+                            pl.pluginsOptions[pl.selected] = PluginOptions(it)
+                        }
+                        pl.fixInvalidParams()
+                        plugin = pl.toString()
+                    }
+                }
+            }
+        }
+    }
 }

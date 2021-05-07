@@ -22,13 +22,14 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class VLESSSettingsActivity : StandardV2RaySettingsActivity() {
 
     override fun createEntity() = VLESSBean()
 
     override fun init() {
-        VLESSBean().apply { initDefaultValues() }.init()
+        VLESSBean().applyDefaultValues().init()
     }
 
 }

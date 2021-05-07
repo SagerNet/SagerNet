@@ -255,7 +255,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
         switch (type) {
             case "tcp": {
-                if (version >= 0) {
+                if (version >= 1) {
                     headerType = input.readString();
                     host = input.readString();
                     path = input.readString();

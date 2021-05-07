@@ -66,7 +66,7 @@ public class HttpBean extends AbstractBean {
 
     @NotNull
     @Override
-    public AbstractBean clone() {
+    public HttpBean clone() {
         return KryoConverters.deserialize(new HttpBean(), KryoConverters.serialize(this));
     }
 }

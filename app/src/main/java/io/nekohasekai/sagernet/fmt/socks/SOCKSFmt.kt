@@ -46,7 +46,6 @@ fun parseSOCKS(link: String): SOCKSBean {
             if (link.contains("#")) {
                 name = link.substringAfter("#").unUrlSafe()
             }
-            udp = false
         }
     } else {
         val url = ("http://" + link
@@ -59,7 +58,6 @@ fun parseSOCKS(link: String): SOCKSBean {
             username = url.username
             password = url.password
             name = url.fragment
-            udp = url.queryParameter("udp") == "true"
             tls = url.queryParameter("tls") == "true"
             sni = url.queryParameter("sni")
         }
@@ -81,7 +79,6 @@ fun SOCKSBean.toUri(): String {
         }
     }
     if (!name.isNullOrBlank()) builder.encodedFragment(name.urlSafe())
-    if (udp) builder.addQueryParameter("udp", "true")
     return builder.toLink("socks")
 
 }

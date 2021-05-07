@@ -104,7 +104,7 @@ public class TrojanBean extends AbstractBean {
 
     @NotNull
     @Override
-    public AbstractBean clone() {
+    public TrojanBean clone() {
         return KryoConverters.deserialize(new TrojanBean(), KryoConverters.serialize(this));
     }
 }

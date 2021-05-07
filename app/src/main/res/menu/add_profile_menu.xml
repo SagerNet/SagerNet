@@ -12,12 +12,11 @@
                 android:title="@string/add_profile_methods_scan_qr_code" />
             <item
                 android:id="@+id/action_import_clipboard"
-                android:alphabeticShortcut="v"
                 android:title="@string/action_import" />
             <item
-                android:id="@+id/action_manual_settings"
-                android:alphabeticShortcut="n"
-                android:title="@string/add_profile_methods_manual_settings">
+                android:id="@+id/action_import_file"
+                android:title="@string/action_import_file" />
+            <item android:title="@string/add_profile_methods_manual_settings">
                 <menu>
                     <item
                         android:id="@+id/action_new_socks"
@@ -48,7 +47,6 @@
                         android:title="@string/proxy_chain" />
                 </menu>
             </item>
-
         </menu>
     </item>
 </menu>

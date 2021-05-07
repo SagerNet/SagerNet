@@ -56,6 +56,7 @@ public class JsonLazyAdapter<T> extends TypeAdapter<JsonLazyInterface<T>> {
             in.nextNull();
             return null;
         }
+
         try {
             JsonLazyInterface<T> instance = clazz.newInstance();
             instance.gson = gson;

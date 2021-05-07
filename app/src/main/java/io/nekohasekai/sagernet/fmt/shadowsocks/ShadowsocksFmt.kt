@@ -28,7 +28,6 @@ import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.json.JSONObject
 import cn.hutool.json.JSONObject as HSONObject
 
 val methodsV2fly = arrayOf(
@@ -38,33 +37,30 @@ val methodsV2fly = arrayOf(
     "chacha20-ietf-poly1305"
 )
 
-fun ShadowsocksBean.fixInvalidParams() {
-    if (method == "plain") method = "none"
+fun PluginConfiguration.fixInvalidParams() {
 
-    val pl = PluginConfiguration(plugin)
+    if (selected.contains("v2ray") && selected != "v2ray-plugin") {
 
-    if (pl.selected.contains("v2ray") && pl.selected != "v2ray-plugin") {
-
-        pl.pluginsOptions["v2ray-plugin"] = pl.getOptions().apply { id = "v2ray-plugin" }
-        pl.pluginsOptions.remove(pl.selected)
-        pl.selected = "v2ray-plugin"
+        pluginsOptions["v2ray-plugin"] = getOptions().apply { id = "v2ray-plugin" }
+        pluginsOptions.remove(selected)
+        selected = "v2ray-plugin"
 
         // resolve v2ray plugin
 
     }
 
-    if (pl.selected.contains("obfs") && pl.selected != "obfs-local") {
+    if (selected.contains("obfs") && selected != "obfs-local") {
 
-        pl.pluginsOptions["obfs-local"] = pl.getOptions().apply { id = "obfs-local" }
-        pl.pluginsOptions.remove(pl.selected)
-        pl.selected = "obfs-local"
+        pluginsOptions["obfs-local"] = getOptions().apply { id = "obfs-local" }
+        pluginsOptions.remove(selected)
+        selected = "obfs-local"
 
         // resolve clash obfs
 
     }
 
-    if (pl.selected == "obfs-local") {
-        val options = pl.pluginsOptions["obfs-local"]
+    if (selected == "obfs-local") {
+        val options = pluginsOptions["obfs-local"]
         if (options != null) {
             if (options.containsKey("mode")) {
                 options["obfs"] = options["mode"]
@@ -77,7 +73,11 @@ fun ShadowsocksBean.fixInvalidParams() {
         }
     }
 
-    plugin = pl.toString()
+}
+
+fun ShadowsocksBean.fixInvalidParams() {
+    if (method == "plain") method = "none"
+    plugin = PluginConfiguration(plugin).apply { fixInvalidParams() }.toString()
 
 }
 
@@ -172,20 +172,21 @@ fun ShadowsocksBean.toUri(): String {
 
 }
 
-fun parseShadowsocks(ssObj: JSONObject): ShadowsocksBean {
-    var pluginStr = ""
-    val pId = ssObj.optString("plugin")
-    if (!pId.isNullOrBlank()) {
-        val plugin = PluginOptions(pId, ssObj.optString("plugin_opts"))
-        pluginStr = plugin.toString(false)
-    }
+fun HSONObject.parseShadowsocks(): ShadowsocksBean {
     return ShadowsocksBean().apply {
-        serverAddress = ssObj.getString("server")
-        serverPort = ssObj.getInt("server_port")
-        password = ssObj.getString("password")
-        method = ssObj.getString("method")
+        var pluginStr = ""
+        val pId = getStr("plugin")
+        if (!pId.isNullOrBlank()) {
+            val plugin = PluginOptions(pId, getStr("plugin_opts"))
+            pluginStr = plugin.toString(false)
+        }
+
+        serverAddress = getStr("server")
+        serverPort = getInt("server_port")
+        password = getStr("password")
+        method = getStr("method")
         plugin = pluginStr
-        name = ssObj.optString("remarks", "")
+        name = getStr("remarks", "")
 
         fixInvalidParams()
     }

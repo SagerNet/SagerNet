@@ -29,13 +29,14 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
 
     override fun createEntity() = SOCKSBean()
 
     override fun init() {
-        SOCKSBean().apply { initDefaultValues() }.init()
+        SOCKSBean().applyDefaultValues().init()
     }
 
     override fun SOCKSBean.init() {
@@ -44,7 +45,6 @@ class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
         DataStore.serverPort = serverPort
         DataStore.serverUsername = username
         DataStore.serverPassword = password
-        DataStore.serverUdp = udp
         DataStore.serverTLS = tls
         DataStore.serverSNI = sni
     }
@@ -55,7 +55,6 @@ class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
         serverPort = DataStore.serverPort
         username = DataStore.serverUsername
         password = DataStore.serverPassword
-        udp = DataStore.serverUdp
         tls = DataStore.serverTLS
         sni = DataStore.serverSNI
     }

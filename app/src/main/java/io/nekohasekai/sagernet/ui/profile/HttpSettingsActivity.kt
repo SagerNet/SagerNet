@@ -29,13 +29,14 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class HttpSettingsActivity : ProfileSettingsActivity<HttpBean>() {
 
     override fun createEntity() = HttpBean()
 
     override fun init() {
-        HttpBean().apply { initDefaultValues() }.init()
+        HttpBean().applyDefaultValues().init()
     }
 
     override fun HttpBean.init() {

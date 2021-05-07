@@ -38,6 +38,7 @@ import androidx.preference.Preference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.github.shadowsocks.plugin.*
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
+import com.github.shadowsocks.plugin.showAllowingStateLoss
 import com.github.shadowsocks.preference.PluginConfigurationDialogFragment
 import com.github.shadowsocks.preference.PluginPreference
 import com.github.shadowsocks.preference.PluginPreferenceDialogFragment
@@ -47,10 +48,8 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ktx.Empty
-import io.nekohasekai.sagernet.ktx.listenForPackageChanges
-import io.nekohasekai.sagernet.ktx.readableMessage
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -65,7 +64,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     private lateinit var receiver: BroadcastReceiver
 
     override fun init() {
-        ShadowsocksBean().apply { initDefaultValues() }.init()
+        ShadowsocksBean().applyDefaultValues().init()
     }
 
     override fun ShadowsocksBean.init() {
