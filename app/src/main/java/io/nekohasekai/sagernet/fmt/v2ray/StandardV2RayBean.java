@@ -24,8 +24,10 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.ktx.UUIDsKt;
 
 /**
  * https://github.com/XTLS/Xray-core/issues/91
@@ -306,10 +308,18 @@ public abstract class StandardV2RayBean extends AbstractBean {
         initDefaultValues();
     }
 
-
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         StandardV2RayBean bean = ((StandardV2RayBean) other);
         bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
     }
+
+    public String uuidOrGenerate() {
+        try {
+            return UUID.fromString(uuid).toString(false);
+        } catch (Exception ignored) {
+            return UUIDsKt.uuid5(uuid);
+        }
+    }
+
 }

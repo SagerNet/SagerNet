@@ -378,7 +378,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                                 users = listOf(
                                                     VMessOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            id = bean.uuid
+                                                            id = bean.uuidOrGenerate()
                                                             alterId = bean.alterId
                                                             security =
                                                                 bean.encryption.takeIf { it.isNotBlank() }
@@ -401,7 +401,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                                 users = listOf(
                                                     VLESSOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            id = bean.uuid
+                                                            id = bean.uuidOrGenerate()
                                                             encryption = bean.encryption
                                                             level = 8
                                                         }
