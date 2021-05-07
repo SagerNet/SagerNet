@@ -187,7 +187,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -196,6 +196,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
         switch (type) {
             case "tcp": {
+                output.writeString(headerType);
+                output.writeString(host);
+                output.writeString(path);
                 break;
             }
             case "kcp": {
@@ -252,6 +255,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
         switch (type) {
             case "tcp": {
+                if (version >= 0) {
+                    headerType = input.readString();
+                    host = input.readString();
+                    path = input.readString();
+                }
                 break;
             }
             case "kcp": {
