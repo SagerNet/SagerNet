@@ -46,6 +46,7 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.yaml.snakeyaml.Yaml
 import java.io.IOException
+import java.lang.Exception
 import java.sql.SQLException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -392,10 +393,14 @@ object ProfileManager {
         } catch (ignored: JSONException) {
         }
 
-        runCatching {
-            return 3 to parseProxies(text.decodeBase64UrlSafe())
-        }.recoverCatching {
-            return 0 to parseProxies(text)
+        try {
+            return 3 to (parseProxies(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() } ?: error("Not found"))
+        } catch (ignored: Exception) {
+        }
+
+        try {
+            return 0 to (parseProxies(text).takeIf { it.isNotEmpty() } ?: error("Not found"))
+        } catch (ignored: Exception) {
         }
 
         return null
