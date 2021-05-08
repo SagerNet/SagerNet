@@ -55,6 +55,7 @@ abstract class SagerDatabase : RoomDatabase() {
         val profileCacheDao get() = instance.profileCacheDao()
         val groupDao get() = instance.groupDao()
         val proxyDao get() = instance.proxyDao()
+        val rulesDao get() = instance.rulesDao()
 
     }
 

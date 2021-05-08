@@ -33,14 +33,14 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.fmt.V2rayBuildResult
+import io.nekohasekai.sagernet.fmt.buildV2RayConfig
+import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.fmt.v2ray.V2rayBuildResult
-import io.nekohasekai.sagernet.fmt.v2ray.buildV2RayConfig
-import io.nekohasekai.sagernet.fmt.v2ray.buildXrayConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -56,7 +56,6 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
-
 
 class ProxyInstance(val profile: ProxyEntity) {
 
@@ -74,8 +73,12 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     fun init(service: BaseService.Interface) {
         base = service
-        v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportClass(if (service is VpnService)
-            service else null), false)
+        v2rayPoint = Libv2ray.newV2RayPoint(
+            SagerSupportClass(
+                if (service is VpnService)
+                    service else null
+            ), false
+        )
         val socksPort = DataStore.socksPort + 10
         if (profile.needExternal()) {
             v2rayPoint.domainName = "127.0.0.1:$socksPort"
@@ -90,34 +93,35 @@ class ProxyInstance(val profile: ProxyEntity) {
 
         Libv2ray.testConfig(jsonContent)
         v2rayPoint.configureFileContent = jsonContent
-
-        for ((index, profile) in config.index.entries) {
-            val port = socksPort + index
-            val needChain = index != config.index.size - 1
-            when {
-                profile.useExternalShadowsocks() -> {
-                    val bean = profile.requireSS()
-                    pluginConfigs[index] = bean.buildShadowsocksConfig(port).also {
-                        Logs.d(it)
-                    }
-                }
-                profile.type == 2 -> {
-                    pluginConfigs[index] = profile.requireSSR().buildShadowsocksRConfig().also {
-                        Logs.d(it)
-                    }
-                }
-                profile.useXray() -> {
-                    initPlugin("xtls-plugin")
-                    pluginConfigs[index] =
-                        gson.toJson(buildXrayConfig(profile, port, needChain, index)).also {
+        for (chain in config.index) {
+            chain.entries.forEachIndexed { index, (port, profile) ->
+                val needChain = index != chain.size - 1
+                when {
+                    profile.useExternalShadowsocks() -> {
+                        val bean = profile.requireSS()
+                        pluginConfigs[index] = bean.buildShadowsocksConfig(port).also {
                             Logs.d(it)
                         }
-                }
-                profile.type == 7 -> {
-                    val bean = profile.requireTrojanGo()
-                    initPlugin("trojan-go-plugin")
-                    pluginConfigs[index] = bean.buildTrojanGoConfig(port, needChain, index).also {
-                        Logs.d(it)
+                    }
+                    profile.type == 2 -> {
+                        pluginConfigs[index] = profile.requireSSR().buildShadowsocksRConfig().also {
+                            Logs.d(it)
+                        }
+                    }
+                    profile.useXray() -> {
+                        initPlugin("xtls-plugin")
+                        pluginConfigs[index] =
+                            gson.toJson(buildXrayConfig(profile, port, needChain, index)).also {
+                                Logs.d(it)
+                            }
+                    }
+                    profile.type == 7 -> {
+                        val bean = profile.requireTrojanGo()
+                        initPlugin("trojan-go-plugin")
+                        pluginConfigs[index] =
+                            bean.buildTrojanGoConfig(port, needChain, index).also {
+                                Logs.d(it)
+                            }
                     }
                 }
             }
@@ -129,122 +133,141 @@ class ProxyInstance(val profile: ProxyEntity) {
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     fun start() {
 
-        val socksPort = DataStore.socksPort + 10
-        for ((index, profile) in config.index.entries) {
-            val bean = profile.requireBean()
-            val needChain = index != config.index.size - 1
-            val config = pluginConfigs[index] ?: continue
+        for (chain in config.index) {
+            chain.entries.forEachIndexed { index, (port, profile) ->
+                val bean = profile.requireBean()
+                val needChain = index != config.index.size - 1
+                val config = pluginConfigs[index] ?: return@forEachIndexed
 
-            when {
-                profile.useExternalShadowsocks() -> {
+                when {
+                    profile.useExternalShadowsocks() -> {
 
-                    val context =
-                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                            SagerNet.application else SagerNet.deviceStorage
-                    val configFile =
-                        File(context.noBackupFilesDir,
-                            "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
-                    configFile.writeText(config)
-                    cacheFiles.add(configFile)
+                        val context =
+                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                                SagerNet.application else SagerNet.deviceStorage
+                        val configFile =
+                            File(
+                                context.noBackupFilesDir,
+                                "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
+                            )
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
 
-                    val commands = mutableListOf(
-                        File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                            Executable.SS_LOCAL).absolutePath,
-                        "-c", configFile.absolutePath
-                    )
+                        val commands = mutableListOf(
+                            File(
+                                SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.SS_LOCAL
+                            ).absolutePath,
+                            "-c", configFile.absolutePath
+                        )
 
-                    val env = mutableMapOf<String, String>()
+                        val env = mutableMapOf<String, String>()
 
-                    if (needChain) {
-                        val proxychainsConfigFile =
-                            File(context.noBackupFilesDir,
-                                "proxychains_ss_" + SystemClock.elapsedRealtime() + ".json")
-                        proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${socksPort + index + 1}")
-                        cacheFiles.add(proxychainsConfigFile)
+                        if (needChain) {
+                            val proxychainsConfigFile =
+                                File(
+                                    context.noBackupFilesDir,
+                                    "proxychains_ss_" + SystemClock.elapsedRealtime() + ".json"
+                                )
+                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
+                            cacheFiles.add(proxychainsConfigFile)
 
-                        env["LD_PRELOAD"] =
-                            File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.PROXYCHAINS).absolutePath
-                        env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                            env["LD_PRELOAD"] =
+                                File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.PROXYCHAINS
+                                ).absolutePath
+                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                        }
+
+                        base.data.processes!!.start(commands, env)
                     }
+                    profile.type == 2 -> {
+                        bean as ShadowsocksRBean
+                        val context =
+                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                                SagerNet.application else SagerNet.deviceStorage
 
-                    base.data.processes!!.start(commands, env)
-                }
-                profile.type == 2 -> {
-                    bean as ShadowsocksRBean
-                    val port = socksPort + index
+                        val configFile =
+                            File(
+                                context.noBackupFilesDir,
+                                "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json"
+                            )
 
-                    val context =
-                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                            SagerNet.application else SagerNet.deviceStorage
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
 
-                    val configFile =
-                        File(context.noBackupFilesDir,
-                            "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
+                        val commands = mutableListOf(
+                            File(
+                                SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.SSR_LOCAL
+                            ).absolutePath,
+                            "-b", "127.0.0.1",
+                            "-c", configFile.absolutePath,
+                            "-l", "$port"
+                        )
 
-                    configFile.writeText(config)
-                    cacheFiles.add(configFile)
+                        val env = mutableMapOf<String, String>()
 
-                    val commands = mutableListOf(
-                        File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                            Executable.SSR_LOCAL).absolutePath,
-                        "-b", "127.0.0.1",
-                        "-c", configFile.absolutePath,
-                        "-l", "$port"
-                    )
+                        if (needChain) {
+                            val proxychainsConfigFile =
+                                File(
+                                    context.noBackupFilesDir,
+                                    "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
+                                )
+                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
+                            cacheFiles.add(proxychainsConfigFile)
 
-                    val env = mutableMapOf<String, String>()
+                            env["LD_PRELOAD"] =
+                                File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.PROXYCHAINS
+                                ).absolutePath
+                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                        }
 
-                    if (needChain) {
-                        val proxychainsConfigFile =
-                            File(context.noBackupFilesDir,
-                                "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json")
-                        proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                        cacheFiles.add(proxychainsConfigFile)
-
-                        env["LD_PRELOAD"] =
-                            File(SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.PROXYCHAINS).absolutePath
-                        env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                        base.data.processes!!.start(commands, env)
                     }
+                    profile.useXray() -> {
+                        val context =
+                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                                SagerNet.application else SagerNet.deviceStorage
 
-                    base.data.processes!!.start(commands, env)
-                }
-                profile.useXray() -> {
-                    val context =
-                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                            SagerNet.application else SagerNet.deviceStorage
+                        val configFile =
+                            File(
+                                context.noBackupFilesDir,
+                                "xray_" + SystemClock.elapsedRealtime() + ".json"
+                            )
+                        configFile.parentFile.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
 
-                    val configFile =
-                        File(context.noBackupFilesDir,
-                            "xray_" + SystemClock.elapsedRealtime() + ".json")
-                    configFile.parentFile.mkdirs()
-                    configFile.writeText(config)
-                    cacheFiles.add(configFile)
+                        val commands = mutableListOf(
+                            initPlugin("xtls-plugin").path, "-c", configFile.absolutePath
+                        )
 
-                    val commands = mutableListOf(
-                        initPlugin("xtls-plugin").path, "-c", configFile.absolutePath
-                    )
+                        base.data.processes!!.start(commands)
+                    }
+                    profile.type == 7 -> {
+                        val context =
+                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                                SagerNet.application else SagerNet.deviceStorage
 
-                    base.data.processes!!.start(commands)
-                }
-                profile.type == 7 -> {
-                    val context =
-                        if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                            SagerNet.application else SagerNet.deviceStorage
+                        val configFile =
+                            File(
+                                context.noBackupFilesDir,
+                                "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
+                            )
+                        configFile.parentFile.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
 
-                    val configFile =
-                        File(context.noBackupFilesDir,
-                            "trojan_go_" + SystemClock.elapsedRealtime() + ".json")
-                    configFile.parentFile.mkdirs()
-                    configFile.writeText(config)
-                    cacheFiles.add(configFile)
+                        val commands = mutableListOf(
+                            initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
+                        )
 
-                    val commands = mutableListOf(
-                        initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
-                    )
-
-                    base.data.processes!!.start(commands)
+                        base.data.processes!!.start(commands)
+                    }
                 }
             }
         }
