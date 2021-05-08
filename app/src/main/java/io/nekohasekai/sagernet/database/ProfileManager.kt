@@ -46,7 +46,6 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.yaml.snakeyaml.Yaml
 import java.io.IOException
-import java.lang.Exception
 import java.sql.SQLException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -77,9 +76,16 @@ object ProfileManager {
         }
     }
 
+    interface RuleListener {
+        suspend fun onAdd(rule: RuleEntity)
+        suspend fun onUpdated(rule: RuleEntity)
+        suspend fun onRemoved(ruleId: Long)
+        suspend fun onCleared()
+    }
 
     private val listeners = ArrayList<Listener>()
     private val groupListeners = ArrayList<GroupListener>()
+    private val ruleListeners = ArrayList<RuleListener>()
 
     suspend fun iterator(what: suspend Listener.() -> Unit) {
         val listeners = synchronized(listeners) {
@@ -95,6 +101,15 @@ object ProfileManager {
             groupListeners.toList()
         }
         for (listener in groupListeners) {
+            what(listener)
+        }
+    }
+
+    suspend fun ruleIterator(what: suspend RuleListener.() -> Unit) {
+        val ruleListeners = synchronized(ruleListeners) {
+            ruleListeners.toList()
+        }
+        for (listener in ruleListeners) {
             what(listener)
         }
     }
@@ -117,13 +132,23 @@ object ProfileManager {
         }
     }
 
-
     fun removeListener(listener: GroupListener) {
         synchronized(groupListeners) {
             groupListeners.remove(listener)
         }
     }
 
+    fun addListener(listener: RuleListener) {
+        synchronized(ruleListeners) {
+            ruleListeners.add(listener)
+        }
+    }
+
+    fun removeListener(listener: RuleListener) {
+        synchronized(ruleListeners) {
+            ruleListeners.remove(listener)
+        }
+    }
 
     suspend fun createProfile(groupId: Long, bean: AbstractBean): ProxyEntity {
         val profile = ProxyEntity(groupId = groupId).apply {
@@ -246,6 +271,57 @@ object ProfileManager {
         for (proxyGroup in group) {
             groupIterator { onRemoved(proxyGroup.id) }
         }
+    }
+
+    suspend fun createRule(rule: RuleEntity, post: Boolean = true): RuleEntity {
+        rule.userOrder = SagerDatabase.rulesDao.nextOrder() ?: 1
+        rule.id = SagerDatabase.rulesDao.createRule(rule)
+        if (post) {
+            ruleIterator { onAdd(rule) }
+        }
+        return rule
+    }
+
+    suspend fun updateRule(rule: RuleEntity) {
+        SagerDatabase.rulesDao.updateRule(rule)
+        ruleIterator { onUpdated(rule) }
+    }
+
+    suspend fun deleteRule(ruleId: Long) {
+        SagerDatabase.rulesDao.deleteById(ruleId)
+        ruleIterator { onRemoved(ruleId) }
+    }
+
+    suspend fun getRules(): List<RuleEntity> {
+        var rules = SagerDatabase.rulesDao.allRules()
+        if (rules.isEmpty() /*&& !DataStore.rulesFirstCreate*/) {
+            DataStore.rulesFirstCreate = true
+            val country = Locale.getDefault().country.lowercase()
+            val displayCountry = Locale.getDefault().displayCountry
+            createRule(
+                RuleEntity(
+                    name = app.getString(R.string.route_bypass_ip, displayCountry),
+                    ip = "geoip:$country",
+                    outbound = -1
+                ), false
+            )
+            createRule(
+                RuleEntity(
+                    name = app.getString(R.string.route_bypass_domain, displayCountry),
+                    domains = "geosite:$country",
+                    outbound = -1
+                ), false
+            )
+            createRule(
+                RuleEntity(
+                    name = app.getString(R.string.route_opt_block_ads),
+                    domains = "geosite:category-ads-all",
+                    outbound = -2
+                )
+            )
+            rules = SagerDatabase.rulesDao.allRules()
+        }
+        return rules
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -394,7 +470,8 @@ object ProfileManager {
         }
 
         try {
-            return 3 to (parseProxies(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() } ?: error("Not found"))
+            return 3 to (parseProxies(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() }
+                ?: error("Not found"))
         } catch (ignored: Exception) {
         }
 

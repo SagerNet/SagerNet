@@ -71,8 +71,6 @@ fun Context.isVerified(): Boolean {
 }
 
 fun Context.checkMT() {
-    if (isVerified()) return
-
     val fuckMT = block {
         Thread.setDefaultUncaughtExceptionHandler(null)
         Thread.currentThread().uncaughtExceptionHandler = null
@@ -92,6 +90,8 @@ fun Context.checkMT() {
     } catch (ignored: ClassNotFoundException) {
     }
 
+    if (isVerified()) return
+
     val manifestMF = javaClass.getResourceAsStream("/META-INF/MANIFEST.MF")
     if (manifestMF == null) {
         Logs.w("/META-INF/MANIFEST.MF not found")
@@ -99,7 +99,7 @@ fun Context.checkMT() {
     }
 
     val input = manifestMF.bufferedReader()
-    val headers = input.use { (0 until 3).map { readLine() } }.joinToString("\n")
+    val headers = input.use { (0 until 5).map { readLine() } }.joinToString("\n")
 
     // WTF version?
     if (headers.contains("Android Gradle 3.5.0")) {

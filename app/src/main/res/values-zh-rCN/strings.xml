@@ -201,7 +201,7 @@
     <string name="add_profile_scanner_permission_required">扫描二维码需要相机权限</string>
     <plurals name="removed">
         <item quantity="one">已删除</item>
-        <item quantity="other">%d 个服务器配置已删除</item>
+        <item quantity="other">%d 项已删除</item>
     </plurals>
     <plurals name="added">
         <item quantity="one">已添加</item>
@@ -248,7 +248,6 @@
     <string name="route_block">屏蔽</string>
     <string name="route_opt_bypass_lan">绕过局域网地址</string>
     <string name="route_opt_block_ads">屏蔽广告</string>
-    <string name="route_opt_china">中国大陆规则</string>
     <string name="domain_strategy">域名解析策略</string>
     <string name="domain_matcher">域名匹配算法</string>
     <string name="dm_linear">线性匹配</string>
@@ -289,5 +288,18 @@
     <string name="mux_for_all">为所有可能支持的协议启用多路复用</string>
     <string name="mux_for_all_sum">如果服务器不支持, 则将无法连接</string>
     <string name="tcp_keep_alive_interval">TCP 保持活跃数据包发送间隔</string>
+    <string name="ipv6_settings">IPv6 设置</string>
+    <string name="route_add">新建路由规则</string>
+    <string name="delete_route_prompt">您确定要移除此路吗?</string>
+    <string name="route_name">路由名称</string>
+    <string name="route_profile">选择配置…</string>
+    <string name="empty_route">空路由</string>
+    <string name="empty_route_notice">在保存前设置一些规则</string>
+    <string name="route_warn">在添加自定义规则之前，请确保您已经阅读了文档，否则您将可能无法连接到互联网。</string>
+    <string name="route_bypass_domain">%s 域名规则</string>
+    <string name="route_bypass_ip">%s IP 规则</string>
+    <string name="profile_file">配置文件</string>
+    <string name="no_proxies_found_in_file">未在此文件内找到服务器配置</string>
+    <string name="no_proxies_found_in_clipboard">未在剪切板内找到服务器配置</string>
 
 </resources>

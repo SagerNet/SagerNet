@@ -19,14 +19,19 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ui.profile
+package io.nekohasekai.sagernet.ui
 
+import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.component1
+import androidx.activity.result.component2
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -38,33 +43,125 @@ import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
+import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
-import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.widget.ListListener
+import io.nekohasekai.sagernet.widget.OutboundPreference
 import kotlinx.parcelize.Parcelize
 
 @Suppress("UNCHECKED_CAST")
-abstract class ProfileSettingsActivity<T : AbstractBean>(
+class RouteSettingsActivity(
     @LayoutRes
     resId: Int = R.layout.layout_settings_activity,
 ) : AppCompatActivity(resId),
     OnPreferenceDataStoreChangeListener {
+
+    fun init() {
+        RuleEntity().init()
+    }
+
+    fun RuleEntity.init() {
+        DataStore.routeName = name
+        DataStore.routeDomain = domains
+        DataStore.routeIP = ip
+        DataStore.routeSourcePort = sourcePort
+        DataStore.routeNetwork = network
+        DataStore.routeSource = source
+        DataStore.routeProtocol = protocol
+        DataStore.routeOutboundRule = outbound
+        DataStore.routeOutbound = when (outbound) {
+            0L -> 0
+            -1L -> 1
+            -2L -> 2
+            else -> 3
+        }
+    }
+
+    fun RuleEntity.serialize() {
+        name = DataStore.routeName
+        domains = DataStore.routeDomain
+        ip = DataStore.routeIP
+        sourcePort = DataStore.routeSourcePort
+        network = DataStore.routeNetwork
+        protocol = DataStore.routeProtocol
+        outbound = when (DataStore.routeOutbound) {
+            0 -> 0L
+            1 -> -1L
+            2 -> -2L
+            else -> DataStore.routeOutboundRule
+        }
+    }
+
+    fun needSave(): Boolean {
+        if (!DataStore.dirty) return false
+        if (DataStore.routeDomain.isBlank() &&
+            DataStore.routeIP.isBlank() &&
+            DataStore.routeSourcePort.isBlank() &&
+            DataStore.routeNetwork.isBlank() &&
+            DataStore.routeProtocol.isBlank()
+        ) {
+            return false
+        }
+        return true
+    }
+
+    fun PreferenceFragmentCompat.createPreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
+        addPreferencesFromResource(R.xml.route_preferences)
+    }
+
+    lateinit var outbound: OutboundPreference
+    val selectProfileForAdd = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { (resultCode, data) ->
+        if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
+            val profile = ProfileManager.getProfile(
+                data!!.getLongExtra(
+                    ProfileSelectActivity.EXTRA_PROFILE_ID,
+                    0
+                )
+            ) ?: return@runOnDefaultDispatcher
+            DataStore.routeOutboundRule = profile.id
+            onMainDispatcher {
+                outbound.value = "3"
+            }
+        }
+    }
+
+    fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
+        outbound = findPreference(Key.ROUTE_OUTBOUND)!!
+        outbound.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue.toString() == "3") {
+                selectProfileForAdd.launch(
+                    Intent(
+                        this@RouteSettingsActivity,
+                        ProfileSelectActivity::class.java
+                    )
+                )
+                false
+            } else true
+        }
+    }
+
+    fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
+        return false
+    }
 
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
             setTitle(R.string.unsaved_changes_prompt)
             setPositiveButton(R.string.yes) { _, _ ->
                 runOnDefaultDispatcher {
-                    (requireActivity() as ProfileSettingsActivity<*>).saveAndExit()
+                    (requireActivity() as RouteSettingsActivity).saveAndExit()
                 }
             }
             setNegativeButton(R.string.no) { _, _ ->
@@ -75,13 +172,13 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     }
 
     @Parcelize
-    data class ProfileIdArg(val profileId: Long, val groupId: Long) : Parcelable
+    data class ProfileIdArg(val ruleId: Long) : Parcelable
     class DeleteConfirmationDialogFragment : AlertDialogFragment<ProfileIdArg, Empty>() {
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.delete_confirm_prompt)
+            setTitle(R.string.delete_route_prompt)
             setPositiveButton(R.string.yes) { _, _ ->
                 runOnDefaultDispatcher {
-                    ProfileManager.deleteProfile(arg.groupId, arg.profileId)
+                    ProfileManager.deleteRule(arg.ruleId)
                 }
                 requireActivity().finish()
             }
@@ -90,54 +187,45 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     }
 
     companion object {
-        const val EXTRA_PROFILE_ID = "id"
-        const val EXTRA_IS_SUBSCRIPTION = "sub"
+        const val EXTRA_ROUTE_ID = "id"
     }
-
-    abstract fun createEntity(): T
-    abstract fun init()
-    abstract fun T.init()
-    abstract fun T.serialize()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
-            setTitle(R.string.profile_config)
+            setTitle(R.string.cag_route)
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
 
         if (savedInstanceState == null) {
-            val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
+            val editingId = intent.getLongExtra(EXTRA_ROUTE_ID, 0L)
             DataStore.editingId = editingId
             runOnDefaultDispatcher {
                 if (editingId == 0L) {
-                    DataStore.editingGroup = DataStore.selectedGroupForImport()
                     init()
                 } else {
-                    val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
-                    if (proxyEntity == null) {
+                    val ruleEntity = SagerDatabase.rulesDao.getById(editingId)
+                    if (ruleEntity == null) {
                         onMainDispatcher {
                             finish()
                         }
                         return@runOnDefaultDispatcher
                     }
-                    DataStore.editingGroup = proxyEntity.groupId
-                    (proxyEntity.requireBean() as T).init()
+                    ruleEntity.init()
                 }
 
                 onMainDispatcher {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.settings,
                             MyPreferenceFragmentCompat().apply {
-                                activity = this@ProfileSettingsActivity
+                                activity = this@RouteSettingsActivity
                             })
                         .commit()
 
                     DataStore.dirty = false
-
-                    DataStore.profileCacheStore.registerChangeListener(this@ProfileSettingsActivity)
+                    DataStore.profileCacheStore.registerChangeListener(this@RouteSettingsActivity)
                 }
             }
 
@@ -148,20 +236,27 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
     suspend fun saveAndExit() {
 
+        if (!needSave()) {
+            onMainDispatcher {
+                AlertDialog.Builder(this@RouteSettingsActivity)
+                    .setTitle(R.string.empty_route)
+                    .setMessage(R.string.empty_route_notice)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+            }
+            return
+        }
+
         val editingId = DataStore.editingId
         if (editingId == 0L) {
-            val editingGroup = DataStore.editingGroup
-            ProfileManager.createProfile(editingGroup, createEntity().apply { serialize() })
+            ProfileManager.createRule(RuleEntity().apply { serialize() })
         } else {
-            val entity = SagerDatabase.proxyDao.getById(DataStore.editingId)
+            val entity = SagerDatabase.rulesDao.getById(DataStore.editingId)
             if (entity == null) {
                 finish()
                 return
             }
-            if (entity.id == DataStore.selectedProxy) {
-                SagerNet.stopService()
-            }
-            ProfileManager.updateProfile(entity.apply { (requireBean() as T).serialize() })
+            ProfileManager.updateRule(entity.apply { serialize() })
         }
         if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
         finish()
@@ -178,8 +273,10 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     override fun onOptionsItemSelected(item: MenuItem) = child.onOptionsItemSelected(item)
 
     override fun onBackPressed() {
-        if (DataStore.dirty) UnsavedChangesDialogFragment().apply { key() }
-            .show(supportFragmentManager, null) else super.onBackPressed()
+        if (needSave()) {
+            UnsavedChangesDialogFragment().apply { key() }
+                .show(supportFragmentManager, null)
+        } else super.onBackPressed()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -198,21 +295,9 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
         }
     }
 
-    abstract fun PreferenceFragmentCompat.createPreferences(
-        savedInstanceState: Bundle?,
-        rootKey: String?,
-    )
-
-    open fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
-    }
-
-    open fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
-        return false
-    }
-
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
-        lateinit var activity: ProfileSettingsActivity<*>
+        lateinit var activity: RouteSettingsActivity
 
         override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
@@ -237,8 +322,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                     requireActivity().finish()
                 } else {
                     DeleteConfirmationDialogFragment().apply {
-                        arg(ProfileIdArg(DataStore.editingId,
-                            DataStore.editingGroup))
+                        arg(ProfileIdArg(DataStore.editingId))
                         key()
                     }.show(parentFragmentManager, null)
                 }

@@ -60,6 +60,7 @@ class GuardedProcessPool(private val onFatal: suspend (IOException) -> Unit) : C
             }.start()
         }
 
+        @DelicateCoroutinesApi
         suspend fun looper(onRestartCallback: (suspend () -> Unit)?) {
             var running = true
             val cmdName = File(cmd.first()).nameWithoutExtension

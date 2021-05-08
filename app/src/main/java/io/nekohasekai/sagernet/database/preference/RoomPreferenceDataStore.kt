@@ -90,12 +90,22 @@ open class RoomPreferenceDataStore(private val kvPairDao: KeyValuePair.Dao) :
     }
 
     private val listeners = HashSet<OnPreferenceDataStoreChangeListener>()
-    private fun fireChangeListener(key: String) =
+    private fun fireChangeListener(key: String) {
+        val listeners = synchronized(listeners) {
+            listeners.toList()
+        }
         listeners.forEach { it.onPreferenceDataStoreChanged(this, key) }
+    }
 
-    fun registerChangeListener(listener: OnPreferenceDataStoreChangeListener) =
-        listeners.add(listener)
+    fun registerChangeListener(listener: OnPreferenceDataStoreChangeListener) {
+        synchronized(listeners) {
+            listeners.add(listener)
+        }
+    }
 
-    fun unregisterChangeListener(listener: OnPreferenceDataStoreChangeListener) =
-        listeners.remove(listener)
+    fun unregisterChangeListener(listener: OnPreferenceDataStoreChangeListener) {
+        synchronized(listeners) {
+            listeners.remove(listener)
+        }
+    }
 }

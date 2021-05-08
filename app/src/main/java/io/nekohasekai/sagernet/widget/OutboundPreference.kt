@@ -19,67 +19,47 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.trojan
+package io.nekohasekai.sagernet.widget
 
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.unUrlSafe
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import android.content.Context
+import android.util.AttributeSet
+import com.takisoft.preferencex.SimpleMenuPreference
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProfileManager
 
-// WTF
-// https://github.com/trojan-gfw/igniter/issues/318
-fun parseTrojan(server: String): TrojanBean {
+class OutboundPreference : SimpleMenuPreference {
 
-    val link = server.replace("trojan://", "https://").toHttpUrlOrNull()
-        ?: error("invalid trojan link $server")
+    constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    )
 
-    return TrojanBean().apply {
-        serverAddress = link.host
-        serverPort = link.port
-        password = link.username.unUrlSafe()
+    constructor(
+        context: Context?,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-        if (link.password.isNotBlank()) {
-            password += ":" + link.password.unUrlSafe()
+    init {
+        setEntries(R.array.outbound_entry)
+        setEntryValues(R.array.outbound_value)
+    }
+
+    override fun getSummary(): CharSequence {
+        if (value == "3") {
+            val routeOutbound = DataStore.routeOutboundRule
+            if (routeOutbound > 0) {
+                ProfileManager.getProfile(routeOutbound)?.displayName()?.let {
+                    return it
+                }
+            }
         }
-
-        security = link.queryParameter("security") ?: "tls"
-        sni = link.queryParameter("sni") ?: ""
-        alpn = link.queryParameter("alpn") ?: ""
-        flow = link.queryParameter("flow") ?: ""
-        name = link.fragment ?: ""
+        return super.getSummary()
     }
-
-}
-
-fun TrojanBean.toUri(): String {
-
-    val builder = linkBuilder()
-        .username(password.urlSafe())
-        .host(serverAddress)
-        .port(serverPort)
-
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (alpn.isNotBlank()) {
-        builder.addQueryParameter("alpn", alpn)
-    }
-
-    when (security) {
-        "tls" -> {
-        }
-        "xtls" -> {
-            builder.addQueryParameter("security", security)
-            builder.addQueryParameter("flow", flow)
-        }
-    }
-
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
-    }
-
-
-    return builder.toLink("trojan")
 
 }

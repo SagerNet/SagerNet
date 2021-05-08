@@ -107,6 +107,17 @@ object Key {
     const val SERVER_WS_CATEGORY = "serverWsCategory"
     const val SERVER_SS_CATEGORY = "serverSsCategory"
 
+    const val ROUTE_NAME = "routeName"
+    const val ROUTE_DOMAIN = "routeDomain"
+    const val ROUTE_IP = "routeIP"
+    const val ROUTE_PORT = "routePort"
+    const val ROUTE_SOURCE_PORT = "routeSourcePort"
+    const val ROUTE_NETWORK = "routeNetwork"
+    const val ROUTE_SOURCE = "routeSource"
+    const val ROUTE_PROTOCOL = "routeProtocol"
+    const val ROUTE_OUTBOUND = "routeOutbound"
+    const val ROUTE_OUTBOUND_RULE = "routeOutboundRule"
+
 }
 
 object Action {

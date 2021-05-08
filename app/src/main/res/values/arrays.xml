@@ -223,7 +223,28 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-
+    <string-array name="route_protocol_entry">
+        <item>TCP and UDP</item>
+        <item>TCP</item>
+        <item>UDP</item>
+    </string-array>
+    <string-array name="route_protocol_value">
+        <item />
+        <item>tcp</item>
+        <item>udp</item>
+    </string-array>
+    <string-array name="outbound_entry">
+        <item>@string/route_proxy</item>
+        <item>@string/route_bypass</item>
+        <item>@string/route_block</item>
+        <item>@string/route_profile</item>
+    </string-array>
+    <string-array name="outbound_value" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
     <string-array name="enc_method_entry_ssr" translatable="false">
         <item>NONE</item>
         <item>TABLE</item>

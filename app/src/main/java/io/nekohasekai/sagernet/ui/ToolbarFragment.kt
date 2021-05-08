@@ -35,7 +35,6 @@ open class ToolbarFragment : Fragment {
 
     lateinit var toolbar: Toolbar
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar = view.findViewById(R.id.toolbar)

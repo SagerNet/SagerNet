@@ -441,9 +441,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                     override fun getSwipeDirs(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
-                    ) = if (isProfileEditable((viewHolder).itemId)) {
-                        super.getSwipeDirs(recyclerView, viewHolder)
-                    } else 0
+                    ): Int {
+                        return if (isProfileEditable((viewHolder as ConfigurationHolder).entity.id)) {
+                            super.getSwipeDirs(recyclerView, viewHolder)
+                        } else 0
+                    }
 
                     override fun getDragDirs(
                         recyclerView: RecyclerView,

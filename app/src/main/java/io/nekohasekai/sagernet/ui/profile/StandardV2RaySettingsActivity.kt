@@ -260,7 +260,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             }
             "kcp" -> {
                 header.setEntries(R.array.kcp_quic_headers_entry)
-                header.setEntryValues(R.array.kcp_quic_headers_entry)
+                header.setEntryValues(R.array.kcp_quic_headers_value)
                 path.setTitle(R.string.kcp_seed)
 
                 if (DataStore.serverHeader !in kcpQuicHeadersValue) {

@@ -53,9 +53,11 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ui.profile.*
 
-@Entity(tableName = "proxy_entities", indices = [
-    Index("groupId", name = "groupId")
-])
+@Entity(
+    tableName = "proxy_entities", indices = [
+        Index("groupId", name = "groupId")
+    ]
+)
 data class ProxyEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
@@ -89,7 +91,8 @@ data class ProxyEntity(
         parcel.readInt(),
         parcel.readLong(),
         parcel.readLong(),
-        parcel.readLong()) {
+        parcel.readLong()
+    ) {
         dirty = parcel.readByte() > 0
         val byteArray = ByteArray(parcel.readInt())
         parcel.readByteArray(byteArray)
@@ -102,7 +105,7 @@ data class ProxyEntity(
             5 -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
             6 -> httpBean = KryoConverters.httpDeserialize(byteArray)
             7 -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
-            7 -> chainBean = KryoConverters.chainDeserialize(byteArray)
+            8 -> chainBean = KryoConverters.chainDeserialize(byteArray)
         }
     }
 
@@ -317,18 +320,20 @@ data class ProxyEntity(
     fun requireChain() = requireBean() as ChainBean
 
     fun settingIntent(ctx: Context, isSubscription: Boolean): Intent {
-        return Intent(ctx, when (type) {
-            0 -> SocksSettingsActivity::class.java
-            1 -> ShadowsocksSettingsActivity::class.java
-            2 -> ShadowsocksRSettingsActivity::class.java
-            3 -> VMessSettingsActivity::class.java
-            4 -> VLESSSettingsActivity::class.java
-            5 -> TrojanSettingsActivity::class.java
-            6 -> HttpSettingsActivity::class.java
-            7 -> TrojanGoSettingsActivity::class.java
-            8 -> ChainSettingsActivity::class.java
-            else -> throw IllegalArgumentException()
-        }).apply {
+        return Intent(
+            ctx, when (type) {
+                0 -> SocksSettingsActivity::class.java
+                1 -> ShadowsocksSettingsActivity::class.java
+                2 -> ShadowsocksRSettingsActivity::class.java
+                3 -> VMessSettingsActivity::class.java
+                4 -> VLESSSettingsActivity::class.java
+                5 -> TrojanSettingsActivity::class.java
+                6 -> HttpSettingsActivity::class.java
+                7 -> TrojanGoSettingsActivity::class.java
+                8 -> ChainSettingsActivity::class.java
+                else -> throw IllegalArgumentException()
+            }
+        ).apply {
             putExtra(ProfileSettingsActivity.EXTRA_PROFILE_ID, id)
             putExtra(ProfileSettingsActivity.EXTRA_IS_SUBSCRIPTION, isSubscription)
         }
@@ -369,7 +374,6 @@ data class ProxyEntity(
 
         @Insert
         fun addProxy(proxy: ProxyEntity): Long
-
 
         @Query("DELETE FROM proxy_entities WHERE groupId = :groupId")
         fun deleteAll(groupId: Long): Int

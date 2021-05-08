@@ -168,6 +168,19 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverWsMaxEarlyData by profileCacheStore.stringToInt(Key.SERVER_WS_MAX_EARLY_DATA)
     var serverWsBrowserForwarding by profileCacheStore.boolean(Key.SERVER_WS_BROWSER_FORWARDING)
 
+    var routeName by profileCacheStore.string(Key.ROUTE_NAME)
+    var routeDomain by profileCacheStore.string(Key.ROUTE_DOMAIN)
+    var routeIP by profileCacheStore.string(Key.ROUTE_IP)
+    var routePort by profileCacheStore.string(Key.ROUTE_PORT)
+    var routeSourcePort by profileCacheStore.string(Key.ROUTE_SOURCE_PORT)
+    var routeNetwork by profileCacheStore.string(Key.ROUTE_NETWORK)
+    var routeSource by profileCacheStore.string(Key.ROUTE_SOURCE)
+    var routeProtocol by profileCacheStore.string(Key.ROUTE_PROTOCOL)
+    var routeOutbound by profileCacheStore.stringToInt(Key.ROUTE_OUTBOUND)
+    var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND_RULE)
+
+    var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
+
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
             Key.PROFILE_ID -> if (directBootAware) DirectBoot.update()

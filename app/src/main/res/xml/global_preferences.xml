@@ -1,71 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:initialExpandedChildrenCount="114">
-    <SwitchPreference
-        app:defaultValue="true"
-        app:icon="@drawable/ic_communication_phonelink_ring"
-        app:key="isAutoConnect"
-        app:summary="@string/auto_connect_summary"
-        app:title="@string/auto_connect" />
-    <SwitchPreference
-        app:icon="@drawable/ic_action_lock"
-        app:key="directBootAware"
-        app:summary="@string/direct_boot_aware_summary"
-        app:title="@string/direct_boot_aware" />
-    <com.takisoft.preferencex.SimpleMenuPreference
-        app:defaultValue="vpn"
-        app:entries="@array/service_modes"
-        app:entryValues="@array/service_mode_values"
-        app:icon="@drawable/ic_device_developer_mode"
-        app:key="serviceMode"
-        app:title="@string/service_mode"
-        app:useSimpleSummaryProvider="true" />
-    <SwitchPreference
-        app:icon="@drawable/ic_device_data_usage"
-        app:key="meteredNetwork"
-        app:summary="@string/metered_summary"
-        app:title="@string/metered" />
-    <SwitchPreference
-        app:icon="@drawable/ic_baseline_security_24"
-        app:key="securityAdvisory"
-        app:summary="@string/insecure_warn_sum"
-        app:title="@string/insecure_warn" />
-    <com.takisoft.preferencex.SimpleMenuPreference
-        app:defaultValue="1000"
-        app:entries="@array/notification_entry"
-        app:entryValues="@array/notification_value"
-        app:icon="@drawable/ic_baseline_shutter_speed_24"
-        app:key="speedInterval"
-        app:title="@string/speed_interval"
-        app:useSimpleSummaryProvider="true" />
-    <SwitchPreference
-        app:icon="@drawable/ic_baseline_speed_24"
-        app:key="showDirectSpeed"
-        app:summary="@string/show_direct_speed_sum"
-        app:title="@string/show_direct_speed"
-        app:useSimpleSummaryProvider="true" />
-    <SwitchPreference
-        app:icon="@drawable/ic_baseline_multiple_stop_24"
-        app:key="showStopButton"
-        app:summary="@string/show_stop_sum"
-        app:title="@string/show_stop" />
-    <SwitchPreference
-        app:icon="@drawable/ic_baseline_nat_24"
-        app:key="allowAccess"
-        app:summary="@string/allow_access_sum"
-        app:title="@string/allow_access" />
-    <EditTextPreference
-        app:icon="@drawable/ic_maps_directions_boat"
-        app:key="socksPort"
-        app:title="@string/port_proxy"
-        app:useSimpleSummaryProvider="true" />
-    <SwitchPreference
-        app:icon="@drawable/ic_baseline_http_24"
-        app:key="requireHttp"
-        app:title="@string/require_http" />
-    <EditTextPreference
-        app:key="httpPort"
-        app:title="@string/port_http"
-        app:useSimpleSummaryProvider="true" />
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="@string/general_settings">
+        <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_communication_phonelink_ring"
+            app:key="isAutoConnect"
+            app:summary="@string/auto_connect_summary"
+            app:title="@string/auto_connect" />
+        <SwitchPreference
+            app:icon="@drawable/ic_action_lock"
+            app:key="directBootAware"
+            app:summary="@string/direct_boot_aware_summary"
+            app:title="@string/direct_boot_aware" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="vpn"
+            app:entries="@array/service_modes"
+            app:entryValues="@array/service_mode_values"
+            app:icon="@drawable/ic_device_developer_mode"
+            app:key="serviceMode"
+            app:title="@string/service_mode"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="securityAdvisory"
+            app:summary="@string/insecure_warn_sum"
+            app:title="@string/insecure_warn" />
+        <SwitchPreference
+            app:icon="@drawable/ic_device_data_usage"
+            app:key="meteredNetwork"
+            app:summary="@string/metered_summary"
+            app:title="@string/metered" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="1000"
+            app:entries="@array/notification_entry"
+            app:entryValues="@array/notification_value"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="speedInterval"
+            app:title="@string/speed_interval"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="showDirectSpeed"
+            app:summary="@string/show_direct_speed_sum"
+            app:title="@string/show_direct_speed"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_multiple_stop_24"
+            app:key="showStopButton"
+            app:summary="@string/show_stop_sum"
+            app:title="@string/show_stop" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_nat_24"
+            app:key="allowAccess"
+            app:summary="@string/allow_access_sum"
+            app:title="@string/allow_access" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/inbound_settings">
+        <EditTextPreference
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="socksPort"
+            app:title="@string/port_proxy"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_http_24"
+            app:key="requireHttp"
+            app:title="@string/require_http" />
+        <EditTextPreference
+            app:key="httpPort"
+            app:title="@string/port_http"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/ipv6_settings">
+        <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_image_looks_6"
+            app:key="ipv6Route"
+            app:summary="@string/ipv6_summary"
+            app:title="@string/ipv6" />
+        <SwitchPreference
+            app:key="preferIpv6"
+            app:summary="@string/ipv6_prefer_summary"
+            app:title="@string/ipv6_prefer" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/cag_dns">
+        <EditTextPreference
+            app:defaultValue="https://1.1.1.1/dns-query"
+            app:icon="@drawable/ic_action_dns"
+            app:key="remoteDns"
+            app:title="@string/remote_dns"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="enableLocalDns"
+            app:title="@string/local_dns" />
+        <EditTextPreference
+            app:defaultValue="5450"
+            app:key="portLocalDns"
+            app:title="@string/port_local_dns"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="9.9.9.11"
+            app:key="domesticDns"
+            app:title="@string/domestic_dns"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/cag_route">
+        <SwitchPreference
+            app:icon="@drawable/ic_navigation_apps"
+            app:key="proxyApps"
+            app:summary="@string/proxied_apps_summary"
+            app:title="@string/proxied_apps" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_baseline_local_bar_24"
+            app:key="bypassLan"
+            app:title="@string/route_opt_bypass_lan" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="IPIfNonMatch"
+            app:entries="@array/domain_strategy"
+            app:entryValues="@array/domain_strategy"
+            app:icon="@drawable/ic_action_dns"
+            app:key="domainStrategy"
+            app:title="@string/domain_strategy"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="mph"
+            app:entries="@array/domain_matcher_entry"
+            app:entryValues="@array/domain_matcher_value"
+            app:icon="@drawable/ic_baseline_domain_24"
+            app:key="domainMatcher"
+            app:title="@string/domain_matcher"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_baseline_manage_search_24"
+            app:key="trafficSniffing"
+            app:title="@string/traffic_sniffing" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/cag_misc">
+        <SwitchPreference
+            app:defaultValue="false"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="enableMux"
+            app:summary="@string/mux_sum"
+            app:title="@string/enable_mux" />
+        <SwitchPreference
+            app:defaultValue="false"
+            app:icon="@drawable/ic_baseline_multiline_chart_24"
+            app:key="enableMuxForAll"
+            app:summary="@string/mux_for_all_sum"
+            app:title="@string/mux_for_all" />
+        <EditTextPreference
+            app:defaultValue="8"
+            app:icon="@drawable/ic_baseline_low_priority_24"
+            app:key="muxConcurrency"
+            app:title="@string/mux_concurrency"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="15"
+            app:icon="@drawable/ic_baseline_flip_camera_android_24"
+            app:key="tcpKeepAliveInterval"
+            app:title="@string/tcp_keep_alive_interval"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_airplanemode_active_24"
+            app:key="forceShadowsocksRust"
+            app:summary="@string/force_ss_sum"
+            app:title="@string/force_ss_rust" />
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

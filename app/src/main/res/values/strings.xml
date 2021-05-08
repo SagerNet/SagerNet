@@ -128,6 +128,7 @@
     <string name="encryption">Encryption</string>
 
     <!-- feature category -->
+    <string name="ipv6_settings">IPv6 Settings</string>
     <string name="ipv6">IPv6 Route</string>
     <string name="ipv6_summary">Redirect IPv6 traffic to remote</string>
     <string name="ipv6_prefer">Prefer IPv6</string>
@@ -136,14 +137,20 @@
     <string name="metered">Metered Hint</string>
     <string name="metered_summary">Hint system to treat VPN as metered</string>
     <string name="menu_route">Route</string>
-
+    <string name="route_add">Create Route</string>
+    <string name="delete_route_prompt">Are you sure you want to remove this route?</string>
+    <string name="route_name">Route Name</string>
     <string name="route_proxy">Proxy</string>
     <string name="route_bypass">Bypass</string>
     <string name="route_block">Block</string>
+    <string name="route_profile">Select Profile…</string>
+    <string name="empty_route">Empty Route</string>
+    <string name="empty_route_notice">Set some rules before saving</string>
+    <string name="route_bypass_domain">Domain rule for %s</string>
+    <string name="route_bypass_ip">IP rule for %s</string>
 
     <string name="route_opt_bypass_lan">Bypass LAN</string>
     <string name="route_opt_block_ads">Block ADs</string>
-    <string name="route_opt_china">Rule for mainland China</string>
 
     <string name="domain_strategy">Domain resolution strategy</string>
     <string name="domain_matcher">Domain matching algorithm</string>
@@ -300,5 +307,6 @@
     <string name="apply">Apply</string>
 
     <string name="license">License</string>
+    <string name="route_warn">Make sure you have read the documentation before adding custom rules, otherwise you may not be able to connect to the Internet.</string>
 
 </resources>

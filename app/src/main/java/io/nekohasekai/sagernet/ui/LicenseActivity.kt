@@ -22,12 +22,9 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.mikepenz.aboutlibraries.LibsBuilder
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
 class LicenseActivity : AppCompatActivity() {
@@ -50,7 +47,8 @@ class LicenseActivity : AppCompatActivity() {
             .withExcludedLibraries(
                 // Can't parse ${project.artifactId} in pom.xml
                 "cn_hutool__hutool_core",
-                "cn_hutool__hutool_json"
+                "cn_hutool__hutool_json",
+                "cn_hutool__hutool_crypto"
             )
             .supportFragment()
 

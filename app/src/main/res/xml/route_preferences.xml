@@ -1,117 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditTextPreference
+        app:icon="@drawable/ic_social_emoji_symbols"
+        app:key="routeName"
+        app:title="@string/route_name"
+        app:useSimpleSummaryProvider="true" />
     <PreferenceCategory app:title="@string/cag_route">
-        <SwitchPreference
-            app:icon="@drawable/ic_navigation_apps"
-            app:key="proxyApps"
-            app:summary="@string/proxied_apps_summary"
-            app:title="@string/proxied_apps" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:icon="@drawable/ic_baseline_local_bar_24"
-            app:key="bypassLan"
-            app:title="@string/route_opt_bypass_lan" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_gpp_bad_24"
-            app:key="blockAds"
-            app:title="@string/route_opt_block_ads" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
-            app:entries="@array/route_entry"
-            app:entryValues="@array/route_value"
-            app:icon="@drawable/ic_baseline_vpn_lock_24"
-            app:key="routeChina"
-            app:title="@string/route_opt_china"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="IPIfNonMatch"
-            app:entries="@array/domain_strategy"
-            app:entryValues="@array/domain_strategy"
-            app:icon="@drawable/ic_action_dns"
-            app:key="domainStrategy"
-            app:title="@string/domain_strategy"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="mph"
-            app:entries="@array/domain_matcher_entry"
-            app:entryValues="@array/domain_matcher_value"
+        <EditTextPreference
             app:icon="@drawable/ic_baseline_domain_24"
-            app:key="domainMatcher"
-            app:title="@string/domain_matcher"
+            app:key="routeDomain"
+            app:title="domain"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:icon="@drawable/ic_baseline_manage_search_24"
-            app:key="trafficSniffing"
-            app:title="@string/traffic_sniffing" />
-        <SwitchPreference
-            app:defaultValue="false"
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_add_road_24"
+            app:key="routeIP"
+            app:title="ip"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="routePort"
+            app:title="port"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_home_24"
+            app:key="routeSourcePort"
+            app:title="sourcePort"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
             app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="enableMux"
-            app:summary="@string/mux_sum"
-            app:title="@string/enable_mux" />
-        <SwitchPreference
-            app:defaultValue="false"
-            app:icon="@drawable/ic_baseline_multiline_chart_24"
-            app:key="enableMuxForAll"
-            app:summary="@string/mux_for_all_sum"
-            app:title="@string/mux_for_all" />
-        <EditTextPreference
-            app:defaultValue="8"
-            app:icon="@drawable/ic_baseline_low_priority_24"
-            app:key="muxConcurrency"
-            app:title="@string/mux_concurrency"
+            app:entries="@array/route_protocol_entry"
+            app:entryValues="@array/route_protocol_value"
+            app:key="routeNetwork"
+            app:title="network"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="15"
-            app:icon="@drawable/ic_baseline_flip_camera_android_24"
-            app:key="tcpKeepAliveInterval"
-            app:title="@string/tcp_keep_alive_interval"
+            app:icon="@drawable/ic_baseline_local_bar_24"
+            app:key="routeSource"
+            app:title="source"
             app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="routeProtocol"
+            app:title="protocol"
+            app:useSimpleSummaryProvider="true" />
+        <io.nekohasekai.sagernet.widget.OutboundPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="routeOutbound"
+            app:title="outbound"
+            app:useSimpleSummaryProvider="true" />
 
-    <PreferenceCategory app:title="@string/cag_misc">
-        <SwitchPreference
-            app:defaultValue="true"
-            app:icon="@drawable/ic_image_looks_6"
-            app:key="ipv6Route"
-            app:summary="@string/ipv6_summary"
-            app:title="@string/ipv6" />
-        <SwitchPreference
-            app:key="preferIpv6"
-            app:summary="@string/ipv6_prefer_summary"
-            app:title="@string/ipv6_prefer" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_airplanemode_active_24"
-            app:key="forceShadowsocksRust"
-            app:summary="@string/force_ss_sum"
-            app:title="@string/force_ss_rust" />
     </PreferenceCategory>
-
-    <PreferenceCategory
-        app:initialExpandedChildrenCount="1"
-        app:title="@string/cag_dns">
-        <EditTextPreference
-            app:defaultValue="https://1.1.1.1/dns-query"
-            app:icon="@drawable/ic_action_dns"
-            app:key="remoteDns"
-            app:title="@string/remote_dns"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:key="enableLocalDns"
-            app:title="@string/local_dns" />
-        <EditTextPreference
-            app:defaultValue="5450"
-            app:key="portLocalDns"
-            app:title="@string/port_local_dns"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:defaultValue="9.9.9.11"
-            app:key="domesticDns"
-            app:title="@string/domestic_dns"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
 </PreferenceScreen>

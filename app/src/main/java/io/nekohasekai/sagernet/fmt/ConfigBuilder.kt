@@ -38,6 +38,7 @@ import io.nekohasekai.sagernet.ktx.formatObject
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashMap
 
 const val TAG_SOCKS = "in"
@@ -97,17 +98,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     valueX = it
                 }
             })
-
-            if (routeChina == 1) {
-                servers.add(DnsObject.StringOrServerObject().apply {
-                    valueY = DnsObject.ServerObject().apply {
-                        address = domesticDns.first()
-                        port = 53
-                        domains = listOf("geosite:cn")
-                        expectIPs = listOf("geoip:cn")
-                    }
-                })
-            }
         }
 
         log = LogObject().apply {
@@ -215,33 +205,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     type = "field"
                     outboundTag = TAG_DIRECT
                     ip = listOf("geoip:private")
-                })
-            }
-
-            if (DataStore.blockAds) {
-                rules.add(RoutingObject.RuleObject().apply {
-                    type = "field"
-                    outboundTag = TAG_BLOCK
-                    domain = listOf("geosite:category-ads-all")
-                })
-            }
-
-            rules.add(RoutingObject.RuleObject().apply {
-                type = "field"
-                outboundTag = TAG_AGENT
-                domain = listOf("domain:googleapis.cn")
-            })
-
-            if (routeChina > 0) {
-                rules.add(RoutingObject.RuleObject().apply {
-                    type = "field"
-                    outboundTag = if (routeChina == 1) TAG_DIRECT else TAG_BLOCK
-                    ip = listOf("geoip:cn")
-                })
-                rules.add(RoutingObject.RuleObject().apply {
-                    type = "field"
-                    outboundTag = if (routeChina == 1) TAG_DIRECT else TAG_BLOCK
-                    domain = listOf("geosite:cn")
                 })
             }
         }
@@ -663,15 +626,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         }
 
         buildChain(TAG_AGENT, proxies)
-        if (extraProxies.isNotEmpty()) {
-            extraProxies.forEach { (id, entities) ->
-                buildChain("$TAG_AGENT-$id", entities)
-            }
-            routing.rules.add(RoutingObject.RuleObject().apply {
-                type = "field"
-                inboundTag = extraProxies.keys.map { "$TAG_AGENT-$it" }
-                outboundTag = TAG_DIRECT
-            })
+        extraProxies.forEach { (id, entities) ->
+            buildChain("$TAG_AGENT-$id", entities)
         }
         extraRules.forEach { rule ->
             routing.rules.add(RoutingObject.RuleObject().apply {
@@ -705,6 +661,30 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     -1L -> TAG_DIRECT
                     -2L -> TAG_BLOCK
                     else -> "$TAG_AGENT-$outId"
+                }
+            })
+        }
+
+        val bypassIP = HashSet<String>()
+        val bypassDomain = HashSet<String>()
+        for (bypassRule in extraRules.filter { it.isBypassRule() }) {
+            if (bypassRule.domains.isNotBlank()) {
+                bypassDomain.addAll(bypassRule.domains.split("\n"))
+            } else if (bypassRule.ip.isNotBlank()) {
+                bypassIP.addAll(bypassRule.ip.split("\n"))
+            }
+        }
+        if (bypassIP.isNotEmpty() || bypassDomain.isNotEmpty()) {
+            dns.servers.add(DnsObject.StringOrServerObject().apply {
+                valueY = DnsObject.ServerObject().apply {
+                    address = domesticDns.first()
+                    port = 53
+                    if (bypassIP.isNotEmpty()) {
+                        expectIPs = bypassIP.toList()
+                    }
+                    if (bypassDomain.isNotEmpty()) {
+                        domains = bypassDomain.toList()
+                    }
                 }
             })
         }
@@ -966,6 +946,7 @@ fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean, index: I
                     tag = "front"
                 }
             )
+
             outbound.proxySettings = OutboundObject.ProxySettingsObject().apply {
                 tag = "front"
                 transportLayer = true

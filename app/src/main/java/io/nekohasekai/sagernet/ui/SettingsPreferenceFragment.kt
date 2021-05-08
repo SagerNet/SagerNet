@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -34,11 +35,13 @@ import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.addOverScrollListener
+import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ktx.remove
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
+    private lateinit var isProxyApps: SwitchPreference
     private lateinit var listener: (BaseService.State) -> Unit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,7 +68,31 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
         val securityAdvisory = findPreference<SwitchPreference>(Key.SECURITY_ADVISORY)!!
         val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
+        val ipv6Route = findPreference<Preference>(Key.IPV6_ROUTE)!!
+        val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
+        val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
+        val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
+        domainMatcher.isVisible = isExpert
 
+        val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
+        val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
+        val enableMuxForAll = findPreference<Preference>(Key.ENABLE_MUX_FOR_ALL)!!
+        val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
+        val tcpKeepAliveInterval = findPreference<EditTextPreference>(Key.TCP_KEEP_ALIVE_INTERVAL)!!
+
+        val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
+
+        val forceShadowsocksRust =
+            findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
+        forceShadowsocksRust.isVisible = isExpert
+
+        val remoteDns = findPreference<Preference>(Key.REMOTE_DNS)!!
+        val enableLocalDns = findPreference<SwitchPreference>(Key.ENABLE_LOCAL_DNS)!!
+        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
+        val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
+
+        portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+        muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
@@ -75,6 +102,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             metedNetwork.isEnabled = currServiceMode == Key.MODE_VPN
         } else {
             metedNetwork.remove()
+        }
+        isProxyApps = findPreference(Key.PROXY_APPS)!!
+        isProxyApps.isEnabled = currServiceMode == Key.MODE_VPN
+        isProxyApps.setOnPreferenceChangeListener { _, newValue ->
+            startActivity(Intent(activity, AppManagerActivity::class.java))
+            if (newValue as Boolean) DataStore.dirty = true
+            newValue
         }
 
         listener = {
@@ -92,10 +126,26 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 showStopButton.isEnabled = stopped
                 securityAdvisory.isEnabled = stopped
                 showDirectSpeed.isEnabled = stopped
+                domainStrategy.isEnabled = stopped
+                domainMatcher.isEnabled = stopped
+                trafficSniffing.isEnabled = stopped
+                enableMux.isEnabled = stopped
+                enableMuxForAll.isEnabled = stopped
+                muxConcurrency.isEnabled = stopped
+                tcpKeepAliveInterval.isEnabled = stopped
+                bypassLan.isEnabled = stopped
+                forceShadowsocksRust.isEnabled = stopped
+                remoteDns.isEnabled = stopped
+                enableLocalDns.isEnabled = stopped
+                portLocalDns.isEnabled = stopped
+                domesticDns.isEnabled = stopped
+                ipv6Route.isEnabled = stopped
+                preferIpv6.isEnabled = stopped
+                allowAccess.isEnabled = stopped
 
                 metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
+                isProxyApps.isEnabled = sMode == Key.MODE_VPN && stopped
 
-                allowAccess.isEnabled = stopped
             }
         }
 
@@ -107,6 +157,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         if (::listener.isInitialized) {
             MainActivity.stateListener = listener
             listener((activity as MainActivity).state)
+        }
+        if (::isProxyApps.isInitialized) {
+            isProxyApps.isChecked = DataStore.proxyApps
         }
     }
 

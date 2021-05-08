@@ -5,7 +5,6 @@
         app:key="profileName"
         app:title="@string/profile_name"
         app:useSimpleSummaryProvider="true" />
-
     <PreferenceCategory app:title="@string/proxy_cat">
 
         <EditTextPreference

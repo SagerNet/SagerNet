@@ -32,7 +32,7 @@ data class RuleEntity(
     var id: Long = 0L,
     var name: String = "",
     var userOrder: Long = 0L,
-    var enabled: Boolean = true,
+    var enabled: Boolean = false,
     var domains: String = "",
     var ip: String = "",
     var port: String = "",
@@ -43,6 +43,33 @@ data class RuleEntity(
     var attrs: String = "",
     var outbound: Long = 0,
 ) : Parcelable {
+
+    fun isBypassRule(): Boolean {
+        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) &&
+                port.isBlank() &&
+                sourcePort.isBlank() &&
+                network.isBlank() &&
+                source.isBlank() &&
+                protocol.isBlank() &&
+                attrs.isBlank() &&
+                outbound == -1L
+    }
+
+    fun displayName(): String {
+        return name.takeIf { it.isNotBlank() } ?: "Rule $id"
+    }
+
+    fun mkSummary(): String {
+        var summary = ""
+        if (domains.isNotBlank()) summary += "$domains\n"
+        if (ip.isNotBlank()) summary += "$ip\n"
+        if (sourcePort.isNotBlank()) summary += "$sourcePort\n"
+        if (network.isNotBlank()) summary += "$network\n"
+        if (source.isNotBlank()) summary += "$source\n"
+        if (protocol.isNotBlank()) summary += "$protocol\n"
+        if (attrs.isNotBlank()) summary += "$attrs\n"
+        return summary.trim()
+    }
 
     @androidx.room.Dao
     interface Dao {
@@ -63,13 +90,19 @@ data class RuleEntity(
         fun deleteById(ruleId: Long): Int
 
         @Delete
-        fun deleteRule(vararg group: RuleEntity)
+        fun deleteRule(rule: RuleEntity)
+
+        @Delete
+        fun deleteRules(rules: List<RuleEntity>)
 
         @Insert
-        fun createRule(group: RuleEntity): Long
+        fun createRule(rule: RuleEntity): Long
 
         @Update
-        fun updateRule(group: RuleEntity)
+        fun updateRule(rule: RuleEntity)
+
+        @Update
+        fun updateRules(rules: List<RuleEntity>)
 
     }
 
