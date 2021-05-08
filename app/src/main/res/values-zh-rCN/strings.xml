@@ -175,8 +175,8 @@
     <string name="action_from_link">添加订阅</string>
 
     <string name="action_scan_china_apps">扫描中国应用</string>
-    <string name="action_export_more">导出…</string>
-    <string name="action_export_file">导出到文件…</string>
+    <string name="action_export_more">导出</string>
+    <string name="action_export_file">导出到文件</string>
     <string name="action_export">导出到剪切板</string>
     <string name="action_import">从剪切板导入</string>
     <string name="action_import_file">从文件中导入</string>

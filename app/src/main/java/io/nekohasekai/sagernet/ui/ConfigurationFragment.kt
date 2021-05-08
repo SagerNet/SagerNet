@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -32,6 +34,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
@@ -156,8 +159,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         super.onDestroy()
     }
 
-    fun snackbar(text: String) = (activity as MainActivity).snackbar(text)
-
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
         runOnDefaultDispatcher {
             try {
@@ -253,8 +254,65 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
+            R.id.action_export_clipboard -> {
+                runOnDefaultDispatcher {
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val links = profiles.mapNotNull { it.toUri() }.joinToString("\n")
+                    SagerNet.trySetPrimaryClip(links)
+                    onMainDispatcher {
+                        snackbar(getString(R.string.copy_toast_msg)).show()
+                    }
+                }
+            }
+            R.id.action_export_file -> {
+                startFilesForResult(exportProfiles)
+            }
+            R.id.action_clear -> {
+                runOnDefaultDispatcher {
+                    ProfileManager.clearGroup(DataStore.selectedGroup)
+                }
+            }
         }
         return true
+    }
+
+    private fun startFilesForResult(launcher: ActivityResultLauncher<String>) {
+        try {
+            return launcher.launch("")
+        } catch (_: ActivityNotFoundException) {
+        } catch (_: SecurityException) {
+        }
+        (activity as MainActivity).snackbar(getString(R.string.file_manager_missing)).show()
+    }
+
+    class SaveProfiles : ActivityResultContracts.CreateDocument() {
+        override fun createIntent(context: Context, input: String) =
+            super.createIntent(context, "profiles.txt").apply { type = "text/plain" }
+    }
+
+
+    private val exportProfiles = registerForActivityResult(SaveProfiles()) { data ->
+        if (data != null) {
+            runOnDefaultDispatcher {
+                val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                val links = profiles.mapNotNull { it.toUri() }.joinToString("\n")
+                try {
+                    (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
+                        .bufferedWriter().use {
+                        it.write(links)
+                    }
+                    onMainDispatcher {
+                        snackbar(getString(R.string.copy_toast_msg)).show()
+                    }
+                } catch (e: Exception) {
+                    Logs.w(e)
+                    onMainDispatcher {
+                        snackbar(e.readableMessage).show()
+                    }
+                }
+
+            }
+        }
     }
 
     inner class GroupPagerAdapter : FragmentStateAdapter(this), ProfileManager.GroupListener {
@@ -645,11 +703,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             override suspend fun onCleared(groupId: Long) {
                 if (groupId != proxyGroup.id) return
-                configurationListView.post {
-                    configurationList.clear()
-                    configurationList.clear()
-                    notifyDataSetChanged()
-                }
+                reloadProfiles(groupId)
             }
 
             override suspend fun reloadProfiles(groupId: Long) {
@@ -942,10 +996,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                     when (item.itemId) {
                         // socks
                         R.id.action_qr_code -> {
-                            showCode(entity.toUri())
+                            showCode(entity.toUri()!!)
                         }
                         R.id.action_export_clipboard -> {
-                            export(entity.toUri())
+                            export(entity.toUri()!!)
                         }
                     }
                 } catch (e: Exception) {

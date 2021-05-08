@@ -191,7 +191,7 @@ object ProfileManager {
         }
     }
 
-    suspend fun clear(groupId: Long) {
+    suspend fun clearGroup(groupId: Long) {
         DataStore.selectedProxy = 0L
         SagerDatabase.proxyDao.deleteAll(groupId)
         if (DataStore.directBootAware) DirectBoot.clean()

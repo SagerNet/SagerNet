@@ -134,10 +134,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                                 activity = this@ProfileSettingsActivity
                             })
                         .commit()
-
-                    DataStore.dirty = false
-
-                    DataStore.profileCacheStore.registerChangeListener(this@ProfileSettingsActivity)
                 }
             }
 
@@ -229,6 +225,9 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             activity.apply {
                 viewCreated(view, savedInstanceState)
             }
+
+            DataStore.dirty = false
+            DataStore.profileCacheStore.registerChangeListener(activity)
         }
 
         override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

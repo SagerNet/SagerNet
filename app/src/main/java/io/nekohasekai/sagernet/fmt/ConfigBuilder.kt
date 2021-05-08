@@ -73,7 +73,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     val proxies = proxy.resolveChain().asReversed()
     val extraRules = SagerDatabase.rulesDao.enabledRules()
     val extraProxies = SagerDatabase.proxyDao.getEntities(extraRules.mapNotNull { rule ->
-        rule.outbound.takeIf { it > 0 }
+        rule.outbound.takeIf { it > 0 && it != proxy.id }
     }.toHashSet().toList()).map { it.id to it.resolveChain() }.toMap()
 
     val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
@@ -660,7 +660,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     0L -> TAG_AGENT
                     -1L -> TAG_DIRECT
                     -2L -> TAG_BLOCK
-                    else -> "$TAG_AGENT-$outId"
+                    else -> if (outId == proxy.id) TAG_AGENT else "$TAG_AGENT-$outId"
                 }
             })
         }

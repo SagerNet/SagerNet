@@ -178,7 +178,7 @@ data class ProxyEntity(
         }
     }
 
-    fun toUri(): String {
+    fun toUri(): String? {
         return when (type) {
             0 -> requireSOCKS().toUri()
             1 -> requireSS().toUri()
@@ -188,7 +188,7 @@ data class ProxyEntity(
             5 -> requireTrojan().toUri()
             6 -> requireHttp().toUri()
             7 -> requireTrojanGo().toUri()
-            else -> error("Undefined type $type")
+            else -> null
         }
     }
 

@@ -36,6 +36,7 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -126,6 +127,13 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             R.id.action_new_route -> {
                 startActivity(Intent(context, RouteSettingsActivity::class.java))
             }
+            R.id.action_reset_route -> {
+                runOnDefaultDispatcher {
+                    SagerDatabase.rulesDao.deleteAll()
+                    DataStore.rulesFirstCreate = false
+                    ruleAdapter.reload()
+                }
+            }
         }
         return true
     }
@@ -137,9 +145,9 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         val ruleList = ArrayList<RuleEntity>()
         suspend fun reload() {
             val rules = ProfileManager.getRules()
-            ruleList.clear()
-            ruleList.addAll(rules)
             ruleListView.post {
+                ruleList.clear()
+                ruleList.addAll(rules)
                 ruleAdapter.notifyDataSetChanged()
             }
         }

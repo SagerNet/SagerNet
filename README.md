@@ -22,7 +22,6 @@ The application is designed to be used whenever possible.
 * Trojan
 * VLESS / Trojan + XTLS ( xtls-plugin )
 * Trojan-Go ( trojan-go-plugin )
-* Proxy Chain
 
 ### Subscription protocols
 
@@ -32,16 +31,18 @@ The application is designed to be used whenever possible.
 
 ## FEATURES
 
-* Full basic features  
-* Option to change the notification update interval  
+* Full basic features
+* V2Ray WebSocket Browser Forwarding
+* Option to change the notification update interval
 * A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
+* Proxy Chain
+* Advanced routing with outbound profile selection support
 
 ## TIPS
 
 * Click on the title to scroll to the first proxy or the selected proxy  
 * Proxy list can be dragged by holding the progress bar  
 * The Chinese apps scanner will only scan system apps if "Show system apps" is checked  
-* ~~V2Ray browser forwarding is not yet available, only for developers to debug~~ Fixed
 
 ## OPEN SOURCE LICENSES
 

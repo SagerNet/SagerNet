@@ -148,6 +148,8 @@
     <string name="empty_route_notice">Set some rules before saving</string>
     <string name="route_bypass_domain">Domain rule for %s</string>
     <string name="route_bypass_ip">IP rule for %s</string>
+    <string name="other">Other</string>
+    <string name="route_reset">Reset</string>
 
     <string name="route_opt_bypass_lan">Bypass LAN</string>
     <string name="route_opt_block_ads">Block ADs</string>
@@ -225,14 +227,14 @@
     <string name="circular_reference">Circular reference</string>
     <string name="circular_reference_sum">The route cannot contain itself.</string>
     <string name="profile_file">Profile File</string>
-
+    <string name="clear_profiles">Clear</string>
 
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
 
     <string name="action_scan_china_apps">Scan China apps</string>
-    <string name="action_export_more">Export…</string>
-    <string name="action_export_file">Export to file…</string>
+    <string name="action_export_more">Export</string>
+    <string name="action_export_file">Export to file</string>
     <string name="action_export">Export to Clipboard</string>
     <string name="action_import">Import from Clipboard</string>
     <string name="action_import_file">Import from file</string>
@@ -241,6 +243,7 @@
     <string name="action_export_err">Failed to export.</string>
     <string name="action_import_msg">Successfully import!</string>
     <string name="action_import_err">Failed to import.</string>
+    <string name="file_manager_missing">Please install a file manager like MiXplorer</string>
 
     <!-- share -->
     <string name="format_standard">Standard</string>

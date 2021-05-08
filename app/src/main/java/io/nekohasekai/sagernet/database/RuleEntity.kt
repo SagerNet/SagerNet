@@ -104,6 +104,9 @@ data class RuleEntity(
         @Update
         fun updateRules(rules: List<RuleEntity>)
 
+        @Query("DELETE FROM rules")
+        fun deleteAll()
+
     }
 
 
