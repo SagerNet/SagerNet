@@ -67,10 +67,10 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         for (proxyId in bean.proxies) {
             beanList.addAll((beansMap[proxyId] ?: continue).resolveChain())
         }
-        return beanList
+        return beanList.asReversed()
     }
 
-    val proxies = proxy.resolveChain().asReversed()
+    val proxies = proxy.resolveChain()
     val extraRules = SagerDatabase.rulesDao.enabledRules()
     val extraProxies = SagerDatabase.proxyDao.getEntities(extraRules.mapNotNull { rule ->
         rule.outbound.takeIf { it > 0 && it != proxy.id }
@@ -80,7 +80,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     val remoteDns = DataStore.remoteDNS.split(",")
     val domesticDns = DataStore.domesticDns.split(',')
     val enableLocalDNS = DataStore.enableLocalDNS
-    val routeChina = DataStore.routeChina
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = LinkedList<LinkedHashMap<Int, ProxyEntity>>()
     var requireWs = false

@@ -53,8 +53,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         DataStore.initGlobal()
         addPreferencesFromResource(R.xml.global_preferences)
         val appTheme = findPreference<ColorPickerPreference>(Key.APP_THEME)!!
-        appTheme.isVisible = isExpert
-        if (isExpert) {
+        if (!isExpert) {
+            appTheme.remove()
+        } else {
             appTheme.setOnPreferenceChangeListener { _, newTheme ->
                 if (serviceStarted()) {
                     SagerNet.reloadService()
@@ -77,14 +78,16 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
         val showStopButton = findPreference<SwitchPreference>(Key.SHOW_STOP_BUTTON)!!
         if (Build.VERSION.SDK_INT < 24) {
-            showStopButton.isVisible = false
+            showStopButton.remove()
         }
         val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
         val ipv6Route = findPreference<Preference>(Key.IPV6_ROUTE)!!
         val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
         val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
         val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
-        domainMatcher.isVisible = isExpert
+        if (!isExpert) {
+            domainMatcher.remove()
+        }
 
         val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
         val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
@@ -96,7 +99,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val forceShadowsocksRust =
             findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
-        forceShadowsocksRust.isVisible = isExpert
+        if (!isExpert) {
+            forceShadowsocksRust.remove()
+        }
 
         val remoteDns = findPreference<Preference>(Key.REMOTE_DNS)!!
         val enableLocalDns = findPreference<SwitchPreference>(Key.ENABLE_LOCAL_DNS)!!
@@ -108,15 +113,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
 
-        val currServiceMode = DataStore.serviceMode
         val metedNetwork = findPreference<Preference>(Key.METERED_NETWORK)!!
-        if (Build.VERSION.SDK_INT >= 28) {
-            metedNetwork.isEnabled = currServiceMode == Key.MODE_VPN
-        } else {
+        if (Build.VERSION.SDK_INT < 28) {
             metedNetwork.remove()
         }
         isProxyApps = findPreference(Key.PROXY_APPS)!!
-        isProxyApps.isEnabled = currServiceMode == Key.MODE_VPN
         isProxyApps.setOnPreferenceChangeListener { _, newValue ->
             startActivity(Intent(activity, AppManagerActivity::class.java))
             if (newValue as Boolean) DataStore.dirty = true

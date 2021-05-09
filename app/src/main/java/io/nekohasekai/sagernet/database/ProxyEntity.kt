@@ -98,12 +98,12 @@ data class ProxyEntity(
         parcel.readByteArray(byteArray)
         when (type) {
             0 -> socksBean = KryoConverters.socksDeserialize(byteArray)
-            1 -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
-            2 -> ssrBean = KryoConverters.shadowsocksRDeserialize(byteArray)
-            3 -> vmessBean = KryoConverters.vmessDeserialize(byteArray)
-            4 -> vlessBean = KryoConverters.vlessDeserialize(byteArray)
-            5 -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
-            6 -> httpBean = KryoConverters.httpDeserialize(byteArray)
+            1 -> httpBean = KryoConverters.httpDeserialize(byteArray)
+            2 -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
+            3 -> ssrBean = KryoConverters.shadowsocksRDeserialize(byteArray)
+            4 -> vmessBean = KryoConverters.vmessDeserialize(byteArray)
+            5 -> vlessBean = KryoConverters.vlessDeserialize(byteArray)
+            6 -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
             7 -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
             8 -> chainBean = KryoConverters.chainDeserialize(byteArray)
         }
@@ -129,12 +129,12 @@ data class ProxyEntity(
     fun displayType(): String {
         return when (type) {
             0 -> "SOCKS5"
-            1 -> "Shadowsocks"
-            2 -> "ShadowsocksR"
-            3 -> "VMess"
-            4 -> "VLESS"
-            5 -> "Trojan"
-            6 -> if (requireHttp().tls) "HTTPS" else "HTTP"
+            1 -> if (requireHttp().tls) "HTTPS" else "HTTP"
+            2 -> "Shadowsocks"
+            3 -> "ShadowsocksR"
+            4 -> "VMess"
+            5 -> "VLESS"
+            6 -> "Trojan"
             7 -> "Trojan-Go"
             8 -> chainName
             else -> "Undefined type $type"
@@ -166,12 +166,12 @@ data class ProxyEntity(
         return when (type) {
             // 2 -> vmessBean ?: error("Null vmess node")
             0 -> socksBean ?: error("Null socks node")
-            1 -> ssBean ?: error("Null ss node")
-            2 -> ssrBean ?: error("Null ssr node")
-            3 -> vmessBean ?: error("Null vmess node")
-            4 -> vlessBean ?: error("Null vless node")
-            5 -> trojanBean ?: error("Null trojan node")
-            6 -> httpBean ?: error("Null http node")
+            1 -> httpBean ?: error("Null http node")
+            2 -> ssBean ?: error("Null ss node")
+            3 -> ssrBean ?: error("Null ssr node")
+            4 -> vmessBean ?: error("Null vmess node")
+            5 -> vlessBean ?: error("Null vless node")
+            6 -> trojanBean ?: error("Null trojan node")
             7 -> trojanGoBean ?: error("Null trojan-go node")
             8 -> chainBean ?: error("Null chain bean")
             else -> error("Undefined type $type")
@@ -181,12 +181,12 @@ data class ProxyEntity(
     fun toUri(): String? {
         return when (type) {
             0 -> requireSOCKS().toUri()
-            1 -> requireSS().toUri()
-            2 -> requireSSR().toUri()
-            3 -> requireVMess().toUri(true)
-            4 -> requireVLESS().toUri(true)
-            5 -> requireTrojan().toUri()
-            6 -> requireHttp().toUri()
+            1 -> requireHttp().toUri()
+            2 -> requireSS().toUri()
+            3 -> requireSSR().toUri()
+            4 -> requireVMess().toUri(true)
+            5 -> requireVLESS().toUri(true)
+            6 -> requireTrojan().toUri()
             7 -> requireTrojanGo().toUri()
             else -> null
         }
@@ -221,10 +221,10 @@ data class ProxyEntity(
             0 -> enableMuxForAll
             1 -> enableMuxForAll
             2 -> enableMuxForAll
-            3 -> isV2RayNetworkTcp()
-            4 -> !useXray()
-            5 -> enableMuxForAll && !useXray()
-            6 -> enableMuxForAll
+            3 -> enableMuxForAll
+            4 -> isV2RayNetworkTcp()
+            5 -> !useXray()
+            6 -> enableMuxForAll && !useXray()
             7 -> false
             else -> error("Undefined type $type")
         }
@@ -233,14 +233,14 @@ data class ProxyEntity(
     fun needXrayMux(): Boolean {
         val enableMuxForAll by lazy { DataStore.enableMuxForAll }
         return when (type) {
-            4 -> isV2RayNetworkTcp()
-            5 -> enableMuxForAll
+            5 -> isV2RayNetworkTcp()
+            6 -> enableMuxForAll
             else -> error("Undefined type $type")
         }
     }
 
     fun useExternalShadowsocks(): Boolean {
-        if (type != 1) return false
+        if (type != 2) return false
         if (DataStore.forceShadowsocksRust) return true
         val bean = requireSS()
         if (bean.plugin.isNotBlank()) {
@@ -274,27 +274,27 @@ data class ProxyEntity(
                 socksBean = bean
             }
             is HttpBean -> {
-                type = 6
+                type = 1
                 httpBean = bean
             }
             is ShadowsocksBean -> {
-                type = 1
+                type = 2
                 ssBean = bean
             }
             is ShadowsocksRBean -> {
-                type = 2
+                type = 3
                 ssrBean = bean
             }
             is VMessBean -> {
-                type = 3
+                type = 4
                 vmessBean = bean
             }
             is VLESSBean -> {
-                type = 4
+                type = 5
                 vlessBean = bean
             }
             is TrojanBean -> {
-                type = 5
+                type = 6
                 trojanBean = bean
             }
             is TrojanGoBean -> {
@@ -323,12 +323,12 @@ data class ProxyEntity(
         return Intent(
             ctx, when (type) {
                 0 -> SocksSettingsActivity::class.java
-                1 -> ShadowsocksSettingsActivity::class.java
-                2 -> ShadowsocksRSettingsActivity::class.java
-                3 -> VMessSettingsActivity::class.java
-                4 -> VLESSSettingsActivity::class.java
-                5 -> TrojanSettingsActivity::class.java
-                6 -> HttpSettingsActivity::class.java
+                1 -> HttpSettingsActivity::class.java
+                2 -> ShadowsocksSettingsActivity::class.java
+                3 -> ShadowsocksRSettingsActivity::class.java
+                4 -> VMessSettingsActivity::class.java
+                5 -> VLESSSettingsActivity::class.java
+                6 -> TrojanSettingsActivity::class.java
                 7 -> TrojanGoSettingsActivity::class.java
                 8 -> ChainSettingsActivity::class.java
                 else -> throw IllegalArgumentException()

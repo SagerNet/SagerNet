@@ -53,23 +53,15 @@ public class TrojanBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(0);
         super.serialize(output);
         output.writeString(password);
         output.writeString(security);
+        output.writeString(sni);
+        output.writeString(alpn);
 
-        switch (security) {
-            case "tls": {
-                output.writeString(sni);
-                output.writeString(alpn);
-                break;
-            }
-            case "xtls": {
-                output.writeString(sni);
-                output.writeString(alpn);
-                output.writeString(flow);
-                break;
-            }
+        if ("xtls".equals(security)) {
+            output.writeString(flow);
         }
     }
 
@@ -78,25 +70,12 @@ public class TrojanBean extends AbstractBean {
         int version = input.readInt();
         super.deserialize(input);
         password = input.readString();
-        if (version == 0) {
-            security = "tls";
-            sni = input.readString();
-
-            initDefaultValues();
-            return;
-        }
         security = input.readString();
-        switch (security) {
-            case "tls": {
-                sni = input.readString();
-                alpn = input.readString();
-                break;
-            }
-            case "xtls": {
-                sni = input.readString();
-                alpn = input.readString();
-                flow = input.readString();
-            }
+        sni = input.readString();
+        alpn = input.readString();
+
+        if ("xtls".equals(security)) {
+            flow = input.readString();
         }
 
         initDefaultValues();

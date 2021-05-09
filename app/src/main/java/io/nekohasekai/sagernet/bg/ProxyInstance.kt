@@ -37,9 +37,11 @@ import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
+import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
@@ -96,14 +98,15 @@ class ProxyInstance(val profile: ProxyEntity) {
         for (chain in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val needChain = index != chain.size - 1
+                val bean = profile.requireBean()
                 when {
                     profile.useExternalShadowsocks() -> {
-                        val bean = profile.requireSS()
+                        bean as ShadowsocksBean
                         pluginConfigs[index] = bean.buildShadowsocksConfig(port).also {
                             Logs.d(it)
                         }
                     }
-                    profile.type == 2 -> {
+                    bean is ShadowsocksRBean -> {
                         pluginConfigs[index] = profile.requireSSR().buildShadowsocksRConfig().also {
                             Logs.d(it)
                         }
@@ -115,8 +118,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                                 Logs.d(it)
                             }
                     }
-                    profile.type == 7 -> {
-                        val bean = profile.requireTrojanGo()
+                    bean is TrojanGoBean -> {
                         initPlugin("trojan-go-plugin")
                         pluginConfigs[index] =
                             bean.buildTrojanGoConfig(port, needChain, index).also {
@@ -136,12 +138,11 @@ class ProxyInstance(val profile: ProxyEntity) {
         for (chain in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val bean = profile.requireBean()
-                val needChain = index != config.index.size - 1
+                val needChain = index != chain.size - 1
                 val config = pluginConfigs[index] ?: return@forEachIndexed
 
                 when {
                     profile.useExternalShadowsocks() -> {
-
                         val context =
                             if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
                                 SagerNet.application else SagerNet.deviceStorage
@@ -182,8 +183,7 @@ class ProxyInstance(val profile: ProxyEntity) {
 
                         base.data.processes!!.start(commands, env)
                     }
-                    profile.type == 2 -> {
-                        bean as ShadowsocksRBean
+                    bean is ShadowsocksRBean -> {
                         val context =
                             if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
                                 SagerNet.application else SagerNet.deviceStorage
@@ -248,7 +248,7 @@ class ProxyInstance(val profile: ProxyEntity) {
 
                         base.data.processes!!.start(commands)
                     }
-                    profile.type == 7 -> {
+                    bean is TrojanGoBean -> {
                         val context =
                             if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
                                 SagerNet.application else SagerNet.deviceStorage

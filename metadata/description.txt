@@ -3,27 +3,32 @@ The application is designed to be used whenever possible.
 Protocols
 
 * SOCKS
+* HTTP(s) / naiveproxy
 * Shadowsocks
 * ShadowsocksR
 * VMess
 * VLESS
 * Trojan
+* VLESS / Trojan + XTLS ( xtls-plugin )
+* Trojan-Go ( trojan-go-plugin )
 
 Subscription protocols
 
 * Universal base64 format
-* SIP008
+* Shadowsocks SIP008
 * Clash
 
-FEATURES
+Features
 
-* Full basic features  
-* Option to change the notification update interval  
-* A China apps scanner (based on dex classpath scanning, so it may be slower)
+* Full basic features
+* V2Ray WebSocket browser forwarding
+* Option to change the notification update interval
+* A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
+* Proxy Chain
+* Advanced routing with outbound profile selection support
 
-TIPS
+Tips
 
-* Click on the title to scroll to the first proxy or the selected proxy  
-* Proxy list can be dragged by holding the progress bar  
-* The china apps scanner will only scan system apps if "Show system apps" is checked  
-* V2Ray browser forwarding is not yet available, only for developers to debug
+* Click on the title to scroll to the first proxy or the selected proxy
+* Proxy list can be dragged by holding the progress bar
+* The china apps scanner will only scan system apps if "Show system apps" is checked

@@ -76,8 +76,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
-    var routeChina by configurationStore.stringToInt(Key.ROUTE_CHINA)
-    var blockAds by configurationStore.boolean(Key.BLOCK_ADS) { false }
 
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)

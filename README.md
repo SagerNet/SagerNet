@@ -32,7 +32,7 @@ The application is designed to be used whenever possible.
 ## FEATURES
 
 * Full basic features
-* V2Ray WebSocket Browser Forwarding
+* V2Ray WebSocket browser forwarding
 * Option to change the notification update interval
 * A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
 * Proxy Chain
