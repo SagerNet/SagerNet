@@ -40,8 +40,8 @@ import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
@@ -60,8 +60,10 @@ class SagerNet : Application() {
 
         val configureIntent: (Context) -> PendingIntent by lazy {
             {
-                PendingIntent.getActivity(it, 0, Intent(application, MainActivity::class.java)
-                    .setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0)
+                PendingIntent.getActivity(
+                    it, 0, Intent(application, MainActivity::class.java)
+                        .setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
+                )
             }
         }
         val activity by lazy { application.getSystemService<ActivityManager>()!! }
@@ -71,8 +73,12 @@ class SagerNet : Application() {
         val user by lazy { application.getSystemService<UserManager>()!! }
         val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
         val directBootSupported by lazy {
-            Build.VERSION.SDK_INT >= 24 && application.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus ==
-                    DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
+            Build.VERSION.SDK_INT >= 24 && try {
+                app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus ==
+                        DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
+            } catch (_: RuntimeException) {
+                false
+            }
         }
 
         val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
@@ -91,21 +97,32 @@ class SagerNet : Application() {
 
         fun updateNotificationChannels() {
             if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
-                notification.createNotificationChannels(listOf(
-                    NotificationChannel("service-vpn", application.getText(R.string.service_vpn),
-                        if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
-                        else NotificationManager.IMPORTANCE_LOW),   // #1355
-                    NotificationChannel("service-proxy",
-                        application.getText(R.string.service_proxy),
-                        NotificationManager.IMPORTANCE_LOW),
-                    NotificationChannel("service-transproxy",
-                        application.getText(R.string.service_transproxy),
-                        NotificationManager.IMPORTANCE_LOW)))
+                notification.createNotificationChannels(
+                    listOf(
+                        NotificationChannel(
+                            "service-vpn", application.getText(R.string.service_vpn),
+                            if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
+                            else NotificationManager.IMPORTANCE_LOW
+                        ),   // #1355
+                        NotificationChannel(
+                            "service-proxy",
+                            application.getText(R.string.service_proxy),
+                            NotificationManager.IMPORTANCE_LOW
+                        ),
+                        NotificationChannel(
+                            "service-transproxy",
+                            application.getText(R.string.service_transproxy),
+                            NotificationManager.IMPORTANCE_LOW
+                        )
+                    )
+                )
             }
         }
 
-        fun startService() = ContextCompat.startForegroundService(application,
-            Intent(application, SagerConnection.serviceClass))
+        fun startService() = ContextCompat.startForegroundService(
+            application,
+            Intent(application, SagerConnection.serviceClass)
+        )
 
         fun reloadService() =
             application.sendBroadcast(Intent(Action.RELOAD).setPackage(application.packageName))
@@ -140,9 +157,11 @@ class SagerNet : Application() {
         Theme.apply(this)
     }
 
-    fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,
+    fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
+        packageName,
         if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
-        else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES)!!
+        else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES
+    )!!
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
