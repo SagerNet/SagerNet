@@ -46,7 +46,13 @@ if [ $(command -v go) ]; then
   export PATH=$PATH:$(go env GOPATH)/bin
 fi
 
-DEPS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
+_HOST="linux"
+case "$OSTYPE" in
+  darwin*) _HOST="darwin" ;;
+  msys|cygwin) _HOST="windows" ;;
+esac
+
+DEPS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$_HOST-x86_64/bin
 
 export ANDROID_ARM_CC=$DEPS/armv7a-linux-androideabi16-clang
 export ANDROID_ARM_STRIP=$DEPS/arm-linux-androideabi-strip
