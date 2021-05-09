@@ -256,7 +256,7 @@ data class ProxyEntity(
             is VLESSBean -> {
                 if (bean.security != "xtls") return false
                 if (bean.type != "tcp") return false
-                if (bean.headerType.isNotBlank()) return false
+                if (bean.headerType.isNotBlank() && bean.headerType != "none") return false
                 return true
             }
             is TrojanBean -> {
