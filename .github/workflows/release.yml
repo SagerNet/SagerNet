@@ -11,6 +11,9 @@ on:
       publish:
         description: 'Publish: If want ignore'
         required: false
+      play:
+        description: 'Play: If want ignore'
+        required: false
 jobs:
   check:
     name: Check Access
@@ -255,9 +258,10 @@ jobs:
           upload apks/*.apk
   play:
     name: Publish to Play Store
-    if: github.event.inputs.upload != 'y'
+    if: github.event.inputs.play != 'y'
     runs-on: ubuntu-latest
     needs:
+      - core
       - v2ray
       - shadowsocks
       - shadowsocksr
