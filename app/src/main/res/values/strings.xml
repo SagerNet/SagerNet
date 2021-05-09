@@ -17,6 +17,7 @@
     <string name="menu_configuration">Configuration</string>
     <string name="menu_group">Group</string>
     <string name="menu_about">About</string>
+    <string name="theme">Theme</string>
 
     <string name="group_default">Default</string>
     <string name="profile_address">127.0.0.1:1080</string>
@@ -308,6 +309,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="apply">Apply</string>
+    <string name="restart">Reload proxy service to apply changes</string>
 
     <string name="license">License</string>
     <string name="route_warn">Make sure you have read the documentation before adding custom rules, otherwise you may not be able to connect to the Internet.</string>

@@ -31,18 +31,16 @@ import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.ktx.addOverScrollListener
-import io.nekohasekai.sagernet.ktx.isExpert
-import io.nekohasekai.sagernet.ktx.remove
-import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.Theme
+import io.nekohasekai.sagernet.widget.ColorPickerPreference
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private lateinit var isProxyApps: SwitchPreference
-    private lateinit var listener: (BaseService.State) -> Unit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,8 +52,23 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         preferenceManager.preferenceDataStore = DataStore.configurationStore
         DataStore.initGlobal()
         addPreferencesFromResource(R.xml.global_preferences)
-        val persistAcrossReboot = findPreference<SwitchPreference>(Key.PERSIST_ACROSS_REBOOT)!!
-        val directBootAware = findPreference<SwitchPreference>(Key.DIRECT_BOOT_AWARE)!!
+        val appTheme = findPreference<ColorPickerPreference>(Key.APP_THEME)!!
+        appTheme.isVisible = isExpert
+        if (isExpert) {
+            appTheme.setOnPreferenceChangeListener { _, newTheme ->
+                if (serviceStarted()) {
+                    SagerNet.reloadService()
+                }
+                val theme = Theme.getTheme(newTheme as Int)
+                app.setTheme(theme)
+                requireActivity().apply {
+                    setTheme(theme)
+                    recreate()
+                }
+                true
+            }
+        }
+
         val portSocks5 = findPreference<EditTextPreference>(Key.SOCKS_PORT)!!
         val speedInterval = findPreference<Preference>(Key.SPEED_INTERVAL)!!
         val serviceMode = findPreference<Preference>(Key.SERVICE_MODE)!!
@@ -66,7 +79,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         if (Build.VERSION.SDK_INT < 24) {
             showStopButton.isVisible = false
         }
-        val securityAdvisory = findPreference<SwitchPreference>(Key.SECURITY_ADVISORY)!!
         val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
         val ipv6Route = findPreference<Preference>(Key.IPV6_ROUTE)!!
         val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
@@ -111,62 +123,43 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             newValue
         }
 
-        listener = {
-            val stopped = it == BaseService.State.Stopped
-            val sMode = DataStore.serviceMode
-
-            runOnMainDispatcher {
-                persistAcrossReboot.isEnabled = stopped
-                directBootAware.isEnabled = stopped
-                serviceMode.isEnabled = stopped
-                speedInterval.isEnabled = stopped
-                portSocks5.isEnabled = stopped
-                requireHttp.isEnabled = stopped
-                portHttp.isEnabled = stopped
-                showStopButton.isEnabled = stopped
-                securityAdvisory.isEnabled = stopped
-                showDirectSpeed.isEnabled = stopped
-                domainStrategy.isEnabled = stopped
-                domainMatcher.isEnabled = stopped
-                trafficSniffing.isEnabled = stopped
-                enableMux.isEnabled = stopped
-                enableMuxForAll.isEnabled = stopped
-                muxConcurrency.isEnabled = stopped
-                tcpKeepAliveInterval.isEnabled = stopped
-                bypassLan.isEnabled = stopped
-                forceShadowsocksRust.isEnabled = stopped
-                remoteDns.isEnabled = stopped
-                enableLocalDns.isEnabled = stopped
-                portLocalDns.isEnabled = stopped
-                domesticDns.isEnabled = stopped
-                ipv6Route.isEnabled = stopped
-                preferIpv6.isEnabled = stopped
-                allowAccess.isEnabled = stopped
-
-                metedNetwork.isEnabled = sMode == Key.MODE_VPN && stopped
-                isProxyApps.isEnabled = sMode == Key.MODE_VPN && stopped
-
-            }
+        val reloadListener = Preference.OnPreferenceChangeListener { _, _ ->
+            needReload()
+            true
         }
+
+        serviceMode.onPreferenceChangeListener = reloadListener
+        speedInterval.onPreferenceChangeListener = reloadListener
+        portSocks5.onPreferenceChangeListener = reloadListener
+        requireHttp.onPreferenceChangeListener = reloadListener
+        portHttp.onPreferenceChangeListener = reloadListener
+        showStopButton.onPreferenceChangeListener = reloadListener
+        showDirectSpeed.onPreferenceChangeListener = reloadListener
+        domainStrategy.onPreferenceChangeListener = reloadListener
+        domainMatcher.onPreferenceChangeListener = reloadListener
+        trafficSniffing.onPreferenceChangeListener = reloadListener
+        enableMux.onPreferenceChangeListener = reloadListener
+        enableMuxForAll.onPreferenceChangeListener = reloadListener
+        muxConcurrency.onPreferenceChangeListener = reloadListener
+        tcpKeepAliveInterval.onPreferenceChangeListener = reloadListener
+        bypassLan.onPreferenceChangeListener = reloadListener
+        forceShadowsocksRust.onPreferenceChangeListener = reloadListener
+        remoteDns.onPreferenceChangeListener = reloadListener
+        enableLocalDns.onPreferenceChangeListener = reloadListener
+        portLocalDns.onPreferenceChangeListener = reloadListener
+        domesticDns.onPreferenceChangeListener = reloadListener
+        ipv6Route.onPreferenceChangeListener = reloadListener
+        preferIpv6.onPreferenceChangeListener = reloadListener
+        allowAccess.onPreferenceChangeListener = reloadListener
 
     }
 
     override fun onResume() {
         super.onResume()
 
-        if (::listener.isInitialized) {
-            MainActivity.stateListener = listener
-            listener((activity as MainActivity).state)
-        }
         if (::isProxyApps.isInitialized) {
             isProxyApps.isChecked = DataStore.proxyApps
         }
     }
 
-    override fun onDestroy() {
-        if (MainActivity.stateListener == listener) {
-            MainActivity.stateListener = null
-        }
-        super.onDestroy()
-    }
 }

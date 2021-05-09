@@ -110,7 +110,7 @@
                 android:layout_weight="1"
                 android:text="@string/profile_type"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/color_primary_text" />
+                android:textColor="?colorAccent" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/enable"

@@ -41,9 +41,11 @@ import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.checkMT
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
+import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
@@ -123,6 +125,7 @@ class SagerNet : Application() {
         System.setProperty(DEBUG_PROPERTY_NAME, DEBUG_PROPERTY_VALUE_ON)
 
         DataStore.init()
+
         updateNotificationChannels()
 
         Seq.setContext(this)
@@ -130,7 +133,11 @@ class SagerNet : Application() {
         externalAssets.mkdirs()
         Libv2ray.setAssetsPath(externalAssets.absolutePath, "v2ray/")
 
-        runOnMainDispatcher { checkMT() }
+        runOnMainDispatcher {
+            checkMT()
+        }
+
+        Theme.apply(this)
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,

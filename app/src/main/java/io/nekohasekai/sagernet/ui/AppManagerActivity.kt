@@ -73,7 +73,7 @@ import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import kotlin.coroutines.coroutineContext
 
-class AppManagerActivity : AppCompatActivity() {
+class AppManagerActivity : ThemedActivity() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         private var instance: AppManagerActivity? = null

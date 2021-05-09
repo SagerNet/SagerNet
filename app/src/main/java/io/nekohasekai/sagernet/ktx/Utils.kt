@@ -39,6 +39,7 @@ import android.system.OsConstants
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.AttrRes
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -50,7 +51,9 @@ import cn.hutool.core.net.URLDecoder
 import cn.hutool.core.net.URLEncoder
 import cn.hutool.core.util.CharsetUtil
 import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -62,6 +65,7 @@ import java.net.HttpURLConnection
 import java.net.InetAddress
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+
 
 inline fun <T> Iterable<T>.forEachTry(action: (T) -> Unit) {
     var result: Exception? = null
@@ -152,8 +156,10 @@ private val parseNumericAddress by lazy {
 
 fun String?.parseNumericAddress(): InetAddress? = Os.inet_pton(OsConstants.AF_INET, this)
     ?: Os.inet_pton(OsConstants.AF_INET6, this)?.let {
-        if (Build.VERSION.SDK_INT >= 29) it else parseNumericAddress.invoke(null,
-            this) as InetAddress
+        if (Build.VERSION.SDK_INT >= 29) it else parseNumericAddress.invoke(
+            null,
+            this
+        ) as InetAddress
     }
 
 
@@ -228,7 +234,26 @@ fun View.crossFadeFrom(other: View) {
     }).duration = shortAnimTime
 }
 
+
 fun Fragment.snackbar(text: CharSequence) = (requireActivity() as MainActivity).snackbar(text)
+fun Fragment.serviceStarted(): Boolean {
+    return ((activity as? MainActivity) ?: return false).state.canStop
+}
+
+fun Fragment.needReload() {
+    if (serviceStarted()) {
+        snackbar(getString(R.string.restart)).setAction(R.string.apply) {
+            SagerNet.reloadService()
+        }.show()
+    }
+}
+
+fun Context.loadColor(@AttrRes attr: Int): Int {
+    return ContextCompat.getColor(this, TypedValue().also {
+        theme.resolveAttribute(attr, it, true)
+    }.resourceId)
+}
+
 fun Fragment.addOverScrollListener(recyclerView: RecyclerView) {
     if (activity !is MainActivity) return
     val layoutManager = recyclerView.layoutManager as LinearLayoutManager

@@ -30,6 +30,7 @@ object Key {
     const val PERSIST_ACROSS_REBOOT = "isAutoConnect"
     const val DIRECT_BOOT_AWARE = "directBootAware"
 
+    const val APP_THEME = "appTheme"
     const val SERVICE_MODE = "serviceMode"
     const val MODE_VPN = "vpn"
     const val MODE_PROXY = "proxy"
@@ -45,6 +46,7 @@ object Key {
 
     const val PROXY_APPS = "proxyApps"
     const val BYPASS_MODE = "bypassMode"
+    const val INDIVIDUAL = "individual"
     const val METERED_NETWORK = "meteredNetwork"
 
     const val DOMAIN_STRATEGY = "domainStrategy"

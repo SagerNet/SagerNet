@@ -26,7 +26,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.nekohasekai.sagernet.R
 
-class ProfileSelectActivity : AppCompatActivity(R.layout.layout_empty) {
+class ProfileSelectActivity : ThemedActivity(R.layout.layout_empty) {
 
     companion object {
         const val EXTRA_PROFILE_ID = "id"

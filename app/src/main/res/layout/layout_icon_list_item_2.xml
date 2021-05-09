@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?android:attr/selectableItemBackground"
@@ -38,7 +39,7 @@
         android:layout_gravity="center"
         android:paddingStart="12dp"
         android:src="@drawable/ic_action_lock_open"
-        android:tint="@color/material_amber_a700"
         android:importantForAccessibility="no"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry"
+        app:tint="@color/material_amber_accent_700" />
 </LinearLayout>

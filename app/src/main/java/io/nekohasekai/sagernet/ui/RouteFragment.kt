@@ -40,10 +40,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.ktx.FixedLinearLayoutManager
-import io.nekohasekai.sagernet.ktx.addOverScrollListener
-import io.nekohasekai.sagernet.ktx.launchCustomTab
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 
@@ -218,8 +215,11 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         }
 
         fun commitMove() = runOnDefaultDispatcher {
-            SagerDatabase.rulesDao.updateRules(updated.toList())
-            updated.clear()
+            if (updated.isNotEmpty()) {
+                SagerDatabase.rulesDao.updateRules(updated.toList())
+                updated.clear()
+                needReload()
+            }
         }
 
         fun remove(index: Int) {
@@ -237,7 +237,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         override fun commit(actions: List<Pair<Int, RuleEntity>>) {
             val rules = actions.map { it.second }
             runOnDefaultDispatcher {
-                SagerDatabase.rulesDao.deleteRules(rules)
+                ProfileManager.deleteRules(rules)
             }
         }
 
@@ -245,6 +245,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             ruleListView.post {
                 ruleList.add(rule)
                 ruleAdapter.notifyItemInserted(ruleList.size)
+                needReload()
             }
         }
 
@@ -253,16 +254,21 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             if (index == -1) return
             ruleListView.post {
                 ruleList[index] = rule
-                ruleAdapter.notifyItemChanged(index)
+                ruleAdapter.notifyItemChanged(index + 1)
+                needReload()
             }
         }
 
         override suspend fun onRemoved(ruleId: Long) {
             val index = ruleList.indexOfFirst { it.id == ruleId }
-            if (index == -1) return
-            ruleListView.post {
+            if (index == -1) {
+                onMainDispatcher {
+                    needReload()
+                }
+            } else ruleListView.post {
                 ruleList.removeAt(index)
-                ruleAdapter.notifyItemRemoved(index)
+                ruleAdapter.notifyItemRemoved(index + 1)
+                needReload()
             }
         }
 
@@ -270,6 +276,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             ruleListView.post {
                 ruleList.clear()
                 ruleAdapter.notifyDataSetChanged()
+                needReload()
             }
         }
 
@@ -302,6 +309,9 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                     runOnDefaultDispatcher {
                         rule.enabled = isChecked
                         SagerDatabase.rulesDao.updateRule(rule)
+                        onMainDispatcher {
+                            needReload()
+                        }
                     }
                 }
                 editButton.setOnClickListener {

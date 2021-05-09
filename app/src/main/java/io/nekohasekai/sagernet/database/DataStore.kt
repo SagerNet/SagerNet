@@ -67,6 +67,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         return targetId
     }
 
+    var appTheme by configurationStore.int(Key.APP_THEME) { 0 }
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
@@ -120,7 +121,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var meteredNetwork by configurationStore.boolean(Key.METERED_NETWORK)
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
     var bypass by configurationStore.boolean(Key.BYPASS_MODE)
-    var individual by configurationStore.string("individual")
+    var individual by configurationStore.string("")
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)

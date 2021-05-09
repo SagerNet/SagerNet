@@ -301,5 +301,11 @@
     <string name="profile_file">配置文件</string>
     <string name="no_proxies_found_in_file">未在此文件内找到服务器配置</string>
     <string name="no_proxies_found_in_clipboard">未在剪切板内找到服务器配置</string>
+    <string name="other">其他</string>
+    <string name="route_reset">重置</string>
+    <string name="clear_profiles">清空</string>
+    <string name="file_manager_missing">请安装文件管理器，如 MiXplorer</string>
+    <string name="restart">重载代理服务以应用修改</string>
+    <string name="theme">主题颜色</string>
 
 </resources>

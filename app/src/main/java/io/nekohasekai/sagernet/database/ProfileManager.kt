@@ -292,12 +292,28 @@ object ProfileManager {
         ruleIterator { onRemoved(ruleId) }
     }
 
+    suspend fun deleteRules(rules: List<RuleEntity>) {
+        SagerDatabase.rulesDao.deleteRules(rules)
+        ruleIterator {
+            rules.forEach {
+                onRemoved(it.id)
+            }
+        }
+    }
+
     suspend fun getRules(): List<RuleEntity> {
         var rules = SagerDatabase.rulesDao.allRules()
         if (rules.isEmpty() /*&& !DataStore.rulesFirstCreate*/) {
             DataStore.rulesFirstCreate = true
-            val country = Locale.getDefault().country.lowercase()
-            val displayCountry = Locale.getDefault().displayCountry
+            var country = Locale.getDefault().country.lowercase()
+            var displayCountry = Locale.getDefault().displayCountry
+            if (country !in arrayOf(
+                    "ir"
+                )
+            ) {
+                country = Locale.CHINA.country.lowercase()
+                displayCountry = Locale.CHINA.displayCountry
+            }
             createRule(
                 RuleEntity(
                     name = app.getString(R.string.route_bypass_ip, displayCountry),

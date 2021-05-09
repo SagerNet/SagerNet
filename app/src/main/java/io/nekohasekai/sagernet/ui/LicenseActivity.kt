@@ -27,7 +27,7 @@ import com.mikepenz.aboutlibraries.LibsBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
-class LicenseActivity : AppCompatActivity() {
+class LicenseActivity : ThemedActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

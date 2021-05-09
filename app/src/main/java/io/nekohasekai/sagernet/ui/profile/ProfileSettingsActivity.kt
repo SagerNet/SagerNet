@@ -29,7 +29,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -45,9 +44,9 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
@@ -56,7 +55,7 @@ import kotlinx.parcelize.Parcelize
 abstract class ProfileSettingsActivity<T : AbstractBean>(
     @LayoutRes
     resId: Int = R.layout.layout_settings_activity,
-) : AppCompatActivity(resId),
+) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
@@ -236,8 +235,12 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                     requireActivity().finish()
                 } else {
                     DeleteConfirmationDialogFragment().apply {
-                        arg(ProfileIdArg(DataStore.editingId,
-                            DataStore.editingGroup))
+                        arg(
+                            ProfileIdArg(
+                                DataStore.editingId,
+                                DataStore.editingGroup
+                            )
+                        )
                         key()
                     }.show(parentFragmentManager, null)
                 }

@@ -14,6 +14,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/colorpicker" />
+            <option value="$PROJECT_DIR$/flexbox" />
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/preferencex" />
             <option value="$PROJECT_DIR$/preferencex-colorpicker" />
@@ -26,7 +28,6 @@
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

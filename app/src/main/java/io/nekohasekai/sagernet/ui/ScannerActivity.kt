@@ -50,7 +50,7 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
 
-class ScannerActivity : AppCompatActivity(), BarcodeCallback {
+class ScannerActivity : ThemedActivity(), BarcodeCallback {
 
     lateinit var toolbar: MaterialToolbar
     lateinit var capture: CaptureManager

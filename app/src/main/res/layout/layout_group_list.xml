@@ -16,7 +16,7 @@
         android:id="@+id/group_tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color_primary"
+        android:background="?colorPrimary"
         android:elevation="4dp"
         android:visibility="gone"
         app:tabIndicatorColor="@color/white"

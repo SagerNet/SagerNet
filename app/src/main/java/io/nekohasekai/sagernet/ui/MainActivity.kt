@@ -23,7 +23,6 @@ package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
 import android.os.RemoteException
-import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -50,12 +49,8 @@ import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ServiceButton
 import io.nekohasekai.sagernet.widget.StatsBar
 
-class MainActivity : AppCompatActivity(), SagerConnection.Callback,
+class MainActivity : ThemedActivity(), SagerConnection.Callback,
     OnPreferenceDataStoreChangeListener {
-
-    companion object {
-        var stateListener: ((BaseService.State) -> Unit)? = null
-    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var fab: ServiceButton
@@ -67,6 +62,7 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.layout_main)
 
         coordinator = findViewById(R.id.coordinator)
@@ -83,9 +79,11 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
         ViewCompat.setOnApplyWindowInsetsListener(coordinator, ListHolderListener)
 
-        appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_configuration, R.id.nav_group, R.id.nav_settings, R.id.nav_about
-        ), drawer)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_configuration, R.id.nav_group, R.id.nav_settings, R.id.nav_about
+            ), drawer
+        )
 
         navView.setupWithNavController(navController)
 
@@ -113,7 +111,6 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
         this.state = state
-        stateListener?.invoke(state)
     }
 
     fun snackbar(text: CharSequence = ""): Snackbar {
@@ -127,11 +124,13 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
     }
 
     val connection = SagerConnection(true)
-    override fun onServiceConnected(service: IShadowsocksService) = changeState(try {
-        BaseService.State.values()[service.state]
-    } catch (_: RemoteException) {
-        BaseService.State.Idle
-    })
+    override fun onServiceConnected(service: IShadowsocksService) = changeState(
+        try {
+            BaseService.State.values()[service.state]
+        } catch (_: RemoteException) {
+            BaseService.State.Idle
+        }
+    )
 
     override fun onServiceDisconnected() = changeState(BaseService.State.Idle)
     override fun onBinderDied() {
@@ -145,7 +144,8 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
         if (profileId != 0L) this@MainActivity.stats.updateTraffic(
-            stats.txRateProxy, stats.rxRateProxy)
+            stats.txRateProxy, stats.rxRateProxy
+        )
         runOnDefaultDispatcher {
             ProfileManager.postTrafficUpdated(profileId, stats)
         }
@@ -155,21 +155,23 @@ class MainActivity : AppCompatActivity(), SagerConnection.Callback,
         runOnDefaultDispatcher {
             ProfileManager.postUpdate(profileId)
         }
-//        ProfilesFragment.instance?.onTrafficPersisted(profileId)
     }
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
-            Key.SERVICE_MODE -> {
-                connection.disconnect(this)
-                connection.connect(this, this)
+            Key.PROXY_APPS, Key.BYPASS_MODE, Key.INDIVIDUAL -> {
+                if (state.canStop) {
+                    snackbar(getString(R.string.restart)).setAction(R.string.apply) {
+                        SagerNet.reloadService()
+                    }.show()
+                }
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
-        connection.bandwidthTimeout = 500
+        connection.bandwidthTimeout = 1000
     }
 
     override fun onStop() {

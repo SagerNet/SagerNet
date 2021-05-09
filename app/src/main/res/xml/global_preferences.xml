@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory app:title="@string/general_settings">
         <SwitchPreference
             app:defaultValue="true"
@@ -12,6 +13,10 @@
             app:key="directBootAware"
             app:summary="@string/direct_boot_aware_summary"
             app:title="@string/direct_boot_aware" />
+        <io.nekohasekai.sagernet.widget.ColorPickerPreference
+            android:title="@string/theme"
+            app:icon="@drawable/ic_baseline_color_lens_24"
+            app:key="appTheme" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="vpn"
             app:entries="@array/service_modes"

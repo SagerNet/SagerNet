@@ -60,7 +60,7 @@ import kotlinx.parcelize.Parcelize
 class RouteSettingsActivity(
     @LayoutRes
     resId: Int = R.layout.layout_settings_activity,
-) : AppCompatActivity(resId),
+) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
     fun init() {

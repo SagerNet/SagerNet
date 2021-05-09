@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:elevation="6dp"
             android:nextFocusDown="@+id/stats"
+            app:backgroundTint="?colorPrimary"
             app:layout_anchor="@id/stats"
             app:pressedTranslationZ="6dp"
             app:srcCompat="@drawable/ic_service_idle" />
@@ -40,7 +41,7 @@
             android:layout_gravity="bottom"
             android:fitsSystemWindows="true"
             android:nextFocusUp="@+id/fab"
-            app:backgroundTint="@color/background_stat"
+            app:backgroundTint="?colorMaterial300"
             app:contentInsetStart="0dp"
             app:fabAlignmentMode="end"
             app:fabCradleMargin="0dp"

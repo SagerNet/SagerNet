@@ -25,11 +25,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import io.nekohasekai.sagernet.ui.ThemedActivity
 
 /**
  * Activity that's capable of getting EXTRA_OPTIONS input.
  */
-abstract class OptionsCapableActivity : AppCompatActivity() {
+abstract class OptionsCapableActivity : ThemedActivity() {
     protected fun pluginOptions(intent: Intent = this.intent) = try {
         PluginOptions("", intent.getStringExtra(PluginContract.EXTRA_OPTIONS))
     } catch (exc: IllegalArgumentException) {
