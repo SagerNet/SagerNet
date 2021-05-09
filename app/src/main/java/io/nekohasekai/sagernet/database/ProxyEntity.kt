@@ -195,12 +195,12 @@ data class ProxyEntity(
     fun needExternal(): Boolean {
         return when (type) {
             0 -> false
-            1 -> useExternalShadowsocks()
-            2 -> true
-            3 -> false
-            4 -> useXray()
+            1 -> false
+            2 -> useExternalShadowsocks()
+            3 -> true
+            4 -> false
             5 -> useXray()
-            6 -> false
+            6 -> useXray()
             7 -> true
             8 -> false
             else -> error("Undefined type $type")
