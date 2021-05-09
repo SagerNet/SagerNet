@@ -85,10 +85,21 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
     if (url.contains("@")) {
 
-        // ss-android style
-
-        val link = url.replace("ss://", "https://").toHttpUrlOrNull()
+        var link = url.replace("ss://", "https://").toHttpUrlOrNull()
             ?: error("invalid ss-android link $url")
+
+        if (link.username.isBlank()) {
+            // fix justmysocks's shit link
+
+            link = (("https://" + url.substringAfter("ss://").substringBefore("#")
+                .decodeBase64UrlSafe())
+                .toHttpUrlOrNull() ?: error("invalid jms link $url"))
+                .newBuilder()
+                .fragment(url.substringAfter("#"))
+                .build()
+        }
+
+        // ss-android style
 
         if (link.password.isNotBlank()) {
 
