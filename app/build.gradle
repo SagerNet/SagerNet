@@ -6,13 +6,16 @@ plugins {
     id "com.mikepenz.aboutlibraries.plugin"
 }
 
-def verCode = 27
-def verName = "0.1-beta26"
+def metadata = new Properties()
+metadata.load(project.rootProject.file("sager.properties").newDataInputStream())
+
+def verCode = metadata.getProperty("VERSION_CODE").toInteger()
+def verName = metadata.getProperty("VERSION_NAME")
+def packageName = metadata.getProperty("PACKAGE_NAME")
 
 def keystorePwd = null
 def alias = null
 def pwd = null
-def packageName = null
 
 Properties properties
 def base64 = System.getenv("LOCAL_PROPERTIES")
@@ -28,7 +31,6 @@ if (properties != null) {
     keystorePwd = properties.getProperty("KEYSTORE_PASS")
     alias = properties.getProperty("ALIAS_NAME")
     pwd = properties.getProperty("ALIAS_PASS")
-    packageName = properties.getProperty("PACKAGE_NAME")
 }
 
 keystorePwd = keystorePwd ?: System.getenv("KEYSTORE_PASS")
@@ -62,7 +64,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId packageName == null ? "io.nekohasekai.sagernet" : packageName
+        applicationId packageName
         minSdkVersion 21
         targetSdkVersion 30
         versionCode verCode

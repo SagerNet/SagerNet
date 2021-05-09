@@ -38,6 +38,12 @@ jobs:
           path: |
             app/libs/core-release.aar
           key: ${{ hashFiles('core_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -65,6 +71,12 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.16
+      - name: Gradle cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -90,6 +102,12 @@ jobs:
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
+      - name: Gradle cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -112,6 +130,12 @@ jobs:
           path: |
             app/libs/shadowsocksr-release.aar
           key: ${{ hashFiles('shadowsocksr_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
