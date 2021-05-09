@@ -13,6 +13,27 @@ on:
       - dev
 
 jobs:
+  core:
+    name: Native Build (Core)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'core/*' > core_status
+      - name: Core Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/core-release.aar
+          key: ${{ hashFiles('core_status') }}
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run libs core
   v2ray:
     name: Native Build (V2Ray)
     runs-on: ubuntu-latest
@@ -142,19 +163,25 @@ jobs:
     name: Gradle Build
     runs-on: ubuntu-latest
     needs:
+      - core
       - v2ray
       - shadowsocks
       - shadowsocksr
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
       - name: Fetch Status
         run: |
+          git submodule status 'core/*' > core_status
           git submodule status 'shadowsocks/*' > shadowsocks_status
           git submodule status 'shadowsocksr/*' > shadowsocksr_status
           git submodule status v2ray > v2ray_status
+      - name: Core Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/core-release.aar
+          key: ${{ hashFiles('core_status') }}
       - name: V2Ray Cache
         uses: actions/cache@v2
         with:
@@ -178,9 +205,6 @@ jobs:
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle') }}
-      - name: Checkout Library
-        run: |
-          git submodule update --init 'app/*'
       - name: Debug Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties

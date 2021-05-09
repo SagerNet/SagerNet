@@ -1,8 +1,8 @@
 [submodule "app/src/main/jni/badvpn"]
-	path = app/src/main/jni/badvpn
+	path = core/src/main/jni/badvpn
 	url = https://github.com/shadowsocks/badvpn
 [submodule "app/src/main/jni/libancillary"]
-	path = app/src/main/jni/libancillary
+	path = core/src/main/jni/libancillary
 	url = https://github.com/shadowsocks/libancillary
 [submodule "v2ray"]
 	path = v2ray
@@ -35,5 +35,5 @@
 	path = trojan-go-plugin/src/main/go/trojan-go
 	url = https://github.com/p4gefau1t/trojan-go
 [submodule "app/src/main/jni/proxychains-ng"]
-	path = app/src/main/jni/proxychains
+	path = core/src/main/jni/proxychains
 	url = https://github.com/SagerNet/proxychains-ng

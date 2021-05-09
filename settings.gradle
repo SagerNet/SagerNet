@@ -1,6 +1,7 @@
 include ':app'
 rootProject.name = "SagerNet"
 
+include ':core'
 include ':shadowsocks'
 include ':shadowsocksr'
 
