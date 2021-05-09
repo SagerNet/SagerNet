@@ -27,6 +27,7 @@ The application is designed to be used whenever possible.
 
 * Universal base64 format
 * Shadowsocks SIP008
+* Just My Socks' proprietary format
 * Clash
 
 ## FEATURES
