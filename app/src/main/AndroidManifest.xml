@@ -59,7 +59,8 @@
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
