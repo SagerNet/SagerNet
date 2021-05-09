@@ -511,7 +511,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     ) = if (isEnabled) super.getDragDirs(recyclerView, viewHolder) else 0
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val index = viewHolder.adapterPosition
+                        val index = viewHolder.bindingAdapterPosition
                         adapter.remove(index)
                         undoManager.remove(index to (viewHolder as ConfigurationHolder).entity)
                     }
@@ -520,7 +520,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder,
                     ): Boolean {
-                        adapter.move(viewHolder.adapterPosition, target.adapterPosition)
+                        adapter.move(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
                         return true
                     }
 

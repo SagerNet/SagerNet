@@ -21,7 +21,9 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.ShortcutManager
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -56,8 +58,12 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
     lateinit var capture: CaptureManager
     lateinit var barcodeScanner: DecoratedBarcodeView
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         if (Build.VERSION.SDK_INT >= 25) getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
         setContentView(R.layout.layout_scanner)
         ListHolderListener.setup(this)

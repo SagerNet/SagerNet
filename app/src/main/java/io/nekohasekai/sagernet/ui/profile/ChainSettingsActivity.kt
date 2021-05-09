@@ -98,8 +98,10 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
         configurationList.adapter = configurationAdapter
 
         ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.START) {
+            ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.START
+            ) {
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -120,13 +122,16 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                 target: RecyclerView.ViewHolder,
             ): Boolean {
                 return if (target !is ProfileHolder) false else {
-                    configurationAdapter.move(viewHolder.adapterPosition, target.adapterPosition)
+                    configurationAdapter.move(
+                        viewHolder.bindingAdapterPosition,
+                        target.bindingAdapterPosition
+                    )
                     true
                 }
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                configurationAdapter.remove(viewHolder.adapterPosition)
+                configurationAdapter.remove(viewHolder.bindingAdapterPosition)
             }
 
         }).attachToRecyclerView(configurationList)
@@ -232,13 +237,18 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
 
 
     val selectProfileForAdd = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
+        ActivityResultContracts.StartActivityForResult()
+    ) { (resultCode, data) ->
         if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
             DataStore.dirty = true
 
             val profile =
-                ProfileManager.getProfile(data!!.getLongExtra(ProfileSelectActivity.EXTRA_PROFILE_ID,
-                    0))!!
+                ProfileManager.getProfile(
+                    data!!.getLongExtra(
+                        ProfileSelectActivity.EXTRA_PROFILE_ID,
+                        0
+                    )
+                )!!
 
             if (!testProfileAllowed(profile)) {
                 onMainDispatcher {
@@ -260,8 +270,12 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
     inner class AddHolder(val view: View) : RecyclerView.ViewHolder(view) {
         fun bind() {
             view.setOnClickListener {
-                selectProfileForAdd.launch(Intent(this@ChainSettingsActivity,
-                    ProfileSelectActivity::class.java))
+                selectProfileForAdd.launch(
+                    Intent(
+                        this@ChainSettingsActivity,
+                        ProfileSelectActivity::class.java
+                    )
+                )
             }
         }
     }
@@ -298,9 +312,11 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
             val showTraffic = rx + tx != 0L
             trafficText.isVisible = showTraffic
             if (showTraffic) {
-                trafficText.text = view.context.getString(R.string.traffic,
+                trafficText.text = view.context.getString(
+                    R.string.traffic,
                     Formatter.formatFileSize(view.context, tx),
-                    Formatter.formatFileSize(view.context, rx))
+                    Formatter.formatFileSize(view.context, rx)
+                )
             }
 
             editButton.isVisible = false

@@ -45,6 +45,7 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.error.YAMLException
 import java.io.IOException
 import java.sql.SQLException
 import java.util.*
@@ -347,136 +348,140 @@ object ProfileManager {
 
         if (text.contains("proxies:")) {
 
-            // clash
-            for (proxy in (Yaml().loadAs(
-                text,
-                Map::class.java
-            )["proxies"] as? (List<Map<String, Any?>>)
-                ?: error(app.getString(R.string.no_proxies_found_in_file)))) {
+            try {
 
-                when (proxy["type"] as String) {
-                    "socks5" -> {
-                        proxies.add(SOCKSBean().apply {
-                            serverAddress = proxy["server"] as String
-                            serverPort = proxy["port"].toString().toInt()
-                            username = proxy["username"] as String?
-                            password = proxy["password"] as String?
-                            tls = proxy["tls"]?.toString() == "true"
-                            sni = proxy["sni"] as String?
-//                            udp = proxy["udp"]?.toString() == "true"
-                            name = proxy["name"] as String?
-                        })
-                    }
-                    "http" -> {
-                        proxies.add(
-                            HttpBean().apply {
+                // clash
+                for (proxy in (Yaml().loadAs(
+                    text,
+                    Map::class.java
+                )["proxies"] as? (List<Map<String, Any?>>)
+                    ?: error(app.getString(R.string.no_proxies_found_in_file)))) {
+
+                    when (proxy["type"] as String) {
+                        "socks5" -> {
+                            proxies.add(SOCKSBean().apply {
                                 serverAddress = proxy["server"] as String
                                 serverPort = proxy["port"].toString().toInt()
                                 username = proxy["username"] as String?
                                 password = proxy["password"] as String?
                                 tls = proxy["tls"]?.toString() == "true"
                                 sni = proxy["sni"] as String?
+//                            udp = proxy["udp"]?.toString() == "true"
                                 name = proxy["name"] as String?
-                            }
-                        )
-                    }
-                    "ss" -> {
-                        var pluginStr = ""
-                        if (proxy.contains("plugin")) {
-                            val opts = PluginOptions()
-                            opts.id = proxy["plugin"] as String
-                            opts.putAll(proxy["plugin-opts"] as Map<String, String?>)
-                            pluginStr = opts.toString(false)
+                            })
                         }
-                        proxies.add(ShadowsocksBean().apply {
-                            serverAddress = proxy["server"] as String
-                            serverPort = proxy["port"].toString().toInt()
-                            password = proxy["password"] as String
-                            method = proxy["cipher"] as String
-                            plugin = pluginStr
-                            name = proxy["name"] as String?
+                        "http" -> {
+                            proxies.add(
+                                HttpBean().apply {
+                                    serverAddress = proxy["server"] as String
+                                    serverPort = proxy["port"].toString().toInt()
+                                    username = proxy["username"] as String?
+                                    password = proxy["password"] as String?
+                                    tls = proxy["tls"]?.toString() == "true"
+                                    sni = proxy["sni"] as String?
+                                    name = proxy["name"] as String?
+                                }
+                            )
+                        }
+                        "ss" -> {
+                            var pluginStr = ""
+                            if (proxy.contains("plugin")) {
+                                val opts = PluginOptions()
+                                opts.id = proxy["plugin"] as String
+                                opts.putAll(proxy["plugin-opts"] as Map<String, String?>)
+                                pluginStr = opts.toString(false)
+                            }
+                            proxies.add(ShadowsocksBean().apply {
+                                serverAddress = proxy["server"] as String
+                                serverPort = proxy["port"].toString().toInt()
+                                password = proxy["password"] as String
+                                method = proxy["cipher"] as String
+                                plugin = pluginStr
+                                name = proxy["name"] as String?
 
-                            fixInvalidParams()
-                        })
-                    }
-                    "vmess" -> {
-                        val bean = VMessBean()
-                        for (opt in proxy) {
-                            when (opt.key) {
-                                "name" -> bean.name = opt.value as String
-                                "server" -> bean.serverAddress = opt.value as String
-                                "port" -> bean.serverPort = opt.value.toString().toInt()
-                                "uuid" -> bean.uuid = opt.value as String
-                                "alterId" -> bean.alterId = opt.value.toString().toInt()
-                                "cipher" -> bean.security = opt.value as String
-                                "network" -> bean.type = opt.value as String
-                                "tls" -> bean.security =
-                                    if (opt.value?.toString() == "true") "tls" else ""
-                                "ws-path" -> bean.path = opt.value as String
-                                "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
-                                    when (wsOpt.key.lowercase()) {
-                                        "host" -> bean.host = wsOpt.value as String
+                                fixInvalidParams()
+                            })
+                        }
+                        "vmess" -> {
+                            val bean = VMessBean()
+                            for (opt in proxy) {
+                                when (opt.key) {
+                                    "name" -> bean.name = opt.value as String
+                                    "server" -> bean.serverAddress = opt.value as String
+                                    "port" -> bean.serverPort = opt.value.toString().toInt()
+                                    "uuid" -> bean.uuid = opt.value as String
+                                    "alterId" -> bean.alterId = opt.value.toString().toInt()
+                                    "cipher" -> bean.security = opt.value as String
+                                    "network" -> bean.type = opt.value as String
+                                    "tls" -> bean.security =
+                                        if (opt.value?.toString() == "true") "tls" else ""
+                                    "ws-path" -> bean.path = opt.value as String
+                                    "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
+                                        when (wsOpt.key.lowercase()) {
+                                            "host" -> bean.host = wsOpt.value as String
+                                        }
                                     }
-                                }
-                                "servername" -> bean.host = opt.value as String
-                                "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
-                                    when (h2Opt.key.lowercase()) {
-                                        "host" -> bean.host =
-                                            (h2Opt.value as List<String>).first()
-                                        "path" -> bean.path = h2Opt.value as String
+                                    "servername" -> bean.host = opt.value as String
+                                    "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
+                                        when (h2Opt.key.lowercase()) {
+                                            "host" -> bean.host =
+                                                (h2Opt.value as List<String>).first()
+                                            "path" -> bean.path = h2Opt.value as String
+                                        }
                                     }
-                                }
-                                "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
-                                    when (httpOpt.key.lowercase()) {
-                                        "path" -> bean.path =
-                                            (httpOpt.value as List<String>).first()
+                                    "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
+                                        when (httpOpt.key.lowercase()) {
+                                            "path" -> bean.path =
+                                                (httpOpt.value as List<String>).first()
+                                        }
                                     }
-                                }
-                                "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
-                                    when (grpcOpt.key.lowercase()) {
-                                        "grpc-service-name" -> bean.path = grpcOpt.value as String
+                                    "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
+                                        when (grpcOpt.key.lowercase()) {
+                                            "grpc-service-name" -> bean.path =
+                                                grpcOpt.value as String
+                                        }
                                     }
                                 }
                             }
+                            proxies.add(bean)
                         }
-                        proxies.add(bean)
-                    }
-                    "trojan" -> {
-                        val bean = TrojanBean()
-                        for (opt in proxy) {
-                            when (opt.key) {
-                                "name" -> bean.name = opt.value as String?
-                                "server" -> bean.serverAddress = opt.value as String
-                                "port" -> bean.serverPort = opt.value.toString().toInt()
-                                "password" -> bean.password = opt.value as String
-                                "sni" -> bean.sni = opt.value as String?
+                        "trojan" -> {
+                            val bean = TrojanBean()
+                            for (opt in proxy) {
+                                when (opt.key) {
+                                    "name" -> bean.name = opt.value as String?
+                                    "server" -> bean.serverAddress = opt.value as String
+                                    "port" -> bean.serverPort = opt.value.toString().toInt()
+                                    "password" -> bean.password = opt.value as String
+                                    "sni" -> bean.sni = opt.value as String?
+                                }
                             }
+                            proxies.add(bean)
                         }
-                        proxies.add(bean)
-                    }
 
-                    "ssr" -> {
-                        val entity = ShadowsocksRBean()
-                        for (opt in proxy) {
-                            when (opt.key) {
-                                "name" -> entity.name = opt.value as String
-                                "server" -> entity.serverAddress = opt.value as String
-                                "port" -> entity.serverPort = opt.value.toString().toInt()
-                                "cipher" -> entity.method = opt.value as String
-                                "password" -> entity.password = opt.value as String
-                                "obfs" -> entity.obfs = opt.value as String
-                                "protocol" -> entity.protocol = opt.value as String
-                                "obfs-param" -> entity.obfsParam = opt.value as String
-                                "protocol-param" -> entity.protocolParam =
-                                    opt.value as String
+                        "ssr" -> {
+                            val entity = ShadowsocksRBean()
+                            for (opt in proxy) {
+                                when (opt.key) {
+                                    "name" -> entity.name = opt.value as String
+                                    "server" -> entity.serverAddress = opt.value as String
+                                    "port" -> entity.serverPort = opt.value.toString().toInt()
+                                    "cipher" -> entity.method = opt.value as String
+                                    "password" -> entity.password = opt.value as String
+                                    "obfs" -> entity.obfs = opt.value as String
+                                    "protocol" -> entity.protocol = opt.value as String
+                                    "obfs-param" -> entity.obfsParam = opt.value as String
+                                    "protocol-param" -> entity.protocolParam =
+                                        opt.value as String
+                                }
                             }
+                            proxies.add(entity)
                         }
-                        proxies.add(entity)
                     }
                 }
-            }
-            proxies.forEach { it.initDefaultValues() }
-            return 1 to proxies
+                proxies.forEach { it.initDefaultValues() }
+                return 1 to proxies
+            } catch (ignored: YAMLException) {}
         }
 
         try {

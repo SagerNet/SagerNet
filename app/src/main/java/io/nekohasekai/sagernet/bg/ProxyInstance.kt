@@ -102,25 +102,25 @@ class ProxyInstance(val profile: ProxyEntity) {
                 when {
                     profile.useExternalShadowsocks() -> {
                         bean as ShadowsocksBean
-                        pluginConfigs[index] = bean.buildShadowsocksConfig(port).also {
+                        pluginConfigs[port] = bean.buildShadowsocksConfig(port).also {
                             Logs.d(it)
                         }
                     }
                     bean is ShadowsocksRBean -> {
-                        pluginConfigs[index] = profile.requireSSR().buildShadowsocksRConfig().also {
+                        pluginConfigs[port] = profile.requireSSR().buildShadowsocksRConfig().also {
                             Logs.d(it)
                         }
                     }
                     profile.useXray() -> {
                         initPlugin("xtls-plugin")
-                        pluginConfigs[index] =
+                        pluginConfigs[port] =
                             gson.toJson(buildXrayConfig(profile, port, needChain, index)).also {
                                 Logs.d(it)
                             }
                     }
                     bean is TrojanGoBean -> {
                         initPlugin("trojan-go-plugin")
-                        pluginConfigs[index] =
+                        pluginConfigs[port] =
                             bean.buildTrojanGoConfig(port, needChain, index).also {
                                 Logs.d(it)
                             }
@@ -139,7 +139,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val bean = profile.requireBean()
                 val needChain = index != chain.size - 1
-                val config = pluginConfigs[index] ?: return@forEachIndexed
+                val config = pluginConfigs[port] ?: return@forEachIndexed
 
                 when {
                     profile.useExternalShadowsocks() -> {
@@ -253,11 +253,10 @@ class ProxyInstance(val profile: ProxyEntity) {
                             if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
                                 SagerNet.application else SagerNet.deviceStorage
 
-                        val configFile =
-                            File(
-                                context.noBackupFilesDir,
-                                "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
-                            )
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
+                        )
                         configFile.parentFile.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
