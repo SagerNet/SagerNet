@@ -299,8 +299,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 try {
                     (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
                         .bufferedWriter().use {
-                        it.write(links)
-                    }
+                            it.write(links)
+                        }
                     onMainDispatcher {
                         snackbar(getString(R.string.copy_toast_msg)).show()
                     }

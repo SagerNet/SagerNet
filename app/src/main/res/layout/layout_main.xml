@@ -15,13 +15,11 @@
         android:clipChildren="false"
         android:fitsSystemWindows="true">
 
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/fragment_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/mobile_navigation" />
+            android:fitsSystemWindows="true"/>
 
         <io.nekohasekai.sagernet.widget.ServiceButton
             android:id="@+id/fab"

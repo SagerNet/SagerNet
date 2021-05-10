@@ -23,14 +23,10 @@ package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
 import android.os.RemoteException
+import android.view.MenuItem
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceDataStore
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -50,15 +46,14 @@ import io.nekohasekai.sagernet.widget.ServiceButton
 import io.nekohasekai.sagernet.widget.StatsBar
 
 class MainActivity : ThemedActivity(), SagerConnection.Callback,
-    OnPreferenceDataStoreChangeListener {
+    OnPreferenceDataStoreChangeListener,
+    NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var fab: ServiceButton
     lateinit var stats: StatsBar
     lateinit var drawer: DrawerLayout
     lateinit var coordinator: CoordinatorLayout
-    lateinit var navView: NavigationView
-    lateinit var navController: NavController
+    lateinit var navigation: NavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,21 +66,18 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         stats = findViewById(R.id.stats)
         drawer = findViewById(R.id.drawer_layout)
 
-        navView = findViewById(R.id.nav_view)
-        navController = findNavController(R.id.nav_host_fragment)
+        navigation = findViewById(R.id.nav_view)
+        navigation.setNavigationItemSelectedListener(this)
+
+        if (savedInstanceState == null) {
+            navigation.menu.findItem(R.id.nav_configuration).isChecked = true
+            displayFragment(ConfigurationFragment())
+        }
 
         fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
         stats.setOnClickListener { if (state == BaseService.State.Connected) stats.testConnection() }
 
         ViewCompat.setOnApplyWindowInsetsListener(coordinator, ListHolderListener)
-
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_configuration, R.id.nav_group, R.id.nav_settings, R.id.nav_about
-            ), drawer
-        )
-
-        navView.setupWithNavController(navController)
 
         /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
              view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -99,6 +91,41 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
     }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        if (item.isChecked) drawer.closeDrawers() else {
+            when (item.itemId) {
+                R.id.nav_configuration -> {
+                    displayFragment(ConfigurationFragment())
+                    // request stats update
+                    connection.bandwidthTimeout = connection.bandwidthTimeout
+                }
+                R.id.nav_group -> {
+                    displayFragment(GroupFragment())
+                }
+                R.id.nav_route -> {
+                    displayFragment(RouteFragment())
+                }
+                R.id.nav_settings -> {
+                    displayFragment(SettingsFragment())
+                }
+                R.id.nav_about -> {
+                    displayFragment(AboutFragment())
+                }
+                else -> return false
+            }
+            item.isChecked = true
+        }
+        return true
+    }
+
+    fun displayFragment(fragment: ToolbarFragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_holder, fragment)
+            .commitAllowingStateLoss()
+        drawer.closeDrawers()
+    }
+
 
     var state = BaseService.State.Idle
 
@@ -183,11 +210,6 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         super.onDestroy()
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
 }

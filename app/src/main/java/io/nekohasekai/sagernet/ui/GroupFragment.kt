@@ -778,8 +778,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
                                 if (needGo) {
 
-                                    activity.navController.navigateUp();
-                                    activity.navController.navigate(R.id.nav_configuration)
+                                    activity.displayFragment(ConfigurationFragment())
 
                                 } else {
                                     subscriptionUpdateProgress.isVisible = false
