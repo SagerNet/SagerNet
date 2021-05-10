@@ -7,20 +7,17 @@
     <string name="telegram">Telegram update channel</string>
     <string name="oss_licenses">Open source licenses</string>
 
-    <string name="misc">Misc</string>
     <string name="app_version">Version</string>
     <string name="version_x">Version (%s)</string>
     <string name="logcat">Export debug information</string>
     <string name="logcat_summary">Such useful very wow</string>
 
-    <string name="action_settings">Settings</string>
     <string name="menu_configuration">Configuration</string>
     <string name="menu_group">Group</string>
     <string name="menu_about">About</string>
     <string name="theme">Theme</string>
 
     <string name="group_default">Default</string>
-    <string name="profile_address">127.0.0.1:1080</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">Toggle</string>
@@ -52,12 +49,9 @@
     <string name="service_mode">Service mode</string>
     <string name="service_mode_proxy">Proxy only</string>
     <string name="service_mode_vpn">VPN</string>
-    <string name="service_mode_transproxy">Transproxy</string>
-    <string name="share_over_lan">Share over LAN</string>
     <string name="port_proxy">SOCKS5 proxy port</string>
     <string name="port_http">HTTP proxy port</string>
     <string name="port_local_dns">Local DNS port</string>
-    <string name="port_transproxy">Transproxy port</string>
     <string name="allow_access">Allow connections from the LAN</string>
     <string name="allow_access_sum">Bind inbound servers to 0.0.0.0</string>
     <string name="cag_dns">DNS Settings</string>
@@ -84,9 +78,7 @@
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="speed_detail">Proxy： %1$s↑ %2$s↓\nDirect： %3$s↑ %4$s↓</string>
-    <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s\nReceived: \t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
-    <string name="connection_test_pending">Check Connectivity</string>
     <string name="connection_test_testing">Testing…</string>
     <string name="connection_test_available">Success: HTTPS handshake took %dms</string>
     <string name="connection_test_error">Fail to detect internet connection: %s</string>
@@ -100,8 +92,6 @@
     <string name="username_opt">Username (Optional)</string>
     <string name="password_opt">Password (Optional)</string>
     <string name="password">Password</string>
-    <string name="server_udp">UDP Route</string>
-    <string name="udp_summary">Redirect UDP traffic to remote</string>
     <string name="enc_method">Encrypt Method</string>
     <string name="protocol">Protocol</string>
     <string name="protocol_param">Protocol Param</string>
@@ -149,7 +139,6 @@
     <string name="empty_route_notice">Set some rules before saving</string>
     <string name="route_bypass_domain">Domain rule for %s</string>
     <string name="route_bypass_ip">IP rule for %s</string>
-    <string name="other">Other</string>
     <string name="route_reset">Reset</string>
 
     <string name="route_opt_bypass_lan">Bypass LAN</string>
@@ -183,10 +172,6 @@
     <string name="auto_connect_summary">Enable SagerNet on startup/app update if it was running before</string>
     <string name="direct_boot_aware">Allow Toggling in Lock Screen</string>
     <string name="direct_boot_aware_summary">Your selected profile information will be less protected</string>
-    <plurals name="hosts_summary">
-        <item quantity="one">1 hostname configured</item>
-        <item quantity="other">%d hostnames configured</item>
-    </plurals>
 
     <!-- notification category -->
     <string name="service_vpn">VPN Service</string>
@@ -200,7 +185,6 @@
     <string name="vpn_error">%s</string>
     <string name="vpn_permission_denied">Permission denied to create a VPN service</string>
     <string name="reboot_required">Failed to start VPN service. You might need to reboot your device.</string>
-    <string name="profile_invalid_input">No valid profile data found.</string>
 
     <!-- alert category -->
     <string name="profile_empty">Please select a profile</string>
@@ -208,13 +192,11 @@
     <string name="clipboard_empty">Clipboard is empty</string>
 
     <!-- menu category -->
-    <string name="profiles">Profiles</string>
     <string name="settings">Settings</string>
     <string name="edit">Edit</string>
     <string name="share">Share</string>
     <string name="add_profile">Add Profile</string>
     <string name="select_profile">Select Profile</string>
-    <string name="action_profile">Profile</string>
     <string name="action_socks" translatable="false">SOCKS</string>
     <string name="action_http" translatable="false">HTTP</string>
     <string name="action_shadowsocks" translatable="false">Shadowsocks</string>
@@ -227,19 +209,16 @@
     <string name="chain_settings">Chain Settings</string>
     <string name="circular_reference">Circular reference</string>
     <string name="circular_reference_sum">The route cannot contain itself.</string>
-    <string name="profile_file">Profile File</string>
     <string name="clear_profiles">Clear</string>
 
     <string name="action_create_group">Empty group</string>
     <string name="action_from_link">From subscription</string>
 
     <string name="action_scan_china_apps">Scan China apps</string>
-    <string name="action_export_more">Export</string>
     <string name="action_export_file">Export to file</string>
     <string name="action_export">Export to Clipboard</string>
     <string name="action_import">Import from Clipboard</string>
     <string name="action_import_file">Import from file</string>
-    <string name="action_replace_file">Replace from file</string>
     <string name="action_export_msg">Successfully export!</string>
     <string name="action_export_err">Failed to export.</string>
     <string name="action_import_msg">Successfully import!</string>
@@ -247,18 +226,14 @@
     <string name="file_manager_missing">Please install a file manager like MiXplorer</string>
 
     <!-- share -->
-    <string name="format_standard">Standard</string>
-    <string name="format_v2rayn">V2rayN</string>
 
     <!-- profile -->
     <string name="profile_config">Profile config</string>
     <string name="delete">Remove</string>
     <string name="delete_confirm_prompt">Are you sure you want to remove this profile?</string>
     <string name="share_qr_nfc">QR code</string>
-    <string name="add_profile_dialog">Add this Profile?</string>
     <string name="add_profile_methods_scan_qr_code">Scan QR code</string>
     <string name="add_profile_methods_manual_settings">Manual Settings</string>
-    <string name="add_profile_scanner_permission_required">Camera permission is required for scanning QR code.</string>
     <plurals name="removed">
         <item quantity="one">Removed</item>
         <item quantity="other">%d items removed</item>
@@ -274,11 +249,6 @@
     <string name="deprecated">Deprecated</string>
 
     <!-- tasker -->
-    <string name="toggle_service_state">Start the service</string>
-    <string name="start_service_default">Connect to the current server</string>
-    <string name="start_service">Connect to %s</string>
-    <string name="stop_service">Switch to %s</string>
-    <string name="profile_default">Use the current profile</string>
 
     <!-- status -->
     <string name="connecting">Connecting…</string>
@@ -304,7 +274,6 @@
 
     <string name="proxy_cat">Server Settings</string>
     <string name="ss_cat">Shadowsocks Settings</string>
-    <string name="feature_cat">Feature Settings</string>
     <string name="unsaved_changes_prompt">Changes not saved. Do you want to save?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

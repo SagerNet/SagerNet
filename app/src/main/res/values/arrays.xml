@@ -213,16 +213,6 @@
         -->
     </string-array>
 
-    <string-array name="route_entry">
-        <item>@string/route_proxy</item>
-        <item>@string/route_bypass</item>
-        <item>@string/route_block</item>
-    </string-array>
-    <string-array name="route_value" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
     <string-array name="route_protocol_entry">
         <item>TCP and UDP</item>
         <item>TCP</item>

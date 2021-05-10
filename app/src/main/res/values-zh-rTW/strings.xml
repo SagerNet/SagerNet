@@ -7,18 +7,15 @@
     <string name="telegram">Telegram 更新頻道</string>
     <string name="oss_licenses">開放原始碼授權協定</string>
 
-    <string name="misc">雜項</string>
     <string name="app_version">版本</string>
     <string name="logcat">匯出 debug 所需資訊</string>
     <string name="logcat_summary">這種非常有用啊(^O^)／</string>
 
-    <string name="action_settings">設定</string>
     <string name="menu_configuration">設定檔</string>
     <string name="menu_group">群組</string>
     <string name="menu_about">關於</string>
 
     <string name="group_default">預設</string>
-    <string name="profile_address">127.0.0.1:1080</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">切換</string>
@@ -49,12 +46,9 @@
     <string name="service_mode">執行模式</string>
     <string name="service_mode_proxy">代理</string>
     <string name="service_mode_vpn">VPN</string>
-    <string name="service_mode_transproxy">透明代理</string>
-    <string name="share_over_lan">LAN 共用</string>
     <string name="port_proxy">SOCKS5 代理連接埠</string>
     <string name="port_http">HTTP 代理連接埠</string>
     <string name="port_local_dns">本地 DNS 連接埠</string>
-    <string name="port_transproxy">透明代理連接埠</string>
     <string name="allow_access">允許來自區域網路的連線</string>
     <string name="allow_access_sum">繫結傳入伺服器至 0.0.0.0</string>
     <string name="cag_dns">DNS 設定</string>
@@ -75,9 +69,7 @@
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="speed_detail">代理： %1$s↑ %2$s↓\n直連： %3$s↑ %4$s↓</string>
-    <string name="stat_summary">送出：\t\t\t\t\t%3$s\t↑\t%1$s\n接收：\t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
-    <string name="connection_test_pending">檢查連線能力</string>
     <string name="connection_test_testing">測試中……</string>
     <string name="connection_test_available">成功：HTTPS 握手花費 %dms</string>
     <string name="connection_test_error">檢查網路連線失敗：%s</string>
@@ -91,8 +83,6 @@
     <string name="username_opt">使用者名稱（可選）</string>
     <string name="password_opt">密碼（可選）</string>
     <string name="password">密碼</string>
-    <string name="server_udp">UDP 路由</string>
-    <string name="udp_summary">向遠端重新導向 UDP 流量。</string>
     <string name="enc_method">加密方式</string>
     <string name="protocol">設定</string>
     <string name="protocol_param">協定參數</string>
@@ -131,10 +121,6 @@
     <string name="auto_connect_summary">如果 SagerNet 在開機或應用更新前正在運行，啟用 SagerNet。</string>
     <string name="direct_boot_aware">允許與解鎖前啓動</string>
     <string name="direct_boot_aware_summary">您選取的設定檔將受到較少的保護。</string>
-    <plurals name="hosts_summary">
-        <item quantity="one">1 個主機名稱已被設定</item>
-        <item quantity="other">%d 個主機名稱已被設定</item>
-    </plurals>
 
     <!-- notification category -->
     <string name="service_vpn">VPN 服務</string>
@@ -148,7 +134,6 @@
     <string name="vpn_error">%s</string>
     <string name="vpn_permission_denied">建立 VPN 服務的權限被拒。</string>
     <string name="reboot_required">無法啟動 VPN 服務，您可能需要重新啟動您的裝置。</string>
-    <string name="profile_invalid_input">找不到有效的設定檔資料。</string>
 
     <!-- alert category -->
     <string name="profile_empty">請選擇一個設定檔</string>
@@ -156,18 +141,15 @@
     <string name="clipboard_empty">剪貼簿為空</string>
 
     <!-- menu category -->
-    <string name="profiles">設定檔</string>
     <string name="settings">設定</string>
     <string name="edit">編輯</string>
     <string name="share">分享</string>
     <string name="add_profile">新增設定檔</string>
-    <string name="action_profile">設定檔</string>
 
     <string name="action_create_group">空白群組</string>
     <string name="action_from_link">來自訂閱</string>
 
     <string name="action_scan_china_apps">掃描中國應用程式</string>
-    <string name="action_export_more">匯出</string>
     <string name="action_export_file">匯出至檔案</string>
     <string name="action_export">匯出至剪貼簿</string>
     <string name="action_import">自剪貼簿匯入</string>
@@ -178,18 +160,14 @@
     <string name="action_import_err">匯入失敗。</string>
 
     <!-- share -->
-    <string name="format_standard">標準</string>
-    <string name="format_v2rayn">V2rayN</string>
 
     <!-- profile -->
     <string name="profile_config">設定檔設定</string>
     <string name="delete">刪除</string>
     <string name="delete_confirm_prompt">您確定要刪除此設定檔嗎？</string>
     <string name="share_qr_nfc">QR 碼</string>
-    <string name="add_profile_dialog">新增此設定檔？</string>
     <string name="add_profile_methods_scan_qr_code">掃描 QR 碼</string>
     <string name="add_profile_methods_manual_settings">手動設定</string>
-    <string name="add_profile_scanner_permission_required">需要相機權限以掃描 QR 碼。</string>
     <plurals name="removed">
         <item quantity="one">已刪除</item>
         <item quantity="other">%d 個項目已被刪除</item>
@@ -201,11 +179,6 @@
     <string name="undo">復原</string>
 
     <!-- tasker -->
-    <string name="toggle_service_state">啟動服務</string>
-    <string name="start_service_default">連線至當前伺服器</string>
-    <string name="start_service">連線至 %s</string>
-    <string name="stop_service">切換至 %s</string>
-    <string name="profile_default">使用當前設定檔</string>
 
     <!-- status -->
     <string name="connecting">連線中……</string>
@@ -227,7 +200,6 @@
     <string name="plugin_auto_connect_unlock_only">此外掛程式可能不支援自動連線</string>
 
     <string name="proxy_cat">"伺服器設定"</string>
-    <string name="feature_cat">"功能設定"</string>
     <string name="unsaved_changes_prompt">"要儲存變更嗎？"</string>
     <string name="yes">"是"</string>
     <string name="no">"否"</string>

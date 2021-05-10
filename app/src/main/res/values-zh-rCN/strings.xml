@@ -7,18 +7,15 @@
     <string name="telegram">Telegram 更新频道</string>
     <string name="oss_licenses">开放源代码协议</string>
 
-    <string name="misc">其他</string>
     <string name="app_version">版本</string>
     <string name="logcat">导出调试信息</string>
     <string name="logcat_summary">这种非常有用哇</string>
 
-    <string name="action_settings">设置</string>
     <string name="menu_configuration">配置</string>
     <string name="menu_group">组</string>
     <string name="menu_about">关于</string>
 
     <string name="group_default">默认</string>
-    <string name="profile_address">127.0.0.1:1080</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">切换</string>
@@ -49,12 +46,9 @@
     <string name="service_mode">运行模式</string>
     <string name="service_mode_proxy">仅代理</string>
     <string name="service_mode_vpn">VPN</string>
-    <string name="service_mode_transproxy">透明代理</string>
-    <string name="share_over_lan">LAN 共用</string>
     <string name="port_proxy">SOCKS5 代理端口</string>
     <string name="port_http">HTTP 代理端口</string>
     <string name="port_local_dns">本地 DNS 端口</string>
-    <string name="port_transproxy">透明代理端口</string>
     <string name="allow_access">允许来自局域网的连接</string>
     <string name="allow_access_sum">将入站绑定至 0.0.0.0</string>
     <string name="cag_dns">DNS 设置</string>
@@ -75,9 +69,7 @@
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="speed_detail">代理： %1$s↑ %2$s↓\n直连： %3$s↑ %4$s↓</string>
-    <string name="stat_summary">上传: \t\t\t\t\t%3$s\t↑\t%1$s\n下载: \t%4$s\t↓\t%2$s</string>
     <string name="speed">%s/s</string>
-    <string name="connection_test_pending">测试连接</string>
     <string name="connection_test_testing">测试中…</string>
     <string name="connection_test_available">连接成功: HTTPS 握手耗时 %dms</string>
     <string name="connection_test_error">连接失败: %s</string>
@@ -91,8 +83,6 @@
     <string name="username_opt">用户名 (可选)</string>
     <string name="password_opt">密码 (可选)</string>
     <string name="password">密码</string>
-    <string name="server_udp">UDP</string>
-    <string name="udp_summary">路由 UDP 流量到服务器</string>
     <string name="enc_method">加密方式</string>
     <string name="protocol">协议</string>
     <string name="protocol_param">协议参数</string>
@@ -132,10 +122,6 @@
     <string name="auto_connect_summary">SagerNet 将在手机启动或更新完成后自动重新连接</string>
     <string name="direct_boot_aware">允许在解锁前启动</string>
     <string name="direct_boot_aware_summary">您正在使用的服务器可能会受到更少的保护</string>
-    <plurals name="hosts_summary">
-        <item quantity="one">1 个主机已设置</item>
-        <item quantity="other"> %d 个主机已设置 </item>
-    </plurals>
 
     <!-- notification category -->
     <string name="service_vpn">VPN 服务</string>
@@ -149,7 +135,6 @@
     <string name="vpn_error">%s</string>
     <string name="vpn_permission_denied">VPN 服务权限请求被拒绝</string>
     <string name="reboot_required">无法启动 VPN 服务 , 您可能需要重启手机</string>
-    <string name="profile_invalid_input">找不到有效的服务器配置</string>
 
     <!-- alert category -->
     <string name="profile_empty">请选择一个服务器配置</string>
@@ -157,12 +142,10 @@
     <string name="clipboard_empty">剪切板没有内容</string>
 
     <!-- menu category -->
-    <string name="profiles">服务器配置</string>
     <string name="settings">设置</string>
     <string name="edit">编辑</string>
     <string name="share">分享</string>
     <string name="add_profile">添加服务器配置</string>
-    <string name="action_profile">服务器配置</string>
     <string name="action_socks">SOCKS</string>
     <string name="action_http">HTTP</string>
     <string name="action_shadowsocks">Shadowsocks</string>
@@ -175,30 +158,24 @@
     <string name="action_from_link">添加订阅</string>
 
     <string name="action_scan_china_apps">扫描中国应用</string>
-    <string name="action_export_more">导出</string>
     <string name="action_export_file">导出到文件</string>
     <string name="action_export">导出到剪切板</string>
     <string name="action_import">从剪切板导入</string>
     <string name="action_import_file">从文件中导入</string>
-    <string name="action_replace_file">替换为文件内服务器配置</string>
     <string name="action_export_msg">导出成功!</string>
     <string name="action_export_err">导出失败</string>
     <string name="action_import_msg">导入成功!</string>
     <string name="action_import_err">导入失败</string>
 
     <!-- share -->
-    <string name="format_standard">标准</string>
-    <string name="format_v2rayn">V2rayN</string>
 
     <!-- profile -->
     <string name="profile_config">服务器配置</string>
     <string name="delete">删除</string>
     <string name="delete_confirm_prompt">您确定要删除这个服务器配置吗?</string>
     <string name="share_qr_nfc">二维码</string>
-    <string name="add_profile_dialog">您确定要添加这个服务器配置吗?</string>
     <string name="add_profile_methods_scan_qr_code">扫描二维码</string>
     <string name="add_profile_methods_manual_settings">手动输入</string>
-    <string name="add_profile_scanner_permission_required">扫描二维码需要相机权限</string>
     <plurals name="removed">
         <item quantity="one">已删除</item>
         <item quantity="other">%d 项已删除</item>
@@ -210,11 +187,6 @@
     <string name="undo">还原</string>
 
     <!-- tasker -->
-    <string name="toggle_service_state">启动服务</string>
-    <string name="start_service_default">连接到当前选择的服务器</string>
-    <string name="start_service">连接到 %s</string>
-    <string name="stop_service">切换到 %s</string>
-    <string name="profile_default">连接当前服务器</string>
 
     <!-- status -->
     <string name="connecting">正在连接…</string>
@@ -236,7 +208,6 @@
     <string name="plugin_auto_connect_unlock_only">此插件可能不支持自动连接</string>
 
     <string name="proxy_cat">"服务器设置"</string>
-    <string name="feature_cat">"功能设置"</string>
     <string name="unsaved_changes_prompt">"是否要保存修改？"</string>
     <string name="yes">是</string>
     <string name="no">否</string>
@@ -298,10 +269,8 @@
     <string name="route_warn">在添加自定义规则之前，请确保您已经阅读了文档，否则您将可能无法连接到互联网。</string>
     <string name="route_bypass_domain">%s 域名规则</string>
     <string name="route_bypass_ip">%s IP 规则</string>
-    <string name="profile_file">配置文件</string>
     <string name="no_proxies_found_in_file">未在此文件内找到服务器配置</string>
     <string name="no_proxies_found_in_clipboard">未在剪切板内找到服务器配置</string>
-    <string name="other">其他</string>
     <string name="route_reset">重置</string>
     <string name="clear_profiles">清空</string>
     <string name="file_manager_missing">请安装文件管理器，如 MiXplorer</string>
