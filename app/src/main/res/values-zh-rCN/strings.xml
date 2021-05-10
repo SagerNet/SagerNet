@@ -276,5 +276,7 @@
     <string name="file_manager_missing">请安装文件管理器，如 MiXplorer</string>
     <string name="restart">重载代理服务以应用修改</string>
     <string name="theme">主题颜色</string>
+    <string name="donate">捐款</string>
+    <string name="donate_info">世界很可爱 请给世界钱</string>
 
 </resources>

@@ -274,4 +274,5 @@ fun Fragment.addOverScrollListener(recyclerView: RecyclerView) {
     })
 }
 
+const val isDefaultFlavor = BuildConfig.FLAVOR == "oss"
 const val isExpert = BuildConfig.FLAVOR == "expert"

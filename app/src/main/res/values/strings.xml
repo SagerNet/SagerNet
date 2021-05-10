@@ -263,6 +263,9 @@
     <string name="no_proxies_found_in_file">No proxies found in the file</string>
     <string name="no_proxies_found_in_clipboard">No proxies found in the clipboard</string>
     <string name="deduplication">Deduplication</string>
+    
+    <string name="donate">Donate</string>
+    <string name="donate_info">I love money</string>
 
     <!-- plugin -->
     <string name="plugin">Plugin</string>

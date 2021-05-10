@@ -37,6 +37,7 @@ import com.danielstone.materialaboutlibrary.MaterialAboutFragment
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
+import com.google.android.material.card.MaterialCardView
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.*
@@ -55,6 +56,9 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
         ViewCompat.setOnApplyWindowInsetsListener(view, ListHolderListener)
         toolbar.setTitle(R.string.menu_about)
+
+        view.findViewById<MaterialCardView>(R.id.title_card).setOnClickListener {
+        }
 
         parentFragmentManager.beginTransaction().replace(R.id.about_fragment_holder, AboutContent())
             .commitAllowingStateLoss()
@@ -175,6 +179,24 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .setOnClickAction { exportLog() }
                         .build()
                     )
+                    .apply {
+                        if (isDefaultFlavor) {
+                            addItem(
+                                MaterialAboutActionItem.Builder()
+                                    .icon(R.drawable.ic_baseline_card_giftcard_24)
+                                    .text(R.string.donate)
+                                    .subText(R.string.donate_info)
+                                    .setOnClickAction {
+                                        requireContext().launchCustomTab(
+                                            Uri.parse(
+                                                "https://liberapay.com/nekohasekai/donate"
+                                            )
+                                        )
+                                    }
+                                    .build()
+                            )
+                        }
+                    }
                     .build()
                 )
                 .addCard(MaterialAboutCard.Builder()
