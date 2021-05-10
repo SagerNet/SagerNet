@@ -117,6 +117,7 @@ object ProfileManager {
 
     fun addListener(listener: Listener) {
         synchronized(listeners) {
+            listeners.clear()
             listeners.add(listener)
         }
     }
@@ -129,6 +130,7 @@ object ProfileManager {
 
     fun addListener(listener: GroupListener) {
         synchronized(groupListeners) {
+            groupListeners.clear()
             groupListeners.add(listener)
         }
     }
@@ -141,6 +143,7 @@ object ProfileManager {
 
     fun addListener(listener: RuleListener) {
         synchronized(ruleListeners) {
+            ruleListeners.clear()
             ruleListeners.add(listener)
         }
     }
