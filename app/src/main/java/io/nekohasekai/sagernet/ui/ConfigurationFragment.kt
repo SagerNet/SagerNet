@@ -484,7 +484,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             ProfileManager.addListener(adapter)
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
-            addOverScrollListener(configurationListView)
 
             if (!select && !proxyGroup.isSubscription) {
 

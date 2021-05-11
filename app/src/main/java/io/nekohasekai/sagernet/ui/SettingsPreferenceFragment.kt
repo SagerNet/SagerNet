@@ -45,7 +45,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addOverScrollListener(listView)
+        listView.layoutManager = FixedLinearLayoutManager(requireActivity())
     }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {

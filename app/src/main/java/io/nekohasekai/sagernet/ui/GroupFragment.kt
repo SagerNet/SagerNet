@@ -94,8 +94,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         ProfileManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter
 
-        addOverScrollListener(groupListView)
-
         undoManager =
             UndoSnackbarManager(activity, groupAdapter)
 

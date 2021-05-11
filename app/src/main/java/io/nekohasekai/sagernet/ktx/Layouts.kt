@@ -25,8 +25,9 @@ import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.nekohasekai.sagernet.ui.MainActivity
 
-class FixedLinearLayoutManager(context: Context) :
+class FixedLinearLayoutManager(val context: Context) :
     LinearLayoutManager(context, RecyclerView.VERTICAL, false) {
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
@@ -36,9 +37,36 @@ class FixedLinearLayoutManager(context: Context) :
         }
     }
 
+    private var listenerDisabled = false
+
+    override fun scrollVerticallyBy(
+        dx: Int, recycler: RecyclerView.Recycler?,
+        state: RecyclerView.State?
+    ): Int {
+        val scrollRange = super.scrollVerticallyBy(dx, recycler, state)
+        if (listenerDisabled) return scrollRange
+        val activity = context as? MainActivity
+        if (activity == null) {
+            listenerDisabled = true
+            return scrollRange
+        }
+        val overscroll = dx - scrollRange
+        if (overscroll > 0) {
+            activity.fab.apply {
+                if (isShown) hide()
+            }
+        } else {
+            activity.fab.apply {
+                if (!isShown) show()
+            }
+        }
+        return scrollRange
+    }
+
+
 }
 
-class FixedGridLayoutManager(context: Context, spanCount: Int) :
+class FixedGridLayoutManager(val context: Context, spanCount: Int) :
     GridLayoutManager(context, spanCount) {
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
@@ -46,6 +74,32 @@ class FixedGridLayoutManager(context: Context, spanCount: Int) :
             super.onLayoutChildren(recycler, state)
         } catch (ignored: IndexOutOfBoundsException) {
         }
+    }
+
+    private var listenerDisabled = false
+
+    override fun scrollVerticallyBy(
+        dx: Int, recycler: RecyclerView.Recycler?,
+        state: RecyclerView.State?
+    ): Int {
+        val scrollRange = super.scrollVerticallyBy(dx, recycler, state)
+        if (listenerDisabled) return scrollRange
+        val activity = context as? MainActivity
+        if (activity == null) {
+            listenerDisabled = true
+            return scrollRange
+        }
+        val overscroll = dx - scrollRange
+        if (overscroll > 0) {
+            activity.fab.apply {
+                if (isShown) hide()
+            }
+        } else {
+            activity.fab.apply {
+                if (!isShown) show()
+            }
+        }
+        return scrollRange
     }
 
 }

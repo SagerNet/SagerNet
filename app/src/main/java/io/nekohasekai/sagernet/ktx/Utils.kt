@@ -44,7 +44,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.core.net.URLDecoder
@@ -53,7 +52,6 @@ import cn.hutool.core.util.CharsetUtil
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -252,26 +250,6 @@ fun Context.loadColor(@AttrRes attr: Int): Int {
     return ContextCompat.getColor(this, TypedValue().also {
         theme.resolveAttribute(attr, it, true)
     }.resourceId)
-}
-
-fun Fragment.addOverScrollListener(recyclerView: RecyclerView) {
-    if (activity !is MainActivity) return
-    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-    val adapter = recyclerView.adapter!!
-    recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            if (dy > 0 && layoutManager.findFirstCompletelyVisibleItemPosition() > 0 && layoutManager.findLastVisibleItemPosition() >= adapter.itemCount - 1) {
-                (activity as MainActivity?)?.fab?.apply {
-                    if (isShown) hide()
-                }
-            } else {
-                (activity as MainActivity?)?.fab?.apply {
-                    if (!isShown) show()
-                }
-            }
-        }
-    })
 }
 
 const val isDefaultFlavor = BuildConfig.FLAVOR == "oss"

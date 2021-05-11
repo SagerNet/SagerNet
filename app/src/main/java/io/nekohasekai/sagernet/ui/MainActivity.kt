@@ -186,6 +186,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
+            Key.SERVICE_MODE -> onBinderDied()
             Key.PROXY_APPS, Key.BYPASS_MODE, Key.INDIVIDUAL -> {
                 if (state.canStop) {
                     snackbar(getString(R.string.restart)).setAction(R.string.apply) {
