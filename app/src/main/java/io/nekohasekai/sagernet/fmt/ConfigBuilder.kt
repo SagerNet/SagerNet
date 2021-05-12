@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt
 
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -36,6 +37,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.formatObject
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.internal.canParseAsIpAddress
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -77,9 +79,17 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     }.toHashSet().toList()).map { it.id to it.resolveChain() }.toMap()
 
     val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
-    val remoteDns = DataStore.remoteDNS.split(",")
-    val domesticDns = DataStore.domesticDns.split(',')
-    val enableLocalDNS = DataStore.enableLocalDNS
+
+    val dnsMode = DataStore.dnsMode
+    val systemDns = DataStore.systemDns.split("\n")
+    val remoteDns = DataStore.remoteDNS
+    val forceTcpInRemoteDns = DataStore.forceTcpInRemoteDns
+    val localDns = DataStore.localDns.split("\n")
+    val domesticDns = DataStore.domesticDns.split("\n")
+    val enableDomesticDns = DataStore.enableDomesticDns
+    val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+    val useLocalDns = dnsMode in arrayOf(DnsMode.LOCAL, DnsMode.FAKEDNS_LOCAL)
+    val ipv6Route = DataStore.ipv6Route
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = LinkedList<LinkedHashMap<Int, ProxyEntity>>()
     var requireWs = false
@@ -92,11 +102,37 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             )
             servers = mutableListOf()
 
-            servers.addAll(remoteDns.map {
-                DnsObject.StringOrServerObject().apply {
-                    valueX = it
+            if (dnsMode == DnsMode.SYSTEM) {
+                servers.addAll(systemDns.map {
+                    DnsObject.StringOrServerObject().apply {
+                        valueX = it
+                    }
+                })
+            } else if (dnsMode == DnsMode.LOCAL || dnsMode == DnsMode.FAKEDNS_LOCAL) {
+                servers.addAll(localDns.map {
+                    DnsObject.StringOrServerObject().apply {
+                        valueX = it
+                    }
+                })
+            } else if (dnsMode == DnsMode.FAKEDNS) {
+                servers.add(DnsObject.StringOrServerObject().apply {
+                    valueX = "fakedns"
+                })
+            }
+
+            if (useFakeDns) {
+                fakedns = mutableListOf()
+                fakedns.add(FakeDnsObject().apply {
+                    ipPool = "198.18.0.0/15"
+                    poolSize = 10000
+                })
+                if (ipv6Route) {
+                    fakedns.add(FakeDnsObject().apply {
+                        ipPool = "fc00::/18"
+                        poolSize = 10000
+                    })
                 }
-            })
+            }
         }
 
         log = LogObject().apply {
@@ -129,10 +165,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         udp = true
                         userLevel = 8
                     })
-                if (trafficSniffing) {
+                if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride = listOf("http", "tls")
+                        destOverride =
+                            if (useFakeDns) listOf("fakedns+others") else listOf("http", "tls")
                         metadataOnly = false
                     }
                 }
@@ -152,10 +189,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         allowTransparent = true
                         userLevel = 8
                     })
-                if (trafficSniffing) {
+                if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride = listOf("http", "tls")
+                        destOverride =
+                            if (useFakeDns) listOf("fakedns+others") else listOf("http", "tls")
                         metadataOnly = false
                     }
                 }
@@ -664,30 +702,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             })
         }
 
-        val bypassIP = HashSet<String>()
-        val bypassDomain = HashSet<String>()
-        for (bypassRule in extraRules.filter { it.isBypassRule() }) {
-            if (bypassRule.domains.isNotBlank()) {
-                bypassDomain.addAll(bypassRule.domains.split("\n"))
-            } else if (bypassRule.ip.isNotBlank()) {
-                bypassIP.addAll(bypassRule.ip.split("\n"))
-            }
-        }
-        if (bypassIP.isNotEmpty() || bypassDomain.isNotEmpty()) {
-            dns.servers.add(DnsObject.StringOrServerObject().apply {
-                valueY = DnsObject.ServerObject().apply {
-                    address = domesticDns.first()
-                    port = 53
-                    if (bypassIP.isNotEmpty()) {
-                        expectIPs = bypassIP.toList()
-                    }
-                    if (bypassDomain.isNotEmpty()) {
-                        domains = bypassDomain.toList()
-                    }
-                }
-            })
-        }
-
         if (requireWs) {
             browserForwarder = BrowserForwarderObject().apply {
                 listenAddr = "127.0.0.1"
@@ -699,6 +713,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             OutboundObject().apply {
                 tag = TAG_DIRECT
                 protocol = "freedom"
+                if (useFakeDns) {
+                    settings = LazyOutboundConfigurationObject(this,
+                        FreedomOutboundConfigurationObject().apply {
+                            domainStrategy = "UseIP"
+                        }
+                    )
+                }
             }
         )
 
@@ -719,7 +740,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
         )
 
-        if (enableLocalDNS) {
+        if (dnsMode != DnsMode.SYSTEM) {
             inbounds.add(
                 InboundObject().apply {
                     tag = TAG_DNS_IN
@@ -728,43 +749,115 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     protocol = "dokodemo-door"
                     settings = LazyInboundConfigurationObject(this,
                         DokodemoDoorInboundConfigurationObject().apply {
-                            address = if (remoteDns.first().startsWith("https")) {
-                                "1.1.1.1"
-                            } else {
-                                remoteDns.first()
+                            if (useLocalDns) {
+                                address = if (localDns.first().startsWith("https")) {
+                                    "1.1.1.1"
+                                } else {
+                                    localDns.first()
+                                }
                             }
                             network = "tcp,udp"
                             port = 53
                         })
+
                 }
             )
             outbounds.add(
                 OutboundObject().apply {
                     protocol = "dns"
                     tag = TAG_DNS_OUT
-                    settings = LazyOutboundConfigurationObject(this,
-                        DNSOutboundConfigurationObject().apply {
-                            network = "tcp"
-                        }
-                    )
-                    proxySettings
+                    if (dnsMode == DnsMode.REMOTE) {
+                        settings = LazyOutboundConfigurationObject(this,
+                            DNSOutboundConfigurationObject().apply {
+                                address = remoteDns
+                                if (forceTcpInRemoteDns) {
+                                    network = "tcp"
+                                }
+                            }
+                        )
+                    }
                 }
             )
 
-            if (!domesticDns.first().startsWith("https")) {
+            if (useLocalDns) {
+
+                for (dns in localDns) {
+                    if (!dns.canParseAsIpAddress()) continue
+                    routing.rules.add(0, RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_AGENT
+                        ip = listOf(dns)
+                    })
+                }
+
+                if (enableDomesticDns) {
+                    for (dns in domesticDns) {
+                        if (!dns.canParseAsIpAddress()) continue
+
+                        routing.rules.add(0, RoutingObject.RuleObject().apply {
+                            type = "field"
+                            outboundTag = TAG_DIRECT
+                            ip = listOf(dns)
+                        })
+                    }
+
+                    val bypassIP = HashSet<String>()
+                    val bypassDomain = HashSet<String>()
+                    for (bypassRule in extraRules.filter { it.isBypassRule() }) {
+                        if (bypassRule.domains.isNotBlank()) {
+                            bypassDomain.addAll(bypassRule.domains.split("\n"))
+                        } else if (bypassRule.ip.isNotBlank()) {
+                            bypassIP.addAll(bypassRule.ip.split("\n"))
+                        }
+                    }
+                    if (bypassIP.isNotEmpty() || bypassDomain.isNotEmpty()) {
+                        dns.servers.add(DnsObject.StringOrServerObject().apply {
+                            valueY = DnsObject.ServerObject().apply {
+                                address = domesticDns.first()
+                                port = 53
+                                if (bypassIP.isNotEmpty()) {
+                                    expectIPs = bypassIP.toList()
+                                }
+                                if (bypassDomain.isNotEmpty()) {
+                                    domains = bypassDomain.toList()
+                                }
+                            }
+                        })
+                    }
+                }
+
+            } else if (dnsMode == DnsMode.SYSTEM) {
+                for (dns in systemDns) {
+                    routing.rules.add(0, RoutingObject.RuleObject().apply {
+                        type = "field"
+                        outboundTag = TAG_AGENT
+                        ip = listOf(dns)
+                    })
+                }
+            }
+
+            if (useFakeDns) {
                 routing.rules.add(0, RoutingObject.RuleObject().apply {
                     type = "field"
-                    outboundTag = TAG_DIRECT
-                    ip = listOf(domesticDns.first())
                     port = "53"
+                    outboundTag = TAG_DNS_OUT
                 })
             }
-            if (!remoteDns.first().startsWith("https")) {
-                routing.rules.add(0, RoutingObject.RuleObject().apply {
-                    type = "field"
-                    outboundTag = TAG_AGENT
-                    ip = listOf(remoteDns.first())
-                    port = "53"
+
+            if (dnsMode == DnsMode.FAKEDNS_LOCAL) {
+                val domainsToRoute = dns.servers.flatMap { it.valueY?.domains ?: listOf() }
+                    .toHashSet().toList()
+                dns.servers.add(0, if (domainsToRoute.isNotEmpty()) {
+                    DnsObject.StringOrServerObject().apply {
+                        valueY = DnsObject.ServerObject().apply {
+                            address = "fakedns"
+                            domains = domainsToRoute
+                        }
+                    }
+                } else {
+                    DnsObject.StringOrServerObject().apply {
+                        valueX = "fakedns"
+                    }
                 })
             }
 
@@ -787,9 +880,15 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
 }
 
-fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean, index: Int): V2RayConfig {
+fun buildXrayConfig(
+    proxy: ProxyEntity,
+    localPort: Int,
+    chain: Boolean,
+    index: Int
+): V2RayConfig {
 
-    val remoteDns = DataStore.remoteDNS.split(",")
+    val dnsMode = DataStore.dnsMode
+    val systemDns = DataStore.systemDns.split("\n")
     val trafficSniffing = DataStore.trafficSniffing
     val bean = proxy.requireBean()
 
@@ -798,12 +897,12 @@ fun buildXrayConfig(proxy: ProxyEntity, localPort: Int, chain: Boolean, index: I
         dns = DnsObject().apply {
             servers = mutableListOf()
 
-            if (!DataStore.enableLocalDNS) {
-                servers.addAll(remoteDns.map {
-                    DnsObject.StringOrServerObject().apply {
-                        valueX = it
-                    }
-                })
+            if (dnsMode == DnsMode.SYSTEM) {
+                for (dns in systemDns) {
+                    servers.add(DnsObject.StringOrServerObject().apply {
+                        valueX = dns
+                    })
+                }
             } else {
                 servers.add(
                     DnsObject.StringOrServerObject().apply {

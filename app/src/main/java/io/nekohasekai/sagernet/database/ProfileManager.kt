@@ -170,7 +170,7 @@ object ProfileManager {
     }
 
     suspend fun deleteProfile(groupId: Long, profileId: Long) {
-        check(SagerDatabase.proxyDao.deleteById(profileId) > 0)
+        if (SagerDatabase.proxyDao.deleteById(profileId) == 0) return
         if (DataStore.selectedProxy == profileId) {
             if (DataStore.directBootAware) DirectBoot.clean()
             DataStore.selectedProxy = 0L
@@ -481,7 +481,8 @@ object ProfileManager {
                 }
                 proxies.forEach { it.initDefaultValues() }
                 return 1 to proxies
-            } catch (ignored: YAMLException) {}
+            } catch (ignored: YAMLException) {
+            }
         }
 
         try {
@@ -491,13 +492,13 @@ object ProfileManager {
         }
 
         try {
-            return 3 to (parseProxies(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() }
-                ?: error("Not found"))
+            return parseProxies(text.decodeBase64UrlSafe(), 3).takeIf { it.second.isNotEmpty() }
+                ?: error("Not found")
         } catch (ignored: Exception) {
         }
 
         try {
-            return 0 to (parseProxies(text).takeIf { it.isNotEmpty() } ?: error("Not found"))
+            return parseProxies(text).takeIf { it.second.isNotEmpty() } ?: error("Not found")
         } catch (ignored: Exception) {
         }
 

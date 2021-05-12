@@ -32,6 +32,7 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import androidx.annotation.RequiresApi
+import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -109,8 +110,12 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (DataStore.serviceMode == Key.MODE_VPN) {
             if (prepare(this) != null) {
-                startActivity(Intent(this,
-                    VpnRequestActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                startActivity(
+                    Intent(
+                        this,
+                        VpnRequestActivity::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
             } else return super<BaseService.Interface>.onStartCommand(intent, flags, startId)
         }
         stopRunner()
@@ -130,8 +135,17 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             .setSession(profile.displayName())
             .setMtu(VPN_MTU)
             .addAddress(PRIVATE_VLAN4_CLIENT, 30)
+        val useFakeDns = DataStore.dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+        /*if (useFakeDns) {
+            builder.addAddress("198.18.0.0", 15)
+        }*/
+
         if (DataStore.ipv6Route) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
+
+            /*if (useFakeDns) {
+                builder.addAddress("fc00::", 18)
+            }*/
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -154,6 +168,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         // https://issuetracker.google.com/issues/149636790
 
+        val useSystemDns = DataStore.dnsMode == DnsMode.SYSTEM
+
         val me = packageName
         if (DataStore.proxyApps) {
             val bypass = DataStore.bypass
@@ -172,10 +188,12 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             builder.addDisallowedApplication(me)
         }
 
-        if (DataStore.enableLocalDNS) {
-            builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
+        if (useSystemDns) {
+            DataStore.systemDns.split("\n").forEach {
+                builder.addDnsServer(it)
+            }
         } else {
-            builder.addDnsServer(DataStore.remoteDNS)
+            builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
         }
 
         metered = DataStore.meteredNetwork
@@ -186,7 +204,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         this.conn = conn
 
         val cmd =
-            arrayListOf(File(applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS).canonicalPath,
+            arrayListOf(
+                File(applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS).canonicalPath,
                 "--netif-ipaddr",
                 PRIVATE_VLAN4_ROUTER,
                 "--socks-server-addr",
@@ -195,8 +214,9 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 VPN_MTU.toString(),
                 "--sock-path",
                 File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
-                "--loglevel", "warning")
-        if (DataStore.enableLocalDNS) {
+                "--loglevel", "warning"
+            )
+        if (!useSystemDns) {
             cmd += "--dnsgw"
             cmd += "127.0.0.1:${DataStore.localDNSPort}"
         }
@@ -221,8 +241,12 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         while (true) try {
             delay(50L shl tries)
             LocalSocket().use { localSocket ->
-                localSocket.connect(LocalSocketAddress(path,
-                    LocalSocketAddress.Namespace.FILESYSTEM))
+                localSocket.connect(
+                    LocalSocketAddress(
+                        path,
+                        LocalSocketAddress.Namespace.FILESYSTEM
+                    )
+                )
                 localSocket.setFileDescriptorsForSend(arrayOf(fd))
                 localSocket.outputStream.write(42)
             }

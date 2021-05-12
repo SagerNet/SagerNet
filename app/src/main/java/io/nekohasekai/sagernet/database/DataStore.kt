@@ -80,9 +80,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
-    var enableLocalDNS by configurationStore.boolean(Key.ENABLE_LOCAL_DNS) { true }
-    var remoteDNS by configurationStore.string(Key.REMOTE_DNS) { "https://1.1.1.1/dns-query" }
+    var dnsMode by configurationStore.stringToInt(Key.DNS_MODE) { 2 }
+
+    var systemDns by configurationStore.string(Key.SYSTEM_DNS) { "1.1.1.1" }
+    var remoteDNS by configurationStore.string(Key.REMOTE_DNS) { "1.1.1.1" }
+    var forceTcpInRemoteDns by configurationStore.boolean(Key.FORCE_TCP_IN_REMOTE_DNS) { true }
+    var localDns by configurationStore.string(Key.LOCAL_DNS) { "https://1.1.1.1/dns-query" }
+    var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS) { true }
     var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "9.9.9.11" }
+
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY)
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat

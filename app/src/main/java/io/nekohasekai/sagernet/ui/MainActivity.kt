@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.ui
 import android.os.Bundle
 import android.os.RemoteException
 import android.view.MenuItem
+import androidx.annotation.IdRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -70,8 +71,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         navigation.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            navigation.menu.findItem(R.id.nav_configuration).isChecked = true
-            displayFragment(ConfigurationFragment())
+            displayFragmentWithId(R.id.nav_configuration)
         }
 
         fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
@@ -94,27 +94,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.isChecked) drawer.closeDrawers() else {
-            when (item.itemId) {
-                R.id.nav_configuration -> {
-                    displayFragment(ConfigurationFragment())
-                    // request stats update
-                    connection.bandwidthTimeout = connection.bandwidthTimeout
-                }
-                R.id.nav_group -> {
-                    displayFragment(GroupFragment())
-                }
-                R.id.nav_route -> {
-                    displayFragment(RouteFragment())
-                }
-                R.id.nav_settings -> {
-                    displayFragment(SettingsFragment())
-                }
-                R.id.nav_about -> {
-                    displayFragment(AboutFragment())
-                }
-                else -> return false
-            }
-            item.isChecked = true
+            displayFragmentWithId(item.itemId)
         }
         return true
     }
@@ -126,6 +106,30 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         drawer.closeDrawers()
     }
 
+    fun displayFragmentWithId(@IdRes id: Int): Boolean {
+        when (id) {
+            R.id.nav_configuration -> {
+                displayFragment(ConfigurationFragment())
+                // request stats update
+                connection.bandwidthTimeout = connection.bandwidthTimeout
+            }
+            R.id.nav_group -> {
+                displayFragment(GroupFragment())
+            }
+            R.id.nav_route -> {
+                displayFragment(RouteFragment())
+            }
+            R.id.nav_settings -> {
+                displayFragment(SettingsFragment())
+            }
+            R.id.nav_about -> {
+                displayFragment(AboutFragment())
+            }
+            else -> return false
+        }
+        navigation.menu.findItem(id).isChecked = true
+        return true
+    }
 
     var state = BaseService.State.Idle
 

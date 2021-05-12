@@ -84,8 +84,11 @@ class SagerNet : Application() {
         val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
 
         fun getClipboardText(): String {
-            val clip = clipboard.primaryClip?.takeIf { it.itemCount > 0 } ?: return ""
-            return clip.getItemAt(0).text.toString()
+            return clipboard.primaryClip
+                ?.takeIf { it.itemCount > 0 }
+                ?.getItemAt(0)
+                ?.text
+                ?.toString() ?: ""
         }
 
         fun trySetPrimaryClip(clip: String) = try {

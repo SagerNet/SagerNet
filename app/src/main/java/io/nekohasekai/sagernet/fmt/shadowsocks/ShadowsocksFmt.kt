@@ -25,6 +25,7 @@ import cn.hutool.core.codec.Base64
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
+import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -221,10 +222,10 @@ fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
         it["local_udp_address"] = "127.0.0.1"
         it["local_udp_port"] = port
         it["mode"] = "tcp_and_udp"
-        if (DataStore.enableLocalDNS) {
+        if (DataStore.dnsMode != DnsMode.SYSTEM) {
             it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
         } else {
-            it["dns"] = DataStore.remoteDNS
+            it["dns"] = DataStore.systemDns
         }
 
         if (DataStore.ipv6Route && DataStore.preferIpv6) {

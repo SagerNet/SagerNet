@@ -47,63 +47,89 @@ fun String.decodeBase64UrlSafe(): String {
     )
 }
 
-fun parseProxies(text: String): List<AbstractBean> {
+fun parseProxies(text: String, initType: Int = 0, badType:Int = 4): Pair<Int, List<AbstractBean>> {
     val links = text.split('\n').flatMap { it.trim().split(' ') }
+    val linksByLine = text.split('\n').map { it.trim() }
+
     val entities = LinkedList<AbstractBean>()
-    for (link in links) {
-        if (link.startsWith("socks://")) {
-            Logs.d("Try parse socks link: $link")
+    val entitiesByLine = LinkedList<AbstractBean>()
+
+    fun String.parseLink(entities: LinkedList<AbstractBean>) {
+        if (startsWith("socks://")) {
+            Logs.d("Try parse socks link: $this")
             runCatching {
-                entities.add(parseSOCKS(link))
+                entities.add(parseSOCKS(this))
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.matches("(http|https|naive\\+https)://.*".toRegex())) {
-            Logs.d("Try parse http link: $link")
+        } else if (matches("(http|https|naive\\+https)://.*".toRegex())) {
+            Logs.d("Try parse http link: $this")
             runCatching {
-                entities.add(parseHttp(link))
+                entities.add(parseHttp(this))
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.startsWith("vmess://") || link.startsWith("vless://")) {
-            Logs.d("Try parse v2ray link: $link")
+        } else if (startsWith("vmess://") || startsWith("vless://")) {
+            Logs.d("Try parse v2ray link: $this")
             runCatching {
-                entities.add(parseV2Ray(link))
+                entities.add(parseV2Ray(this))
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.startsWith("trojan://")) {
-            Logs.d("Try parse trojan link: $link")
+        } else if (startsWith("trojan://")) {
+            Logs.d("Try parse trojan link: $this")
             runCatching {
-                entities.add(parseTrojan(link))
+                entities.add(parseTrojan(this))
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.startsWith("trojan-go://")) {
-            Logs.d("Try parse trojan-go link: $link")
+        } else if (startsWith("trojan-go://")) {
+            Logs.d("Try parse trojan-go link: $this")
             runCatching {
-                entities.add(parseTrojanGo(link))
+                entities.add(parseTrojanGo(this))
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.startsWith("ss://")) {
-            Logs.d("Try parse shadowsocks link: $link")
+        } else if (startsWith("ss://")) {
+            Logs.d("Try parse shadowsocks link: $this")
             runCatching {
-                entities.add(parseShadowsocks(link))
+                entities.add(parseShadowsocks(this))
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (link.startsWith("ssr://")) {
-            Logs.d("Try parse shadowsocksr link: $link")
+        } else if (startsWith("ssr://")) {
+            Logs.d("Try parse shadowsocksr link: $this")
             runCatching {
-                entities.add(parseShadowsocksR(link))
+                entities.add(parseShadowsocksR(this))
             }.onFailure {
                 Logs.w(it)
             }
         }
     }
-    entities.forEach { it.initDefaultValues() }
-    return entities
+
+    for (link in links) {
+        link.parseLink(entities)
+    }
+    for (link in linksByLine) {
+        link.parseLink(entitiesByLine)
+    }
+    var isBadLink = false
+    if (entities.size == entitiesByLine.size) {
+        run test@{
+            entities.forEachIndexed { index, bean ->
+                val lineBean = entitiesByLine[index]
+                if (bean == lineBean && bean.displayName() != lineBean.displayName()) {
+                    isBadLink = true
+                    return@test
+                }
+            }
+        }
+    }
+    return if (entities.size > entitiesByLine.size) {
+        initType to entities.onEach { it.initDefaultValues() }
+    } else {
+        (if (isBadLink) badType else initType) to entitiesByLine.onEach { it.initDefaultValues() }
+    }
 }
 
 fun <T : AbstractBean> T.applyDefaultValues(): T {

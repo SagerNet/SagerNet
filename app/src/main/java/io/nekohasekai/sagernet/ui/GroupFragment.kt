@@ -233,7 +233,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             if (!uniqueProxies.add(proxy)) {
                                 val index = uniqueProxies.indexOf(proxy)
                                 if (uniqueNames.containsKey(proxy)) {
-                                    val name = uniqueNames[proxy]!!
+                                    val name = uniqueNames[proxy]!!.replace(" ($index)", "")
                                     if (name.isNotBlank()) {
                                         duplicate.add("$name ($index)")
                                         uniqueNames[proxy] = ""
@@ -775,9 +775,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                 // shareButton.isVisible = true
 
                                 if (needGo) {
-
-                                    activity.displayFragment(ConfigurationFragment())
-
+                                    activity.displayFragmentWithId(R.id.nav_configuration)
                                 } else {
                                     subscriptionUpdateProgress.isVisible = false
                                     updateButton.isVisible = true

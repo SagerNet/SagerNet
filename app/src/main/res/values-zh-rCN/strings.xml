@@ -52,10 +52,7 @@
     <string name="allow_access">允许来自局域网的连接</string>
     <string name="allow_access_sum">将入站绑定至 0.0.0.0</string>
     <string name="cag_dns">DNS 设置</string>
-    <string name="local_dns">启用本地 DNS</string>
-    <string name="domestic_dns">国内 DNS</string>
     <string name="cag_route">路由设置</string>
-    <string name="remote_dns">远程DNS</string>
     <string name="force_ss_rust">不要使用 V2Ray 路由 Shadowsocks</string>
     <string name="force_ss_sum">强制所有 Shadowsocks 节点使用和 Shadowsocks Android 相同的 shadowsocks-rust 后端</string>
     <string name="inbound_settings">入站设置</string>
@@ -129,7 +126,7 @@
     <string name="service_transproxy">透明代理服务</string>
     <string name="forward_success">SagerNet 已启动.</string>
     <string name="invalid_server">无效的服务器</string>
-    <string name="service_failed">无法连接到服务器</string>
+    <string name="service_failed">失败: </string>
     <string name="stop">停止</string>
     <string name="stopping">正在停止…</string>
     <string name="vpn_error">%s</string>
@@ -278,5 +275,17 @@
     <string name="theme">主题颜色</string>
     <string name="donate">捐款</string>
     <string name="donate_info">世界很可爱 请给世界钱</string>
+    <string name="dns_mode">DNS 模式</string>
+    <string name="dns_mode_system">系统</string>
+    <string name="dns_mode_remote">远程</string>
+    <string name="dns_mode_local">本地</string>
+    <string name="dns_mode_fakedns_local">FakeDNS + 本地</string>
+    <string name="dns_mode_fakedns" translatable="false">FakeDNS</string>
+    <string name="dns_system">系统 DNS</string>
+    <string name="dns_remote">远程 DNS</string>
+    <string name="dns_local">本地 DNS</string>
+    <string name="dns_remote_tcp">"强制使用 TCP 连接远程 DNS "</string>
+    <string name="enable_domestic_dns">启用国内 DNS</string>
+    <string name="dns_domestic">国内 DNS</string>
 
 </resources>

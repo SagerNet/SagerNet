@@ -36,9 +36,12 @@ object Key {
     const val MODE_PROXY = "proxy"
     const val MODE_TRANS = "transproxy"
 
+    const val DNS_MODE = "dnsMode"
+    const val SYSTEM_DNS = "systemDns"
     const val REMOTE_DNS = "remoteDns"
-    const val ENABLE_LOCAL_DNS = "enableLocalDns"
-    const val LOCAL_DNS_PORT = "portLocalDns"
+    const val FORCE_TCP_IN_REMOTE_DNS = "forceTcpInRemoteDns"
+    const val LOCAL_DNS = "localDns"
+    const val ENABLE_DOMESTIC_DNS = "enableDomesticDns"
     const val DOMESTIC_DNS = "domesticDns"
 
     const val IPV6_ROUTE = "ipv6Route"
@@ -53,8 +56,6 @@ object Key {
     const val DOMAIN_MATCHER = "domainMatcher"
     const val TRAFFIC_SNIFFING = "trafficSniffing"
     const val BYPASS_LAN = "bypassLan"
-    const val ROUTE_CHINA = "routeChina"
-    const val BLOCK_ADS = "blockAds"
 
     const val SOCKS_PORT = "socksPort"
     const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"
@@ -63,6 +64,7 @@ object Key {
     const val ALLOW_ACCESS = "allowAccess"
     const val SPEED_INTERVAL = "speedInterval"
     const val SHOW_DIRECT_SPEED = "showDirectSpeed"
+    const val LOCAL_DNS_PORT = "portLocalDns"
 
     const val ENABLE_MUX = "enableMux"
     const val ENABLE_MUX_FOR_ALL = "enableMuxForAll"
@@ -120,6 +122,14 @@ object Key {
     const val ROUTE_OUTBOUND = "routeOutbound"
     const val ROUTE_OUTBOUND_RULE = "routeOutboundRule"
 
+}
+
+object DnsMode {
+    const val SYSTEM = 0
+    const val REMOTE = 1
+    const val LOCAL = 2
+    const val FAKEDNS = 3
+    const val FAKEDNS_LOCAL = 4
 }
 
 object Action {

@@ -21,15 +21,11 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonToken;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.ObjectOutput;
 import java.util.List;
 import java.util.Map;
 
@@ -207,6 +203,7 @@ public class V2RayConfig {
         }
 
         public InboundObject ctx;
+
         public void init(InboundObject ctx) {
             this.ctx = ctx;
         }
@@ -415,12 +412,13 @@ public class V2RayConfig {
         public LazyOutboundConfigurationObject() {
         }
 
-        public LazyOutboundConfigurationObject(OutboundObject ctx,OutboundConfigurationObject value) {
+        public LazyOutboundConfigurationObject(OutboundObject ctx, OutboundConfigurationObject value) {
             super(value);
             init(ctx);
         }
 
         private OutboundObject ctx;
+
         public void init(OutboundObject ctx) {
             this.ctx = ctx;
         }
@@ -801,6 +799,15 @@ public class V2RayConfig {
     }
 
     public Map<String, Object> stats;
+
+    public List<FakeDnsObject> fakedns;
+
+    public static class FakeDnsObject {
+
+        public String ipPool;
+        public Integer poolSize;
+
+    }
 
     public BrowserForwarderObject browserForwarder;
 

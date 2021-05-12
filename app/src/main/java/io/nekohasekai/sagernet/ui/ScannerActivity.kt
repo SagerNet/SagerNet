@@ -34,7 +34,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.core.view.isGone
 import com.google.android.material.appbar.MaterialToolbar
@@ -94,8 +93,12 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
             try {
                 it.forEachTry { uri ->
                     val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver,
-                            uri)) { decoder, _, _ ->
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                contentResolver,
+                                uri
+                            )
+                        ) { decoder, _, _ ->
                             decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
                             decoder.isMutableRequired = true
                         }
@@ -103,28 +106,34 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
                         MediaStore.Images.Media.getBitmap(contentResolver, uri)
                     }
                     val intArray = IntArray(bitmap.width * bitmap.height)
-                    bitmap.getPixels(intArray,
+                    bitmap.getPixels(
+                        intArray,
                         0,
                         bitmap.width,
                         0,
-                        0, bitmap.width, bitmap.height)
+                        0, bitmap.width, bitmap.height
+                    )
 
                     val source = RGBLuminanceSource(bitmap.width, bitmap.height, intArray)
                     val qrReader = QRCodeReader()
                     try {
                         val result = try {
-                            qrReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source)),
+                            qrReader.decode(
+                                BinaryBitmap(GlobalHistogramBinarizer(source)),
                                 mapOf(
                                     DecodeHintType.TRY_HARDER to true
-                                ))
+                                )
+                            )
                         } catch (e: NotFoundException) {
-                            qrReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
+                            qrReader.decode(
+                                BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
                                 mapOf(
                                     DecodeHintType.TRY_HARDER to true
-                                ))
+                                )
+                            )
                         }
 
-                        val results = parseProxies(result.text ?: "")
+                        val results = parseProxies(result.text ?: "").second
 
                         if (results.isNotEmpty()) {
                             onMainDispatcher {
@@ -208,7 +217,7 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
         finish()
         val text = result.result.text
         runOnDefaultDispatcher {
-            val results = parseProxies(text)
+            val results = parseProxies(text).second
             if (results.isNotEmpty()) {
                 val currentGroupId = DataStore.selectedGroup
 

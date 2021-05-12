@@ -52,10 +52,7 @@
     <string name="allow_access">允許來自區域網路的連線</string>
     <string name="allow_access_sum">繫結傳入伺服器至 0.0.0.0</string>
     <string name="cag_dns">DNS 設定</string>
-    <string name="local_dns">啟用本地 DNS</string>
-    <string name="domestic_dns">國內 DNS</string>
     <string name="cag_route">路由設定</string>
-    <string name="remote_dns">遠端 DNS</string>
     <string name="force_ss_rust">不使用 V2Ray 路由 Shadowsocks</string>
     <string name="force_ss_sum">強制所有 Shadowsocks 設定檔使用和 Shadowsocks Android 相同的 shadowsocks-rust 後端。</string>
     <string name="inbound_settings">傳入設定</string>
@@ -128,7 +125,6 @@
     <string name="service_transproxy">透明代理服務</string>
     <string name="forward_success">SagerNet 已啟動。</string>
     <string name="invalid_server">伺服器名稱無效</string>
-    <string name="service_failed">無法連接遠端伺服器</string>
     <string name="stop">停止</string>
     <string name="stopping">關閉中……</string>
     <string name="vpn_error">%s</string>

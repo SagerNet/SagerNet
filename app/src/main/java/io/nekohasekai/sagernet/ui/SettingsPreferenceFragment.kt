@@ -29,6 +29,8 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
+import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -103,10 +105,36 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             forceShadowsocksRust.remove()
         }
 
-        val remoteDns = findPreference<Preference>(Key.REMOTE_DNS)!!
-        val enableLocalDns = findPreference<SwitchPreference>(Key.ENABLE_LOCAL_DNS)!!
-        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
+        val dnsMode = findPreference<SimpleMenuPreference>(Key.DNS_MODE)!!
+        val systemDns = findPreference<EditTextPreference>(Key.SYSTEM_DNS)!!
+        val remoteDns = findPreference<EditTextPreference>(Key.REMOTE_DNS)!!
+        val forceTcpRemoteDns = findPreference<SwitchPreference>(Key.FORCE_TCP_IN_REMOTE_DNS)!!
+        val localDns = findPreference<EditTextPreference>(Key.LOCAL_DNS)!!
+        val enableDomesticDns = findPreference<SwitchPreference>(Key.ENABLE_DOMESTIC_DNS)!!
         val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
+
+        fun updateDnsMode(newMode: Int) {
+            systemDns.isVisible = newMode == DnsMode.SYSTEM
+            remoteDns.isVisible = newMode == DnsMode.REMOTE
+            forceTcpRemoteDns.isVisible = newMode == DnsMode.REMOTE
+            val useLocalDns = newMode in intArrayOf(DnsMode.LOCAL, DnsMode.FAKEDNS_LOCAL)
+            localDns.isVisible = useLocalDns
+            enableDomesticDns.isVisible = useLocalDns
+            domesticDns.isVisible = useLocalDns
+            domesticDns.isEnabled = useLocalDns && enableDomesticDns.isChecked
+        }
+        updateDnsMode(DataStore.dnsMode)
+        enableDomesticDns.setOnPreferenceChangeListener { _, newValue ->
+            domesticDns.isEnabled = newValue as Boolean
+            true
+        }
+        dnsMode.setOnPreferenceChangeListener { _, newValue ->
+            updateDnsMode((newValue as String).toInt())
+            needReload()
+            true
+        }
+
+        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
 
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -145,10 +173,15 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tcpKeepAliveInterval.onPreferenceChangeListener = reloadListener
         bypassLan.onPreferenceChangeListener = reloadListener
         forceShadowsocksRust.onPreferenceChangeListener = reloadListener
+
+        systemDns.onPreferenceChangeListener = reloadListener
         remoteDns.onPreferenceChangeListener = reloadListener
-        enableLocalDns.onPreferenceChangeListener = reloadListener
-        portLocalDns.onPreferenceChangeListener = reloadListener
+        forceTcpRemoteDns.onPreferenceChangeListener = reloadListener
+        localDns.onPreferenceChangeListener = reloadListener
+        enableDomesticDns.onPreferenceChangeListener = reloadListener
         domesticDns.onPreferenceChangeListener = reloadListener
+
+        portLocalDns.onPreferenceChangeListener = reloadListener
         ipv6Route.onPreferenceChangeListener = reloadListener
         preferIpv6.onPreferenceChangeListener = reloadListener
         allowAccess.onPreferenceChangeListener = reloadListener
