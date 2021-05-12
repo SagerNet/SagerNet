@@ -141,7 +141,7 @@
             app:key="enableDomesticDns"
             app:title="@string/enable_domestic_dns" />
         <EditTextPreference
-            app:defaultValue="9.9.9.11"
+            app:defaultValue="https+local://223.5.5.5/dns-query"
             app:key="domesticDns"
             app:title="@string/dns_domestic"
             app:useSimpleSummaryProvider="true" />

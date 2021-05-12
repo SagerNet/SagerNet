@@ -87,7 +87,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var forceTcpInRemoteDns by configurationStore.boolean(Key.FORCE_TCP_IN_REMOTE_DNS) { true }
     var localDns by configurationStore.string(Key.LOCAL_DNS) { "https://1.1.1.1/dns-query" }
     var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS) { true }
-    var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "9.9.9.11" }
+    var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "https+local://223.5.5.5/dns-query" }
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY)
 
