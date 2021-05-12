@@ -494,7 +494,8 @@ object ProfileManager {
         try {
             return parseProxies(text.decodeBase64UrlSafe(), 3).takeIf { it.second.isNotEmpty() }
                 ?: error("Not found")
-        } catch (ignored: Exception) {
+        } catch (e: Exception) {
+            Logs.w(e)
         }
 
         try {

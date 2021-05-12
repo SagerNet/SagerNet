@@ -472,7 +472,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             if (!::proxyGroup.isInitialized) return
 
-            layoutManager = if (proxyGroup.type != 3) {
+            layoutManager = if (proxyGroup.type != 1) {
                 FixedLinearLayoutManager(view.context)
             } else {
                 FixedGridLayoutManager(view.context, 2)
@@ -573,7 +573,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 return ConfigurationHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(
-                            if (proxyGroup.type != 3) R.layout.layout_profile else R.layout.layout_profile_clash,
+                            if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
                             parent,
                             false
                         )
@@ -752,7 +752,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             lateinit var entity: ProxyEntity
             val impl =
-                if (proxyGroup.type != 3) DefaultConfigurationHolderImpl() else ClashConfigurationHolderImpl()
+                if (proxyGroup.type != 1) DefaultConfigurationHolderImpl() else ClashConfigurationHolderImpl()
 
             fun bind(proxyEntity: ProxyEntity) {
                 entity = proxyEntity

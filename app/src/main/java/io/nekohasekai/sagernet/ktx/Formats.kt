@@ -47,7 +47,7 @@ fun String.decodeBase64UrlSafe(): String {
     )
 }
 
-fun parseProxies(text: String, initType: Int = 0, badType:Int = 4): Pair<Int, List<AbstractBean>> {
+fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, List<AbstractBean>> {
     val links = text.split('\n').flatMap { it.trim().split(' ') }
     val linksByLine = text.split('\n').map { it.trim() }
 
@@ -114,21 +114,21 @@ fun parseProxies(text: String, initType: Int = 0, badType:Int = 4): Pair<Int, Li
         link.parseLink(entitiesByLine)
     }
     var isBadLink = false
-    if (entities.size == entitiesByLine.size) {
-        run test@{
-            entities.forEachIndexed { index, bean ->
-                val lineBean = entitiesByLine[index]
-                if (bean == lineBean && bean.displayName() != lineBean.displayName()) {
-                    isBadLink = true
-                    return@test
-                }
+    if (entities.onEach { it.initDefaultValues() }.size ==
+        entitiesByLine.onEach { it.initDefaultValues() }.size
+    ) run test@{
+        entities.forEachIndexed { index, bean ->
+            val lineBean = entitiesByLine[index]
+            if (bean == lineBean && bean.displayName() != lineBean.displayName()) {
+                isBadLink = true
+                return@test
             }
         }
     }
     return if (entities.size > entitiesByLine.size) {
-        initType to entities.onEach { it.initDefaultValues() }
+        initType to entities
     } else {
-        (if (isBadLink) badType else initType) to entitiesByLine.onEach { it.initDefaultValues() }
+        (if (isBadLink) badType else initType) to entitiesByLine
     }
 }
 
