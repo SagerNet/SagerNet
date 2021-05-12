@@ -44,12 +44,14 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.error.YAMLException
 import java.io.IOException
 import java.sql.SQLException
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 object ProfileManager {
 
@@ -351,7 +353,9 @@ object ProfileManager {
             try {
 
                 // clash
-                for (proxy in (Yaml().loadAs(
+                for (proxy in (Yaml().apply {
+                    addTypeDescription(TypeDescription(String::class.java, "str"))
+                }.loadAs(
                     text,
                     Map::class.java
                 )["proxies"] as? (List<Map<String, Any?>>)
@@ -481,7 +485,8 @@ object ProfileManager {
                 }
                 proxies.forEach { it.initDefaultValues() }
                 return 1 to proxies
-            } catch (ignored: YAMLException) {
+            } catch (e: YAMLException) {
+                Logs.w(e)
             }
         }
 
