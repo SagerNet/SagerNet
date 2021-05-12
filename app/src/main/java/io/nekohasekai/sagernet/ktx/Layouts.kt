@@ -61,6 +61,7 @@ class FixedLinearLayoutManager(val context: Context) :
                 }
                 activity.fab.apply {
                     if (isShown) hide()
+                    suppression = true
                 }
             }
         } else {
