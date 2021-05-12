@@ -38,6 +38,7 @@ class FixedLinearLayoutManager(val context: Context) :
     }
 
     private var listenerDisabled = false
+    private var suppression = true
 
     override fun scrollVerticallyBy(
         dx: Int, recycler: RecyclerView.Recycler?,
@@ -51,9 +52,16 @@ class FixedLinearLayoutManager(val context: Context) :
             return scrollRange
         }
         val overscroll = dx - scrollRange
+
         if (overscroll > 0) {
-            activity.fab.apply {
-                if (isShown) hide()
+            if (activity.stats.behavior.hide) {
+                if (suppression) {
+                    suppression = false
+                    return scrollRange
+                }
+                activity.fab.apply {
+                    if (isShown) hide()
+                }
             }
         } else {
             activity.fab.apply {
@@ -77,6 +85,7 @@ class FixedGridLayoutManager(val context: Context, spanCount: Int) :
     }
 
     private var listenerDisabled = false
+    private var suppression = true
 
     override fun scrollVerticallyBy(
         dx: Int, recycler: RecyclerView.Recycler?,
@@ -90,9 +99,16 @@ class FixedGridLayoutManager(val context: Context, spanCount: Int) :
             return scrollRange
         }
         val overscroll = dx - scrollRange
+
         if (overscroll > 0) {
-            activity.fab.apply {
-                if (isShown) hide()
+            if (activity.stats.behavior.hide) {
+                if (suppression) {
+                    suppression = false
+                    return scrollRange
+                }
+                activity.fab.apply {
+                    if (isShown) hide()
+                }
             }
         } else {
             activity.fab.apply {

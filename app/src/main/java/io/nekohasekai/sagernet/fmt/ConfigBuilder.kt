@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.fmt
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.DnsMode
+import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -123,13 +124,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             if (useFakeDns) {
                 fakedns = mutableListOf()
                 fakedns.add(FakeDnsObject().apply {
-                    ipPool = "198.18.0.0/15"
-                    poolSize = 10000
+                    ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
+                    poolSize = 65535
                 })
                 if (ipv6Route) {
                     fakedns.add(FakeDnsObject().apply {
-                        ipPool = "fc00::/18"
-                        poolSize = 10000
+                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
+                        poolSize = 65535
                     })
                 }
             }
@@ -169,7 +170,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
                         destOverride =
-                            if (useFakeDns) listOf("fakedns+others") else listOf("http", "tls")
+                            if (useFakeDns) {
+                                listOf("fakedns")
+                            } else {
+                                listOf("http", "tls")
+                            }
                         metadataOnly = false
                     }
                 }

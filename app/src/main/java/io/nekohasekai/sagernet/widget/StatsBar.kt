@@ -50,27 +50,44 @@ class StatsBar @JvmOverloads constructor(
     private lateinit var txText: TextView
     private lateinit var rxText: TextView
     private val tester by (context as MainActivity).viewModels<HttpsTest>()
-    private lateinit var behavior: Behavior
-    override fun getBehavior(): Behavior {
-        if (!this::behavior.isInitialized) behavior = object : Behavior() {
-            override fun onNestedScroll(
-                coordinatorLayout: CoordinatorLayout, child: BottomAppBar, target: View,
-                dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
-                type: Int, consumed: IntArray,
-            ) {
-                super.onNestedScroll(coordinatorLayout,
-                    child,
-                    target,
-                    dxConsumed,
-                    dyConsumed + dyUnconsumed,
-                    dxUnconsumed,
-                    0,
-                    type,
-                    consumed)
-            }
-        }
+    private lateinit var behavior: YourBehavior
+    override fun getBehavior(): YourBehavior {
+        if (!this::behavior.isInitialized) behavior = YourBehavior()
         return behavior
     }
+
+    class YourBehavior : Behavior() {
+        override fun onNestedScroll(
+            coordinatorLayout: CoordinatorLayout, child: BottomAppBar, target: View,
+            dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
+            type: Int, consumed: IntArray,
+        ) {
+            super.onNestedScroll(
+                coordinatorLayout,
+                child,
+                target,
+                dxConsumed,
+                dyConsumed + dyUnconsumed,
+                dxUnconsumed,
+                0,
+                type,
+                consumed
+            )
+        }
+
+        var hide = false
+
+        override fun slideUp(child: BottomAppBar) {
+            hide = false
+            super.slideUp(child)
+        }
+
+        override fun slideDown(child: BottomAppBar) {
+            hide = true
+            super.slideDown(child)
+        }
+    }
+
 
     override fun setOnClickListener(l: OnClickListener?) {
         statusText = findViewById(R.id.status)
@@ -106,23 +123,31 @@ class StatsBar @JvmOverloads constructor(
             updateTraffic(0, 0)
             tester.status.removeObservers(activity)
             if (state != BaseService.State.Idle) tester.invalidate()
-            setStatus(context.getText(when (state) {
-                BaseService.State.Connecting -> R.string.connecting
-                BaseService.State.Stopping -> R.string.stopping
-                else -> R.string.not_connected
-            }))
+            setStatus(
+                context.getText(
+                    when (state) {
+                        BaseService.State.Connecting -> R.string.connecting
+                        BaseService.State.Stopping -> R.string.stopping
+                        else -> R.string.not_connected
+                    }
+                )
+            )
         }
     }
 
     @SuppressLint("SetTextI18n")
     fun updateTraffic(txRate: Long, rxRate: Long) {
         txText.text = "▲  ${
-            context.getString(R.string.speed,
-                Formatter.formatFileSize(context, txRate))
+            context.getString(
+                R.string.speed,
+                Formatter.formatFileSize(context, txRate)
+            )
         }"
         rxText.text = "▼  ${
-            context.getString(R.string.speed,
-                Formatter.formatFileSize(context, rxRate))
+            context.getString(
+                R.string.speed,
+                Formatter.formatFileSize(context, rxRate)
+            )
         }"
     }
 

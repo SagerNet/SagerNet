@@ -51,11 +51,13 @@ import android.net.VpnService as BaseVpnService
 class VpnService : BaseVpnService(), BaseService.Interface {
 
     companion object {
-        private const val VPN_MTU = 1500
-        private const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
-        private const val PRIVATE_VLAN4_ROUTER = "172.19.0.2"
-        private const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
-        private const val PRIVATE_VLAN6_ROUTER = "fdfe:dcba:9876::2"
+        const val VPN_MTU = 1500
+        const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
+        const val PRIVATE_VLAN4_ROUTER = "172.19.0.2"
+        const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
+        const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
+        const val PRIVATE_VLAN6_ROUTER = "fdfe:dcba:9876::2"
+        const val FAKEDNS_VLAN6_CLIENT = "fc00::"
 
         private fun <T> FileDescriptor.use(block: (FileDescriptor) -> T) = try {
             block(this)
@@ -136,16 +138,17 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             .setMtu(VPN_MTU)
             .addAddress(PRIVATE_VLAN4_CLIENT, 30)
         val useFakeDns = DataStore.dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
-        /*if (useFakeDns) {
-            builder.addAddress("198.18.0.0", 15)
-        }*/
+
+        if (useFakeDns) {
+            builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
+        }
 
         if (DataStore.ipv6Route) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
 
-            /*if (useFakeDns) {
-                builder.addAddress("fc00::", 18)
-            }*/
+            if (useFakeDns) {
+                builder.addAddress(FAKEDNS_VLAN6_CLIENT, 18)
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {

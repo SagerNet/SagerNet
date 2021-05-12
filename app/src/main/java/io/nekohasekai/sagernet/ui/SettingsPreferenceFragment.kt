@@ -126,6 +126,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         updateDnsMode(DataStore.dnsMode)
         enableDomesticDns.setOnPreferenceChangeListener { _, newValue ->
             domesticDns.isEnabled = newValue as Boolean
+            needReload()
             true
         }
         dnsMode.setOnPreferenceChangeListener { _, newValue ->
@@ -178,7 +179,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         remoteDns.onPreferenceChangeListener = reloadListener
         forceTcpRemoteDns.onPreferenceChangeListener = reloadListener
         localDns.onPreferenceChangeListener = reloadListener
-        enableDomesticDns.onPreferenceChangeListener = reloadListener
         domesticDns.onPreferenceChangeListener = reloadListener
 
         portLocalDns.onPreferenceChangeListener = reloadListener

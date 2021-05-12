@@ -834,7 +834,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     runOnDefaultDispatcher {
                         if (!select) {
                             val selected = DataStore.selectedProxy == proxyEntity.id
-                            val started = DataStore.startedProxy == proxyEntity.id
+                            val started = serviceStarted() && DataStore.startedProxy == proxyEntity.id
                             onMainDispatcher {
                                 editButton.isEnabled = !started
                                 selectedView.visibility =
