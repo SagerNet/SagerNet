@@ -544,12 +544,21 @@ object ProfileManager {
                         }
                     }
 
-                    val v2rayConfig = gson.fromJson(
-                        json.toString(),
-                        V2RayConfig::class.java
-                    ).apply { init() }
+                    try {
+                        gson.fromJson(
+                            json.toString(),
+                            V2RayConfig::class.java
+                        ).apply { init() }
+                    } catch (e: Exception) {
+                        json.getJSONArray("outbounds").toList(JSONObject::class.java).forEach {
+                            val v2rayConfig = gson
+                                .fromJson(it.toString(), OutboundObject::class.java)
+                                .apply { init() }
 
-                    v2rayConfig.outbounds?.forEach {
+                            proxies.addAll(parseOutbound(v2rayConfig))
+                        }
+                        null
+                    }?.outbounds?.forEach {
                         proxies.addAll(parseOutbound(it))
                     }
                 }
