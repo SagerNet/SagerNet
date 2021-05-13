@@ -77,10 +77,19 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
-            ) = if (viewHolder.bindingAdapterPosition == 0) {
+            ) = if (viewHolder is RuleAdapter.DocumentHolder) {
                 0
             } else {
                 super.getSwipeDirs(recyclerView, viewHolder)
+            }
+
+            override fun getDragDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ) = if (viewHolder is RuleAdapter.DocumentHolder) {
+                0
+            } else {
+                super.getDragDirs(recyclerView, viewHolder)
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
