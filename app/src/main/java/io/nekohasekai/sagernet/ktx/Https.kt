@@ -21,7 +21,9 @@
 
 package io.nekohasekai.sagernet.ktx
 
+import android.net.Uri
 import androidx.fragment.app.Fragment
+import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ui.MainActivity
@@ -59,4 +61,16 @@ fun HttpUrl.Builder.toLink(scheme: String): String {
         .replace("${url.scheme}://", "$scheme://").let {
             if (replace) it.replace("${url.host}:14514", "${url.host}:$defaultPort") else it
         }
+}
+
+fun String.isIpAddress(): Boolean {
+    return Validator.isIpv4(this) || Validator.isIpv6(this)
+}
+
+fun String.parseHost(): String {
+    return try {
+        Uri.parse(this)?.host?.takeIf { it.isNotBlank() }
+    } catch (ignored: Exception) {
+        null
+    } ?: this
 }

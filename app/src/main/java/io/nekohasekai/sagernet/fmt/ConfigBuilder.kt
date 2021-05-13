@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.fmt
 
-import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.bg.VpnService
@@ -37,8 +36,8 @@ import io.nekohasekai.sagernet.fmt.v2ray.*
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.formatObject
+import io.nekohasekai.sagernet.ktx.isIpAddress
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.internal.canParseAsIpAddress
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -198,7 +197,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
                         destOverride =
-                            if (useFakeDns) listOf("fakedns+others") else listOf("http", "tls")
+                            if (useFakeDns) listOf("fakedns") else listOf("http", "tls")
                         metadataOnly = false
                     }
                 }
@@ -225,11 +224,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         type = "field"
                         outboundTag = TAG_DIRECT
                         when {
-                            Validator.isIpv4(bean.host) || Validator.isIpv6(bean.host) -> {
+                            bean.host.isIpAddress() -> {
                                 ip = listOf(bean.host)
                             }
-                            bean.host.isNotBlank() -> domain = listOf(bean.host)
-                            Validator.isIpv4(bean.serverAddress) || Validator.isIpv6(bean.serverAddress) -> {
+                            bean.host.isNotBlank() -> {
+                                domain = listOf(bean.host)
+                            }
+                            bean.serverAddress.isIpAddress() -> {
                                 ip = listOf(bean.serverAddress)
                             }
                             else -> domain = listOf(bean.serverAddress)
@@ -787,7 +788,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             if (useLocalDns) {
 
                 for (dns in localDns) {
-                    if (!dns.canParseAsIpAddress()) continue
+                    if (!dns.isIpAddress()) continue
                     routing.rules.add(0, RoutingObject.RuleObject().apply {
                         type = "field"
                         outboundTag = TAG_AGENT
@@ -797,7 +798,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
                 if (enableDomesticDns) {
                     for (dns in domesticDns) {
-                        if (!dns.canParseAsIpAddress()) continue
+                        if (!dns.isIpAddress()) continue
 
                         routing.rules.add(0, RoutingObject.RuleObject().apply {
                             type = "field"
@@ -819,7 +820,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         dns.servers.add(DnsObject.StringOrServerObject().apply {
                             valueY = DnsObject.ServerObject().apply {
                                 address = domesticDns.first()
-                                port = 53
                                 if (bypassIP.isNotEmpty()) {
                                     expectIPs = bypassIP.toList()
                                 }
@@ -852,18 +852,18 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             if (dnsMode == DnsMode.FAKEDNS_LOCAL) {
                 val domainsToRoute = dns.servers.flatMap { it.valueY?.domains ?: listOf() }
                     .toHashSet().toList()
-                dns.servers.add(0, if (domainsToRoute.isNotEmpty()) {
+                dns.servers.add(0, /*if (domainsToRoute.isNotEmpty()) {
                     DnsObject.StringOrServerObject().apply {
                         valueY = DnsObject.ServerObject().apply {
                             address = "fakedns"
                             domains = domainsToRoute
                         }
                     }
-                } else {
+                } else {*/
                     DnsObject.StringOrServerObject().apply {
                         valueX = "fakedns"
                     }
-                })
+                    /*}*/)
             }
 
             routing.rules.add(0, RoutingObject.RuleObject().apply {
