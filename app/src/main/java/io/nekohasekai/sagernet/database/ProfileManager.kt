@@ -537,6 +537,13 @@ object ProfileManager {
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbounds") -> {
+                    val fakedns = json["fakedns"]
+                    if (fakedns is JSONObject) {
+                        json["fakedns"] = JSONArray().apply {
+                            add(fakedns)
+                        }
+                    }
+
                     val v2rayConfig = gson.fromJson(
                         json.toString(),
                         V2RayConfig::class.java
