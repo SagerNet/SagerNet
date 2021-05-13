@@ -308,6 +308,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof StandardV2RayBean)) return;
         StandardV2RayBean bean = ((StandardV2RayBean) other);
         bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
     }
