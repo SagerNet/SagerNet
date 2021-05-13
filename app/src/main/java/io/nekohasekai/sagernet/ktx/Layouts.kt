@@ -55,18 +55,27 @@ class FixedLinearLayoutManager(val context: Context) :
 
         if (overscroll > 0) {
             if (activity.stats.behavior.hide) {
-                if (suppression) {
-                    suppression = false
-                    return scrollRange
-                }
                 activity.fab.apply {
-                    if (isShown) hide()
-                    suppression = true
+                    if (isShown) {
+                        if (suppression) {
+                            suppression = false
+                            return scrollRange
+                        }
+                        hide()
+                        suppression = true
+                    }
                 }
             }
         } else {
             activity.fab.apply {
-                if (!isShown) show()
+                if (!isShown) {
+                    if (suppression) {
+                        suppression = false
+                        return scrollRange
+                    }
+                    show()
+                    suppression = true
+                }
             }
         }
         return scrollRange
@@ -103,17 +112,27 @@ class FixedGridLayoutManager(val context: Context, spanCount: Int) :
 
         if (overscroll > 0) {
             if (activity.stats.behavior.hide) {
-                if (suppression) {
-                    suppression = false
-                    return scrollRange
-                }
                 activity.fab.apply {
-                    if (isShown) hide()
+                    if (isShown) {
+                        if (suppression) {
+                            suppression = false
+                            return scrollRange
+                        }
+                        hide()
+                        suppression = true
+                    }
                 }
             }
         } else {
             activity.fab.apply {
-                if (!isShown) show()
+                if (!isShown) {
+                    if (suppression) {
+                        suppression = false
+                        return scrollRange
+                    }
+                    show()
+                    suppression = true
+                }
             }
         }
         return scrollRange
