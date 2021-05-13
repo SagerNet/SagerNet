@@ -214,6 +214,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         while (proxiesMap.containsKey(name)) {
                             println("Exists name: $name")
                             index++
+                            name = name.replace(" (${index - 1})", "")
                             name = "$name ($index)"
                             proxy.name = name
                         }
