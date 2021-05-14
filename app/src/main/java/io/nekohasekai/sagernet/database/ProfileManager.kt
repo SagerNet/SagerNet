@@ -550,6 +550,7 @@ object ProfileManager {
                             V2RayConfig::class.java
                         ).apply { init() }
                     } catch (e: Exception) {
+                        Logs.w(e)
                         json.getJSONArray("outbounds").toList(JSONObject::class.java).forEach {
                             val v2rayConfig = gson
                                 .fromJson(it.toString(), OutboundObject::class.java)
