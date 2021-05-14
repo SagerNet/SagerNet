@@ -130,7 +130,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         }
     }
 
-    var cacheFiles = LinkedList<File>()
+    var cacheFiles = ArrayList<File>()
 
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     fun start() {

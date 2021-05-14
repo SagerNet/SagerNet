@@ -62,7 +62,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
         ChainBean().apply { initDefaultValues() }.init()
     }
 
-    val proxyList = LinkedList<ProxyEntity>()
+    val proxyList = ArrayList<ProxyEntity>()
 
     override fun ChainBean.init() {
         DataStore.profileName = name

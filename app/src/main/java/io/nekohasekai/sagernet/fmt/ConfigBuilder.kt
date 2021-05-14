@@ -54,7 +54,7 @@ const val TAG_DNS_OUT = "dns-out"
 
 class V2rayBuildResult(
     var config: V2RayConfig,
-    var index: LinkedList<LinkedHashMap<Int, ProxyEntity>>,
+    var index: ArrayList<LinkedHashMap<Int, ProxyEntity>>,
     var requireWs: Boolean,
 )
 
@@ -65,7 +65,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         if (bean !is ChainBean) return mutableListOf(this)
         val beans = SagerDatabase.proxyDao.getEntities(bean.proxies)
         val beansMap = beans.map { it.id to it }.toMap()
-        val beanList = LinkedList<ProxyEntity>()
+        val beanList = ArrayList<ProxyEntity>()
         for (proxyId in bean.proxies) {
             beanList.addAll((beansMap[proxyId] ?: continue).resolveChain())
         }
@@ -91,7 +91,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     val useLocalDns = dnsMode in arrayOf(DnsMode.LOCAL, DnsMode.FAKEDNS_LOCAL)
     val ipv6Route = DataStore.ipv6Route
     val trafficSniffing = DataStore.trafficSniffing
-    val indexMap = LinkedList<LinkedHashMap<Int, ProxyEntity>>()
+    val indexMap = ArrayList<LinkedHashMap<Int, ProxyEntity>>()
     var requireWs = false
 
     return V2RayConfig().apply {

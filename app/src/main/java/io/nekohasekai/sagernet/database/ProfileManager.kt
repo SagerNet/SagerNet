@@ -346,7 +346,7 @@ object ProfileManager {
     @Suppress("UNCHECKED_CAST")
     fun parseSubscription(text: String): Pair<Int, List<AbstractBean>>? {
 
-        val proxies = LinkedList<AbstractBean>()
+        val proxies = ArrayList<AbstractBean>()
 
         if (text.contains("proxies:")) {
 
@@ -512,7 +512,7 @@ object ProfileManager {
     }
 
     fun parseJSON(json: JSON): List<AbstractBean> {
-        val proxies = LinkedList<AbstractBean>()
+        val proxies = ArrayList<AbstractBean>()
 
         if (json is JSONObject) {
             when {
@@ -585,7 +585,7 @@ object ProfileManager {
     }
 
     fun parseOutbound(outboundObject: OutboundObject): List<AbstractBean> {
-        val proxies = LinkedList<AbstractBean>()
+        val proxies = ArrayList<AbstractBean>()
 
         with(outboundObject) {
             when (protocol) {

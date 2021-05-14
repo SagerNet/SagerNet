@@ -223,7 +223,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     proxies = proxiesMap.values.toList()
 
                     val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
-                    val duplicate = LinkedList<String>()
+                    val duplicate = ArrayList<String>()
                     if (proxyGroup.deduplication) {
 
                         Logs.d("Before deduplication: ${proxies.size}")
@@ -257,7 +257,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
 
                     Logs.d("Unique profiles: ${nameMap.size}")
 
-                    val toDelete = LinkedList<ProxyEntity>()
+                    val toDelete = ArrayList<ProxyEntity>()
                     val toReplace = exists.mapNotNull { entity ->
                         val name = entity.displayName()
                         if (nameMap.contains(name)) name to entity else let {
@@ -269,7 +269,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                     Logs.d("toDelete profiles: ${toDelete.size}")
                     Logs.d("toReplace profiles: ${toReplace.size}")
 
-                    val toUpdate = LinkedList<ProxyEntity>()
+                    val toUpdate = ArrayList<ProxyEntity>()
                     val added = mutableListOf<String>()
                     val updated = mutableMapOf<String, String>()
                     val deleted = toDelete.map { it.displayName() }

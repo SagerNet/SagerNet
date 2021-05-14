@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import java.util.*
+import kotlin.collections.ArrayList
 
 fun formatObject(obj: Any): String {
     return gson.toJson(obj).let { JSONObject(it).toStringPretty() }
@@ -51,10 +52,10 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
     val links = text.split('\n').flatMap { it.trim().split(' ') }
     val linksByLine = text.split('\n').map { it.trim() }
 
-    val entities = LinkedList<AbstractBean>()
-    val entitiesByLine = LinkedList<AbstractBean>()
+    val entities = ArrayList<AbstractBean>()
+    val entitiesByLine = ArrayList<AbstractBean>()
 
-    fun String.parseLink(entities: LinkedList<AbstractBean>) {
+    fun String.parseLink(entities: ArrayList<AbstractBean>) {
         if (startsWith("socks://")) {
             Logs.d("Try parse socks link: $this")
             runCatching {

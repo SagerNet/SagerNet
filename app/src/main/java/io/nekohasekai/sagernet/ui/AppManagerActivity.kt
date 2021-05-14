@@ -38,7 +38,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.util.contains
@@ -373,7 +372,7 @@ class AppManagerActivity : ThemedActivity() {
         val txt = text.text.toString()
 
         runOnDefaultDispatcher {
-            val chinaApps = LinkedList<Pair<PackageInfo, String>>()
+            val chinaApps = ArrayList<Pair<PackageInfo, String>>()
             val chinaRegex = ("(" + arrayOf(
                 "com.tencent",
                 "com.alibaba",
