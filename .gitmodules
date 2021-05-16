@@ -37,3 +37,6 @@
 [submodule "core/src/main/jni/proxychains-ng"]
 	path = core/src/main/jni/proxychains
 	url = https://github.com/SagerNet/proxychains-ng
+[submodule "naive-plugin/src/main/jni/naiveproxy"]
+	path = naive-plugin/src/main/jni/naiveproxy
+	url = https://github.com/klzgrad/naiveproxy

@@ -7,9 +7,9 @@
     <application
         android:allowBackup="false"
         android:extractNativeLibs="true"
-        android:label="Trojan-Go Plugin">
+        android:label="Naive Plugin">
         <provider
-            android:name="io.nekohasekai.sagernet.plugin.naive.BinaryProvider"
+            android:name=".BinaryProvider"
             android:authorities="io.nekohasekai.sagernet.plugin.naive.BinaryProvider"
             android:directBootAware="true"
             android:exported="true"
@@ -21,16 +21,16 @@
                 <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
                 <data
                     android:host="io.nekohasekai.sagernet"
-                    android:path="/trojan-go-plugin"
+                    android:path="/naive-plugin"
                     android:scheme="plugin" />
             </intent-filter>
 
             <meta-data
                 android:name="io.nekohasekai.sagernet.plugin.id"
-                android:value="trojan-go-plugin" />
+                android:value="naive-plugin" />
             <meta-data
                 android:name="io.nekohasekai.sagernet.plugin.executable_path"
-                android:value="libtrojan-go.so" />
+                android:value="libnaive.so" />
         </provider>
     </application>
 

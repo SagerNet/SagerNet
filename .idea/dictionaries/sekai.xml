@@ -13,6 +13,7 @@
       <w>grpc</w>
       <w>gson</w>
       <w>libev</w>
+      <w>libnaive</w>
       <w>libtrojan</w>
       <w>naiveproxy</w>
       <w>nativeproxy</w>

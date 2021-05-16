@@ -19,7 +19,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.plugin.xtls
+package io.nekohasekai.sagernet.plugin.naive
 
 import android.net.Uri
 import android.os.ParcelFileDescriptor
@@ -30,12 +30,12 @@ import java.io.FileNotFoundException
 
 class BinaryProvider : NativePluginProvider() {
     override fun populateFiles(provider: PathProvider) {
-        provider.addPath("xtls-plugin", 0b111101101)
+        provider.addPath("trojan-go-plugin", 0b111101101)
     }
 
-    override fun getExecutable() = context!!.applicationInfo.nativeLibraryDir + "/libxrayexec.so"
+    override fun getExecutable() = context!!.applicationInfo.nativeLibraryDir + "/libtrojan-go.so"
     override fun openFile(uri: Uri): ParcelFileDescriptor = when (uri.path) {
-        "/xtls-plugin" -> ParcelFileDescriptor.open(File(getExecutable()),
+        "/trojan-go-plugin" -> ParcelFileDescriptor.open(File(getExecutable()),
             ParcelFileDescriptor.MODE_READ_ONLY)
         else -> throw FileNotFoundException()
     }
