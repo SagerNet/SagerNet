@@ -19,6 +19,8 @@
  *                                                                            *
  ******************************************************************************/
 
+@file:Suppress("EXPERIMENTAL_API_USAGE")
+
 package io.nekohasekai.sagernet.ktx
 
 import kotlinx.coroutines.*

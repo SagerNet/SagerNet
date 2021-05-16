@@ -27,7 +27,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import io.nekohasekai.sagernet.R
 
-fun Context.launchCustomTab(uri: Uri) {
+fun Context.launchCustomTab(link: String) {
     CustomTabsIntent.Builder().apply {
         setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
         setColorSchemeParams(
@@ -42,5 +42,5 @@ fun Context.launchCustomTab(uri: Uri) {
                 setToolbarColor(loadColor(R.attr.colorPrimary))
             }.build()
         )
-    }.build().launchUrl(this, uri)
+    }.build().launchUrl(this, Uri.parse(link))
 }

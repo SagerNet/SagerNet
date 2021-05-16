@@ -22,7 +22,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -291,7 +290,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         inner class DocumentHolder(val view: View) : RecyclerView.ViewHolder(view) {
             fun bind() {
                 view.setOnClickListener {
-                    it.context.launchCustomTab(Uri.parse("https://www.v2fly.org/config/routing.html#ruleobject"))
+                    it.context.launchCustomTab("https://www.v2fly.org/config/routing.html#ruleobject")
                 }
             }
         }

@@ -133,9 +133,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .subText(versionName)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                Uri.parse(
                                     "https://github.com/SagerNet/SagerNet/releases"
-                                )
                             )
                         }
                         .build()
@@ -188,9 +186,8 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                     .subText(R.string.donate_info)
                                     .setOnClickAction {
                                         requireContext().launchCustomTab(
-                                            Uri.parse(
                                                 "https://liberapay.com/nekohasekai/donate"
-                                            )
+
                                         )
                                     }
                                     .build()
@@ -207,9 +204,8 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.github)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                Uri.parse(
                                     "https://github.com/SagerNet/SagerNet"
-                                )
+
                             )
                         }
                         .build()
@@ -219,9 +215,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.telegram)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                Uri.parse(
                                     "https://t.me/SagerNet"
-                                )
                             )
                         }
                         .build())
