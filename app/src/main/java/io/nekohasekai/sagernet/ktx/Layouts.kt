@@ -21,14 +21,14 @@
 
 package io.nekohasekai.sagernet.ktx
 
-import android.content.Context
+import android.graphics.Rect
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.nekohasekai.sagernet.ui.MainActivity
 
-class FixedLinearLayoutManager(val context: Context) :
-    LinearLayoutManager(context, RecyclerView.VERTICAL, false) {
+class FixedLinearLayoutManager(val recyclerView: RecyclerView) :
+    LinearLayoutManager(recyclerView.context, RecyclerView.VERTICAL, false) {
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
         try {
@@ -38,54 +38,56 @@ class FixedLinearLayoutManager(val context: Context) :
     }
 
     private var listenerDisabled = false
-    private var suppression = true
 
     override fun scrollVerticallyBy(
-        dx: Int, recycler: RecyclerView.Recycler?,
-        state: RecyclerView.State?
+        dx: Int, recycler: RecyclerView.Recycler,
+        state: RecyclerView.State
     ): Int {
         val scrollRange = super.scrollVerticallyBy(dx, recycler, state)
         if (listenerDisabled) return scrollRange
-        val activity = context as? MainActivity
+        val activity = recyclerView.context as? MainActivity
         if (activity == null) {
             listenerDisabled = true
             return scrollRange
         }
-        val overscroll = dx - scrollRange
 
+        val overscroll = dx - scrollRange
         if (overscroll > 0) {
-            if (activity.stats.behavior.hide) {
-                activity.fab.apply {
-                    if (isShown) {
-                        if (suppression) {
-                            suppression = false
-                            return scrollRange
-                        }
-                        hide()
-                        suppression = true
-                    }
-                }
+            val view =
+                (recyclerView.findViewHolderForAdapterPosition(findLastVisibleItemPosition())
+                    ?: return scrollRange).itemView
+            val itemLocation = Rect().also { view.getGlobalVisibleRect(it) }
+            val fabLocation = Rect().also { activity.fab.getGlobalVisibleRect(it) }
+            if (!itemLocation.contains(fabLocation.left, fabLocation.top) && !itemLocation.contains(fabLocation.right, fabLocation.bottom)) {
+                return scrollRange
+            }
+            activity.fab.apply {
+                if (isShown) hide()
             }
         } else {
+            /*val screen = Rect().also { activity.window.decorView.getGlobalVisibleRect(it) }
+            val location = Rect().also { activity.stats.getGlobalVisibleRect(it) }
+            if (screen.bottom < location.bottom) {
+                return scrollRange
+            }
+            val height = location.bottom - location.top
+            val mH = activity.stats.measuredHeight
+
+            if (mH > height) {
+                return scrollRange
+            }*/
+
             activity.fab.apply {
-                if (!isShown) {
-                    if (suppression) {
-                        suppression = false
-                        return scrollRange
-                    }
-                    show()
-                    suppression = true
-                }
+                if (!isShown) show()
             }
         }
         return scrollRange
     }
 
-
 }
 
-class FixedGridLayoutManager(val context: Context, spanCount: Int) :
-    GridLayoutManager(context, spanCount) {
+class FixedGridLayoutManager(val recyclerView: RecyclerView, spanCount: Int) :
+    GridLayoutManager(recyclerView.context, spanCount) {
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
         try {
@@ -95,44 +97,47 @@ class FixedGridLayoutManager(val context: Context, spanCount: Int) :
     }
 
     private var listenerDisabled = false
-    private var suppression = true
 
     override fun scrollVerticallyBy(
-        dx: Int, recycler: RecyclerView.Recycler?,
-        state: RecyclerView.State?
+        dx: Int, recycler: RecyclerView.Recycler,
+        state: RecyclerView.State
     ): Int {
         val scrollRange = super.scrollVerticallyBy(dx, recycler, state)
         if (listenerDisabled) return scrollRange
-        val activity = context as? MainActivity
+        val activity = recyclerView.context as? MainActivity
         if (activity == null) {
             listenerDisabled = true
             return scrollRange
         }
-        val overscroll = dx - scrollRange
 
+        val overscroll = dx - scrollRange
         if (overscroll > 0) {
-            if (activity.stats.behavior.hide) {
-                activity.fab.apply {
-                    if (isShown) {
-                        if (suppression) {
-                            suppression = false
-                            return scrollRange
-                        }
-                        hide()
-                        suppression = true
-                    }
-                }
+            val view =
+                (recyclerView.findViewHolderForAdapterPosition(findLastVisibleItemPosition())
+                    ?: return scrollRange).itemView
+            val itemLocation = Rect().also { view.getGlobalVisibleRect(it) }
+            val fabLocation = Rect().also { activity.fab.getGlobalVisibleRect(it) }
+            if (!itemLocation.contains(fabLocation.left, fabLocation.top) && !itemLocation.contains(fabLocation.right, fabLocation.bottom)) {
+                return scrollRange
+            }
+            activity.fab.apply {
+                if (isShown) hide()
             }
         } else {
+            /*val screen = Rect().also { activity.window.decorView.getGlobalVisibleRect(it) }
+            val location = Rect().also { activity.stats.getGlobalVisibleRect(it) }
+            if (screen.bottom < location.bottom) {
+                return scrollRange
+            }
+            val height = location.bottom - location.top
+            val mH = activity.stats.measuredHeight
+
+            if (mH > height) {
+                return scrollRange
+            }*/
+
             activity.fab.apply {
-                if (!isShown) {
-                    if (suppression) {
-                        suppression = false
-                        return scrollRange
-                    }
-                    show()
-                    suppression = true
-                }
+                if (!isShown) show()
             }
         }
         return scrollRange

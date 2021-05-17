@@ -475,13 +475,12 @@ class ConfigurationFragment @JvmOverloads constructor(
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             if (!::proxyGroup.isInitialized) return
 
-            layoutManager = if (proxyGroup.type != 1) {
-                FixedLinearLayoutManager(view.context)
-            } else {
-                FixedGridLayoutManager(view.context, 2)
-            }
-
             configurationListView = view.findViewById(R.id.configuration_list)
+            layoutManager = if (proxyGroup.type != 1) {
+                FixedLinearLayoutManager(configurationListView)
+            } else {
+                FixedGridLayoutManager(configurationListView, 2)
+            }
             configurationListView.layoutManager = layoutManager
             adapter = ConfigurationAdapter()
             ProfileManager.addListener(adapter)

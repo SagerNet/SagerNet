@@ -92,7 +92,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
 
         supportActionBar!!.setTitle(R.string.chain_settings)
         configurationList = findViewById(R.id.configuration_list)
-        layoutManager = FixedLinearLayoutManager(this)
+        layoutManager = FixedLinearLayoutManager(configurationList)
         configurationList.layoutManager = layoutManager
         configurationAdapter = ProxiesAdapter()
         configurationList.adapter = configurationAdapter

@@ -47,7 +47,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listView.layoutManager = FixedLinearLayoutManager(requireActivity())
+        listView.layoutManager = FixedLinearLayoutManager(listView)
     }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
