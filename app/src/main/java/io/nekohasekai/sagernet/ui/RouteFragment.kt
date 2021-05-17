@@ -205,7 +205,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             var previousOrder = first.userOrder
             val (step, range) = if (from < to) Pair(1, from - 1 until to - 1) else Pair(
                 -1,
-                to - 1 downTo from - 1
+                to downTo from - 1
             )
             for (i in range) {
                 val next = ruleList[i + step]
