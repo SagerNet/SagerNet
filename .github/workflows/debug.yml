@@ -138,6 +138,34 @@ jobs:
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run libs trojan_go
           ./gradlew trojan-go-plugin:assembleDebug
+  naive:
+    name: Native Build (NaïveProxy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'naive-plugin/*' > naive_status
+      - name: Naive Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            naive-plugin/src/main/jniLibs
+          key: ${{ hashFiles('bin/libs/naive.sh', 'naive_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle') }}
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run libs naive
+          ./gradlew naive-plugin:assembleDebug
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest

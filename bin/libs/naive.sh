@@ -6,6 +6,7 @@ ROOT="$PROJECT/naive-plugin/src/main/jniLibs"
 OUTPUT="naive"
 LIB_OUTPUT="lib$OUTPUT.so"
 
+git submodule update --init --recursive 'naive-plugin/*'
 cd naive-plugin/src/main/jni/naiveproxy/src
 
 export EXTRA_FLAGS='target_os="android" target_cpu="arm"'
