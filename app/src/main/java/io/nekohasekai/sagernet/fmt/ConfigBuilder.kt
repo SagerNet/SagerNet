@@ -1025,7 +1025,7 @@ fun buildXrayConfig(
                     }
                 }
             }
-            if (index == 0 && proxy.needXrayMux() && DataStore.enableMux) {
+            if (index == 0 && DataStore.enableMux) {
                 mux = OutboundObject.MuxObject().apply {
                     enabled = true
                     concurrency = DataStore.muxConcurrency

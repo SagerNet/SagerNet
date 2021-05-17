@@ -86,6 +86,7 @@
         <activity android:name="io.nekohasekai.sagernet.ui.profile.VLESSSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity" />
+        <activity android:name="io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity" />
 

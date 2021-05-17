@@ -26,6 +26,7 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
+import io.nekohasekai.sagernet.fmt.naive.parseNaive
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
@@ -63,7 +64,7 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (matches("(http|https|naive\\+https)://.*".toRegex())) {
+        } else if (matches("(http|https)://.*".toRegex())) {
             Logs.d("Try parse http link: $this")
             runCatching {
                 entities.add(parseHttp(this))
@@ -102,6 +103,13 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
             Logs.d("Try parse shadowsocksr link: $this")
             runCatching {
                 entities.add(parseShadowsocksR(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("naive+")) {
+            Logs.d("Try parse naive link: $this")
+            runCatching {
+                entities.add(parseNaive(this))
             }.onFailure {
                 Logs.w(it)
             }

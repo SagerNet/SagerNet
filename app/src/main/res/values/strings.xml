@@ -131,6 +131,8 @@
     <string name="alpn">Application-Layer Protocol Negotiation</string>
     <string name="encryption">Encryption</string>
 
+    <string name="extra_headers">Extra Headers</string>
+
     <!-- feature category -->
     <string name="ipv6_settings">IPv6 Settings</string>
     <string name="ipv6">IPv6 Route</string>
@@ -218,6 +220,7 @@
     <string name="action_vless" translatable="false">VLESS</string>
     <string name="action_trojan" translatable="false">Trojan</string>
     <string name="action_trojan_go" translatable="false">Trojan Go</string>
+    <string name="action_naive" translatable="false">Naïve</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="chain_settings">Chain Settings</string>
     <string name="circular_reference">Circular reference</string>

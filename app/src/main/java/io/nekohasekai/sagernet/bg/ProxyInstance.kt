@@ -37,6 +37,8 @@ import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
+import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -125,6 +127,13 @@ class ProxyInstance(val profile: ProxyEntity) {
                                 Logs.d(it)
                             }
                     }
+                    bean is NaiveBean -> {
+                        initPlugin("naive-plugin")
+                        pluginConfigs[port] =
+                            bean.buildNaiveConfig(port).also {
+                                Logs.d(it)
+                            }
+                    }
                 }
             }
         }
@@ -134,6 +143,9 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     fun start() {
+        val context =
+            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
+                SagerNet.application else SagerNet.deviceStorage
 
         for (chain in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
@@ -143,9 +155,6 @@ class ProxyInstance(val profile: ProxyEntity) {
 
                 when {
                     profile.useExternalShadowsocks() -> {
-                        val context =
-                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                                SagerNet.application else SagerNet.deviceStorage
                         val configFile =
                             File(
                                 context.noBackupFilesDir,
@@ -184,10 +193,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                         base.data.processes!!.start(commands, env)
                     }
                     bean is ShadowsocksRBean -> {
-                        val context =
-                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                                SagerNet.application else SagerNet.deviceStorage
-
                         val configFile =
                             File(
                                 context.noBackupFilesDir,
@@ -229,10 +234,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                         base.data.processes!!.start(commands, env)
                     }
                     profile.useXray() -> {
-                        val context =
-                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                                SagerNet.application else SagerNet.deviceStorage
-
                         val configFile =
                             File(
                                 context.noBackupFilesDir,
@@ -249,10 +250,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                         base.data.processes!!.start(commands)
                     }
                     bean is TrojanGoBean -> {
-                        val context =
-                            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                                SagerNet.application else SagerNet.deviceStorage
-
                         val configFile = File(
                             context.noBackupFilesDir,
                             "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
@@ -266,6 +263,41 @@ class ProxyInstance(val profile: ProxyEntity) {
                         )
 
                         base.data.processes!!.start(commands)
+                    }
+                    bean is NaiveBean -> {
+                        val configFile =
+                            File(
+                                context.noBackupFilesDir,
+                                "naive_" + SystemClock.elapsedRealtime() + ".json"
+                            )
+
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf(
+                            initPlugin("naive-plugin").path, configFile.absolutePath
+                        )
+
+                        val env = mutableMapOf<String, String>()
+
+                        if (needChain) {
+                            val proxychainsConfigFile =
+                                File(
+                                    context.noBackupFilesDir,
+                                    "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
+                                )
+                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
+                            cacheFiles.add(proxychainsConfigFile)
+
+                            env["LD_PRELOAD"] =
+                                File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.PROXYCHAINS
+                                ).absolutePath
+                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                        }
+
+                        base.data.processes!!.start(commands, env)
                     }
                 }
             }

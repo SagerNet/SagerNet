@@ -49,11 +49,11 @@ fun Fragment.createHttpClient(): OkHttpClient {
 
 fun linkBuilder() = HttpUrl.Builder().scheme("https")
 
-fun HttpUrl.Builder.toLink(scheme: String): String {
+fun HttpUrl.Builder.toLink(scheme: String, appendDefaultPort: Boolean = true): String {
     var url = build()
     val defaultPort = HttpUrl.defaultPort(url.scheme)
     var replace = false
-    if (url.port == defaultPort) {
+    if (appendDefaultPort && url.port == defaultPort) {
         url = url.newBuilder().port(14514).build()
         replace = true
     }

@@ -19,46 +19,61 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http
+package io.nekohasekai.sagernet.fmt.naive;
 
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.toHttpUrlOrNull() ?: error("Invalid http(s) link: $link")
+import org.jetbrains.annotations.NotNull;
 
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
+import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-    return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
-    }
-}
+public class NaiveBean extends AbstractBean {
 
-fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
-        .host(serverAddress)
-        .port(serverPort)
+    /**
+     * Available proto: https, quic.
+     */
+    public String proto;
+    public String username;
+    public String password;
+    public String extraHeaders;
 
-    if (username.isNotBlank()) {
-        builder.username(username)
-    }
-    if (password.isNotBlank()) {
-        builder.password(password)
-    }
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+    @Override
+    public void initDefaultValues() {
+        if (serverPort == 0) {
+            serverPort = 443;
+        }
+        super.initDefaultValues();
+        if (proto == null) proto = "https";
+        if (username == null) username = "";
+        if (password == null) password = "";
+        if (extraHeaders == null) extraHeaders = "";
     }
 
-    return builder.toString()
+    @Override
+    public void serialize(ByteBufferOutput output) {
+        output.writeInt(0);
+        super.serialize(output);
+        output.writeString(proto);
+        output.writeString(username);
+        output.writeString(password);
+        output.writeString(extraHeaders);
+    }
+
+    @Override
+    public void deserialize(ByteBufferInput input) {
+        int version = input.readInt();
+        super.deserialize(input);
+        proto = input.readString();
+        username = input.readString();
+        password = input.readString();
+        extraHeaders = input.readString();
+    }
+
+    @NotNull
+    @Override
+    public NaiveBean clone() {
+        return KryoConverters.deserialize(new NaiveBean(), KryoConverters.serialize(this));
+    }
 }

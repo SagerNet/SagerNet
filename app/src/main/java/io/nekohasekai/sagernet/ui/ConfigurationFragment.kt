@@ -251,6 +251,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_trojan_go -> {
                 startActivity(Intent(requireActivity(), TrojanGoSettingsActivity::class.java))
             }
+            R.id.action_new_naive -> {
+                startActivity(Intent(requireActivity(), NaiveSettingsActivity::class.java))
+            }
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }

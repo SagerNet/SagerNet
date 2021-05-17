@@ -19,46 +19,62 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http
+package io.nekohasekai.sagernet.fmt.naive
 
+import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.ktx.linkBuilder
+import io.nekohasekai.sagernet.ktx.toLink
+import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.toHttpUrlOrNull() ?: error("Invalid http(s) link: $link")
-
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
-
-    return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
+fun parseNaive(link: String): NaiveBean {
+    val proto = link.substringAfter("+").substringBefore(":")
+    val url = ("https://" + link.substringAfter("://")).toHttpUrlOrNull()
+        ?: error("Invalid naive link: $link")
+    return NaiveBean().also {
+        it.proto = proto
+    }.apply {
+        serverAddress = url.host
+        serverPort = url.port
+        username = url.username
+        password = url.password
+        extraHeaders = url.queryParameter("extra-headers")?.let {
+            it.unUrlSafe().replace("\r\n", "\n")
+        }
+        name = url.fragment
+        initDefaultValues()
     }
 }
 
-fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
+fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
+    val builder = linkBuilder()
         .host(serverAddress)
         .port(serverPort)
-
     if (username.isNotBlank()) {
         builder.username(username)
+        if (password.isNotBlank()) {
+            builder.password(password)
+        }
     }
-    if (password.isNotBlank()) {
-        builder.password(password)
+    if (!proxyOnly) {
+        if (extraHeaders.isNotBlank()) {
+            builder.addQueryParameter("extra-headers", extraHeaders)
+        }
+        if (name.isNotBlank()) {
+            builder.encodedFragment(name.urlSafe())
+        }
     }
-    if (sni.isNotBlank()) {
-        builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
-    }
+    return builder.toLink(if (proxyOnly) proto else "naive+$proto", false)
+}
 
-    return builder.toString()
+fun NaiveBean.buildNaiveConfig(port: Int): String {
+    return JSONObject().also {
+        it["listen"] = "socks://127.0.0.1:$port"
+        it["proxy"] = toUri(true)
+        if (extraHeaders.isNotBlank()) {
+            it["extra-headers"] = extraHeaders.split("\n").joinToString("\r\n")
+        }
+        it["log"] = ""
+    }.toStringPretty()
 }

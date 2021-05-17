@@ -7,7 +7,7 @@
     <application
         android:allowBackup="false"
         android:extractNativeLibs="true"
-        android:label="Naive Plugin">
+        android:label="Naïve Plugin">
         <provider
             android:name=".BinaryProvider"
             android:authorities="io.nekohasekai.sagernet.plugin.naive.BinaryProvider"

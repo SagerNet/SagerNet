@@ -43,6 +43,9 @@
                         android:id="@+id/action_new_trojan_go"
                         android:title="@string/action_trojan_go" />
                     <item
+                        android:id="@+id/action_new_naive"
+                        android:title="@string/action_naive" />
+                    <item
                         android:id="@+id/action_new_chain"
                         android:title="@string/proxy_chain" />
                 </menu>
