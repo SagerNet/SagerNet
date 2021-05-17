@@ -299,6 +299,14 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         outbounds.add(outbound)
                     }
 
+                    if (!bean.serverAddress.isIpAddress()) {
+                        routing.rules.add(RoutingObject.RuleObject().apply {
+                            type = "field"
+                            domain = listOf(bean.serverAddress)
+                            outboundTag = TAG_DIRECT
+                        })
+                    }
+
                     pastExternal = true
                     return@forEachIndexed
                 } else {
@@ -816,6 +824,15 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                             bypassIP.addAll(bypassRule.ip.split("\n"))
                         }
                     }
+
+                    (proxies + extraProxies.values.flatten()).forEach {
+                        it.requireBean().apply {
+                            if (!serverAddress.isIpAddress()) {
+                                bypassDomain.add(serverAddress)
+                            }
+                        }
+                    }
+
                     if (bypassIP.isNotEmpty() || bypassDomain.isNotEmpty()) {
                         dns.servers.add(DnsObject.StringOrServerObject().apply {
                             valueY = DnsObject.ServerObject().apply {
