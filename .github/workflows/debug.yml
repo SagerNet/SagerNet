@@ -60,18 +60,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.16
-      - name: Gradle cache
-        uses: actions/cache@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          path: ~/.gradle
-          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs v2ray
+        run: ./run libs v2ray
   xtls:
     name: Native Build (XTLS)
     runs-on: ubuntu-latest
@@ -92,19 +83,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.16
-      - name: Gradle cache
-        uses: actions/cache@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          path: ~/.gradle
-          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs xtls
-          ./gradlew xtls-plugin:assembleDebug
+        run: ./run libs xtls
   trojan-go:
     name: Native Build (Trojan-Go)
     runs-on: ubuntu-latest
@@ -125,19 +106,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.16
-      - name: Gradle cache
-        uses: actions/cache@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          path: ~/.gradle
-          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs trojan_go
-          ./gradlew trojan-go-plugin:assembleDebug
+        run: ./run libs trojan_go
   naive:
     runs-on: ubuntu-latest
     name: Native Build (NaïveProxy)
@@ -157,17 +128,9 @@ jobs:
           path: |
             naive-plugin/src/main/jniLibs/${{ matrix.arch }}
           key: naive-${{ matrix.arch }}-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
-      - name: Gradle cache
-        uses: actions/cache@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          path: ~/.gradle
-          key: native-${{ hashFiles('**/*.gradle') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run init action naive
           ./run libs naive ${{ matrix.arch }}
   shadowsocks:
