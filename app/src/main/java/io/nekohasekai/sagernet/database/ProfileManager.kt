@@ -306,8 +306,15 @@ object ProfileManager {
 
     suspend fun getRules(): List<RuleEntity> {
         var rules = SagerDatabase.rulesDao.allRules()
-        if (rules.isEmpty() /*&& !DataStore.rulesFirstCreate*/) {
+        if (rules.isEmpty() && !DataStore.rulesFirstCreate) {
             DataStore.rulesFirstCreate = true
+            createRule(
+                RuleEntity(
+                    name = app.getString(R.string.route_opt_block_ads),
+                    domains = "geosite:category-ads-all",
+                    outbound = -2
+                )
+            )
             var country = Locale.getDefault().country.lowercase()
             var displayCountry = Locale.getDefault().displayCountry
             if (country !in arrayOf(
@@ -330,13 +337,6 @@ object ProfileManager {
                     domains = "geosite:$country",
                     outbound = -1
                 ), false
-            )
-            createRule(
-                RuleEntity(
-                    name = app.getString(R.string.route_opt_block_ads),
-                    domains = "geosite:category-ads-all",
-                    outbound = -2
-                )
             )
             rules = SagerDatabase.rulesDao.allRules()
         }

@@ -10,11 +10,11 @@ The universal proxy toolchain for Android, written in Kotlin.
 ## PROTOCOLS
 
 The application is designed to be used whenever possible.
- 
-### Protocols
+
+### PROXY
 
 * SOCKS
-* HTTP(s) / naiveproxy
+* HTTP(S)
 * Shadowsocks
 * ShadowsocksR
 * VMess
@@ -22,8 +22,9 @@ The application is designed to be used whenever possible.
 * Trojan
 * VLESS / Trojan + XTLS ( xtls-plugin )
 * Trojan-Go ( trojan-go-plugin )
+* NaïveProxy ( naive-plugin )
 
-### Subscription protocols
+### SUBSCRIPTION
 
 * Universal base64 format
 * Shadowsocks SIP008
@@ -36,23 +37,24 @@ The application is designed to be used whenever possible.
 * V2Ray WebSocket browser forwarding
 * Option to change the notification update interval
 * A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
-* Proxy Chain
+* Proxy chain
 * Advanced routing with outbound profile selection support
 
 ## TIPS
 
-* Click on the title to scroll to the first proxy or the selected proxy  
-* Proxy list can be dragged by holding the progress bar  
-* The Chinese apps scanner will only scan system apps if "Show system apps" is checked  
+* Click on the title to scroll to the first proxy or the selected proxy
+* Proxy list can be dragged by holding the progress bar
+* The Chinese apps scanner will only scan system apps if "Show system apps" is checked
 
 ## OPEN SOURCE LICENSES
 
 <ul>
-    <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks-android</a>: GPL 3.0</li>
-    <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">AndroidLibV2rayLite</a>: LGPL 3.0</li>
-    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksr-libev</a>: GPL 3.0</li>
-    <li><a href="https://github.com/XTLS/Xray-core/blob/main/LICENSE">Xray-core</a>: MPL 2.0</li>
-    <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">Trojan-Go</a>: GPL 3.0</li>
+    <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: GPL 3.0</li>
+    <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">nekohasekai/AndroidLibV2rayLite</a>: LGPL 3.0</li>
+    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksRb/shadowsocksr-libev</a>: GPL 3.0</li>
+    <li><a href="https://github.com/XTLS/Xray-core/blob/main/LICENSE">XTLS/Xray-core</a>: MPL 2.0</li>
+    <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">p4gefau1t/Trojan-Go</a>: GPL 3.0</li>
+    <li><a href="https://github.com/klzgrad/naiveproxy/blob/master/LICENSE">klzgrad/naiveproxy</a>:  BSD-3-Clause License</li>
 </ul>
 
 ### LICENSE
