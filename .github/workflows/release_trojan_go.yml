@@ -46,10 +46,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs trojan_go
+        run: ./run libs trojan_go
   build:
     name: Gradle Build
     runs-on: ubuntu-latest

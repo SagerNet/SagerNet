@@ -7,10 +7,10 @@
     <application
         android:allowBackup="false"
         android:extractNativeLibs="true"
-        android:label="Trojan-Go Plugin">
+        android:label="PingTunnel Plugin">
         <provider
-            android:name="io.nekohasekai.sagernet.plugin.pingtunnel.io.nekohasekai.sagernet.plugin.trojan_go.BinaryProvider"
-            android:authorities="io.nekohasekai.sagernet.plugin.trojan_go.BinaryProvider"
+            android:name="io.nekohasekai.sagernet.plugin.pingtunnel.BinaryProvider"
+            android:authorities="io.nekohasekai.sagernet.plugin.pingtunnel.BinaryProvider"
             android:directBootAware="true"
             android:exported="true"
             tools:ignore="ExportedContentProvider">
@@ -21,16 +21,16 @@
                 <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
                 <data
                     android:host="io.nekohasekai.sagernet"
-                    android:path="/trojan-go-plugin"
+                    android:path="/pingtunnel-plugin"
                     android:scheme="plugin" />
             </intent-filter>
 
             <meta-data
                 android:name="io.nekohasekai.sagernet.plugin.id"
-                android:value="trojan-go-plugin" />
+                android:value="pingtunnel-plugin" />
             <meta-data
                 android:name="io.nekohasekai.sagernet.plugin.executable_path"
-                android:value="libtrojan-go.so" />
+                android:value="libptexec.so" />
         </provider>
     </application>
 

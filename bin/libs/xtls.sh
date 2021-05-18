@@ -2,7 +2,6 @@
 
 source "bin/init/env.sh"
 
-export GO111MOD=on
 export CGO_ENABLED=1
 export GOOS=android
 

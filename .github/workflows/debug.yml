@@ -133,6 +133,29 @@ jobs:
         run: |
           ./run init action naive
           ./run libs naive ${{ matrix.arch }}
+  pingtunnel:
+    name: Native Build (PingTunnel)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'pt-plugin/*' > pt_status
+      - name: PingTunnel Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            pt-plugin/src/main/jniLibs
+          key: ${{ hashFiles('bin/libs/pingtunnel.sh', 'pt_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs pingtunnel
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest

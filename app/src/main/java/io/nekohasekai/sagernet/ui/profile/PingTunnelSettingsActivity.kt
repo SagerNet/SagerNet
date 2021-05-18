@@ -19,38 +19,53 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.database.preference
+package io.nekohasekai.sagernet.ui.profile
 
-import android.graphics.Typeface
-import android.text.InputFilter
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
+import android.os.Bundle
 import androidx.preference.EditTextPreference
+import cn.hutool.core.util.NumberUtil
+import com.takisoft.preferencex.PreferenceFragmentCompat
+import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
+import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
-object EditTextPreferenceModifiers {
-    object Monospace : EditTextPreference.OnBindEditTextListener {
-        override fun onBindEditText(editText: EditText) {
-            editText.typeface = Typeface.MONOSPACE
+class PingTunnelSettingsActivity : ProfileSettingsActivity<PingTunnelBean>() {
+
+    override fun createEntity() = PingTunnelBean()
+
+    override fun init() {
+        PingTunnelBean().applyDefaultValues().init()
+    }
+
+    override fun PingTunnelBean.init() {
+        DataStore.profileName = name
+        DataStore.serverAddress = serverAddress
+        DataStore.serverPassword = key
+    }
+
+    override fun PingTunnelBean.serialize() {
+        name = DataStore.profileName
+        serverAddress = DataStore.serverAddress
+        key = DataStore.serverPassword
+    }
+
+    override fun PreferenceFragmentCompat.createPreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
+        addPreferencesFromResource(R.xml.pingtunnel_preferences)
+        findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
+            summaryProvider = PasswordSummaryProvider
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+            setOnPreferenceChangeListener { _, newValue ->
+                newValue.toString().let {
+                    it.isBlank() || NumberUtil.isInteger(it)
+                }
+            }
         }
     }
 
-    object Port : EditTextPreference.OnBindEditTextListener {
-        private val portLengthFilter = arrayOf(InputFilter.LengthFilter(5))
-
-        override fun onBindEditText(editText: EditText) {
-            editText.inputType = EditorInfo.TYPE_CLASS_NUMBER
-            editText.filters = portLengthFilter
-            editText.setSingleLine()
-            editText.setSelection(editText.text.length)
-        }
-    }
-
-    object Number : EditTextPreference.OnBindEditTextListener {
-
-        override fun onBindEditText(editText: EditText) {
-            editText.inputType = EditorInfo.TYPE_CLASS_NUMBER
-            editText.setSingleLine()
-            editText.setSelection(editText.text.length)
-        }
-    }
 }

@@ -46,6 +46,9 @@
                         android:id="@+id/action_new_naive"
                         android:title="@string/action_naive" />
                     <item
+                        android:id="@+id/action_new_ping_tunnel"
+                        android:title="@string/action_ping_tunnel" />
+                    <item
                         android:id="@+id/action_new_chain"
                         android:title="@string/proxy_chain" />
                 </menu>

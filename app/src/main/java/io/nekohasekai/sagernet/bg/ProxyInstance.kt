@@ -39,6 +39,7 @@ import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
+import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -109,7 +110,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                         }
                     }
                     bean is ShadowsocksRBean -> {
-                        pluginConfigs[port] = profile.requireSSR().buildShadowsocksRConfig().also {
+                        pluginConfigs[port] = bean.buildShadowsocksRConfig().also {
                             Logs.d(it)
                         }
                     }
@@ -133,6 +134,9 @@ class ProxyInstance(val profile: ProxyEntity) {
                             bean.buildNaiveConfig(port).also {
                                 Logs.d(it)
                             }
+                    }
+                    bean is PingTunnelBean -> {
+                        initPlugin("pingtunnel-plugin")
                     }
                 }
             }
@@ -298,6 +302,19 @@ class ProxyInstance(val profile: ProxyEntity) {
                         }
 
                         base.data.processes!!.start(commands, env)
+                    }
+                    bean is PingTunnelBean -> {
+                        if (needChain) error("PingTunnel is incompatible with chain")
+
+                        val commands = mutableListOf(
+                            initPlugin("naive-plugin").path,
+                            "-type", "client",
+                            "-sock5", "1",
+                            "-l", "127.0.0.1:$port",
+                            "-s", bean.serverAddress
+                        )
+
+                        base.data.processes!!.start(commands)
                     }
                 }
             }

@@ -104,6 +104,7 @@
     <string name="server_port">Remote Port</string>
     <string name="username_opt">Username (Optional)</string>
     <string name="password_opt">Password (Optional)</string>
+    <string name="key_opt">Key (Optional)</string>
     <string name="password">Password</string>
     <string name="enc_method">Encrypt Method</string>
     <string name="protocol">Protocol</string>
@@ -221,6 +222,7 @@
     <string name="action_trojan" translatable="false">Trojan</string>
     <string name="action_trojan_go" translatable="false">Trojan Go</string>
     <string name="action_naive" translatable="false">Naïve</string>
+    <string name="action_ping_tunnel" translatable="false">Ping Tunnel</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="chain_settings">Chain Settings</string>
     <string name="circular_reference">Circular reference</string>

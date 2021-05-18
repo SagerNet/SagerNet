@@ -93,7 +93,7 @@ class TestParseV2Ray : TestCase() {
         assertEquals(vless.grpcServiceName, "FuckGFW")
 
         vless.initDefaultValues()
-        assertEquals(parseV2Ray(vless.toUri(true)).applyDefaultValues(), vless)
+        assertEquals(parseV2Ray(vless.toUri()).applyDefaultValues(), vless)
     }
 
 }

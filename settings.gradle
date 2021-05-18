@@ -9,6 +9,7 @@ include ':plugin'
 include ':xtls-plugin'
 include ':trojan-go-plugin'
 include ':naive-plugin'
+include ':pt-plugin'
 
 include ':preferencex'
 include ':preferencex-ringtone'

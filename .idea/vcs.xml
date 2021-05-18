@@ -6,6 +6,7 @@
     <mapping directory="$PROJECT_DIR$/core/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/core/src/main/jni/proxychains" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/naive-plugin/src/main/jni/naiveproxy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/pt-plugin/src/main/go/pingtunnel" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libsodium" vcs="Git" />

@@ -40,3 +40,6 @@
 [submodule "naive-plugin/src/main/jni/naiveproxy"]
 	path = naive-plugin/src/main/jni/naiveproxy
 	url = https://github.com/klzgrad/naiveproxy
+[submodule "pt-plugin/src/main/go/pingtunnel"]
+	path = pt-plugin/src/main/go/pingtunnel
+	url = https://github.com/esrrhs/pingtunnel

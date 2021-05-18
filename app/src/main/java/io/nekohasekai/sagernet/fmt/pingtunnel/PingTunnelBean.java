@@ -19,48 +19,44 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ktx
+package io.nekohasekai.sagernet.fmt.pingtunnel;
 
-import androidx.preference.PreferenceDataStore
-import cn.hutool.core.util.NumberUtil
-import kotlin.reflect.KProperty
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-fun PreferenceDataStore.string(
-    name: String,
-    defaultValue: () -> String = { "" },
-) = PreferenceProxy(name, defaultValue, ::getString, ::putString)
+import org.jetbrains.annotations.NotNull;
 
-fun PreferenceDataStore.boolean(
-    name: String,
-    defaultValue: () -> Boolean = { false },
-) = PreferenceProxy(name, defaultValue, ::getBoolean, ::putBoolean)
+import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-fun PreferenceDataStore.int(
-    name: String,
-    defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name, defaultValue, ::getInt, ::putInt)
+public class PingTunnelBean extends AbstractBean {
 
-fun PreferenceDataStore.stringToInt(
-    name: String,
-    defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name,
-    defaultValue,
-    { key, default -> getString(key, "$default")?.takeIf { NumberUtil.isInteger(it) }?.toInt() },
-    { key, value -> putString(key, "$value") })
+    public String key;
 
-fun PreferenceDataStore.long(
-    name: String,
-    defaultValue: () -> Long = { 0L },
-) = PreferenceProxy(name, defaultValue, ::getLong, ::putLong)
+    @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+        if (key == null) key = "";
+    }
 
-class PreferenceProxy<T>(
-    val name: String,
-    val defaultValue: () -> T,
-    val getter: (String, T) -> T?,
-    val setter: (String, value: T) -> Unit,
-) {
+    @Override
+    public void serialize(ByteBufferOutput output) {
+        output.writeInt(0);
+        output.writeString(serverAddress);
+        output.writeString(key);
+    }
 
-    operator fun setValue(thisObj: Any?, property: KProperty<*>, value: T) = setter(name, value)
-    operator fun getValue(thisObj: Any?, property: KProperty<*>) = getter(name, defaultValue())!!
+    @Override
+    public void deserialize(ByteBufferInput input) {
+        int version = input.readInt();
+        serverAddress = input.readString();
+        key = input.readString();
+        initDefaultValues();
+    }
 
+    @NotNull
+    @Override
+    public PingTunnelBean clone() {
+        return KryoConverters.deserialize(new PingTunnelBean(), KryoConverters.serialize(this));
+    }
 }

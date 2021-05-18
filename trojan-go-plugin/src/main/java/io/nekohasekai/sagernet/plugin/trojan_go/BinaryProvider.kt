@@ -19,48 +19,24 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ktx
+package io.nekohasekai.sagernet.plugin.trojan_go
 
-import androidx.preference.PreferenceDataStore
-import cn.hutool.core.util.NumberUtil
-import kotlin.reflect.KProperty
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import io.nekohasekai.sagernet.plugin.NativePluginProvider
+import io.nekohasekai.sagernet.plugin.PathProvider
+import java.io.File
+import java.io.FileNotFoundException
 
-fun PreferenceDataStore.string(
-    name: String,
-    defaultValue: () -> String = { "" },
-) = PreferenceProxy(name, defaultValue, ::getString, ::putString)
+class BinaryProvider : NativePluginProvider() {
+    override fun populateFiles(provider: PathProvider) {
+        provider.addPath("trojan-go-plugin", 0b111101101)
+    }
 
-fun PreferenceDataStore.boolean(
-    name: String,
-    defaultValue: () -> Boolean = { false },
-) = PreferenceProxy(name, defaultValue, ::getBoolean, ::putBoolean)
-
-fun PreferenceDataStore.int(
-    name: String,
-    defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name, defaultValue, ::getInt, ::putInt)
-
-fun PreferenceDataStore.stringToInt(
-    name: String,
-    defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name,
-    defaultValue,
-    { key, default -> getString(key, "$default")?.takeIf { NumberUtil.isInteger(it) }?.toInt() },
-    { key, value -> putString(key, "$value") })
-
-fun PreferenceDataStore.long(
-    name: String,
-    defaultValue: () -> Long = { 0L },
-) = PreferenceProxy(name, defaultValue, ::getLong, ::putLong)
-
-class PreferenceProxy<T>(
-    val name: String,
-    val defaultValue: () -> T,
-    val getter: (String, T) -> T?,
-    val setter: (String, value: T) -> Unit,
-) {
-
-    operator fun setValue(thisObj: Any?, property: KProperty<*>, value: T) = setter(name, value)
-    operator fun getValue(thisObj: Any?, property: KProperty<*>) = getter(name, defaultValue())!!
-
+    override fun getExecutable() = context!!.applicationInfo.nativeLibraryDir + "/libtrojan-go.so"
+    override fun openFile(uri: Uri): ParcelFileDescriptor = when (uri.path) {
+        "/trojan-go-plugin" -> ParcelFileDescriptor.open(File(getExecutable()),
+            ParcelFileDescriptor.MODE_READ_ONLY)
+        else -> throw FileNotFoundException()
+    }
 }

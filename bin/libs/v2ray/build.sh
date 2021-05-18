@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 source "bin/init/env.sh"
-export GO111MOUDLE=on
 export GO386=softfloat
 
 cd "$PROJECT/v2ray"

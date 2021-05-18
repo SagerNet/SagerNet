@@ -223,7 +223,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
     fun testProfileContains(profile: ProxyEntity, anotherProfile: ProxyEntity): Boolean {
         if (profile.type != 8 || anotherProfile.type != 8) return false
         if (profile.id == anotherProfile.id) return true
-        val proxies = profile.requireChain().proxies
+        val proxies = profile.chainBean!!.proxies
         if (proxies.contains(anotherProfile.id)) return true
         if (proxies.isNotEmpty()) {
             for (entity in ProfileManager.getProfiles(proxies)) {

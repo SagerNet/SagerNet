@@ -34,6 +34,7 @@ import cn.hutool.core.util.ArrayUtil;
 import io.nekohasekai.sagernet.fmt.chain.ChainBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
+import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
@@ -142,6 +143,12 @@ public class KryoConverters {
     public static NaiveBean naiveDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new NaiveBean(), bytes);
+    }
+
+    @TypeConverter
+    public static PingTunnelBean pingTunnelDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new PingTunnelBean(), bytes);
     }
 
 }

@@ -19,48 +19,40 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ktx
+package io.nekohasekai.sagernet.fmt.pingtunnel
 
-import androidx.preference.PreferenceDataStore
-import cn.hutool.core.util.NumberUtil
-import kotlin.reflect.KProperty
+import io.nekohasekai.sagernet.ktx.linkBuilder
+import io.nekohasekai.sagernet.ktx.toLink
+import io.nekohasekai.sagernet.ktx.urlSafe
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-fun PreferenceDataStore.string(
-    name: String,
-    defaultValue: () -> String = { "" },
-) = PreferenceProxy(name, defaultValue, ::getString, ::putString)
+/**
+ * Unofficial
+ *
+ * ping-tunnel://[urlEncode(key)@]host[#urlEncode(remarks)]
+ */
 
-fun PreferenceDataStore.boolean(
-    name: String,
-    defaultValue: () -> Boolean = { false },
-) = PreferenceProxy(name, defaultValue, ::getBoolean, ::putBoolean)
+fun parsePingTunnel(server: String): PingTunnelBean {
+    val link = server.replace("ping-tunnel://", "https://").toHttpUrlOrNull()
+        ?: error("invalid PingTunnel link $server")
+    return PingTunnelBean().apply {
+        serverAddress = link.host
+        key = link.username
+        link.fragment.takeIf { !it.isNullOrBlank() }?.let {
+            name = it
+        }
+        initDefaultValues()
+    }
+}
 
-fun PreferenceDataStore.int(
-    name: String,
-    defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name, defaultValue, ::getInt, ::putInt)
-
-fun PreferenceDataStore.stringToInt(
-    name: String,
-    defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name,
-    defaultValue,
-    { key, default -> getString(key, "$default")?.takeIf { NumberUtil.isInteger(it) }?.toInt() },
-    { key, value -> putString(key, "$value") })
-
-fun PreferenceDataStore.long(
-    name: String,
-    defaultValue: () -> Long = { 0L },
-) = PreferenceProxy(name, defaultValue, ::getLong, ::putLong)
-
-class PreferenceProxy<T>(
-    val name: String,
-    val defaultValue: () -> T,
-    val getter: (String, T) -> T?,
-    val setter: (String, value: T) -> Unit,
-) {
-
-    operator fun setValue(thisObj: Any?, property: KProperty<*>, value: T) = setter(name, value)
-    operator fun getValue(thisObj: Any?, property: KProperty<*>) = getter(name, defaultValue())!!
-
+fun PingTunnelBean.toUri(): String {
+    val builder = linkBuilder()
+        .host(serverAddress)
+    if (key.isNotBlank() && key != "1") {
+        builder.encodedUsername(key.urlSafe())
+    }
+    if (name.isNotBlank()) {
+        builder.encodedFragment(name.urlSafe())
+    }
+    return builder.toLink("ping-tunnel", false)
 }

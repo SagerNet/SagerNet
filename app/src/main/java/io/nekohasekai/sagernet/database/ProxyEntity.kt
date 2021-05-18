@@ -36,6 +36,8 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.toUri
+import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
+import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
@@ -77,6 +79,7 @@ data class ProxyEntity(
     var trojanBean: TrojanBean? = null,
     var trojanGoBean: TrojanGoBean? = null,
     var naiveBean: NaiveBean? = null,
+    var ptBean: PingTunnelBean? = null,
     var chainBean: ChainBean? = null,
 ) : Parcelable {
 
@@ -90,9 +93,22 @@ data class ProxyEntity(
         const val TYPE_TROJAN = 6
         const val TYPE_TROJAN_GO = 7
         const val TYPE_NAIVE = 9
+        const val TYPE_PING_TUNNEL = 10
+
         const val TYPE_CHAIN = 8
 
         val chainName by lazy { app.getString(R.string.proxy_chain) }
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<ProxyEntity> {
+            override fun createFromParcel(parcel: Parcel): ProxyEntity {
+                return ProxyEntity(parcel)
+            }
+
+            override fun newArray(size: Int): Array<ProxyEntity?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 
     @Ignore
@@ -124,6 +140,8 @@ data class ProxyEntity(
             TYPE_TROJAN -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
             TYPE_TROJAN_GO -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
             TYPE_NAIVE -> naiveBean = KryoConverters.naiveDeserialize(byteArray)
+            TYPE_PING_TUNNEL -> ptBean = KryoConverters.pingTunnelDeserialize(byteArray)
+
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
         }
     }
@@ -144,7 +162,7 @@ data class ProxyEntity(
     fun displayType(): String {
         return when (type) {
             TYPE_SOCKS -> "SOCKS5"
-            TYPE_HTTP -> if (requireHttp().tls) "HTTPS" else "HTTP"
+            TYPE_HTTP -> if (httpBean!!.tls) "HTTPS" else "HTTP"
             TYPE_SS -> "Shadowsocks"
             TYPE_SSR -> "ShadowsocksR"
             TYPE_VMESS -> "VMess"
@@ -152,6 +170,7 @@ data class ProxyEntity(
             TYPE_TROJAN -> "Trojan"
             TYPE_TROJAN_GO -> "Trojan-Go"
             TYPE_NAIVE -> "Naïve"
+            TYPE_PING_TUNNEL -> "PingTunnel"
             TYPE_CHAIN -> chainName
             else -> "Undefined type $type"
         }
@@ -189,22 +208,25 @@ data class ProxyEntity(
             TYPE_TROJAN -> trojanBean
             TYPE_TROJAN_GO -> trojanGoBean
             TYPE_NAIVE -> naiveBean
+            TYPE_PING_TUNNEL -> ptBean
+
             TYPE_CHAIN -> chainBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
 
-    fun toUri(): String? {
-        return when (type) {
-            TYPE_SOCKS -> requireSOCKS().toUri()
-            TYPE_HTTP -> requireHttp().toUri()
-            TYPE_SS -> requireSS().toUri()
-            TYPE_SSR -> requireSSR().toUri()
-            TYPE_VMESS -> requireVMess().toUri(true)
-            TYPE_VLESS -> requireVLESS().toUri(true)
-            TYPE_TROJAN -> requireTrojan().toUri()
-            TYPE_TROJAN_GO -> requireTrojanGo().toUri()
-            TYPE_NAIVE -> requireNaive().toUri()
+    fun toLink(): String? = with(requireBean()) {
+        when (this) {
+            is SOCKSBean -> toUri()
+            is HttpBean -> toUri()
+            is ShadowsocksBean -> toUri()
+            is ShadowsocksRBean -> toUri()
+            is VMessBean -> toUri()
+            is VLESSBean -> toUri()
+            is TrojanBean -> toUri()
+            is TrojanGoBean -> toUri()
+            is NaiveBean -> toUri()
+            is PingTunnelBean -> toUri()
             else -> null
         }
     }
@@ -221,6 +243,7 @@ data class ProxyEntity(
             TYPE_TROJAN_GO -> true
             TYPE_NAIVE -> true
             TYPE_CHAIN -> false
+            TYPE_PING_TUNNEL -> true
             else -> error("Undefined type $type")
         }
     }
@@ -245,14 +268,14 @@ data class ProxyEntity(
             TYPE_TROJAN -> enableMuxForAll && !useXray()
             TYPE_TROJAN_GO -> false
             TYPE_NAIVE -> enableMuxForAll
+            TYPE_PING_TUNNEL -> enableMuxForAll
             else -> error("Undefined type $type")
         }
     }
 
     fun useExternalShadowsocks(): Boolean {
-        if (type != TYPE_SS) return false
+        val bean = ssBean ?: return false
         if (DataStore.forceShadowsocksRust) return true
-        val bean = requireSS()
         if (bean.plugin.isNotBlank()) {
             Logs.d("Requiring plugin ${bean.plugin}")
             return true
@@ -315,6 +338,10 @@ data class ProxyEntity(
                 type = TYPE_NAIVE
                 naiveBean = bean
             }
+            is PingTunnelBean -> {
+                type = TYPE_PING_TUNNEL
+                ptBean = bean
+            }
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
@@ -322,17 +349,6 @@ data class ProxyEntity(
             else -> error("Undefined type $type")
         }
     }
-
-    fun requireSOCKS() = requireBean() as SOCKSBean
-    fun requireSS() = requireBean() as ShadowsocksBean
-    fun requireSSR() = requireBean() as ShadowsocksRBean
-    fun requireVMess() = requireBean() as VMessBean
-    fun requireVLESS() = requireBean() as VLESSBean
-    fun requireTrojan() = requireBean() as TrojanBean
-    fun requireHttp() = requireBean() as HttpBean
-    fun requireTrojanGo() = requireBean() as TrojanGoBean
-    fun requireNaive() = requireBean() as NaiveBean
-    fun requireChain() = requireBean() as ChainBean
 
     fun settingIntent(ctx: Context, isSubscription: Boolean): Intent {
         return Intent(
@@ -346,6 +362,7 @@ data class ProxyEntity(
                 TYPE_TROJAN -> TrojanSettingsActivity::class.java
                 TYPE_TROJAN_GO -> TrojanGoSettingsActivity::class.java
                 TYPE_NAIVE -> NaiveSettingsActivity::class.java
+                TYPE_PING_TUNNEL -> PingTunnelSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
@@ -400,13 +417,4 @@ data class ProxyEntity(
         return 0
     }
 
-    object CREATOR : Parcelable.Creator<ProxyEntity> {
-        override fun createFromParcel(parcel: Parcel): ProxyEntity {
-            return ProxyEntity(parcel)
-        }
-
-        override fun newArray(size: Int): Array<ProxyEntity?> {
-            return arrayOfNulls(size)
-        }
-    }
 }

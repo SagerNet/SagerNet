@@ -254,13 +254,16 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_naive -> {
                 startActivity(Intent(requireActivity(), NaiveSettingsActivity::class.java))
             }
+            R.id.action_new_ping_tunnel -> {
+                startActivity(Intent(requireActivity(), PingTunnelSettingsActivity::class.java))
+            }
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
             R.id.action_export_clipboard -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
-                    val links = profiles.mapNotNull { it.toUri() }.joinToString("\n")
+                    val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
                     SagerNet.trySetPrimaryClip(links)
                     onMainDispatcher {
                         snackbar(getString(R.string.copy_toast_msg)).show()
@@ -298,7 +301,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (data != null) {
             runOnDefaultDispatcher {
                 val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
-                val links = profiles.mapNotNull { it.toUri() }.joinToString("\n")
+                val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
                 try {
                     (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
                         .bufferedWriter().use {
@@ -836,7 +839,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                     runOnDefaultDispatcher {
                         if (!select) {
                             val selected = DataStore.selectedProxy == proxyEntity.id
-                            val started = serviceStarted() && DataStore.startedProxy == proxyEntity.id
+                            val started =
+                                serviceStarted() && DataStore.startedProxy == proxyEntity.id
                             onMainDispatcher {
                                 editButton.isEnabled = !started
                                 selectedView.visibility =
@@ -997,10 +1001,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                     when (item.itemId) {
                         // socks
                         R.id.action_qr_code -> {
-                            showCode(entity.toUri()!!)
+                            showCode(entity.toLink()!!)
                         }
                         R.id.action_export_clipboard -> {
-                            export(entity.toUri()!!)
+                            export(entity.toLink()!!)
                         }
                     }
                 } catch (e: Exception) {
