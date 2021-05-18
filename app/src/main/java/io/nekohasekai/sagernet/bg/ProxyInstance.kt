@@ -40,6 +40,8 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
+import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
+import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -137,6 +139,13 @@ class ProxyInstance(val profile: ProxyEntity) {
                     }
                     bean is PingTunnelBean -> {
                         initPlugin("pingtunnel-plugin")
+                    }
+                    bean is RelayBatonBean -> {
+                        initPlugin("relaybaton-plugin")
+                        pluginConfigs[port] =
+                            bean.buildRelayBatonConfig(port).also {
+                                Logs.d(it)
+                            }
                     }
                 }
             }
@@ -312,6 +321,25 @@ class ProxyInstance(val profile: ProxyEntity) {
                             "-sock5", "1",
                             "-l", "127.0.0.1:$port",
                             "-s", bean.serverAddress
+                        )
+
+                        base.data.processes!!.start(commands)
+                    }
+                    bean is RelayBatonBean -> {
+                        if (needChain) error("RelayBaton is incompatible with chain")
+
+                        val configFile =
+                            File(
+                                context.noBackupFilesDir,
+                                "rb_" + SystemClock.elapsedRealtime() + ".toml"
+                            )
+
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf(
+                            initPlugin("relaybaton-plugin").path,
+                            "client", "--config", configFile.absolutePath
                         )
 
                         base.data.processes!!.start(commands)

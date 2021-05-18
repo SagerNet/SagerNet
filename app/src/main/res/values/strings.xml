@@ -102,6 +102,7 @@
     <string name="profile_name">Profile Name</string>
     <string name="server_address">Server</string>
     <string name="server_port">Remote Port</string>
+    <string name="username">Username</string>
     <string name="username_opt">Username (Optional)</string>
     <string name="password_opt">Password (Optional)</string>
     <string name="key_opt">Key (Optional)</string>
@@ -223,6 +224,7 @@
     <string name="action_trojan_go" translatable="false">Trojan Go</string>
     <string name="action_naive" translatable="false">Naïve</string>
     <string name="action_ping_tunnel" translatable="false">Ping Tunnel</string>
+    <string name="action_relay_baton" translatable="false">RelayBaton</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="chain_settings">Chain Settings</string>
     <string name="circular_reference">Circular reference</string>

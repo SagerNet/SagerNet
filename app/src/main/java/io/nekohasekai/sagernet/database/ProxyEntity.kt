@@ -38,6 +38,8 @@ import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
+import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
+import io.nekohasekai.sagernet.fmt.relaybaton.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
@@ -80,6 +82,7 @@ data class ProxyEntity(
     var trojanGoBean: TrojanGoBean? = null,
     var naiveBean: NaiveBean? = null,
     var ptBean: PingTunnelBean? = null,
+    var rbBean: RelayBatonBean? = null,
     var chainBean: ChainBean? = null,
 ) : Parcelable {
 
@@ -94,6 +97,7 @@ data class ProxyEntity(
         const val TYPE_TROJAN_GO = 7
         const val TYPE_NAIVE = 9
         const val TYPE_PING_TUNNEL = 10
+        const val TYPE_RELAY_BATON = 11
 
         const val TYPE_CHAIN = 8
 
@@ -141,6 +145,7 @@ data class ProxyEntity(
             TYPE_TROJAN_GO -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
             TYPE_NAIVE -> naiveBean = KryoConverters.naiveDeserialize(byteArray)
             TYPE_PING_TUNNEL -> ptBean = KryoConverters.pingTunnelDeserialize(byteArray)
+            TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
 
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
         }
@@ -171,6 +176,7 @@ data class ProxyEntity(
             TYPE_TROJAN_GO -> "Trojan-Go"
             TYPE_NAIVE -> "Naïve"
             TYPE_PING_TUNNEL -> "PingTunnel"
+            TYPE_RELAY_BATON -> "relaybaton"
             TYPE_CHAIN -> chainName
             else -> "Undefined type $type"
         }
@@ -209,6 +215,7 @@ data class ProxyEntity(
             TYPE_TROJAN_GO -> trojanGoBean
             TYPE_NAIVE -> naiveBean
             TYPE_PING_TUNNEL -> ptBean
+            TYPE_RELAY_BATON -> rbBean
 
             TYPE_CHAIN -> chainBean
             else -> error("Undefined type $type")
@@ -227,6 +234,7 @@ data class ProxyEntity(
             is TrojanGoBean -> toUri()
             is NaiveBean -> toUri()
             is PingTunnelBean -> toUri()
+            is RelayBatonBean -> toUri()
             else -> null
         }
     }
@@ -244,6 +252,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> true
             TYPE_CHAIN -> false
             TYPE_PING_TUNNEL -> true
+            TYPE_RELAY_BATON -> true
             else -> error("Undefined type $type")
         }
     }
@@ -259,17 +268,11 @@ data class ProxyEntity(
     fun needCoreMux(): Boolean {
         val enableMuxForAll by lazy { DataStore.enableMuxForAll }
         return when (type) {
-            TYPE_SOCKS -> enableMuxForAll
-            TYPE_HTTP -> enableMuxForAll
-            TYPE_SS -> enableMuxForAll
-            TYPE_SSR -> enableMuxForAll
             TYPE_VMESS -> isV2RayNetworkTcp()
             TYPE_VLESS -> !useXray()
             TYPE_TROJAN -> enableMuxForAll && !useXray()
             TYPE_TROJAN_GO -> false
-            TYPE_NAIVE -> enableMuxForAll
-            TYPE_PING_TUNNEL -> enableMuxForAll
-            else -> error("Undefined type $type")
+            else -> enableMuxForAll
         }
     }
 
@@ -341,6 +344,10 @@ data class ProxyEntity(
             is PingTunnelBean -> {
                 type = TYPE_PING_TUNNEL
                 ptBean = bean
+            }
+            is RelayBatonBean -> {
+                type = TYPE_RELAY_BATON
+                rbBean = bean
             }
             is ChainBean -> {
                 type = TYPE_CHAIN

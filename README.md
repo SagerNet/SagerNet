@@ -11,15 +11,52 @@ The universal proxy toolchain for Android, written in Kotlin.
 
 https://sagernet.org
 
+### Protocols
+
+The application is designed to be used whenever possible.
+
+#### Proxy
+
+* SOCKS
+* HTTP(S)
+* Shadowsocks
+* ShadowsocksR
+* VMess
+* VLESS
+* Trojan
+* VLESS / Trojan + XTLS ( xtls-plugin )
+* Trojan-Go ( trojan-go-plugin )
+* NaïveProxy ( naive-plugin )
+* Ping Tunnel ( pingtunnel-plugin )
+* relaybaton - ESNI / ECH Tunnel ( relaybaton-plugin )
+
+#### Subscription
+
+* Universal base64 format
+* Shadowsocks SIP008
+* Just My Socks' proprietary format
+* Clash
+
+#### Features
+
+* Full basic features
+* V2Ray WebSocket browser forwarding
+* Option to change the notification update interval
+* A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
+* Proxy chain
+* Advanced routing with outbound profile selection support
+
 ## OPEN SOURCE LICENSES
 
 <ul>
-    <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: GPL 3.0</li>
-    <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">nekohasekai/AndroidLibV2rayLite</a>: LGPL 3.0</li>
-    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksRb/shadowsocksr-libev</a>: GPL 3.0</li>
-    <li><a href="https://github.com/XTLS/Xray-core/blob/main/LICENSE">XTLS/Xray-core</a>: MPL 2.0</li>
-    <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">p4gefau1t/Trojan-Go</a>: GPL 3.0</li>
-    <li><a href="https://github.com/klzgrad/naiveproxy/blob/master/LICENSE">klzgrad/naiveproxy</a>:  BSD-3-Clause License</li>
+    <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: <code>GPL 3.0</code></li>
+    <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">nekohasekai/AndroidLibV2rayLite</a>: <code>LGPL 3.0</code></li>
+    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksRb/shadowsocksr-libev</a>: <code>GPL 3.0</code></li>
+    <li><a href="https://github.com/XTLS/Xray-core/blob/main/LICENSE">XTLS/Xray-core</a>: <code>MPL 2.0</code></li>
+    <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">p4gefau1t/Trojan-Go</a>: <code>GPL 3.0</code></li>
+    <li><a href="https://github.com/klzgrad/naiveproxy/blob/master/LICENSE">klzgrad/naiveproxy</a>:  <code>BSD-3-Clause License</code></li>
+    <li><a href="https://github.com/esrrhs/pingtunnel/blob/master/LICENSE">esrrhs/pingtunnel</a>:  <code>MIT</code></li>
+    <li><a href="https://github.com/iyouport-org/relaybaton/blob/ech/LICENSE">iyouport-org/relaybaton</a>:  <code>MIT</code></li>
 </ul>
 
 ### LICENSE

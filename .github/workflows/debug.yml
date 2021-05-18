@@ -156,6 +156,29 @@ jobs:
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run libs pingtunnel
+  relaybaton:
+    name: Native Build (RelayBaton)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'rb-plugin/*' > rb_status
+      - name: RelayBaton Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            rb-plugin/src/main/jniLibs
+          key: ${{ hashFiles('bin/libs/relaybaton.sh', 'rb_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs relaybaton
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest

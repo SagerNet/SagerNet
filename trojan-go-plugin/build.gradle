@@ -87,7 +87,9 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = outputFileName.replace("plugin", "plugin-" + variant.versionName)
+            outputFileName = outputFileName
+                    .replace("plugin", "plugin-" + variant.versionName)
+                    .replace("-release", "")
         }
     }
 

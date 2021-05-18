@@ -43,3 +43,6 @@
 [submodule "pt-plugin/src/main/go/pingtunnel"]
 	path = pt-plugin/src/main/go/pingtunnel
 	url = https://github.com/esrrhs/pingtunnel
+[submodule "rb-plugin/src/main/go/relaybaton"]
+	path = rb-plugin/src/main/go/relaybaton
+	url = https://github.com/iyouport-org/relaybaton

@@ -34,11 +34,11 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "io.nekohasekai.sagernet.plugin.pingtunnel"
+        applicationId "io.nekohasekai.sagernet.plugin.relaybaton"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "2.5"
+        versionName "0.6.0-ech"
     }
 
     signingConfigs {
@@ -88,7 +88,7 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             outputFileName = outputFileName
-                    .replace("pt-", "pingtunnel-")
+                    .replace("rb-", "relaybaton-")
                     .replace("plugin", "plugin-" + variant.versionName)
                     .replace("-release", "")
         }
