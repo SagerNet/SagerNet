@@ -370,6 +370,7 @@ data class ProxyEntity(
                 TYPE_TROJAN_GO -> TrojanGoSettingsActivity::class.java
                 TYPE_NAIVE -> NaiveSettingsActivity::class.java
                 TYPE_PING_TUNNEL -> PingTunnelSettingsActivity::class.java
+                TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }

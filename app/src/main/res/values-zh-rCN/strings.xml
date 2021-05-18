@@ -288,5 +288,7 @@
     <string name="enable_domestic_dns">启用国内 DNS</string>
     <string name="dns_domestic">国内 DNS</string>
     <string name="extra_headers">附加标头</string>
+    <string name="username">用户名</string>
+    <string name="key_opt">密码 (可选)</string>
 
 </resources>

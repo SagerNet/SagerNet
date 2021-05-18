@@ -133,7 +133,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .subText(versionName)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                    "https://github.com/SagerNet/SagerNet/releases"
+                                "https://github.com/SagerNet/SagerNet/releases"
                             )
                         }
                         .build()
@@ -186,8 +186,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                     .subText(R.string.donate_info)
                                     .setOnClickAction {
                                         requireContext().launchCustomTab(
-                                                "https://liberapay.com/nekohasekai/donate"
-
+                                            "https://opencollective.com/sagernet"
                                         )
                                     }
                                     .build()
@@ -204,7 +203,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.github)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                    "https://github.com/SagerNet/SagerNet"
+                                "https://github.com/SagerNet/SagerNet"
 
                             )
                         }
@@ -215,7 +214,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.telegram)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                    "https://t.me/SagerNet"
+                                "https://t.me/SagerNet"
                             )
                         }
                         .build())
