@@ -8,10 +8,11 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath "com.android.tools.build:gradle:4.2.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "gradle.plugin.org.mozilla.rust-android-gradle:plugin:0.8.3"
-        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.8.6"
+        classpath "org.mozilla.rust-android-gradle:plugin:0.8.6"
+        //noinspection GradleDependency
+        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.8.4"
         //noinspection GradleDependency
         classpath "com.github.triplet.gradle:play-publisher:3.4.0-agp4.2"
         classpath "com.github.ben-manes:gradle-versions-plugin:0.38.0"
