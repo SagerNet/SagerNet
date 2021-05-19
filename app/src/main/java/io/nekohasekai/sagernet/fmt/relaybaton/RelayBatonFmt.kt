@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.fmt.relaybaton
 
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
@@ -68,7 +69,7 @@ fun RelayBatonBean.buildRelayBatonConfig(port: Int): String {
         type = "default"
        
         [log]
-        file = "/dev/null"
-        level = "info"
+        file = "stdout"
+        level = "${if (BuildConfig.DEBUG) "trace" else "warn"}"
     """.trimIndent()
 }

@@ -37,8 +37,8 @@ android {
         applicationId "io.nekohasekai.sagernet.plugin.relaybaton"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "0.6.0-ech"
+        versionCode 2
+        versionName "0.6.0-ech-1"
     }
 
     signingConfigs {
