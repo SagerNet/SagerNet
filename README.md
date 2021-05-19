@@ -19,16 +19,17 @@ The application is designed to be used whenever possible.
 
 * SOCKS
 * HTTP(S)
-* Shadowsocks
+* Shadowsocks `A fast tunnel proxy that helps you bypass firewalls`
 * ShadowsocksR
 * VMess
 * VLESS
-* Trojan
+* Trojan `An unidentifiable mechanism that helps you bypass GFW`
 * VLESS / Trojan + XTLS ( xtls-plugin )
 * Trojan-Go ( trojan-go-plugin )
-* NaïveProxy ( naive-plugin )
-* Ping Tunnel ( pingtunnel-plugin )
-* relaybaton - ESNI / ECH Tunnel ( relaybaton-plugin )
+* NaïveProxy (
+  naive-plugin ) `Uses Chrome's network stack to camouflage traffic with strong censorship resistence and low detectablility`
+* Ping Tunnel ( pingtunnel-plugin ) `A tool that advertises tcp/udp traffic as icmp traffic for forwarding.`
+* relaybaton ( relaybaton-plugin ) `A pluggable transport to circumvent Internet censorship with Encrypted SNI / ECH`
 
 #### Subscription
 
