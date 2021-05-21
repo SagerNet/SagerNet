@@ -4,7 +4,7 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="PLATFORM" />
+        <option name="testRunner" value="GRADLE" />
         <option name="disableWrapperSourceDistributionNotification" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -14,21 +14,25 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/colorpicker" />
-            <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/flexbox" />
-            <option value="$PROJECT_DIR$/naive-plugin" />
+            <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/external" />
+            <option value="$PROJECT_DIR$/external/colorpicker" />
+            <option value="$PROJECT_DIR$/external/flexbox" />
+            <option value="$PROJECT_DIR$/external/preferencex" />
+            <option value="$PROJECT_DIR$/external/preferencex-colorpicker" />
+            <option value="$PROJECT_DIR$/external/preferencex-ringtone" />
+            <option value="$PROJECT_DIR$/external/preferencex-simplemenu" />
+            <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/library/core" />
+            <option value="$PROJECT_DIR$/library/shadowsocks" />
+            <option value="$PROJECT_DIR$/library/shadowsocksr" />
             <option value="$PROJECT_DIR$/plugin" />
-            <option value="$PROJECT_DIR$/preferencex" />
-            <option value="$PROJECT_DIR$/preferencex-colorpicker" />
-            <option value="$PROJECT_DIR$/preferencex-ringtone" />
-            <option value="$PROJECT_DIR$/preferencex-simplemenu" />
-            <option value="$PROJECT_DIR$/pt-plugin" />
-            <option value="$PROJECT_DIR$/rb-plugin" />
-            <option value="$PROJECT_DIR$/shadowsocks" />
-            <option value="$PROJECT_DIR$/shadowsocksr" />
-            <option value="$PROJECT_DIR$/trojan-go-plugin" />
-            <option value="$PROJECT_DIR$/xtls-plugin" />
+            <option value="$PROJECT_DIR$/plugin/api" />
+            <option value="$PROJECT_DIR$/plugin/naive" />
+            <option value="$PROJECT_DIR$/plugin/pingtunnel" />
+            <option value="$PROJECT_DIR$/plugin/relaybaton" />
+            <option value="$PROJECT_DIR$/plugin/trojan-go" />
+            <option value="$PROJECT_DIR$/plugin/xtls" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

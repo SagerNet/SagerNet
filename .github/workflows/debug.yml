@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'core/*' > core_status
+        run: git submodule status 'library/core/*' > core_status
       - name: Core Cache
         id: cache
         uses: actions/cache@v2
@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs core
+          ./run lib core
   v2ray:
     name: Native Build (V2Ray)
     runs-on: ubuntu-latest
@@ -47,14 +47,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status v2ray > v2ray_status
+        run: git submodule status library/v2ray > v2ray_status
       - name: V2Ray Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -62,7 +62,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs v2ray
+        run: ./run lib v2ray
   xtls:
     name: Native Build (XTLS)
     runs-on: ubuntu-latest
@@ -70,14 +70,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'xtls-plugin/*' > xtls_status
+        run: git submodule status 'plugin/xtls/*' > xtls_status
       - name: XTLS Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            xtls-plugin/src/main/jniLibs
-          key: ${{ hashFiles('bin/libs/xtls.sh', 'xtls_status') }}
+            plugin/xtls/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -85,7 +85,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs xtls
+        run: ./run plugin xtls
   trojan-go:
     name: Native Build (Trojan-Go)
     runs-on: ubuntu-latest
@@ -93,14 +93,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'trojan-go-plugin/*' > trojan_go_status
+        run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            trojan-go-plugin/src/main/jniLibs
-          key: ${{ hashFiles('bin/libs/trojan_go.sh', 'trojan_go_status') }}
+            plugin/trojan-go/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/trojan_go.sh', 'trojan_go_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -108,7 +108,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs trojan_go
+        run: ./run plugin trojan_go
   naive:
     runs-on: ubuntu-latest
     name: Native Build (NaïveProxy)
@@ -120,19 +120,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'naive-plugin/*' > naive_status
+        run: git submodule status 'plugin/naive/*' > naive_status
       - name: Naive Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            naive-plugin/src/main/jniLibs/${{ matrix.arch }}
-          key: naive-${{ matrix.arch }}-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
+            plugin/naive/src/main/jniLibs/${{ matrix.arch }}
+          key: naive-${{ matrix.arch }}-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           ./run init action naive
-          ./run libs naive ${{ matrix.arch }}
+          ./run plugin naive ${{ matrix.arch }}
   pingtunnel:
     name: Native Build (PingTunnel)
     runs-on: ubuntu-latest
@@ -140,14 +140,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'pt-plugin/*' > pt_status
+        run: git submodule status 'plugin/pingtunnel/*' > pt_status
       - name: PingTunnel Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            pt-plugin/src/main/jniLibs
-          key: ${{ hashFiles('bin/libs/pingtunnel.sh', 'pt_status') }}
+            plugin/pingtunnel/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/pingtunnel.sh', 'pt_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -155,7 +155,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs pingtunnel
+        run: ./run plugin pingtunnel
   relaybaton:
     name: Native Build (RelayBaton)
     runs-on: ubuntu-latest
@@ -163,14 +163,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'rb-plugin/*' > rb_status
+        run: git submodule status 'plugin/relaybaton/*' > rb_status
       - name: RelayBaton Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            rb-plugin/src/main/jniLibs
-          key: ${{ hashFiles('bin/libs/relaybaton.sh', 'rb_status') }}
+            plugin/relaybaton/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/relaybaton.sh', 'rb_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -178,7 +178,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs relaybaton
+        run: ./run plugin relaybaton
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest
@@ -186,14 +186,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'shadowsocks/*' > shadowsocks_status
+        run: git submodule status 'library/shadowsocks/*' > shadowsocks_status
       - name: Shadowsocks Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/shadowsocks-release.aar
-          key: ${{ hashFiles('shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
@@ -208,7 +208,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs shadowsocks
+          ./run lib shadowsocks
   shadowsocksr:
     name: Native Build (ShadowsocksR)
     runs-on: ubuntu-latest
@@ -216,7 +216,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'shadowsocksr/*' > shadowsocksr_status
+        run: git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
       - name: ShadowsocksR Cache
         id: cache
         uses: actions/cache@v2
@@ -235,7 +235,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs shadowsocksr
+          ./run lib shadowsocksr
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
@@ -249,10 +249,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Fetch Status
         run: |
-          git submodule status 'core/*' > core_status
-          git submodule status 'shadowsocks/*' > shadowsocks_status
-          git submodule status 'shadowsocksr/*' > shadowsocksr_status
-          git submodule status v2ray > v2ray_status
+          git submodule status 'library/core/*' > core_status
+          git submodule status 'library/shadowsocks/*' > shadowsocks_status
+          git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
+          git submodule status library/v2ray > v2ray_status
       - name: Core Cache
         uses: actions/cache@v2
         with:
@@ -264,13 +264,13 @@ jobs:
         with:
           path: |
             app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
       - name: Shadowsocks Cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/shadowsocks-release.aar
-          key: ${{ hashFiles('shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: ShadowsocksR Cache
         uses: actions/cache@v2
         with:

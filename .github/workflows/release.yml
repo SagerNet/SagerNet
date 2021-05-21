@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'core/*' > core_status
+        run: git submodule status 'library/core/*' > core_status
       - name: Core Cache
         id: cache
         uses: actions/cache@v2
@@ -52,7 +52,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs core
+          ./run lib core
   v2ray:
     name: Native Build (V2Ray)
     runs-on: ubuntu-latest
@@ -61,14 +61,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status v2ray > v2ray_status
+        run: git submodule status library/v2ray > v2ray_status
       - name: V2Ray Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -85,7 +85,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs v2ray
+          ./run lib v2ray
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest
@@ -94,14 +94,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'shadowsocks/*' > shadowsocks_status
+        run: git submodule status 'library/shadowsocks/*' > shadowsocks_status
       - name: Shadowsocks Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/shadowsocks-release.aar
-          key: ${{ hashFiles('shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
@@ -116,7 +116,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs shadowsocks
+          ./run lib shadowsocks
   shadowsocksr:
     name: Native Build (ShadowsocksR)
     runs-on: ubuntu-latest
@@ -125,7 +125,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'shadowsocksr/*' > shadowsocksr_status
+        run: git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
       - name: ShadowsocksR Cache
         id: cache
         uses: actions/cache@v2
@@ -144,7 +144,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run libs shadowsocksr
+          ./run lib shadowsocksr
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
@@ -158,10 +158,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Fetch Status
         run: |
-          git submodule status 'core/*' > core_status
-          git submodule status 'shadowsocks/*' > shadowsocks_status
-          git submodule status 'shadowsocksr/*' > shadowsocksr_status
-          git submodule status v2ray > v2ray_status
+          git submodule status 'library/core/*' > core_status
+          git submodule status 'library/shadowsocks/*' > shadowsocks_status
+          git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
+          git submodule status library/v2ray > v2ray_status
       - name: Core Cache
         uses: actions/cache@v2
         with:
@@ -173,13 +173,13 @@ jobs:
         with:
           path: |
             app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
       - name: Shadowsocks Cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/shadowsocks-release.aar
-          key: ${{ hashFiles('shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: ShadowsocksR Cache
         uses: actions/cache@v2
         with:
@@ -270,10 +270,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Fetch Status
         run: |
-          git submodule status 'core/*' > core_status
-          git submodule status 'shadowsocks/*' > shadowsocks_status
-          git submodule status 'shadowsocksr/*' > shadowsocksr_status
-          git submodule status v2ray > v2ray_status
+          git submodule status 'library/core/*' > core_status
+          git submodule status 'library/shadowsocks/*' > shadowsocks_status
+          git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
+          git submodule status library/v2ray > v2ray_status
       - name: Core Cache
         uses: actions/cache@v2
         with:
@@ -285,13 +285,13 @@ jobs:
         with:
           path: |
             app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
       - name: Shadowsocks Cache
         uses: actions/cache@v2
         with:
           path: |
             app/libs/shadowsocks-release.aar
-          key: ${{ hashFiles('shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: ShadowsocksR Cache
         uses: actions/cache@v2
         with:

@@ -1,48 +1,48 @@
-[submodule "core/src/main/jni/badvpn"]
-	path = core/src/main/jni/badvpn
+[submodule "library/core/src/main/jni/badvpn"]
+	path = library/core/src/main/jni/badvpn
 	url = https://github.com/shadowsocks/badvpn
-[submodule "core/src/main/jni/libancillary"]
-	path = core/src/main/jni/libancillary
+[submodule "library/core/src/main/jni/libancillary"]
+	path = library/core/src/main/jni/libancillary
 	url = https://github.com/shadowsocks/libancillary
-[submodule "v2ray"]
-	path = v2ray
+[submodule "library/v2ray"]
+	path = library/v2ray
 	url = https://github.com/nekohasekai/AndroidLibV2rayLite
-[submodule "shadowsocks/src/main/rust/shadowsocks-rust"]
-	path = shadowsocks/src/main/rust/shadowsocks-rust
+[submodule "library/shadowsocks/src/main/rust/shadowsocks-rust"]
+	path = library/shadowsocks/src/main/rust/shadowsocks-rust
 	url = https://github.com/shadowsocks/shadowsocks-rust.git
-[submodule "shadowsocksr/src/main/jni/shadowsocks-libev"]
-	path = shadowsocksr/src/main/jni/shadowsocks-libev
+[submodule "library/shadowsocksr/src/main/jni/shadowsocks-libev"]
+	path = library/shadowsocksr/src/main/jni/shadowsocks-libev
 	url = https://github.com/shadowsocksRb/shadowsocksr-libev
-[submodule "shadowsocksr/src/main/jni/mbedtls"]
-	path = shadowsocksr/src/main/jni/mbedtls
+[submodule "library/shadowsocksr/src/main/jni/mbedtls"]
+	path = library/shadowsocksr/src/main/jni/mbedtls
 	url = https://github.com/ARMmbed/mbedtls
-[submodule "shadowsocksr/src/main/jni/libancillary"]
-	path = shadowsocksr/src/main/jni/libancillary
+[submodule "library/shadowsocksr/src/main/jni/libancillary"]
+	path = library/shadowsocksr/src/main/jni/libancillary
 	url = https://github.com/shadowsocks/libancillary
-[submodule "shadowsocksr/src/main/jni/pcre"]
-	path = shadowsocksr/src/main/jni/pcre
+[submodule "library/shadowsocksr/src/main/jni/pcre"]
+	path = library/shadowsocksr/src/main/jni/pcre
 	url = https://android.googlesource.com/platform/external/pcre
-[submodule "shadowsocksr/src/main/jni/libsodium"]
-	path = shadowsocksr/src/main/jni/libsodium
+[submodule "library/shadowsocksr/src/main/jni/libsodium"]
+	path = library/shadowsocksr/src/main/jni/libsodium
 	url = https://github.com/jedisct1/libsodium
-[submodule "shadowsocksr/src/main/jni/re2"]
-	path = shadowsocksr/src/main/jni/re2
+[submodule "library/shadowsocksr/src/main/jni/re2"]
+	path = library/shadowsocksr/src/main/jni/re2
 	url = https://github.com/google/re2
-[submodule "xtls-plugin/src/main/go/Xray-core"]
-	path = xtls-plugin/src/main/go/Xray-core
+[submodule "plugin/xtls/src/main/go/Xray-core"]
+	path = plugin/xtls/src/main/go/Xray-core
 	url = https://github.com/XTLS/Xray-core
-[submodule "trojan-go-plugin/src/main/go/trojan-go"]
-	path = trojan-go-plugin/src/main/go/trojan-go
+[submodule "plugin/trojan-go/src/main/go/trojan-go"]
+	path = plugin/trojan-go/src/main/go/trojan-go
 	url = https://github.com/p4gefau1t/trojan-go
 [submodule "core/src/main/jni/proxychains-ng"]
-	path = core/src/main/jni/proxychains
+	path = library/core/src/main/jni/proxychains
 	url = https://github.com/SagerNet/proxychains-ng
-[submodule "naive-plugin/src/main/jni/naiveproxy"]
-	path = naive-plugin/src/main/jni/naiveproxy
+[submodule "plugin/naive/src/main/jni/naiveproxy"]
+	path = plugin/naive/src/main/jni/naiveproxy
 	url = https://github.com/klzgrad/naiveproxy
-[submodule "pt-plugin/src/main/go/pingtunnel"]
-	path = pt-plugin/src/main/go/pingtunnel
+[submodule "plugin/pingtunnel/src/main/go/pingtunnel"]
+	path = plugin/pingtunnel/src/main/go/pingtunnel
 	url = https://github.com/esrrhs/pingtunnel
-[submodule "rb-plugin/src/main/go/relaybaton"]
-	path = rb-plugin/src/main/go/relaybaton
+[submodule "plugin/relaybaton/src/main/go/relaybaton"]
+	path = plugin/relaybaton/src/main/go/relaybaton
 	url = https://github.com/iyouport-org/relaybaton

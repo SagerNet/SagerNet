@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.nekohasekai.sagernet.plugin.relaybaton"
+    android:installLocation="internalOnly">
+
+    <application
+        android:allowBackup="false"
+        android:extractNativeLibs="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="RelayBaton Plugin"
+        android:roundIcon="@mipmap/ic_launcher_round">
+        <provider
+            android:name=".BinaryProvider"
+            android:authorities="io.nekohasekai.sagernet.plugin.relaybaton.BinaryProvider"
+            android:directBootAware="true"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider">
+            <intent-filter>
+                <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+                <data
+                    android:host="io.nekohasekai.sagernet"
+                    android:path="/relaybaton-plugin"
+                    android:scheme="plugin" />
+            </intent-filter>
+
+            <meta-data
+                android:name="io.nekohasekai.sagernet.plugin.id"
+                android:value="relaybaton-plugin" />
+            <meta-data
+                android:name="io.nekohasekai.sagernet.plugin.executable_path"
+                android:value="librelaybaton.so" />
+        </provider>
+    </application>
+
+</manifest>

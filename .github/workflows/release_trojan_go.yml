@@ -31,14 +31,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'trojan-go-plugin/*' > trojan_go_status
+        run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            trojan-go-plugin/src/main/jniLibs
-          key: ${{ hashFiles('bin/libs/trojan_go.sh', 'trojan_go_status') }}
+            plugin/trojan-go/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/trojan_go.sh', 'trojan_go_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -46,7 +46,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs trojan_go
+        run: ./run plugin trojan_go
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
@@ -56,13 +56,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'trojan-go-plugin/*' > trojan_go_status
+        run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
         uses: actions/cache@v2
         with:
           path: |
-            trojan-go-plugin/src/main/jniLibs
-          key: ${{ hashFiles('bin/libs/trojan_go.sh', 'trojan_go_status') }}
+            plugin/trojan-go/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/trojan_go.sh', 'trojan_go_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -74,7 +74,7 @@ jobs:
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           ./gradlew trojan-go-plugin:assembleRelease
-          APK=$(find trojan-go-plugin/build/outputs/apk -name '*arm64-v8a*.apk')
+          APK=$(find plugin/trojan-go/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v2
@@ -139,13 +139,13 @@ jobs:
 #      - name: Checkout
 #        uses: actions/checkout@v2
 #      - name: Fetch Status
-#        run: git submodule status 'xtls-plugin/*' > xtls_status
+#        run: git submodule status 'plugin/xtls/*' > xtls_status
 #      - name: XTLS Cache
 #        uses: actions/cache@v2
 #        with:
 #          path: |
-#            xtls-plugin/src/main/jniLibs
-#          key: ${{ hashFiles('bin/libs/xtls.sh', 'xtls_status') }}
+#            plugin/xtls/src/main/jniLibs
+#          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
 #      - name: Release Build
 #        run: |
 #          echo "sdk.dir=${ANDROID_HOME}" > local.properties

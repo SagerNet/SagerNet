@@ -2,21 +2,21 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/core/src/main/jni/badvpn" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/core/src/main/jni/libancillary" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/core/src/main/jni/proxychains" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/naive-plugin/src/main/jni/naiveproxy" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/pt-plugin/src/main/go/pingtunnel" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/rb-plugin/src/main/go/relaybaton" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/libsodium" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/mbedtls" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/pcre" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/re2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shadowsocksr/src/main/jni/shadowsocks-libev" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/trojan-go-plugin/src/main/go/trojan-go" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/v2ray" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/xtls-plugin/src/main/go/Xray-core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/badvpn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/libancillary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/proxychains" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/libsodium" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/mbedtls" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/pcre" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/re2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/shadowsocks-libev" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/v2ray" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/naive/src/main/jni/naiveproxy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/pingtunnel/src/main/go/pingtunnel" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/relaybaton/src/main/go/relaybaton" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/trojan-go/src/main/go/trojan-go" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/xtls/src/main/go/Xray-core" vcs="Git" />
   </component>
 </project>

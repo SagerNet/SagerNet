@@ -34,14 +34,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'naive-plugin/*' > naive_status
+        run: git submodule status 'plugin/naive/*' > naive_status
       - name: Naive Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            naive-plugin/src/main/jniLibs/${{ matrix.arch }}
-          key: naive-${{ matrix.arch }}-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
+            plugin/naive/src/main/jniLibs/${{ matrix.arch }}
+          key: naive-${{ matrix.arch }}-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -54,7 +54,7 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run init action naive
-          ./run libs naive ${{ matrix.arch }}
+          ./run plugin naive ${{ matrix.arch }}
   naive:
     needs: naive_libs
     name: Gradle Build (NaïveProxy)
@@ -63,31 +63,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'naive-plugin/*' > naive_status
+        run: git submodule status 'plugin/naive/*' > naive_status
       - name: Naive Cache (armeabi-v7a)
         uses: actions/cache@v2
         with:
           path: |
-            naive-plugin/src/main/jniLibs/armeabi-v7a
-          key: naive-armeabi-v7a-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
+            plugin/naive/src/main/jniLibs/armeabi-v7a
+          key: naive-armeabi-v7a-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
       - name: Naive Cache (arm64-v8a)
         uses: actions/cache@v2
         with:
           path: |
-            naive-plugin/src/main/jniLibs/arm64-v8a
-          key: naive-arm64-v8a-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
+            plugin/naive/src/main/jniLibs/arm64-v8a
+          key: naive-arm64-v8a-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
       - name: Naive Cache (x86)
         uses: actions/cache@v2
         with:
           path: |
-            naive-plugin/src/main/jniLibs/x86
-          key: naive-x86-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
+            plugin/naive/src/main/jniLibs/x86
+          key: naive-x86-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
       - name: Naive Cache (x86_64)
         uses: actions/cache@v2
         with:
           path: |
-            naive-plugin/src/main/jniLibs/x86_64
-          key: naive-x86_64-${{ hashFiles('bin/libs/naive/*', 'naive_status') }}
+            plugin/naive/src/main/jniLibs/x86_64
+          key: naive-x86_64-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -99,7 +99,7 @@ jobs:
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           ./gradlew naive-plugin:assembleRelease
-          APK=$(find naive-plugin/build/outputs/apk -name '*arm64-v8a*.apk')
+          APK=$(find plugin/naive/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v2
@@ -164,13 +164,13 @@ jobs:
 #      - name: Checkout
 #        uses: actions/checkout@v2
 #      - name: Fetch Status
-#        run: git submodule status 'xtls-plugin/*' > xtls_status
+#        run: git submodule status 'plugin/xtls/*' > xtls_status
 #      - name: XTLS Cache
 #        uses: actions/cache@v2
 #        with:
 #          path: |
-#            xtls-plugin/src/main/jniLibs
-#          key: ${{ hashFiles('bin/libs/xtls.sh', 'xtls_status') }}
+#            plugin/xtls/src/main/jniLibs
+#          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
 #      - name: Release Build
 #        run: |
 #          echo "sdk.dir=${ANDROID_HOME}" > local.properties
