@@ -7,10 +7,8 @@ import org.apache.tools.ant.filters.StringInputStream
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.kotlin
+import org.gradle.api.tasks.Exec
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.util.*
 
@@ -114,7 +112,12 @@ fun Project.setupNdkLibrary() {
     android.apply {
         defaultConfig {
             externalNativeBuild.ndkBuild {
-                abiFilters("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+                val nativeTarget = System.getenv("NATIVE_TARGET") ?: ""
+                if (nativeTarget.isNotBlank()) {
+                    abiFilters(nativeTarget)
+                } else {
+                    abiFilters("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+                }
                 arguments("-j${Runtime.getRuntime().availableProcessors()}")
             }
         }
@@ -170,10 +173,11 @@ fun Project.setupAppCommon() {
 
 fun Project.setupPlugin(project: String) {
     val propPrefix = project.toUpperCase(Locale.ROOT)
+    val projName = project.toLowerCase(Locale.ROOT)
     val verName = requireMetadata().getProperty("${propPrefix}_VERSION_NAME")
     val verCode = requireMetadata().getProperty("${propPrefix}_VERSION").toInt() * 5
     android.defaultConfig {
-        applicationId = "io.nekohasekai.sagernet.plugin.${project.toLowerCase(Locale.ROOT)}"
+        applicationId = "io.nekohasekai.sagernet.plugin.$projName"
 
         versionName = verName
         versionCode = verCode
@@ -182,6 +186,19 @@ fun Project.setupPlugin(project: String) {
     apply(plugin = "kotlin-android")
 
     setupAppCommon()
+
+    var targetAbi = ""
+    if (gradle.startParameter.taskNames.isNotEmpty()) {
+        if (gradle.startParameter.taskNames.size == 1) {
+            val targetTask = gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT).trim()
+            when {
+                targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
+                targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
+                targetTask.contains("x64") -> targetAbi = "x86_64"
+                targetTask.contains("x86") -> targetAbi = "x86"
+            }
+        }
+    }
 
     android.apply {
         this as AbstractAppExtension
@@ -195,19 +212,6 @@ fun Project.setupPlugin(project: String) {
         splits.abi {
             isEnable = true
             isUniversalApk = false
-
-            var targetAbi = ""
-            if (gradle.startParameter.taskNames.isNotEmpty()) {
-                if (gradle.startParameter.taskNames.size == 1) {
-                    val targetTask = gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT)
-                    when {
-                        targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
-                        targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
-                        targetTask.contains("x64") -> targetAbi = "x86_64"
-                        targetTask.contains("x86") -> targetAbi = "x86"
-                    }
-                }
-            }
 
             if (targetAbi.isNotBlank()) {
                 reset()
@@ -238,6 +242,45 @@ fun Project.setupPlugin(project: String) {
             }
         }
 
+        if (System.getenv("SKIP_BUILD") != "on") {
+            if (targetAbi.isBlank()) {
+                tasks.register<Exec>("externalBuild") {
+                    executable(rootProject.file("run"))
+                    args("plugin", projName)
+                    workingDir(rootProject.projectDir)
+                }
+
+                tasks.whenTaskAdded {
+                    if (name.startsWith("merge") && name.endsWith("JniLibFolders")) {
+                        dependsOn("externalBuild")
+                    }
+                }
+            } else {
+                tasks.register<Exec>("externalBuildInit") {
+                    executable(rootProject.file("run"))
+                    args("plugin", projName, "init")
+                    workingDir(rootProject.projectDir)
+                }
+                tasks.register<Exec>("externalBuild") {
+                    executable(rootProject.file("run"))
+                    args("plugin", projName, targetAbi)
+                    workingDir(rootProject.projectDir)
+                    dependsOn("externalBuildInit")
+                }
+                tasks.register<Exec>("externalBuildEnd") {
+                    executable(rootProject.file("run"))
+                    args("plugin", projName, "end")
+                    workingDir(rootProject.projectDir)
+                    dependsOn("externalBuild")
+                }
+                tasks.whenTaskAdded {
+                    if (name.startsWith("merge") && name.endsWith("JniLibFolders")) {
+                        dependsOn("externalBuildEnd")
+                    }
+                }
+            }
+        }
+
         applicationVariants.forEach { variant ->
             variant.outputs.forEach {
                 it as BaseVariantOutputImpl
@@ -251,6 +294,7 @@ fun Project.setupPlugin(project: String) {
     }
 
     dependencies.add("implementation", project(":plugin:api"))
+
 }
 
 fun Project.setupApp() {
@@ -279,12 +323,13 @@ fun Project.setupApp() {
 
         splits.abi {
             isEnable = true
-            isUniversalApk = false
+            isUniversalApk = true
 
             var targetAbi = ""
             if (gradle.startParameter.taskNames.isNotEmpty()) {
                 if (gradle.startParameter.taskNames.size == 1) {
-                    val targetTask = gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT)
+                    val targetTask =
+                        gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT).trim()
                     when {
                         targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
                         targetTask.contains("arm") -> targetAbi = "armeabi-v7a"

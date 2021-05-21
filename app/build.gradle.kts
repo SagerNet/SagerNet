@@ -16,12 +16,16 @@ android {
         arg("room.incremental", true)
         arg("room.schemaLocation", "$projectDir/schemas")
     }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {
 
     implementation(fileTree("libs"))
-    implementation(project(":plugin:api"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
     api("androidx.core:core-ktx:1.5.0")

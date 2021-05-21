@@ -11,7 +11,14 @@ setupNdk()
 cargo {
     module = "src/main/rust/shadowsocks-rust"
     libname = "sslocal"
-    targets = listOf("arm", "arm64", "x86", "x86_64")
+    val nativeTarget = System.getenv("NATIVE_TARGET") ?: ""
+    targets = when (nativeTarget) {
+        "armeabi-v7a" -> listOf("arm")
+        "arm64-v8a" -> listOf("arm64")
+        "x86" -> listOf("x86")
+        "x86_64" -> listOf("x86_64")
+        else -> listOf("arm", "arm64", "x86", "x86_64")
+    }
     profile = findProperty("CARGO_PROFILE")?.toString() ?: "release"
     extraCargoBuildArguments = listOf("--bin", "sslocal")
     featureSpec.noDefaultBut(arrayOf(
