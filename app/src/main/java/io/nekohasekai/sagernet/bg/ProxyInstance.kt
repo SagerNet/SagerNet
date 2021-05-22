@@ -168,7 +168,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val bean = profile.requireBean()
                 val needChain = index != chain.size - 1
-                val config = pluginConfigs[port] ?: return@forEachIndexed
+                val config = pluginConfigs[port] ?: ""
 
                 when {
                     profile.useExternalShadowsocks() -> {
@@ -349,6 +349,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                         base.data.processes!!.start(commands)
                     }
                     bean is BrookBean -> {
+
                         if (needChain) error("brook is incompatible with chain")
 
                         val commands = mutableListOf(initPlugin("brook-plugin").path)

@@ -177,11 +177,13 @@ fun Project.setupAppCommon() {
             }
         }
         buildTypes {
-            getByName("release").signingConfig = if (keystorePwd != null) {
+            val key = if (keystorePwd != null) {
                 signingConfigs.getByName("release")
             } else {
                 signingConfigs.getByName("debug")
             }
+            getByName("release").signingConfig = key
+            getByName("debug").signingConfig = key
         }
 
     }

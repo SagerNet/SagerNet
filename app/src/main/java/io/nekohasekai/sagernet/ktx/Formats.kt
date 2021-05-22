@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.ktx
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.brook.parseBrook
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
 import io.nekohasekai.sagernet.fmt.naive.parseNaive
@@ -126,6 +127,13 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
             Logs.d("Try parse rb link: $this")
             runCatching {
                 entities.add(parseRelayBaton(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("brook://")) {
+            Logs.d("Try parse brook link: $this")
+            runCatching {
+                entities.add(parseBrook(this))
             }.onFailure {
                 Logs.w(it)
             }
