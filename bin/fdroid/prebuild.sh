@@ -18,13 +18,7 @@ echo "rust.rustcCommand=$HOME/.cargo/bin/rustc" >>local.properties
 echo "rust.cargoCommand=$HOME/.cargo/bin/cargo" >>local.properties
 echo "rust.pythonCommand=/usr/bin/python3" >>local.properties
 
-# Install Golang
-curl -o golang.tar.gz https://storage.googleapis.com/golang/go1.16.linux-amd64.tar.gz
-mkdir "$HOME/.go"
-tar -C "$HOME/.go" --strip-components=1 -xzf golang.tar.gz
-rm golang.tar.gz
-export PATH="$PATH:$HOME/.go/bin"
-go version || exit 1
+bin/fdroid/install_golang.sh
 
 echo "sdk.dir=$ANDROID_HOME" >>local.properties
 echo "ndk.dir=$ANDROID_NDK_HOME" >>local.properties
