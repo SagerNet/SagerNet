@@ -171,9 +171,9 @@ fun Project.setupAppCommon() {
     }
 }
 
-fun Project.setupPlugin(project: String) {
-    val propPrefix = project.toUpperCase(Locale.ROOT)
-    val projName = project.toLowerCase(Locale.ROOT)
+fun Project.setupPlugin(projectName: String) {
+    val propPrefix = projectName.toUpperCase(Locale.ROOT)
+    val projName = projectName.toLowerCase(Locale.ROOT)
     val verName = requireMetadata().getProperty("${propPrefix}_VERSION_NAME")
     val verCode = requireMetadata().getProperty("${propPrefix}_VERSION").toInt() * 5
     android.defaultConfig {
@@ -281,11 +281,11 @@ fun Project.setupPlugin(project: String) {
             }
         }
 
-        applicationVariants.forEach { variant ->
-            variant.outputs.forEach {
-                it as BaseVariantOutputImpl
-                it.outputFileName = it.outputFileName
-                    .replace(name, "$name-plugin-" + variant.versionName)
+        applicationVariants.all {
+            outputs.all {
+                this as BaseVariantOutputImpl
+                outputFileName = outputFileName
+                    .replace(project.name, "${project.name}-plugin-$versionName")
                     .replace("-release", "")
                     .replace("-oss", "")
 
@@ -323,7 +323,7 @@ fun Project.setupApp() {
 
         splits.abi {
             isEnable = true
-            isUniversalApk = true
+            isUniversalApk = false
 
             var targetAbi = ""
             if (gradle.startParameter.taskNames.isNotEmpty()) {
@@ -369,11 +369,11 @@ fun Project.setupApp() {
             }
         }
 
-        applicationVariants.forEach { variant ->
-            variant.outputs.forEach {
-                it as BaseVariantOutputImpl
-                it.outputFileName = it.outputFileName
-                    .replace("app", "SN-" + variant.versionName)
+        applicationVariants.all {
+            outputs.all {
+                this as BaseVariantOutputImpl
+                outputFileName = outputFileName
+                    .replace(project.name, "SN-$versionName")
                     .replace("-release", "")
                     .replace("-oss", "")
 
