@@ -1,4 +1,4 @@
-name: PingTunnel Plugin Release Build
+name: Brook Plugin Release Build
 on:
   workflow_dispatch:
     inputs:
@@ -31,14 +31,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'plugin/pingtunnel/*' > pt_status
-      - name: PingTunnel Cache
+        run: git submodule status 'plugin/brook/*' > brook_status
+      - name: Brook Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            plugin/pingtunnel/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/pingtunnel/*', 'pt_status') }}
+            plugin/brook/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/*.gradle') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -46,7 +51,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run plugin pingtunnel
+        run: ./run plugin brook
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
@@ -56,32 +61,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status 'plugin/pingtunnel/*' > pt_status
-      - name: PingTunnel Cache
+        run: git submodule status 'plugin/brook/*' > brook_status
+      - name: brook Cache
         uses: actions/cache@v2
         with:
           path: |
-            plugin/pingtunnel/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/pingtunnel/*', 'pt_status') }}
+            plugin/brook/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle') }}
       - name: Release Build
-        env:
-          SKIP_BUILD: on
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-          ./gradlew :plugin:pingtunnel:assembleOssRelease
-          APK=$(find plugin/pingtunnel/build/outputs/apk -name '*arm64-v8a*.apk')
+          ./gradlew :plugin:brook:assembleOssRelease
+          APK=$(find plugin/brook/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v2
         with:
-          name: PingTunnel
+          name: brook
           path: ${{ env.APK }}
   publish:
     name: Publish Release
@@ -141,13 +144,13 @@ jobs:
 #      - name: Checkout
 #        uses: actions/checkout@v2
 #      - name: Fetch Status
-#        run: git submodule status 'plugin/xtls/*' > xtls_status
-#      - name: XTLS Cache
+#        run: git submodule status 'plugin/brook/*' > brook_status
+#      - name: brook Cache
 #        uses: actions/cache@v2
 #        with:
 #          path: |
-#            plugin/xtls/src/main/jniLibs
-#          key: ${{ hashFiles('bin/lib/xtls/*', 'xtls_status') }}
+#            plugin/brook/src/main/jniLibs
+#          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
 #      - name: Release Build
 #        run: |
 #          echo "sdk.dir=${ANDROID_HOME}" > local.properties
@@ -156,4 +159,4 @@ jobs:
 #          cat > service_account_credentials.json << EOF
 #          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
 #          EOF
-#          ./gradlew xtls-plugin:publishRelease
+#          ./gradlew brook-plugin:publishRelease

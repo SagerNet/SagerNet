@@ -28,8 +28,11 @@ The application is designed to be used whenever possible.
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy (
   naive-plugin ) `Uses Chrome's network stack to camouflage traffic with strong censorship resistence and low detectablility`
-* Ping Tunnel ( pingtunnel-plugin ) `A tool that advertises tcp/udp traffic as icmp traffic for forwarding.`
-* relaybaton ( relaybaton-plugin ) `A pluggable transport to circumvent Internet censorship with Encrypted SNI / ECH`
+* Ping Tunnel (
+  pingtunnel-plugin ) `A tool that advertises tcp/udp traffic as icmp traffic for forwarding.`
+* relaybaton (
+  relaybaton-plugin ) `A pluggable transport to circumvent Internet censorship with Encrypted SNI / ECH`
+* Brook ( brook-plugin ) `A cross-platform strong encryption and not detectable proxy`
 
 #### Subscription
 
@@ -58,6 +61,7 @@ The application is designed to be used whenever possible.
     <li><a href="https://github.com/klzgrad/naiveproxy/blob/master/LICENSE">klzgrad/naiveproxy</a>:  <code>BSD-3-Clause License</code></li>
     <li><a href="https://github.com/esrrhs/pingtunnel/blob/master/LICENSE">esrrhs/pingtunnel</a>:  <code>MIT</code></li>
     <li><a href="https://github.com/iyouport-org/relaybaton/blob/ech/LICENSE">iyouport-org/relaybaton</a>:  <code>MIT</code></li>
+    <li><a href="https://github.com/txthinking/brook/blob/master/LICENSE">txthinking/brook</a>:  <code>GPL 3.0</code></li>
 </ul>
 
 ### LICENSE

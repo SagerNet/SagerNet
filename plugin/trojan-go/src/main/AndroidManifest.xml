@@ -11,7 +11,7 @@
         android:label="Trojan-Go Plugin"
         android:roundIcon="@mipmap/ic_launcher_round">
         <provider
-            android:name="io.nekohasekai.sagernet.plugin.trojan_go.BinaryProvider"
+            android:name=".BinaryProvider"
             android:authorities="io.nekohasekai.sagernet.plugin.trojan_go.BinaryProvider"
             android:directBootAware="true"
             android:exported="true"

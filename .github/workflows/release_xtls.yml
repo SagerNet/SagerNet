@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             plugin/xtls/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
+          key: ${{ hashFiles('bin/lib/xtls/*', 'xtls_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -67,7 +67,7 @@ jobs:
         with:
           path: |
             plugin/xtls/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
+          key: ${{ hashFiles('bin/lib/xtls/*', 'xtls_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -78,7 +78,7 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-          ./gradlew xtls-plugin:assembleRelease
+          ./gradlew :plugin:xtls:assembleOssRelease
           APK=$(find plugin/xtls/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV
@@ -150,7 +150,7 @@ jobs:
 #        with:
 #          path: |
 #            plugin/xtls/src/main/jniLibs
-#          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
+#          key: ${{ hashFiles('bin/lib/xtls/*', 'xtls_status') }}
 #      - name: Release Build
 #        run: |
 #          echo "sdk.dir=${ANDROID_HOME}" > local.properties

@@ -8,6 +8,7 @@ include(":plugin:trojan-go")
 include(":plugin:naive")
 include(":plugin:pingtunnel")
 include(":plugin:relaybaton")
+include(":plugin:brook")
 
 include(":external:preferencex")
 include(":external:preferencex-ringtone")

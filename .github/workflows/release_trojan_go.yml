@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go.sh', 'trojan_go_status') }}
+          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -62,7 +62,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go.sh', 'trojan_go_status') }}
+          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -73,7 +73,7 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-          ./gradlew trojan-go-plugin:assembleRelease
+          ./gradlew :plugin:trojan-go:assembleOssRelease
           APK=$(find plugin/trojan-go/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV

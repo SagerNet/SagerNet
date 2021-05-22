@@ -77,7 +77,7 @@ jobs:
         with:
           path: |
             plugin/xtls/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/xtls.sh', 'xtls_status') }}
+          key: ${{ hashFiles('bin/lib/xtls/*', 'xtls_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -100,7 +100,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go.sh', 'trojan_go_status') }}
+          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -132,6 +132,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           ./run init action naive
+          ./run plugin naive init
           ./run plugin naive ${{ matrix.arch }}
   pingtunnel:
     name: Native Build (PingTunnel)
@@ -147,7 +148,7 @@ jobs:
         with:
           path: |
             plugin/pingtunnel/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/pingtunnel.sh', 'pt_status') }}
+          key: ${{ hashFiles('bin/lib/pingtunnel/*', 'pt_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -170,7 +171,7 @@ jobs:
         with:
           path: |
             plugin/relaybaton/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/relaybaton.sh', 'rb_status') }}
+          key: ${{ hashFiles('bin/lib/relaybaton/*', 'rb_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -179,6 +180,29 @@ jobs:
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin relaybaton
+  brook:
+    name: Native Build (Brook)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'plugin/brook/*' > brook_status
+      - name: Brook Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/brook/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run plugin brook
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest
