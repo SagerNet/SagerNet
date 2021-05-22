@@ -35,10 +35,6 @@ class HttpSettingsActivity : ProfileSettingsActivity<HttpBean>() {
 
     override fun createEntity() = HttpBean()
 
-    override fun init() {
-        HttpBean().applyDefaultValues().init()
-    }
-
     override fun HttpBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress

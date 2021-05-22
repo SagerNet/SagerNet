@@ -24,86 +24,42 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
-import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
-import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.fmt.brook.BrookBean
 
-class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
+class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
 
-    override fun createEntity() = TrojanBean()
+    override fun createEntity() = BrookBean()
 
-    override fun TrojanBean.init() {
+    override fun BrookBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
+        DataStore.serverProtocol = protocol
         DataStore.serverPassword = password
-        DataStore.serverSecurity = security
-        DataStore.serverSNI = sni
-        DataStore.serverALPN = alpn
-        DataStore.serverFlow = flow
     }
 
-    override fun TrojanBean.serialize() {
+    override fun BrookBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
-        security = DataStore.serverSecurity
-        sni = DataStore.serverSNI
-        alpn = DataStore.serverALPN
-        flow = DataStore.serverFlow
+        protocol = DataStore.serverProtocol
     }
-
-    lateinit var security: SimpleMenuPreference
-    lateinit var tlsSni: EditTextPreference
-    lateinit var tlsAlpn: EditTextPreference
-    lateinit var xtlsFlow: SimpleMenuPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.trojan_preferences)
+        addPreferencesFromResource(R.xml.brook_preferences)
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
-        }
-
-        security = findPreference(Key.SERVER_SECURITY)!!
-        tlsSni = findPreference(Key.SERVER_SNI)!!
-        tlsAlpn = findPreference(Key.SERVER_ALPN)!!
-        xtlsFlow = findPreference(Key.SERVER_FLOW)!!
-
-        updateTle(security.value)
-        security.setOnPreferenceChangeListener { _, newValue ->
-            updateTle(newValue as String)
-            true
-        }
-    }
-
-    val xtlsFlowValue = app.resources.getStringArray(R.array.xtls_flow_value)
-
-    fun updateTle(tle: String) {
-        when (tle) {
-            "tls" -> {
-                xtlsFlow.isVisible = false
-            }
-            "xtls" -> {
-                xtlsFlow.isVisible = true
-
-                if (DataStore.serverFlow !in xtlsFlowValue) {
-                    xtlsFlow.value = xtlsFlowValue[0]
-                } else {
-                    xtlsFlow.value = DataStore.serverFlow
-                }
-            }
         }
     }
 

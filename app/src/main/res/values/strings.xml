@@ -225,6 +225,7 @@
     <string name="action_naive" translatable="false">Naïve</string>
     <string name="action_ping_tunnel" translatable="false">Ping Tunnel</string>
     <string name="action_relay_baton" translatable="false">RelayBaton</string>
+    <string name="action_brook" translatable="false">Brook</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="chain_settings">Chain Settings</string>
     <string name="circular_reference">Circular reference</string>

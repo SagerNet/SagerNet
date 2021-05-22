@@ -28,8 +28,4 @@ class VMessSettingsActivity : StandardV2RaySettingsActivity() {
 
     override fun createEntity() = VMessBean()
 
-    override fun init() {
-        VMessBean().applyDefaultValues().init()
-    }
-
 }

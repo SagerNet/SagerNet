@@ -34,6 +34,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
+import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
@@ -146,6 +147,9 @@ class ProxyInstance(val profile: ProxyEntity) {
                             bean.buildRelayBatonConfig(port).also {
                                 Logs.d(it)
                             }
+                    }
+                    bean is BrookBean -> {
+                        initPlugin("brook-plugin")
                     }
                 }
             }
@@ -341,6 +345,39 @@ class ProxyInstance(val profile: ProxyEntity) {
                             initPlugin("relaybaton-plugin").path,
                             "client", "--config", configFile.absolutePath
                         )
+
+                        base.data.processes!!.start(commands)
+                    }
+                    bean is BrookBean -> {
+                        if (needChain) error("brook is incompatible with chain")
+
+                        val commands = mutableListOf(initPlugin("brook-plugin").path)
+
+                        when (bean.protocol) {
+                            "ws" -> {
+                                commands.add("wsclient")
+                                commands.add("--wsserver")
+                                commands.add("ws://${bean.serverAddress}:${bean.serverPort}")
+                            }
+                            "wss" -> {
+                                commands.add("wssclient")
+                                commands.add("--wssserver")
+                                commands.add("wss://${bean.serverAddress}:${bean.serverPort}")
+                            }
+                            else -> {
+                                commands.add("client")
+                                commands.add("--server")
+                                commands.add("${bean.serverAddress}:${bean.serverPort}")
+                            }
+                        }
+
+                        if (bean.password.isNotBlank()) {
+                            commands.add("--password")
+                            commands.add(bean.password)
+                        }
+
+                        commands.add("--socks5")
+                        commands.add("127.0.0.1:$port")
 
                         base.data.processes!!.start(commands)
                     }

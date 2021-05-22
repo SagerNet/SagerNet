@@ -35,10 +35,6 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
 
     override fun createEntity() = NaiveBean()
 
-    override fun init() {
-        NaiveBean().applyDefaultValues().init()
-    }
-
     override fun NaiveBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress

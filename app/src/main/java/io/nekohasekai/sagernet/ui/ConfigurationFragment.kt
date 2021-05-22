@@ -260,6 +260,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_relay_baton -> {
                 startActivity(Intent(requireActivity(), RelayBatonSettingsActivity::class.java))
             }
+            R.id.action_new_brook -> {
+                startActivity(Intent(requireActivity(), BrookSettingsActivity::class.java))
+            }
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }

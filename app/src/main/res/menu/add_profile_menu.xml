@@ -52,6 +52,9 @@
                         android:id="@+id/action_new_relay_baton"
                         android:title="@string/action_relay_baton" />
                     <item
+                        android:id="@+id/action_new_brook"
+                        android:title="@string/action_brook" />
+                    <item
                         android:id="@+id/action_new_chain"
                         android:title="@string/proxy_chain" />
                 </menu>

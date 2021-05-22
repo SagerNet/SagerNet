@@ -19,43 +19,47 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ui.profile
+package io.nekohasekai.sagernet.fmt.brook;
 
-import android.os.Bundle
-import androidx.preference.EditTextPreference
-import com.takisoft.preferencex.PreferenceFragmentCompat
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import androidx.annotation.NonNull;
 
-class RelayBatonSettingsActivity : ProfileSettingsActivity<RelayBatonBean>() {
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-    override fun createEntity() = RelayBatonBean()
+import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-    override fun RelayBatonBean.init() {
-        DataStore.profileName = name
-        DataStore.serverAddress = serverAddress
-        DataStore.serverUsername = username
-        DataStore.serverPassword = password
+public class BrookBean extends AbstractBean {
+
+    public String protocol;
+    public String password;
+
+    @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+        if (protocol == null) protocol = "";
+        if (password == null) password = "";
     }
 
-    override fun RelayBatonBean.serialize() {
-        name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
-        username = DataStore.serverUsername
-        password = DataStore.serverPassword
+    @Override
+    public void serialize(ByteBufferOutput output) {
+        output.writeInt(0);
+        super.serialize(output);
+        output.writeString(protocol);
+        output.writeString(password);
     }
 
-    override fun PreferenceFragmentCompat.createPreferences(
-        savedInstanceState: Bundle?,
-        rootKey: String?,
-    ) {
-        addPreferencesFromResource(R.xml.relaybaton_preferences)
-        findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
-            summaryProvider = PasswordSummaryProvider
-        }
+    @Override
+    public void deserialize(ByteBufferInput input) {
+        int version = input.readInt();
+        super.deserialize(input);
+        protocol = input.readString();
+        password = input.readString();
     }
 
+    @NonNull
+    @Override
+    public BrookBean clone() {
+        return KryoConverters.deserialize(new BrookBean(), KryoConverters.serialize(this));
+    }
 }

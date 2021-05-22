@@ -28,8 +28,4 @@ class VLESSSettingsActivity : StandardV2RaySettingsActivity() {
 
     override fun createEntity() = VLESSBean()
 
-    override fun init() {
-        VLESSBean().applyDefaultValues().init()
-    }
-
 }
