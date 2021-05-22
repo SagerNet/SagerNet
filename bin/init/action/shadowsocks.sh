@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none -y
-echo "source \$HOME/.cargo/env" >>$HOME/.bashrc && source $HOME/.cargo/env
+echo "source \$HOME/.cargo/env" >>$HOME/.bashrc
 
 git submodule update --init library/shadowsocks/src/main/rust/shadowsocks-rust
 cd library/shadowsocks/src/main/rust/shadowsocks-rust

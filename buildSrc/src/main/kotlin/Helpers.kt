@@ -41,6 +41,22 @@ fun Project.requireLocalProperties(): Properties {
     return localProperties
 }
 
+fun Project.requireTargetAbi(): String {
+    var targetAbi = ""
+    if (gradle.startParameter.taskNames.isNotEmpty()) {
+        if (gradle.startParameter.taskNames.size == 1) {
+            val targetTask = gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT).trim()
+            when {
+                targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
+                targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
+                targetTask.contains("x64") -> targetAbi = "x86_64"
+                targetTask.contains("x86") -> targetAbi = "x86"
+            }
+        }
+    }
+    return targetAbi
+}
+
 fun Project.setupCommon() {
     android.apply {
         buildToolsVersion("30.0.3")
@@ -112,9 +128,9 @@ fun Project.setupNdkLibrary() {
     android.apply {
         defaultConfig {
             externalNativeBuild.ndkBuild {
-                val nativeTarget = System.getenv("NATIVE_TARGET") ?: ""
-                if (nativeTarget.isNotBlank()) {
-                    abiFilters(nativeTarget)
+                val targetAbi = requireTargetAbi()
+                if (targetAbi.isNotBlank()) {
+                    abiFilters(targetAbi)
                 } else {
                     abiFilters("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
                 }
@@ -187,18 +203,7 @@ fun Project.setupPlugin(projectName: String) {
 
     setupAppCommon()
 
-    var targetAbi = ""
-    if (gradle.startParameter.taskNames.isNotEmpty()) {
-        if (gradle.startParameter.taskNames.size == 1) {
-            val targetTask = gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT).trim()
-            when {
-                targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
-                targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
-                targetTask.contains("x64") -> targetAbi = "x86_64"
-                targetTask.contains("x86") -> targetAbi = "x86"
-            }
-        }
-    }
+    val targetAbi = requireTargetAbi()
 
     android.apply {
         this as AbstractAppExtension
@@ -312,6 +317,8 @@ fun Project.setupApp() {
     }
     setupAppCommon()
 
+    val targetAbi = requireTargetAbi()
+
     android.apply {
         this as AbstractAppExtension
 
@@ -324,20 +331,6 @@ fun Project.setupApp() {
         splits.abi {
             isEnable = true
             isUniversalApk = false
-
-            var targetAbi = ""
-            if (gradle.startParameter.taskNames.isNotEmpty()) {
-                if (gradle.startParameter.taskNames.size == 1) {
-                    val targetTask =
-                        gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT).trim()
-                    when {
-                        targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
-                        targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
-                        targetTask.contains("x64") -> targetAbi = "x86_64"
-                        targetTask.contains("x86") -> targetAbi = "x86"
-                    }
-                }
-            }
 
             if (targetAbi.isNotBlank()) {
                 reset()
@@ -387,5 +380,11 @@ fun Project.setupApp() {
         add("androidTestImplementation", "androidx.test.ext:junit:1.1.2")
         add("androidTestImplementation", "androidx.test:runner:1.3.0")
         add("androidTestImplementation", "androidx.test.espresso:espresso-core:3.3.0")
+
+        if (targetAbi.isNotBlank()) {
+            add("implementation", project(":library:core"))
+            add("implementation", project(":library:shadowsocks"))
+            add("implementation", project(":library:shadowsocksr"))
+        }
     }
 }

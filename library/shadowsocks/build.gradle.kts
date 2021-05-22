@@ -11,7 +11,7 @@ setupNdk()
 cargo {
     module = "src/main/rust/shadowsocks-rust"
     libname = "sslocal"
-    val nativeTarget = System.getenv("NATIVE_TARGET") ?: ""
+    val nativeTarget = requireTargetAbi()
     targets = when (nativeTarget) {
         "armeabi-v7a" -> listOf("arm")
         "arm64-v8a" -> listOf("arm64")
@@ -36,8 +36,8 @@ cargo {
 
 
 tasks.whenTaskAdded {
-    when (name) {
-        "mergeDebugJniLibFolders", "mergeReleaseJniLibFolders" -> dependsOn("cargoBuild")
+    if (name.startsWith("merge") && name.endsWith("JniLibFolders")) {
+        dependsOn("cargoBuild")
     }
 }
 
