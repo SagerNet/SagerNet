@@ -35,10 +35,6 @@ class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>()
 
     override fun createEntity() = ShadowsocksRBean()
 
-    override fun init() {
-        ShadowsocksRBean().applyDefaultValues().init()
-    }
-
     override fun ShadowsocksRBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress

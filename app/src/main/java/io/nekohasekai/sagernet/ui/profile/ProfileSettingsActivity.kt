@@ -44,6 +44,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Empty
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
@@ -94,7 +95,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     }
 
     abstract fun createEntity(): T
-    abstract fun init()
     abstract fun T.init()
     abstract fun T.serialize()
 
@@ -113,7 +113,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             runOnDefaultDispatcher {
                 if (editingId == 0L) {
                     DataStore.editingGroup = DataStore.selectedGroupForImport()
-                    init()
+                    createEntity().applyDefaultValues().init()
                 } else {
                     val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
                     if (proxyEntity == null) {

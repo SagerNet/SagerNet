@@ -36,10 +36,6 @@ class PingTunnelSettingsActivity : ProfileSettingsActivity<PingTunnelBean>() {
 
     override fun createEntity() = PingTunnelBean()
 
-    override fun init() {
-        PingTunnelBean().applyDefaultValues().init()
-    }
-
     override fun PingTunnelBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress

@@ -60,10 +60,6 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
 
     override fun createEntity() = TrojanGoBean()
 
-    override fun init() {
-        TrojanGoBean().applyDefaultValues().init()
-    }
-
     private lateinit var plugin: PluginPreference
     private lateinit var pluginConfigure: EditTextPreference
     private lateinit var pluginConfiguration: PluginConfiguration

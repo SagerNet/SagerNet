@@ -339,7 +339,7 @@
 
     <string-array name="trojan_go_networks_entry" translatable="false">
         <item>NONE</item>
-        <item>WS</item>
+        <item>WEBSOCKET</item>
     </string-array>
 
     <string-array name="trojan_go_networks_value" translatable="false">
@@ -533,6 +533,17 @@
     <string-array name="naive_proto_value">
         <item>https</item>
         <item>quic</item>
+    </string-array>
+
+    <string-array name="brook_protocol_entry">
+        <item>DEFAULT</item>
+        <item>WS</item>
+        <item>WSS</item>
+    </string-array>
+    <string-array name="brook_protocol_value">
+        <item />
+        <item>ws</item>
+        <item>wss</item>
     </string-array>
 
 </resources>

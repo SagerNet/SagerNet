@@ -58,10 +58,6 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
 
     override fun createEntity() = ChainBean()
 
-    override fun init() {
-        ChainBean().apply { initDefaultValues() }.init()
-    }
-
     val proxyList = ArrayList<ProxyEntity>()
 
     override fun ChainBean.init() {

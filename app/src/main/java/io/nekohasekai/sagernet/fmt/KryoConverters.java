@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 import io.nekohasekai.sagernet.fmt.chain.ChainBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
@@ -156,6 +157,12 @@ public class KryoConverters {
     public static RelayBatonBean relayBatonDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new RelayBatonBean(), bytes);
+    }
+
+    @TypeConverter
+    public static BrookBean brookDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new BrookBean(), bytes);
     }
 
 }

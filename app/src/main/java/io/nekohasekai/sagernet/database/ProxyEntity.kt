@@ -31,6 +31,8 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
+import io.nekohasekai.sagernet.fmt.brook.BrookBean
+import io.nekohasekai.sagernet.fmt.brook.toUri
 import io.nekohasekai.sagernet.fmt.chain.ChainBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
@@ -83,6 +85,7 @@ data class ProxyEntity(
     var naiveBean: NaiveBean? = null,
     var ptBean: PingTunnelBean? = null,
     var rbBean: RelayBatonBean? = null,
+    var brookBean: BrookBean? = null,
     var chainBean: ChainBean? = null,
 ) : Parcelable {
 
@@ -98,6 +101,7 @@ data class ProxyEntity(
         const val TYPE_NAIVE = 9
         const val TYPE_PING_TUNNEL = 10
         const val TYPE_RELAY_BATON = 11
+        const val TYPE_BROOK = 12
 
         const val TYPE_CHAIN = 8
 
@@ -146,6 +150,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> naiveBean = KryoConverters.naiveDeserialize(byteArray)
             TYPE_PING_TUNNEL -> ptBean = KryoConverters.pingTunnelDeserialize(byteArray)
             TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
+            TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
 
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
         }
@@ -177,6 +182,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> "Naïve"
             TYPE_PING_TUNNEL -> "PingTunnel"
             TYPE_RELAY_BATON -> "relaybaton"
+            TYPE_BROOK -> "Brook"
             TYPE_CHAIN -> chainName
             else -> "Undefined type $type"
         }
@@ -216,6 +222,7 @@ data class ProxyEntity(
             TYPE_NAIVE -> naiveBean
             TYPE_PING_TUNNEL -> ptBean
             TYPE_RELAY_BATON -> rbBean
+            TYPE_BROOK -> brookBean
 
             TYPE_CHAIN -> chainBean
             else -> error("Undefined type $type")
@@ -235,6 +242,7 @@ data class ProxyEntity(
             is NaiveBean -> toUri()
             is PingTunnelBean -> toUri()
             is RelayBatonBean -> toUri()
+            is BrookBean -> toUri()
             else -> null
         }
     }
@@ -253,6 +261,7 @@ data class ProxyEntity(
             TYPE_CHAIN -> false
             TYPE_PING_TUNNEL -> true
             TYPE_RELAY_BATON -> true
+            TYPE_BROOK -> true
             else -> error("Undefined type $type")
         }
     }
@@ -349,6 +358,10 @@ data class ProxyEntity(
                 type = TYPE_RELAY_BATON
                 rbBean = bean
             }
+            is BrookBean -> {
+                type = TYPE_BROOK
+                brookBean = bean
+            }
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
@@ -371,6 +384,7 @@ data class ProxyEntity(
                 TYPE_NAIVE -> NaiveSettingsActivity::class.java
                 TYPE_PING_TUNNEL -> PingTunnelSettingsActivity::class.java
                 TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
+                TYPE_BROOK -> BrookSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }

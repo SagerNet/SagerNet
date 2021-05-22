@@ -63,10 +63,6 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
     private lateinit var pluginConfiguration: PluginConfiguration
     private lateinit var receiver: BroadcastReceiver
 
-    override fun init() {
-        ShadowsocksBean().applyDefaultValues().init()
-    }
-
     override fun ShadowsocksBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
