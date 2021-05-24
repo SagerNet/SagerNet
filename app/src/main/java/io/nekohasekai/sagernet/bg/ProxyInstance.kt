@@ -35,6 +35,7 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
+import io.nekohasekai.sagernet.fmt.brook.internalUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
@@ -358,19 +359,18 @@ class ProxyInstance(val profile: ProxyEntity) {
                             "ws" -> {
                                 commands.add("wsclient")
                                 commands.add("--wsserver")
-                                commands.add("ws://${bean.serverAddress}:${bean.serverPort}")
                             }
                             "wss" -> {
                                 commands.add("wssclient")
                                 commands.add("--wssserver")
-                                commands.add("wss://${bean.serverAddress}:${bean.serverPort}")
                             }
                             else -> {
                                 commands.add("client")
                                 commands.add("--server")
-                                commands.add("${bean.serverAddress}:${bean.serverPort}")
                             }
                         }
+
+                        commands.add(bean.internalUri())
 
                         if (bean.password.isNotBlank()) {
                             commands.add("--password")

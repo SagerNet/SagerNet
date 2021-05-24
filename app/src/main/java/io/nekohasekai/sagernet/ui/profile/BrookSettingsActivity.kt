@@ -24,11 +24,13 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
+import io.nekohasekai.sagernet.ktx.app
 
 class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
 
@@ -40,6 +42,7 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
         DataStore.serverPort = serverPort
         DataStore.serverProtocol = protocol
         DataStore.serverPassword = password
+        DataStore.serverPath = wsPath
     }
 
     override fun BrookBean.serialize() {
@@ -48,7 +51,12 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
         protocol = DataStore.serverProtocol
+        wsPath = DataStore.serverPath
     }
+
+    lateinit var protocol: SimpleMenuPreference
+    val protocolValue = app.resources.getStringArray(R.array.brook_protocol_value)
+    lateinit var path: EditTextPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -61,6 +69,22 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
+
+        protocol = findPreference(Key.SERVER_PROTOCOL)!!
+        path = findPreference(Key.SERVER_PATH)!!
+
+        if (protocol.value !in protocolValue) {
+            protocol.value = protocolValue[0]
+        }
+        updateProtocol(protocol.value)
+        protocol.setOnPreferenceChangeListener { _, newValue ->
+            updateProtocol(newValue as String)
+            true
+        }
+    }
+
+    fun updateProtocol(value: String) {
+        path.isVisible = value.startsWith("ws")
     }
 
 }

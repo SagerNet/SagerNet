@@ -313,6 +313,19 @@ data class ProxyEntity(
     }
 
     fun putBean(bean: AbstractBean) {
+        socksBean = null
+        httpBean = null
+        ssBean = null
+        ssrBean = null
+        vmessBean = null
+        vlessBean = null
+        trojanBean = null
+        trojanGoBean = null
+        naiveBean = null
+        ptBean = null
+        rbBean = null
+        brookBean = null
+        chainBean = null
         when (bean) {
             is SOCKSBean -> {
                 type = TYPE_SOCKS

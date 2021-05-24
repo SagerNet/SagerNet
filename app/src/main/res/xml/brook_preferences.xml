@@ -30,6 +30,11 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password_opt" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_format_align_left_24"
+            app:key="serverPath"
+            app:title="@string/ws_path"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 

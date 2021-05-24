@@ -23,55 +23,141 @@ package io.nekohasekai.sagernet.fmt.brook
 
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.ktx.unUrlSafe
-import io.nekohasekai.sagernet.ktx.urlSafe
+import io.nekohasekai.sagernet.ktx.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-// https://txthinking.github.io/brook/#/brook-link
 fun parseBrook(text: String): AbstractBean {
-    var server = text.substringAfter("brook://").unUrlSafe()
-    if (server.startsWith("socks5://")) {
-        server = server.substringAfter("://")
-        val bean = SOCKSBean()
-        bean.serverAddress = server.substringBefore(":")
-        bean.serverPort = server.substringAfter(":").substringBefore(" ").toInt()
-        server = server.substringAfter(":").substringAfter(" ")
-        if (server.contains(" ")) {
-            bean.username = server.substringBefore(" ")
-            bean.password = server.substringAfter(" ")
+    if (!text.contains(":") && !text.contains("@")) {
+
+        // https://txthinking.github.io/brook/#/brook-link
+        var server = text.substringAfter("brook://").unUrlSafe()
+        if (server.startsWith("socks5://")) {
+            server = server.substringAfter("://")
+            val bean = SOCKSBean()
+            bean.serverAddress = server.substringBefore(":")
+            bean.serverPort = server.substringAfter(":").substringBefore(" ").toInt()
+            server = server.substringAfter(":").substringAfter(" ")
+            if (server.contains(" ")) {
+                bean.username = server.substringBefore(" ")
+                bean.password = server.substringAfter(" ")
+            }
+            return bean.applyDefaultValues()
         }
+
+        val bean = BrookBean()
+
+        when {
+            server.startsWith("ws://") -> {
+                bean.protocol = "ws"
+                server = server.substringAfter("://")
+            }
+            server.startsWith("wss://") -> {
+                bean.protocol = "wss"
+                server = server.substringAfter("://")
+            }
+            else -> {
+                bean.protocol = ""
+            }
+        }
+
+        if (server.contains(" ")) {
+            bean.password = server.substringAfter(" ")
+            server = server.substringBefore(" ")
+        }
+
+        val url =
+            "https://$server".toHttpUrlOrNull() ?: error("Invalid brook link: $text ($server)")
+
+        bean.serverAddress = url.host
+        bean.serverPort = url.port
+      //  bean.name = url.fragment
+        if (server.contains("/")) {
+            bean.wsPath = url.encodedPath.unUrlSafe()
+        }
+
         return bean.applyDefaultValues()
-    }
-
-    val bean = BrookBean()
-
-    if (server.startsWith("ws://")) {
-        bean.protocol = "ws"
-        server = server.substringAfter("://")
-    } else if (server.startsWith("wss://")) {
-        bean.protocol = "wss"
-        server = server.substringAfter("://")
     } else {
-        bean.protocol = ""
-    }
+        /**
+         * brook://urlEncode(password)@host:port#urlEncode(remarks)
+         * brook+ws(s)://urlEncode(password)@host:port?path=...#urlEncode(remarks)
+         */
+        val proto = if (!text.startsWith("brook+")) "" else {
+            text.substringAfter("+").substringBefore("://")
+        }
 
-    bean.serverAddress = server.substringBefore(":")
-    bean.serverPort = server.substringAfter(":").substringBefore(" ").toInt()
-    server = server.substringAfter(":")
-    if (server.contains(" ")) {
-        bean.password = server.substringAfter(" ")
+        if (proto !in arrayOf("", "ws", "wss")) error("Invalid brook protocol $proto")
+
+        val link = ("https://" + text.substringAfter("://")).toHttpUrlOrNull()
+            ?: error("Invalid brook url: $text")
+
+        return BrookBean().apply {
+            protocol = proto
+            serverAddress = link.host
+            serverPort = link.port
+            link.queryParameter("path")?.also {
+                wsPath = it
+            }
+            name = link.fragment
+        }
     }
-    return bean.applyDefaultValues()
 }
 
 fun BrookBean.toUri(): String {
-    var server = when (protocol) {
+    /*var server = when (protocol) {
         "ws" -> "ws://$serverAddress:$serverPort"
         "wss" -> "wss://$serverAddress:$serverPort"
         else -> "$serverAddress:$serverPort"
     }
+    if (protocol.startsWith("ws")) {
+        if (wsPath.isNotBlank()) {
+            if (!wsPath.startsWith("/")) {
+                server += "/"
+            }
+            server += wsPath.pathSafe()
+        }
+    }
+    //if (name.isNotBlank()) {
+    //    server += "#" + name.urlSafe()
+    //}
     if (password.isNotBlank()) {
         server = "$server $password"
     }
-    return "brook://" + server.urlSafe()
+    return "brook://" + server.urlSafe()*/
+    val builder = linkBuilder()
+        .host(serverAddress)
+        .port(serverPort)
+
+    if (password.isNotBlank()) {
+        builder.encodedUsername(password.urlSafe())
+    }
+
+    if (name.isNotBlank()) {
+        builder.encodedFragment(name.urlSafe())
+    }
+
+    if (wsPath.isNotBlank()) {
+        builder.addQueryParameter("path", wsPath)
+    }
+
+    return when (protocol) {
+        "ws", "wss" -> builder.toLink("brook+$protocol", false)
+        else -> builder.toLink("brook")
+    }
+
+}
+
+fun BrookBean.internalUri(): String {
+    var server = "${serverAddress}:${serverPort}"
+    server = when (protocol) {
+        "ws" -> "ws://"
+        "wss" -> "wss://"
+        else -> return server
+    } + server
+    if (wsPath.isNotBlank()) {
+        if (!wsPath.startsWith("/")) {
+            server += "/"
+        }
+        server += wsPath.pathSafe()
+    }
+    return server
 }

@@ -182,7 +182,7 @@ fun Project.setupAppCommon() {
             } else {
                 signingConfigs.getByName("debug")
             }
-            if (key.name == "debug" && requireTargetAbi().isBlank()) {
+            if (requireTargetAbi().isBlank()) {
                 getByName("release").signingConfig = key
             }
             getByName("debug").signingConfig = key
