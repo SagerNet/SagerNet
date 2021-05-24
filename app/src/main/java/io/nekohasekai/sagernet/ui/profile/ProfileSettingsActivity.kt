@@ -132,7 +132,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                             MyPreferenceFragmentCompat().apply {
                                 activity = this@ProfileSettingsActivity
                             })
-                        .commit()
+                        .commitAllowingStateLoss()
                 }
             }
 
