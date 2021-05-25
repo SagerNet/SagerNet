@@ -906,7 +906,6 @@ fun buildXrayConfig(
     proxy: ProxyEntity,
     localPort: Int,
     chain: Boolean,
-    index: Int
 ): V2RayConfig {
 
     val dnsMode = DataStore.dnsMode
@@ -1040,12 +1039,6 @@ fun buildXrayConfig(
                             alpn = bean.alpn.split(",")
                         }
                     }
-                }
-            }
-            if (index == 0 && DataStore.enableMux) {
-                mux = OutboundObject.MuxObject().apply {
-                    enabled = true
-                    concurrency = DataStore.muxConcurrency
                 }
             }
         }

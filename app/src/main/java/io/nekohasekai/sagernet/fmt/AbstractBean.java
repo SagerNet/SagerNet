@@ -33,6 +33,7 @@ import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import io.nekohasekai.sagernet.fmt.gson.GsonsKt;
+import io.nekohasekai.sagernet.ktx.HttpsKt;
 
 public abstract class AbstractBean implements Cloneable<AbstractBean> {
 
@@ -51,6 +52,8 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
     public void initDefaultValues() {
         if (StrUtil.isBlank(serverAddress)) {
             serverAddress = "127.0.0.1";
+        } else if (serverAddress.startsWith("[") && serverAddress.endsWith("]")){
+            serverAddress = HttpsKt.unwrapHost(serverAddress);
         }
         if (serverPort == 0) {
             serverPort = 1080;

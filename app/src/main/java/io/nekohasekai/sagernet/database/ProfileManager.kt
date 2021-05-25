@@ -323,18 +323,18 @@ object ProfileManager {
             ) {
                 country = Locale.CHINA.country.lowercase()
                 displayCountry = Locale.CHINA.displayCountry
+                createRule(
+                    RuleEntity(
+                        name = app.getString(R.string.route_bypass_domain, displayCountry),
+                        domains = "geosite:$country",
+                        outbound = -1
+                    ), false
+                )
             }
             createRule(
                 RuleEntity(
                     name = app.getString(R.string.route_bypass_ip, displayCountry),
                     ip = "geoip:$country",
-                    outbound = -1
-                ), false
-            )
-            createRule(
-                RuleEntity(
-                    name = app.getString(R.string.route_bypass_domain, displayCountry),
-                    domains = "geosite:$country",
                     outbound = -1
                 ), false
             )

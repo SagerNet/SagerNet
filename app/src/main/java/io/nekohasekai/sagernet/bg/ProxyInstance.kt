@@ -121,7 +121,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                     profile.useXray() -> {
                         initPlugin("xtls-plugin")
                         pluginConfigs[port] =
-                            gson.toJson(buildXrayConfig(profile, port, needChain, index)).also {
+                            gson.toJson(buildXrayConfig(profile, port, needChain)).also {
                                 Logs.d(it)
                             }
                     }

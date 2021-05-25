@@ -28,7 +28,7 @@ The application is designed to be used whenever possible.
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy ( naive-plugin )
 * Ping Tunnel ( pingtunnel-plugin )
-* relaybaton (relaybaton-plugin )
+* relaybaton ( relaybaton-plugin )
 * Brook ( brook-plugin )
 
 #### Subscription
@@ -51,7 +51,6 @@ The application is designed to be used whenever possible.
 
 <ul>
     <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: <code>GPL 3.0</code></li>
-    <li><a href="https://github.com/nekohasekai/AndroidLibV2rayLite">nekohasekai/AndroidLibV2rayLite</a>: <code>LGPL 3.0</code></li>
     <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksRb/shadowsocksr-libev</a>: <code>GPL 3.0</code></li>
     <li><a href="https://github.com/XTLS/Xray-core/blob/main/LICENSE">XTLS/Xray-core</a>: <code>MPL 2.0</code></li>
     <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">p4gefau1t/Trojan-Go</a>: <code>GPL 3.0</code></li>

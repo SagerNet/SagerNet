@@ -277,9 +277,7 @@ data class ProxyEntity(
     fun needCoreMux(): Boolean {
         val enableMuxForAll by lazy { DataStore.enableMuxForAll }
         return when (type) {
-            TYPE_VMESS -> isV2RayNetworkTcp()
-            TYPE_VLESS -> !useXray()
-            TYPE_TROJAN -> enableMuxForAll && !useXray()
+            TYPE_VMESS,TYPE_VLESS -> isV2RayNetworkTcp()
             TYPE_TROJAN_GO -> false
             else -> enableMuxForAll
         }

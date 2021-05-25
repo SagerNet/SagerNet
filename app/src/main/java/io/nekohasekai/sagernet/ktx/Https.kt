@@ -67,10 +67,9 @@ fun String.isIpAddress(): Boolean {
     return Validator.isIpv4(this) || Validator.isIpv6(this)
 }
 
-fun String.parseHost(): String {
-    return try {
-        Uri.parse(this)?.host?.takeIf { it.isNotBlank() }
-    } catch (ignored: Exception) {
-        null
-    } ?: this
+fun String.unwrapHost(): String {
+    if (startsWith("[") && endsWith("]")) {
+        return substring(1, length - 1).unwrapHost()
+    }
+    return this
 }
