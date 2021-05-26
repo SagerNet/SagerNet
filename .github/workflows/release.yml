@@ -194,7 +194,7 @@ jobs:
       - name: Checkout Library
         run: |
           git submodule update --init 'app/*'
-      - name: Debug Build
+      - name: Release Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
@@ -206,8 +206,24 @@ jobs:
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v2
         with:
-          name: SagetNet
+          name: APKs
           path: ${{ env.APK }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-ARM ${{ env.SHA256_ARM }}"
+          path: ${{ env.SUM_ARM }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-ARM64 ${{ env.SHA256_ARM64 }}"
+          path: ${{ env.SUM_ARM64 }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-X64 ${{ env.SHA256_X64 }}"
+          path: ${{ env.SUM_X64 }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-X86 ${{ env.SHA256_X86 }}"
+          path: ${{ env.SUM_X86 }}
   publish:
     name: Publish Release
     if: github.event.inputs.publish != 'y'
@@ -219,6 +235,7 @@ jobs:
       - name: Donwload Artifacts
         uses: actions/download-artifact@v2
         with:
+          name: APKs
           path: artifacts
       - name: Release
         run: |
@@ -227,6 +244,7 @@ jobs:
           mv ghr*linux_amd64/ghr .
           mkdir apks
           find artifacts -name "*.apk" -exec cp {} apks \;
+          find artifacts -name "*.sha256sum.txt" -exec cp {} apks \;
           ./ghr -delete -t "${{ github.token }}" -n "${{ github.event.inputs.tag }}" "${{ github.event.inputs.tag }}" apks
   upload:
     name: Upload Release
@@ -237,11 +255,13 @@ jobs:
       - name: Donwload Artifacts
         uses: actions/download-artifact@v2
         with:
+          name: APKs
           path: artifacts
       - name: Release
         run: |
           mkdir apks
           find artifacts -name "*.apk" -exec cp {} apks \;
+
           function upload() {
             for apk in $@; do
               echo ">> Uploading $apk"
@@ -255,7 +275,7 @@ jobs:
               wait $job || exit 1
             done
           }
-          upload apks/*.apk
+          upload apks/*
   play:
     name: Publish to Play Store
     if: github.event.inputs.play != 'y'
@@ -306,7 +326,7 @@ jobs:
       - name: Checkout Library
         run: |
           git submodule update --init 'app/*'
-      - name: Debug Build
+      - name: Release Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
@@ -316,4 +336,3 @@ jobs:
           ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
           EOF
           ./gradlew app:publishPlayRelease
-          echo "APK=$APK" >> $GITHUB_ENV

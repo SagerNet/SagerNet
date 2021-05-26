@@ -8,9 +8,9 @@ on:
       upload:
         description: 'Upload: If want ignore'
         required: false
-#      publish:
-#        description: 'Publish: If want ignore'
-#        required: false
+      publish:
+        description: 'Publish: If want ignore'
+        required: false
 jobs:
   check:
     name: Check Access
@@ -22,8 +22,7 @@ jobs:
           permission: "write"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  naive_libs:
-    needs: check
+  native:
     runs-on: ubuntu-latest
     name: Native Build (NaïveProxy)
     strategy:
@@ -56,10 +55,12 @@ jobs:
           ./run init action naive
           ./run plugin naive init
           ./run plugin naive ${{ matrix.arch }}
-  naive:
-    needs: naive_libs
+  build:
     name: Gradle Build (NaïveProxy)
     runs-on: ubuntu-latest
+    needs:
+      - native
+      - check
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -107,19 +108,36 @@ jobs:
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v2
         with:
-          name: NaïveProxy
+          name: APKs
           path: ${{ env.APK }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-ARM ${{ env.SHA256_ARM }}"
+          path: ${{ env.SUM_ARM }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-ARM64 ${{ env.SHA256_ARM64 }}"
+          path: ${{ env.SUM_ARM64 }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-X64 ${{ env.SHA256_X64 }}"
+          path: ${{ env.SUM_X64 }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-X86 ${{ env.SHA256_X86 }}"
+          path: ${{ env.SUM_X86 }}
   publish:
     name: Publish Release
     if: github.event.inputs.publish != 'y'
     runs-on: ubuntu-latest
-    needs: naive
+    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Donwload Artifacts
         uses: actions/download-artifact@v2
         with:
+          name: APKs
           path: artifacts
       - name: Release
         run: |
@@ -128,21 +146,24 @@ jobs:
           mv ghr*linux_amd64/ghr .
           mkdir apks
           find artifacts -name "*.apk" -exec cp {} apks \;
-          ./ghr -delete -t "${{ github.token }}" -n "${{ github.event.inputs.tag }}" "${{ github.event.inputs.tag }}" apks
+          find artifacts -name "*.sha256sum.txt" -exec cp {} apks \;
+          ./ghr -delete -prerelease -t "${{ github.token }}" -n "${{ github.event.inputs.tag }}" "${{ github.event.inputs.tag }}" apks
   upload:
     name: Upload Release
     if: github.event.inputs.upload != 'y'
     runs-on: ubuntu-latest
-    needs: naive
+    needs: build
     steps:
       - name: Donwload Artifacts
         uses: actions/download-artifact@v2
         with:
+          name: APKs
           path: artifacts
       - name: Release
         run: |
           mkdir apks
           find artifacts -name "*.apk" -exec cp {} apks \;
+
           function upload() {
             for apk in $@; do
               echo ">> Uploading $apk"
@@ -156,30 +177,56 @@ jobs:
               wait $job || exit 1
             done
           }
-          upload apks/*.apk
-#  play:
-#    name: Publish to Play Store
-#    if: github.event.inputs.upload != 'y'
-#    runs-on: ubuntu-latest
-#    needs:
-#      - native
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: Fetch Status
-#        run: git submodule status 'plugin/xtls/*' > xtls_status
-#      - name: XTLS Cache
-#        uses: actions/cache@v2
-#        with:
-#          path: |
-#            plugin/xtls/src/main/jniLibs
-#          key: ${{ hashFiles('bin/lib/xtls/*', 'xtls_status') }}
-#      - name: Release Build
-#        run: |
-#          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-#          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-#          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-#          cat > service_account_credentials.json << EOF
-#          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
-#          EOF
-#          ./gradlew xtls-plugin:publishRelease
+          upload apks/*
+  play:
+    name: Publish to Play Store
+    if: github.event.inputs.upload != 'y'
+    runs-on: ubuntu-latest
+    needs:
+      - native
+      - check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'plugin/naive/*' > naive_status
+      - name: Naive Cache (armeabi-v7a)
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/naive/src/main/jniLibs/armeabi-v7a
+          key: naive-armeabi-v7a-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
+      - name: Naive Cache (arm64-v8a)
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/naive/src/main/jniLibs/arm64-v8a
+          key: naive-arm64-v8a-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
+      - name: Naive Cache (x86)
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/naive/src/main/jniLibs/x86
+          key: naive-x86-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
+      - name: Naive Cache (x86_64)
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/naive/src/main/jniLibs/x86_64
+          key: naive-x86_64-${{ hashFiles('bin/plugin/naive/*', 'naive_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle') }}
+      - name: Native Build
+        env:
+          SKIP_BUILD: on
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          cat > service_account_credentials.json << EOF
+          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
+          EOF
+          ./gradlew :plugin:naive:publishPlayRelease
