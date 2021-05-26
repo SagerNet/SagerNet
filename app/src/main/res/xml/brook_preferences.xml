@@ -29,7 +29,7 @@
             app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
-            app:title="@string/password_opt" />
+            app:title="@string/password" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_format_align_left_24"
             app:key="serverPath"
