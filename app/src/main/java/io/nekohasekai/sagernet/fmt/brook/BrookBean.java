@@ -33,7 +33,6 @@ public class BrookBean extends AbstractBean {
 
     public String protocol;
     public String password;
-
     public String wsPath;
 
     @Override
@@ -50,7 +49,13 @@ public class BrookBean extends AbstractBean {
         super.serialize(output);
         output.writeString(protocol);
         output.writeString(password);
-        output.writeString(wsPath);
+        switch (protocol) {
+            case "ws":
+            case "wss": {
+                output.writeString(wsPath);
+                break;
+            }
+        }
     }
 
     @Override
@@ -59,8 +64,12 @@ public class BrookBean extends AbstractBean {
         super.deserialize(input);
         protocol = input.readString();
         password = input.readString();
-        if (version > 0) {
-            wsPath = input.readString();
+        if (version > 0) switch (protocol) {
+            case "ws":
+            case "wss": {
+                wsPath = input.readString();
+                break;
+            }
         }
         initDefaultValues();
     }
