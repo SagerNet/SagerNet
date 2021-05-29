@@ -511,17 +511,17 @@
 
     <string-array name="dns_mode_entry">
         <item>@string/dns_mode_system</item>
-        <item>@string/dns_mode_remote</item>
+        <!--        <item>@string/dns_mode_remote</item>-->
         <item>@string/dns_mode_local</item>
-        <item>@string/dns_mode_fakedns</item>
+        <!--        <item>@string/dns_mode_fakedns</item>-->
         <item>@string/dns_mode_fakedns_local</item>
     </string-array>
 
     <string-array name="value_array_5">
         <item>0</item>
-        <item>1</item>
+        <!--        <item>1</item>-->
         <item>2</item>
-        <item>3</item>
+        <!--        <item>3</item>-->
         <item>4</item>
     </string-array>
 
