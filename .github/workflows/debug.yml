@@ -134,6 +134,12 @@ jobs:
           ./run init action naive
           ./run plugin naive init
           ./run plugin naive ${{ matrix.arch }}
+          openssl sha256 plugin/naive/src/main/jniLibs/${{ matrix.arch }}/libnaive.so > sha256sum.txt
+          echo "SHA256SUM=$(cut -d' ' -f2 sha256sum.txt)" >>$GITHUB_ENV
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "NAIVE-SHA256-${{ matrix.arch }} ${{ env.SHA256SUM }}"
+          path: sha256sum.txt
   pingtunnel:
     name: Native Build (PingTunnel)
     runs-on: ubuntu-latest
