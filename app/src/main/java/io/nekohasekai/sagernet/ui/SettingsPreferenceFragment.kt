@@ -78,6 +78,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val allowAccess = findPreference<Preference>(Key.ALLOW_ACCESS)!!
         val requireHttp = findPreference<SwitchPreference>(Key.REQUIRE_HTTP)!!
         val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
+        portHttp.isEnabled = requireHttp.isChecked
+        requireHttp.setOnPreferenceChangeListener { _, newValue ->
+            portHttp.isEnabled = newValue as Boolean
+            needReload()
+            true
+        }
         val showStopButton = findPreference<SwitchPreference>(Key.SHOW_STOP_BUTTON)!!
         if (Build.VERSION.SDK_INT < 24) {
             showStopButton.remove()
@@ -112,6 +118,20 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val localDns = findPreference<EditTextPreference>(Key.LOCAL_DNS)!!
         val enableDomesticDns = findPreference<SwitchPreference>(Key.ENABLE_DOMESTIC_DNS)!!
         val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
+
+        val requireTransproxy = findPreference<SwitchPreference>(Key.REQUIRE_TRANSPROXY)!!
+        val transproxyPort = findPreference<EditTextPreference>(Key.TRANSPROXY_PORT)!!
+        val transproxyMode = findPreference<SimpleMenuPreference>(Key.TRANSPROXY_MODE)!!
+
+        transproxyPort.isEnabled = requireTransproxy.isChecked
+        transproxyMode.isEnabled = requireTransproxy.isChecked
+
+        requireTransproxy.setOnPreferenceChangeListener { _, newValue ->
+            transproxyPort.isEnabled = newValue as Boolean
+            transproxyMode.isEnabled = newValue
+            needReload()
+            true
+        }
 
         fun updateDnsMode(newMode: Int) {
             systemDns.isVisible = newMode == DnsMode.SYSTEM
@@ -161,7 +181,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         serviceMode.onPreferenceChangeListener = reloadListener
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
-        requireHttp.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
         showStopButton.onPreferenceChangeListener = reloadListener
         showDirectSpeed.onPreferenceChangeListener = reloadListener
@@ -185,6 +204,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         ipv6Route.onPreferenceChangeListener = reloadListener
         preferIpv6.onPreferenceChangeListener = reloadListener
         allowAccess.onPreferenceChangeListener = reloadListener
+
+        transproxyPort.onPreferenceChangeListener = reloadListener
+        transproxyMode.onPreferenceChangeListener = reloadListener
 
     }
 

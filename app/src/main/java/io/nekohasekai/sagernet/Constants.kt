@@ -59,12 +59,17 @@ object Key {
 
     const val SOCKS_PORT = "socksPort"
     const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"
-    const val REQUIRE_HTTP = "requireHttp"
-    const val HTTP_PORT = "httpPort"
     const val ALLOW_ACCESS = "allowAccess"
     const val SPEED_INTERVAL = "speedInterval"
     const val SHOW_DIRECT_SPEED = "showDirectSpeed"
     const val LOCAL_DNS_PORT = "portLocalDns"
+
+    const val REQUIRE_HTTP = "requireHttp"
+    const val HTTP_PORT = "httpPort"
+
+    const val REQUIRE_TRANSPROXY = "requireTransproxy"
+    const val TRANSPROXY_MODE = "transproxyMode"
+    const val TRANSPROXY_PORT = "transproxyPort"
 
     const val ENABLE_MUX = "enableMux"
     const val ENABLE_MUX_FOR_ALL = "enableMuxForAll"

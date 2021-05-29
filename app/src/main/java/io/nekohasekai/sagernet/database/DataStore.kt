@@ -104,11 +104,24 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var httpPort: Int
         get() = getLocalPort(Key.HTTP_PORT, 9080)
         set(value) = saveLocalPort(Key.HTTP_PORT, value)
+    var transproxyPort: Int
+        get() = getLocalPort(Key.TRANSPROXY_PORT, 9200)
+        set(value) = saveLocalPort(Key.TRANSPROXY_PORT, value)
 
     fun initGlobal() {
-        if (configurationStore.getString(Key.SOCKS_PORT) == null) socksPort = socksPort
-        if (configurationStore.getString(Key.LOCAL_DNS_PORT) == null) localDNSPort = localDNSPort
-        if (configurationStore.getString(Key.HTTP_PORT) == null) httpPort = httpPort
+        if (configurationStore.getString(Key.SOCKS_PORT) == null) {
+            socksPort = socksPort
+        }
+        if (configurationStore.getString(Key.LOCAL_DNS_PORT) == null) {
+            localDNSPort = localDNSPort
+        }
+        if (configurationStore.getString(Key.HTTP_PORT) == null) {
+            httpPort = httpPort
+        }
+        if (configurationStore.getString(Key.TRANSPROXY_PORT) == null) {
+            transproxyPort = transproxyPort
+        }
+
     }
 
 
@@ -127,7 +140,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var bypass by configurationStore.boolean(Key.BYPASS_MODE)
     var individual by configurationStore.string("")
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
-    var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
     var enableMuxForAll by configurationStore.boolean(Key.ENABLE_MUX_FOR_ALL)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
@@ -137,6 +149,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
     val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
+
+    var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
+    var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
+    var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
 
     // cache
 

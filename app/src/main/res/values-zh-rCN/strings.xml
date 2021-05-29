@@ -290,5 +290,9 @@
     <string name="extra_headers">附加标头</string>
     <string name="username">用户名</string>
     <string name="key_opt">密码 (可选)</string>
+    <string name="group_diff">区别 (%s)</string>
+    <string name="require_transproxy">启用透明代理入站</string>
+    <string name="transproxy_mode">透明代理模式</string>
+    <string name="port_transproxy">透明代理端口</string>
 
 </resources>

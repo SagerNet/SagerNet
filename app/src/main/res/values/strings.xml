@@ -52,7 +52,7 @@
     <string name="service_mode_vpn">VPN</string>
     <string name="port_proxy">SOCKS5 proxy port</string>
     <string name="port_http">HTTP proxy port</string>
-    <string name="port_transproxy" translatable="false">Transproxy port</string>
+    <string name="port_transproxy">Transproxy port</string>
     <string name="cag_route">Route Settings</string>
     <string name="allow_access">Allow connections from the LAN</string>
     <string name="allow_access_sum">Bind inbound servers to 0.0.0.0</string>
@@ -98,6 +98,8 @@
     <string name="enable_domestic_dns">Enable domestic DNS</string>
     <string name="dns_domestic">Domestic DNS</string>
     <string name="port_local_dns">Local DNS port</string>
+    <string name="require_transproxy">Enable Transproxy inbound</string>
+    <string name="transproxy_mode">Transproxy Mode</string>
 
     <!-- proxy category -->
     <string name="profile_name">Profile Name</string>

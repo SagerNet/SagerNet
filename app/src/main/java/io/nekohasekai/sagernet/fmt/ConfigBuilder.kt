@@ -45,6 +45,8 @@ import kotlin.collections.LinkedHashMap
 
 const val TAG_SOCKS = "in"
 const val TAG_HTTP = "http"
+const val TAG_TRANS = "trans"
+
 const val TAG_AGENT = "out"
 const val TAG_DIRECT = "bypass"
 const val TAG_BLOCK = "block"
@@ -168,12 +170,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride =
-                            if (useFakeDns) {
-                                listOf("fakedns")
-                            } else {
-                                listOf("http", "tls")
-                            }
+                        destOverride = if (useFakeDns) {
+                            listOf("fakedns", "http", "tls")
+                        } else {
+                            listOf("http", "tls")
+                        }
                         metadataOnly = false
                     }
                 }
@@ -196,9 +197,46 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride =
-                            if (useFakeDns) listOf("fakedns") else listOf("http", "tls")
+                        destOverride = if (useFakeDns) {
+                            listOf("fakedns", "http", "tls")
+                        } else {
+                            listOf("http", "tls")
+                        }
                         metadataOnly = false
+                    }
+                }
+            })
+        }
+
+        val requireTransproxy = DataStore.requireTransproxy
+        if (requireTransproxy) {
+            inbounds.add(InboundObject().apply {
+                tag = TAG_TRANS
+                listen = bind
+                port = DataStore.transproxyPort
+                protocol = "dokodemo-door"
+                settings =
+                    LazyInboundConfigurationObject(this, DokodemoDoorInboundConfigurationObject().apply {
+                        network = "tcp,udp"
+                        followRedirect = true
+                        userLevel = 8
+                    })
+                if (trafficSniffing || useFakeDns) {
+                    sniffing = InboundObject.SniffingObject().apply {
+                        enabled = true
+                        destOverride = if (useFakeDns) {
+                            listOf("fakedns", "http", "tls")
+                        } else {
+                            listOf("http", "tls")
+                        }
+                        metadataOnly = false
+                    }
+                }
+                when(DataStore.transproxyMode) {
+                    1 -> streamSettings = StreamSettingsObject().apply {
+                        sockopt = StreamSettingsObject.SockoptObject().apply {
+                            tproxy = "tproxy"
+                        }
                     }
                 }
             })
@@ -859,11 +897,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
 
 //            if (useFakeDns) {
-                routing.rules.add(0, RoutingObject.RuleObject().apply {
-                    type = "field"
-                    port = "53"
-                    outboundTag = TAG_DNS_OUT
-                })
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                port = "53"
+                outboundTag = TAG_DNS_OUT
+            })
 //            }
 
             if (dnsMode == DnsMode.FAKEDNS_LOCAL) {

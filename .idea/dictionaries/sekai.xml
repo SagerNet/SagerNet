@@ -30,6 +30,8 @@
       <w>shadowsocks</w>
       <w>shadowsocksr</w>
       <w>snackbar</w>
+      <w>tproxy</w>
+      <w>transproxy</w>
       <w>uplink</w>
       <w>vless</w>
       <w>vmess</w>
