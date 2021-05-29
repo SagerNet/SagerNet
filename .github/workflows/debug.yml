@@ -312,19 +312,3 @@ jobs:
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run update_assets
           ./gradlew app:assembleOssDebug
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "SHA256-ARM ${{ env.SHA256_ARM }}"
-          path: ${{ env.SUM_ARM }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "SHA256-ARM64 ${{ env.SHA256_ARM64 }}"
-          path: ${{ env.SUM_ARM64 }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "SHA256-X64 ${{ env.SHA256_X64 }}"
-          path: ${{ env.SUM_X64 }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "SHA256-X86 ${{ env.SHA256_X86 }}"
-          path: ${{ env.SUM_X86 }}

@@ -103,6 +103,7 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
                             decoder.isMutableRequired = true
                         }
                     } else {
+                        @Suppress("DEPRECATION")
                         MediaStore.Images.Media.getBitmap(contentResolver, uri)
                     }
                     val intArray = IntArray(bitmap.width * bitmap.height)

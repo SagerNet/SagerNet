@@ -244,8 +244,9 @@ fun Project.setupAppCommon() {
                 dependsOn("package${requireFlavor()}")
             }
             val assemble = "assemble${requireFlavor()}"
+            val install = "install${requireFlavor()}"
             tasks.whenTaskAdded {
-                if (name == assemble) dependsOn("calculateAPKsSha256")
+                if (name == assemble || name == install) dependsOn("calculateAPKsSha256")
             }
         }
     }
