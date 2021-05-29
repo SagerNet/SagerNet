@@ -11,7 +11,6 @@ include(":plugin:relaybaton")
 include(":plugin:brook")
 
 include(":external:preferencex")
-include(":external:preferencex-ringtone")
 include(":external:preferencex-simplemenu")
 include(":external:flexbox")
 include(":external:colorpicker")
