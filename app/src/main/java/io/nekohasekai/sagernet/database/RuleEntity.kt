@@ -23,6 +23,8 @@ package io.nekohasekai.sagernet.database
 
 import android.os.Parcelable
 import androidx.room.*
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.ktx.app
 import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "rules")
@@ -69,6 +71,15 @@ data class RuleEntity(
         if (protocol.isNotBlank()) summary += "$protocol\n"
         if (attrs.isNotBlank()) summary += "$attrs\n"
         return summary.trim()
+    }
+
+    fun displayOutbound(): String {
+        return when (outbound) {
+            0L -> app.getString(R.string.route_proxy)
+            -1L -> app.getString(R.string.route_bypass)
+            -2L -> app.getString(R.string.route_block)
+            else -> ProfileManager.getProfile(outbound)?.displayName() ?: app.getString(R.string.route_proxy)
+        }
     }
 
     @androidx.room.Dao

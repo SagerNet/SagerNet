@@ -34,8 +34,8 @@
     <string name="group_status_empty_subscription">尚未更新</string>
     <string name="group_status_proxies">%d 個代理</string>
     <string name="group_status_proxies_subscription">%d 個代理，上次更新於 %s。</string>
-    <string name="group_no_difference">沒有變化</string>
-    <string name="group_updated">更新了 %d 個代理</string>
+    <string name="group_no_difference">%s: 沒有變化</string>
+    <string name="group_updated">%s: 更新了 %d 個代理</string>
     <string name="group_show_diff">變化</string>
     <string name="group_delete_confirm_prompt">您真的希望刪除這個群組嗎？</string>
     <string name="group_added">新增：\n%s</string>

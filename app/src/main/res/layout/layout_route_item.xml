@@ -97,22 +97,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end|bottom"
+            android:gravity="bottom"
             android:orientation="horizontal"
             android:paddingStart="12dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp">
+            android:paddingEnd="8dp">
 
-            <TextView
-                android:id="@+id/profile_type"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/profile_type"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?colorAccent" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/profile_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_type"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?colorAccent" />
+
+                <TextView
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:id="@+id/route_outbound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_type"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?colorAccent" />
+
+            </LinearLayout>
 
             <androidx.appcompat.widget.SwitchCompat
+                android:layout_marginBottom="2dp"
                 android:id="@+id/enable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

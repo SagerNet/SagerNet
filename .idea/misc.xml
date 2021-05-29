@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/layout_group.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_group_item.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_group_list.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/brook_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/chain_preferences.xml" value="0.32135416666666666" />

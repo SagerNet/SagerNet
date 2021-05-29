@@ -34,8 +34,8 @@
     <string name="group_status_empty_subscription">从未更新</string>
     <string name="group_status_proxies">%d 个配置</string>
     <string name="group_status_proxies_subscription">%d 个配置, 最后更新于 %s.</string>
-    <string name="group_no_difference">没有变化</string>
-    <string name="group_updated">更新了 %d 个节点</string>
+    <string name="group_no_difference">%s: 没有变化</string>
+    <string name="group_updated">%s: 更新了 %d 个节点</string>
     <string name="group_show_diff">变化</string>
     <string name="group_delete_confirm_prompt">您确定要删除这个分组吗?</string>
     <string name="group_added">新增: \n%s</string>

@@ -46,6 +46,7 @@ import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
@@ -343,12 +344,13 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             onRefreshFinished.run()
 
                             if (changed == 0 && duplicate.isEmpty()) {
-                                activity.snackbar(activity.getString(R.string.group_no_difference))
+                                activity.snackbar(activity.getString(R.string.group_no_difference, proxyGroup.displayName()))
                                     .show()
                             } else {
                                 activity.snackbar(
                                     activity.getString(
                                         R.string.group_updated,
+                                        proxyGroup.name,
                                         changed
                                     )
                                 ).setAction(R.string.group_show_diff) {
@@ -381,7 +383,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                     }
 
                                     AlertDialog.Builder(activity)
-                                        .setTitle(R.string.group_show_diff)
+                                        .setTitle(app.getString(R.string.group_diff, proxyGroup.displayName()))
                                         .setMessage(status.trim())
                                         .setPositiveButton(android.R.string.ok, null)
                                         .show()
@@ -747,7 +749,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         val editButton: AppCompatImageView = view.findViewById(R.id.edit)
         val shareButton: AppCompatImageView = view.findViewById(R.id.share)
         val updateButton: MaterialButton = view.findViewById(R.id.group_update)
-        val subscriptionUpdateProgress: LinearLayout =
+        val subscriptionUpdateProgress: LinearProgressIndicator =
             view.findViewById(R.id.subscription_update_progress)
         var refreshing = false
 
@@ -760,8 +762,12 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         {
                             refreshing = true
                             runOnMainDispatcher {
+                                (groupName.parent as LinearLayout).apply {
+                                    setPadding(paddingLeft, paddingTop - dp2px(4), paddingRight, paddingBottom)
+                                }
+
                                 subscriptionUpdateProgress.isVisible = true
-                                updateButton.isVisible = false
+                                updateButton.isInvisible = true
                                 if (editButton.isVisible) {
                                     uVisible = true
                                     editButton.isVisible = false
@@ -773,13 +779,17 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             DataStore.selectedGroup = proxyGroup.id
 
                             runOnMainDispatcher {
+                                (groupName.parent as LinearLayout).apply {
+                                    setPadding(paddingLeft, paddingTop + dp2px(4), paddingRight, paddingBottom)
+                                }
+
                                 // shareButton.isVisible = true
 
                                 if (needGo) {
                                     activity.displayFragmentWithId(R.id.nav_configuration)
                                 } else {
                                     subscriptionUpdateProgress.isVisible = false
-                                    updateButton.isVisible = true
+                                    updateButton.isInvisible = false
                                     if (uVisible) {
                                         editButton.isVisible = true
                                     }

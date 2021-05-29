@@ -84,7 +84,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
 
             override fun getDragDirs(
                 recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
+                viewHolder: RecyclerView.ViewHolder,
             ) = if (viewHolder is RuleAdapter.DocumentHolder) {
                 0
             } else {
@@ -164,7 +164,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
 
         override fun onCreateViewHolder(
             parent: ViewGroup,
-            viewType: Int
+            viewType: Int,
         ): RecyclerView.ViewHolder {
             return if (viewType == 0) {
                 DocumentHolder(
@@ -300,6 +300,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             lateinit var rule: RuleEntity
             val profileName: TextView = view.findViewById(R.id.profile_name)
             val profileType: TextView = view.findViewById(R.id.profile_type)
+            val routeOutbound: TextView = view.findViewById(R.id.route_outbound)
             val editButton: ImageView = view.findViewById(R.id.edit)
             val shareLayout: LinearLayout = view.findViewById(R.id.share)
             val enableSwitch: SwitchCompat = view.findViewById(R.id.enable)
@@ -308,6 +309,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                 rule = ruleEntity
                 profileName.text = rule.displayName()
                 profileType.text = rule.mkSummary()
+                routeOutbound.text = rule.displayOutbound()
                 view.setOnClickListener {
                     enableSwitch.performClick()
                 }
