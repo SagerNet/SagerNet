@@ -37,7 +37,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
-import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
@@ -537,31 +536,46 @@ object ProfileManager {
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbounds") -> {
-                    val fakedns = json["fakedns"]
-                    if (fakedns is JSONObject) {
-                        json["fakedns"] = JSONArray().apply {
-                            add(fakedns)
-                        }
-                    }
+                    /*   val fakedns = json["fakedns"]
+                       if (fakedns is JSONObject) {
+                           json["fakedns"] = JSONArray().apply {
+                               add(fakedns)
+                           }
+                       }
 
-                    try {
-                        gson.fromJson(
-                            json.toString(),
-                            V2RayConfig::class.java
-                        ).apply { init() }
-                    } catch (e: Exception) {
-                        Logs.w(e)
-                        json.getJSONArray("outbounds").toList(JSONObject::class.java).forEach {
-                            val v2rayConfig = gson
-                                .fromJson(it.toString(), OutboundObject::class.java)
-                                .apply { init() }
+                       val routing = json["routing"]
+                       if (routing is JSONObject) {
+                           val rules = routing["rules"]
+                           if (rules is JSONArray) {
+                               rules.filterIsInstance<JSONObject>().forEach {
+                                   val inboundTag = it["inboundTag"]
+                                   if (inboundTag is String) {
+                                       it["inboundTag"] = JSONArray().apply {
+                                           add(inboundTag)
+                                       }
+                                   }
+                               }
+                           }
+                       }
 
-                            proxies.addAll(parseOutbound(v2rayConfig))
-                        }
-                        null
-                    }?.outbounds?.forEach {
-                        proxies.addAll(parseOutbound(it))
+                       try {
+                           gson.fromJson(
+                               json.toString(),
+                               V2RayConfig::class.java
+                           ).apply { init() }
+                       } catch (e: Exception) {
+                           Logs.w(e)*/
+                    json.getJSONArray("outbounds").toList(JSONObject::class.java).forEach {
+                        val v2rayConfig = gson
+                            .fromJson(it.toString(), OutboundObject::class.java)
+                            .apply { init() }
+
+                        proxies.addAll(parseOutbound(v2rayConfig))
                     }
+                    /* null
+                 }?.outbounds?.forEach {
+                     proxies.addAll(parseOutbound(it))
+                 }*/
                 }
                 json.containsKey("remote_addr") -> {
                     return listOf(json.parseTrojanGo())

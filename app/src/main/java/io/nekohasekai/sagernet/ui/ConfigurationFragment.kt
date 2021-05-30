@@ -160,7 +160,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        runOnDefaultDispatcher {
+        if (it != null) runOnDefaultDispatcher {
             try {
                 val fileText =
                     requireContext().contentResolver.openInputStream(it)!!.bufferedReader()
@@ -173,7 +173,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 Logs.w(e)
 
                 onMainDispatcher {
-                    Toast.makeText(app, e.readableMessage, Toast.LENGTH_LONG).show()
+                    snackbar(e.readableMessage).show()
                 }
             }
         }
@@ -218,10 +218,18 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (text.isBlank()) {
                     snackbar(getString(R.string.clipboard_empty)).show()
                 } else runOnDefaultDispatcher {
-                    val proxies = ProfileManager.parseSubscription(text)?.second
-                    if (proxies.isNullOrEmpty()) onMainDispatcher {
-                        snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
-                    } else import(proxies)
+                    try {
+                        val proxies = ProfileManager.parseSubscription(text)?.second
+                        if (proxies.isNullOrEmpty()) onMainDispatcher {
+                            snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
+                        } else import(proxies)
+                    } catch (e: Exception) {
+                        Logs.w(e)
+
+                        onMainDispatcher {
+                            snackbar(e.readableMessage).show()
+                        }
+                    }
                 }
             }
             R.id.action_import_file -> {
