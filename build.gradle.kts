@@ -1,7 +1,9 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 plugins {
-    id("com.github.ben-manes.versions") version "0.38.0"
+    id("com.github.ben-manes.versions") version "0.38.0" apply false
 }
 
 buildscript {
@@ -28,6 +30,26 @@ buildscript {
 
 allprojects {
     apply(from = "${rootProject.projectDir}/repositories.gradle.kts")
+    apply(plugin = "com.github.ben-manes.versions")
+    tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+        resolutionStrategy {
+            componentSelection {
+                all {
+                    val rejected = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea")
+                        .map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-+]*") }
+                        .any { it.matches(candidate.version) }
+                    if (rejected) {
+                        reject("Release candidate")
+                    }
+                }
+            }
+        }
+        // optional parameters
+        checkForGradleUpdate = true
+        outputFormatter = "json"
+        outputDir = "build/dependencyUpdates"
+        reportfileName = "report"
+    }
 }
 
 tasks.register<Delete>("clean") {
