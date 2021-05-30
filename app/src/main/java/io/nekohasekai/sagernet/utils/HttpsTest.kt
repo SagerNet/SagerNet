@@ -115,7 +115,7 @@ class HttpsTest : ViewModel() {
                     override fun onResponse(call: Call, response: Response) {
                         val code = response.code
                         val elapsed = SystemClock.elapsedRealtime() - start
-                        response.body?.closeQuietly()
+                        response.closeQuietly()
                         runOnMainDispatcher {
                             status.value =
                                 if (code == 204 || code == 200) {

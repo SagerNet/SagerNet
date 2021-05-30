@@ -39,7 +39,6 @@ import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
-import io.nekohasekai.sagernet.widget.LinkPreference
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -147,8 +146,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
-        val connectionTestURL = findPreference<LinkPreference>(Key.CONNECTION_TEST_URL)!!
-
         fun updateDnsMode(newMode: Int) {
             systemDns.isVisible = newMode == DnsMode.SYSTEM
             remoteDns.isVisible = newMode == DnsMode.REMOTE
@@ -218,9 +215,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         transproxyPort.onPreferenceChangeListener = reloadListener
         transproxyMode.onPreferenceChangeListener = reloadListener
-
-        connectionTestURL.onPreferenceChangeListener = reloadListener
-
     }
 
     override fun onResume() {
