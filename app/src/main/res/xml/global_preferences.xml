@@ -137,7 +137,6 @@
             app:title="@string/dns_local"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
-            app:defaultValue="true"
             app:key="enableDomesticDns"
             app:title="@string/enable_domestic_dns" />
         <EditTextPreference
