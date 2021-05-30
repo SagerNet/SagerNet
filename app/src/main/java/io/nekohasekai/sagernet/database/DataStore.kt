@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.database
 import android.os.Binder
 import android.os.Build
 import androidx.preference.PreferenceDataStore
+import io.nekohasekai.sagernet.CONNECTION_TEST_URL
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
@@ -153,6 +154,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
     var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
+    var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
 
     // cache
 

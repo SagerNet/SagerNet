@@ -30,7 +30,7 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import okhttp3.*
-import okhttp3.internal.headersContentLength
+import okhttp3.internal.closeQuietly
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -53,7 +53,12 @@ class HttpsTest : ViewModel() {
         }
 
         class Success(private val elapsed: Long) : Status() {
-            override val status get() = app.getString(R.string.connection_test_available, elapsed)
+            override val status
+                get() = app.getString(if (DataStore.connectionTestURL.startsWith("https://")) {
+                    R.string.connection_test_available
+                } else {
+                    R.string.connection_test_available_http
+                }, elapsed)
         }
 
         sealed class Error : Status() {
@@ -80,6 +85,7 @@ class HttpsTest : ViewModel() {
                 override val error get() = app.getString(R.string.connection_test_error, e.message)
             }
         }
+
     }
 
     private var running: Call? = null
@@ -96,7 +102,7 @@ class HttpsTest : ViewModel() {
             val start = SystemClock.elapsedRealtime()
             running = okhttp.newCall(
                 Request.Builder()
-                    .url("https://cp.cloudflare.com")
+                    .url(DataStore.connectionTestURL)
                     .addHeader("Connection", "close")
                     .build()
             ).apply {
@@ -111,9 +117,10 @@ class HttpsTest : ViewModel() {
                     override fun onResponse(call: Call, response: Response) {
                         val code = response.code
                         val elapsed = SystemClock.elapsedRealtime() - start
+                        response.body?.closeQuietly()
                         runOnMainDispatcher {
                             status.value =
-                                if (code == 204 || code == 200 && response.headersContentLength() == 0L) {
+                                if (code == 204 || code == 200) {
                                     Status.Success(elapsed)
                                 } else {
                                     Status.Error.UnexpectedResponseCode(code)

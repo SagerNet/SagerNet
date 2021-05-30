@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet
 
+const val CONNECTION_TEST_URL = "https://cp.cloudflare.com"
+
 object Key {
 
     const val DB_PUBLIC = "configuration.db"
@@ -70,6 +72,8 @@ object Key {
     const val REQUIRE_TRANSPROXY = "requireTransproxy"
     const val TRANSPROXY_MODE = "transproxyMode"
     const val TRANSPROXY_PORT = "transproxyPort"
+
+    const val CONNECTION_TEST_URL = "connectionTestURL"
 
     const val ENABLE_MUX = "enableMux"
     const val ENABLE_MUX_FOR_ALL = "enableMuxForAll"

@@ -78,6 +78,7 @@
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">Testing…</string>
     <string name="connection_test_available">Success: HTTPS handshake took %dms</string>
+    <string name="connection_test_available_http">Success: HTTP handshake took %dms</string>
     <string name="connection_test_error">Fail to detect internet connection: %s</string>
     <string name="connection_test_fail">Internet Unavailable</string>
     <string name="connection_test_error_status_code">Error code: #%d</string>
@@ -100,6 +101,7 @@
     <string name="port_local_dns">Local DNS port</string>
     <string name="require_transproxy">Enable Transproxy inbound</string>
     <string name="transproxy_mode">Transproxy Mode</string>
+    <string name="connection_test_url">Connection test URL</string>
 
     <!-- proxy category -->
     <string name="profile_name">Profile Name</string>

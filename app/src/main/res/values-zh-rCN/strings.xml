@@ -192,7 +192,7 @@
 
     <!-- subscriptions -->
     <string name="subscriptions">订阅</string>
-    <string name="cleartext_http_warning">使用纯文字 HTTP 流量传输的订阅并不安全</string>
+    <string name="cleartext_http_warning">纯文本 HTTP 流量并不安全</string>
     <string name="error_title">错误</string>
     <string name="no_proxies_found">未在此订阅内找到服务器配置</string>
 
@@ -294,5 +294,7 @@
     <string name="require_transproxy">启用透明代理入站</string>
     <string name="transproxy_mode">透明代理模式</string>
     <string name="port_transproxy">透明代理端口</string>
+    <string name="connection_test_url">连接测试链接</string>
+    <string name="connection_test_available_http">连接成功: HTTP 握手耗时 %dms</string>
 
 </resources>
