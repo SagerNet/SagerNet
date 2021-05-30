@@ -495,17 +495,12 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     private class SagerSupportClass(val service: VpnService?) : V2RayVPNServiceSupportsSet {
 
-        override fun onEmitStatus(p0: Long, status: String): Long {
+        override fun onEmitStatus(status: String) {
             Logs.i("onEmitStatus $status")
-            return 0L
         }
 
         override fun protect(l: Long): Boolean {
             return (service ?: return true).protect(l.toInt())
-        }
-
-        override fun shutdown(): Long {
-            return 0
         }
     }
 
