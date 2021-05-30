@@ -204,9 +204,9 @@ fun Project.setupAppCommon() {
             }
             getByName("debug").signingConfig = key
         }
-        requireFlavor()
+        val calculateTaskName = "calculate${requireFlavor()}APKsSHA256"
         (this as? AbstractAppExtension)?.apply {
-            tasks.register("calculateAPKsSHA256") {
+            tasks.register(calculateTaskName) {
                 val githubEnv = File(System.getenv("GITHUB_ENV") ?: "this-file-does-not-exist")
 
                 doLast {
@@ -245,7 +245,7 @@ fun Project.setupAppCommon() {
             }
             val assemble = "assemble${requireFlavor()}"
             tasks.whenTaskAdded {
-                if (name == assemble) dependsOn("calculateAPKsSHA256")
+                if (name == assemble) dependsOn(calculateTaskName)
             }
         }
     }
