@@ -321,12 +321,17 @@ class ProxyInstance(val profile: ProxyEntity) {
                         if (needChain) error("PingTunnel is incompatible with chain")
 
                         val commands = mutableListOf(
-                            initPlugin("naive-plugin").path,
+                            initPlugin("pingtunnel-plugin").path,
                             "-type", "client",
                             "-sock5", "1",
                             "-l", "127.0.0.1:$port",
                             "-s", bean.serverAddress
                         )
+
+                        if (bean.key.isNotBlank() && bean.key != "1") {
+                            commands.add("-key")
+                            commands.add(bean.key)
+                        }
 
                         base.data.processes!!.start(commands)
                     }
