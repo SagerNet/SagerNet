@@ -11,6 +11,9 @@ on:
       publish:
         description: 'Publish: If want ignore'
         required: false
+      play:
+        description: 'Play: If want ignore'
+        required: false
 jobs:
   check:
     name: Check Access

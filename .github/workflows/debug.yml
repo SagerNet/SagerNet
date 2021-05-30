@@ -134,6 +134,8 @@ jobs:
           ./run init action naive
           ./run plugin naive init
           ./run plugin naive ${{ matrix.arch }}
+      - name: Calculate SHA256
+        run: |
           openssl sha256 plugin/naive/src/main/jniLibs/${{ matrix.arch }}/libnaive.so > sha256sum.txt
           echo "SHA256SUM=$(cut -d' ' -f2 sha256sum.txt)" >>$GITHUB_ENV
       - uses: actions/upload-artifact@v2
