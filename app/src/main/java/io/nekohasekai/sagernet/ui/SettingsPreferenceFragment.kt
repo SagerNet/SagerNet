@@ -24,7 +24,6 @@ package io.nekohasekai.sagernet.ui
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -50,6 +49,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
 
         listView.layoutManager = FixedLinearLayoutManager(listView)
+    }
+
+    val reloadListener = Preference.OnPreferenceChangeListener { _, _ ->
+        needReload()
+        true
     }
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
@@ -80,12 +84,20 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val allowAccess = findPreference<Preference>(Key.ALLOW_ACCESS)!!
         val requireHttp = findPreference<SwitchPreference>(Key.REQUIRE_HTTP)!!
         val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
-        portHttp.isEnabled = requireHttp.isChecked
-        requireHttp.setOnPreferenceChangeListener { _, newValue ->
-            portHttp.isEnabled = newValue as Boolean
-            needReload()
-            true
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            requireHttp.remove()
+            portHttp.setIcon(R.drawable.ic_baseline_http_24)
+            portHttp.onPreferenceChangeListener = reloadListener
+        } else {
+            portHttp.isEnabled = requireHttp.isChecked
+            requireHttp.setOnPreferenceChangeListener { _, newValue ->
+                portHttp.isEnabled = newValue as Boolean
+                needReload()
+                true
+            }
         }
+
+
         val showStopButton = findPreference<SwitchPreference>(Key.SHOW_STOP_BUTTON)!!
         if (Build.VERSION.SDK_INT < 24) {
             showStopButton.remove()
@@ -175,11 +187,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             startActivity(Intent(activity, AppManagerActivity::class.java))
             if (newValue as Boolean) DataStore.dirty = true
             newValue
-        }
-
-        val reloadListener = Preference.OnPreferenceChangeListener { _, _ ->
-            needReload()
-            true
         }
 
         serviceMode.onPreferenceChangeListener = reloadListener

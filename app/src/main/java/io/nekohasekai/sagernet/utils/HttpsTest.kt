@@ -27,13 +27,12 @@ import androidx.lifecycle.ViewModel
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.requireProxy
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import okhttp3.*
 import okhttp3.internal.closeQuietly
 import java.io.IOException
-import java.net.InetSocketAddress
-import java.net.Proxy
 
 /**
  * Based on: https://android.googlesource.com/platform/frameworks/base/+/b19a838/services/core/java/com/android/server/connectivity/NetworkMonitor.java#1071
@@ -90,20 +89,19 @@ class HttpsTest : ViewModel() {
 
     private var running: Call? = null
     val status = MutableLiveData<Status>(Status.Idle)
+    val okHttpClient by lazy { OkHttpClient.Builder().proxy(requireProxy()).build() }
 
     fun testConnection() {
         cancelTest()
         status.value = Status.Testing
 
         runOnDefaultDispatcher {
-            val okhttp = OkHttpClient.Builder()
-                .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort)))
-                .build()
             val start = SystemClock.elapsedRealtime()
-            running = okhttp.newCall(
+            running = okHttpClient.newCall(
                 Request.Builder()
                     .url(DataStore.connectionTestURL)
                     .addHeader("Connection", "close")
+                    .addHeader("User-Agent", "curl/7.74.0")
                     .build()
             ).apply {
                 enqueue(object : Callback {

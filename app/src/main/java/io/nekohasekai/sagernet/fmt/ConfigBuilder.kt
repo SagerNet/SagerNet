@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.fmt
 
+import android.os.Build
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.bg.VpnService
@@ -181,8 +182,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
         )
 
-        val requireHttp = DataStore.requireHttp
-
+        val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
         if (requireHttp) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_HTTP

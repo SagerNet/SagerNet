@@ -21,7 +21,7 @@
 
 package io.nekohasekai.sagernet.ktx
 
-import android.net.Uri
+import android.os.Build
 import androidx.fragment.app.Fragment
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.bg.BaseService
@@ -37,14 +37,24 @@ val okHttpClient = OkHttpClient.Builder()
     .followSslRedirects(true)
     .build()
 
+private lateinit var proxyClient: OkHttpClient
 fun Fragment.createHttpClient(): OkHttpClient {
     if ((activity as MainActivity?)?.state != BaseService.State.Connected) {
         return okHttpClient
     }
 
-    return okHttpClient.newBuilder()
-        .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort)))
-        .build()
+    if (!::proxyClient.isInitialized) {
+        proxyClient = okHttpClient.newBuilder().proxy(requireProxy()).build()
+    }
+    return proxyClient
+}
+
+fun requireProxy(): Proxy {
+    return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort))
+    } else {
+        Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", DataStore.httpPort))
+    }
 }
 
 fun linkBuilder() = HttpUrl.Builder().scheme("https")
