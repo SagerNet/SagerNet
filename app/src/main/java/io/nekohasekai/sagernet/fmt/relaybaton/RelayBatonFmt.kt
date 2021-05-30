@@ -32,7 +32,6 @@ fun parseRelayBaton(link: String): RelayBatonBean {
         ?: error("Invalid relaybaton link: $link")
     return RelayBatonBean().apply {
         serverAddress = url.host
-        serverPort = url.port
         username = url.username
         password = url.password
         name = url.fragment
@@ -43,7 +42,6 @@ fun parseRelayBaton(link: String): RelayBatonBean {
 fun RelayBatonBean.toUri(): String {
     val builder = linkBuilder()
         .host(serverAddress)
-        .port(serverPort)
         .username(username)
         .password(password)
 
