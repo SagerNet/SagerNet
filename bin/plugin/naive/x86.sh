@@ -3,7 +3,7 @@
 source "bin/init/env.sh"
 source "bin/plugin/naive/build.sh"
 
-mv -f out/ReleaseX86 out/Release
+mv -f out/ReleaseX86 out/Release || true
 export EXTRA_FLAGS='target_os="android" target_cpu="x86"'
 ./get-clang.sh
 ./build.sh
