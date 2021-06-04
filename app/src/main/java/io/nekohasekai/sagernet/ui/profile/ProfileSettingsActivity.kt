@@ -33,6 +33,7 @@ import androidx.core.view.ViewCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
+import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
@@ -43,7 +44,6 @@ import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.ktx.Empty
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher

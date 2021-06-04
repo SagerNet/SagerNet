@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/layout/layout_group_item.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group_list.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_link_dialog.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_password_dialog.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />

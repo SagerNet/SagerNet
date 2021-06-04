@@ -33,7 +33,6 @@ import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.os.Build
-import android.os.Parcelable
 import android.system.Os
 import android.system.OsConstants
 import android.util.TypedValue
@@ -57,7 +56,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.parcelize.Parcelize
 import java.io.FileDescriptor
 import java.net.HttpURLConnection
 import java.net.InetAddress
@@ -159,10 +157,6 @@ fun String?.parseNumericAddress(): InetAddress? = Os.inet_pton(OsConstants.AF_IN
             this
         ) as InetAddress
     }
-
-
-@Parcelize
-class Empty : Parcelable
 
 @JvmOverloads
 fun DialogFragment.showAllowingStateLoss(fragmentManager: FragmentManager, tag: String? = null) {

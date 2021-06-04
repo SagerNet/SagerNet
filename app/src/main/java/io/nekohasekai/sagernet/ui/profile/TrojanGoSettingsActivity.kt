@@ -37,7 +37,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import com.github.shadowsocks.plugin.*
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
-import com.github.shadowsocks.plugin.showAllowingStateLoss
 import com.github.shadowsocks.preference.PluginConfigurationDialogFragment
 import com.github.shadowsocks.preference.PluginPreference
 import com.github.shadowsocks.preference.PluginPreferenceDialogFragment

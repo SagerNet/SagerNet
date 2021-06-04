@@ -42,6 +42,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView

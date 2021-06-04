@@ -64,6 +64,8 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         coordinator = findViewById(R.id.coordinator)
 
         fab = findViewById(R.id.fab)
+        fab.initProgress(findViewById(R.id.fabProgress))
+
         stats = findViewById(R.id.stats)
         drawer = findViewById(R.id.drawer_layout)
 
