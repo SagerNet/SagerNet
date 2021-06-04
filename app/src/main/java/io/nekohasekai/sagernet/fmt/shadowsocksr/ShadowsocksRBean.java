@@ -45,7 +45,7 @@ public class ShadowsocksRBean extends AbstractBean {
 
         if (password == null) password = "";
         if (StrUtil.isBlank(method)) method = "aes-256-cfb";
-        if (StrUtil.isBlank(protocol)) protocol = "plain";
+        if (StrUtil.isBlank(protocol)) protocol = "origin";
         if (protocolParam == null) protocolParam = "";
         if (StrUtil.isBlank(obfs)) obfs = "plain";
         if (obfsParam == null) obfsParam = "";

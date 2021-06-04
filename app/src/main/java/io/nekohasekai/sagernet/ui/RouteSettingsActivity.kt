@@ -147,15 +147,15 @@ class RouteSettingsActivity(
         outbound = findPreference(Key.ROUTE_OUTBOUND)!!
         reverse = findPreference(Key.ROUTE_REVERSE)!!
         redirect = findPreference(Key.ROUTE_REDIRECT)!!
+
         fun updateReverse(enabled: Boolean = outbound.value == "3") {
             reverse.isVisible = enabled
             redirect.isVisible = enabled
-
-            if (enabled) {
-                redirect.isEnabled = reverse.isEnabled
-            }
+            redirect.isEnabled = reverse.isEnabled
         }
+
         updateReverse()
+
         reverse.setOnPreferenceChangeListener { _, newValue ->
             redirect.isEnabled = newValue as Boolean
             true

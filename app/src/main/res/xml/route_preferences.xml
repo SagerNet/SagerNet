@@ -56,7 +56,7 @@
             app:key="routeReverse"
             app:title="@string/route_reverse" />
         <EditTextPreference
-            app:defaultValue="127.0.0.1:1080"
+            app:icon="@drawable/ic_baseline_flip_camera_android_24"
             app:key="routeRedirect"
             app:title="@string/route_reverse_redirect"
             app:useSimpleSummaryProvider="true" />

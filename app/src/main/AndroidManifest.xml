@@ -22,6 +22,7 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <uses-feature
         android:name="android.software.leanback"
@@ -33,6 +34,15 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+
+    <queries>
+        <intent>
+            <action android:name="com.github.shadowsocks.plugin.ACTION_NATIVE_PLUGIN" />
+        </intent>
+        <intent>
+            <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+        </intent>
+    </queries>
 
     <application
         android:name="io.nekohasekai.sagernet.SagerNet"
@@ -93,6 +103,7 @@
         <activity
             android:name=".QuickToggleShortcut"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:label="@string/quick_toggle"
             android:launchMode="singleTask"
             android:process=":bg"
