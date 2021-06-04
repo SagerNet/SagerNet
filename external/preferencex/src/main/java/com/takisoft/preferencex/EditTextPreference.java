@@ -116,6 +116,12 @@ public class EditTextPreference extends androidx.preference.EditTextPreference {
         }
     }
 
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        setDialogTitle(title);
+    }
+
     private void processAttrs(AttributeSet attributeSet) {
         if (attributeSet == null) {
             return;
