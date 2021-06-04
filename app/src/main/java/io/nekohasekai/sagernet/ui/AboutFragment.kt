@@ -21,15 +21,20 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.text.util.Linkify
 import android.view.View
 import android.widget.TextView
+import androidx.activity.result.component1
+import androidx.activity.result.component2
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -74,6 +79,15 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
     }
 
     class AboutContent : MaterialAboutFragment() {
+
+        val requestIgnoreBatteryOptimizations = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) { (resultCode, _) ->
+            if (resultCode == Activity.RESULT_OK) {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.about_fragment_holder, AboutContent())
+                    .commitAllowingStateLoss()
+            }
+        }
 
         fun exportLog() {
             val context = requireContext()
@@ -178,6 +192,26 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .build()
                     )
                     .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            val pm =
+                                requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+                            if (!pm.isIgnoringBatteryOptimizations(app.packageName)) {
+                                addItem(
+                                    MaterialAboutActionItem.Builder()
+                                        .icon(R.drawable.ic_baseline_running_with_errors_24)
+                                        .text(R.string.ignore_battery_optimizations)
+                                        .subText(R.string.ignore_battery_optimizations_sum)
+                                        .setOnClickAction {
+                                            requestIgnoreBatteryOptimizations.launch(
+                                                Intent(
+                                                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                                    Uri.parse("package:${app.packageName}")
+                                                ))
+                                        }
+                                        .build()
+                                )
+                            }
+                        }
                         if (isDefaultFlavor) {
                             addItem(
                                 MaterialAboutActionItem.Builder()

@@ -297,6 +297,9 @@
 
     <string name="donate">Donate</string>
     <string name="donate_info">I love money</string>
+    
+    <string name="ignore_battery_optimizations">Ignore battery optimizations</string>
+    <string name="ignore_battery_optimizations_sum">Remove some restrictions</string>
 
     <!-- plugin -->
     <string name="plugin">Plugin</string>
