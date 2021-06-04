@@ -113,6 +113,8 @@ object Key {
     const val SERVER_TLS = "serverTLS"
     const val SERVER_ENCRYPTION = "serverEncryption"
     const val SERVER_ALPN = "serverALPN"
+    const val SERVER_CERTIFICATES = "serverCertificates"
+    const val SERVER_PINNED_CERTIFICATE_CHAIN = "serverPinnedCertificateChain"
     const val SERVER_FLOW = "serverFlow"
     const val SERVER_QUIC_SECURITY = "serverQuicSecurity"
     const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
@@ -131,6 +133,8 @@ object Key {
     const val ROUTE_PROTOCOL = "routeProtocol"
     const val ROUTE_OUTBOUND = "routeOutbound"
     const val ROUTE_OUTBOUND_RULE = "routeOutboundRule"
+    const val ROUTE_REVERSE = "routeReverse"
+    const val ROUTE_REDIRECT = "routeRedirect"
 
 }
 

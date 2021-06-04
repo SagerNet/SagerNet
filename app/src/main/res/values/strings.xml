@@ -136,6 +136,9 @@
     <string name="tls">Use TLS</string>
     <string name="sni">Server Name Indication</string>
     <string name="alpn">Application-Layer Protocol Negotiation</string>
+    <string name="certificates">Certificates</string>
+    <string name="pinned_peer_certificate_chain_sha256">Pinned Certificate Chain</string>
+
     <string name="encryption">Encryption</string>
 
     <string name="extra_headers">Extra Headers</string>
@@ -162,6 +165,8 @@
     <string name="route_bypass_domain">Domain rule for %s</string>
     <string name="route_bypass_ip">IP rule for %s</string>
     <string name="route_reset">Reset</string>
+    <string name="route_reverse">Reverse Proxy</string>
+    <string name="route_reverse_redirect">Reverse Redirect</string>
 
     <string name="route_opt_bypass_lan">Bypass LAN</string>
     <string name="route_opt_block_ads">Block ADs</string>

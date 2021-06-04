@@ -652,6 +652,7 @@ public class V2RayConfig {
         public List<String> alpn;
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
+        public List<String> pinnedPeerCertificateChainSha256;
 
         public static class CertificateObject {
 
@@ -816,6 +817,23 @@ public class V2RayConfig {
         public String listenAddr;
         public Integer listenPort;
 
+    }
+
+    public ReverseObject reverse;
+
+    public static class ReverseObject {
+        public List<BridgeObject> bridges;
+        public List<PortalObject> portals;
+
+        public static class BridgeObject {
+            public String tag;
+            public String domain;
+        }
+
+        public static class PortalObject {
+            public String tag;
+            public String domain;
+        }
     }
 
     public void init() {

@@ -12,7 +12,7 @@
     <string name="logcat_summary">這種非常有用啊(^O^)／</string>
 
     <string name="menu_configuration">設定檔</string>
-    <string name="menu_group">群組</string>
+    <string name="menu_group">組</string>
     <string name="menu_about">關於</string>
 
     <string name="group_default">預設</string>
@@ -25,12 +25,12 @@
     <string name="group_update">更新</string>
     <string name="group_subscription_link">訂閱連接</string>
     <string name="group_name_required">需要群組名稱</string>
-    <string name="group_create">建立新群組</string>
+    <string name="group_create">建立新組</string>
     <string name="group_create_subscription">建立新訂閱</string>
     <string name="group_edit">編輯</string>
     <string name="group_edit_subscription">編輯訂閱</string>
 
-    <string name="group_status_empty">空白群組</string>
+    <string name="group_status_empty">空組</string>
     <string name="group_status_empty_subscription">尚未更新</string>
     <string name="group_status_proxies">%d 個代理</string>
     <string name="group_status_proxies_subscription">%d 個代理，上次更新於 %s。</string>

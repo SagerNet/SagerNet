@@ -132,6 +132,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 url.queryParameter("alpn")?.let {
                     bean.alpn = it
                 }
+                url.queryParameter("cert")?.let {
+                    bean.certificates = it
+                }
+                url.queryParameter("chain")?.let {
+                    bean.pinnedPeerCertificateChainSha256 = it
+                }
             }
             "xtls" -> {
                 bean.security = "xtls"
@@ -417,6 +423,12 @@ fun StandardV2RayBean.toUri(standard: Boolean = true): String {
                 }
                 if (alpn.isNotBlank()) {
                     builder.addQueryParameter("alpn", alpn)
+                }
+                if (certificates.isNotBlank()) {
+                    builder.addQueryParameter("cert", certificates)
+                }
+                if (pinnedPeerCertificateChainSha256.isNotBlank()) {
+                    builder.addQueryParameter("chain", pinnedPeerCertificateChainSha256)
                 }
             }
             "xtls" -> {

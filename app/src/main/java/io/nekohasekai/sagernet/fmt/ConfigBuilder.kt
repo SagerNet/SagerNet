@@ -40,6 +40,7 @@ import io.nekohasekai.sagernet.ktx.formatObject
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashMap
@@ -232,7 +233,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         metadataOnly = false
                     }
                 }
-                when(DataStore.transproxyMode) {
+                when (DataStore.transproxyMode) {
                     1 -> streamSettings = StreamSettingsObject().apply {
                         sockopt = StreamSettingsObject.SockoptObject().apply {
                             tproxy = "tproxy"
@@ -486,8 +487,25 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                         if (bean.sni.isNotBlank()) {
                                             serverName = bean.sni
                                         }
+
                                         if (bean.alpn.isNotBlank()) {
                                             alpn = bean.alpn.split(",")
+                                        }
+
+                                        if (bean.certificates.isNotBlank()) {
+                                            disableSystemRoot = true
+                                            certificates =
+                                                listOf(TLSObject.CertificateObject().apply {
+                                                    usage = "verify"
+                                                    certificate = bean.certificates
+                                                        .split("\n").filter { it.isNotBlank() }
+                                                })
+                                        }
+
+                                        if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
+                                            pinnedPeerCertificateChainSha256 =
+                                                bean.pinnedPeerCertificateChainSha256
+                                                    .split("\n").filter { it.isNotBlank() }
                                         }
                                     }
                                 }
@@ -508,9 +526,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                                                             TcpObject.HeaderObject.StringOrListObject()
                                                                                 .apply {
                                                                                     valueY =
-                                                                                        bean.host.split(
-                                                                                            ","
-                                                                                        )
+                                                                                        bean.host
+                                                                                            .split(",")
                                                                                             .map { it.trim() }
                                                                                 }
                                                                     }
@@ -745,13 +762,42 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 if (rule.attrs.isNotBlank()) {
                     attrs = rule.attrs
                 }
-                outboundTag = when (val outId = rule.outbound) {
-                    0L -> TAG_AGENT
-                    -1L -> TAG_DIRECT
-                    -2L -> TAG_BLOCK
-                    else -> if (outId == proxy.id) TAG_AGENT else "$TAG_AGENT-$outId"
+                if (rule.reverse) {
+                    inboundTag = listOf("reverse-${rule.id}")
+                } else {
+                    outboundTag = when (val outId = rule.outbound) {
+                        0L -> TAG_AGENT
+                        -1L -> TAG_DIRECT
+                        -2L -> TAG_BLOCK
+                        else -> if (outId == proxy.id) TAG_AGENT else "$TAG_AGENT-$outId"
+                    }
                 }
             })
+            if (rule.reverse) {
+                outbounds.add(OutboundObject().apply {
+                    tag = "reverse-out-${rule.id}"
+                    protocol = "freedom"
+                    settings =
+                        LazyOutboundConfigurationObject(this, FreedomOutboundConfigurationObject().apply {
+                            redirect = rule.redirect
+                        })
+                })
+                if (reverse == null) {
+                    reverse = ReverseObject().apply {
+                        bridges = ArrayList()
+                    }
+                }
+                reverse.bridges.add(ReverseObject.BridgeObject().apply {
+                    tag = "reverse-${rule.id}"
+                    domain = rule.domains.substringAfter("full:")
+                })
+                routing.rules.add(RoutingObject.RuleObject().apply {
+                    type = "field"
+                    inboundTag = listOf("reverse-${rule.id}")
+                    outboundTag = "reverse-out-${rule.id}"
+                })
+            }
+
         }
 
         if (requireWs) {

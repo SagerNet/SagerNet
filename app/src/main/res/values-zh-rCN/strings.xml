@@ -296,5 +296,7 @@
     <string name="port_transproxy">透明代理端口</string>
     <string name="connection_test_url">连接测试链接</string>
     <string name="connection_test_available_http">连接成功: HTTP 握手耗时 %dms</string>
+    <string name="route_reverse">反向代理</string>
+    <string name="route_reverse_redirect">反向地址</string>
 
 </resources>

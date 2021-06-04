@@ -45,7 +45,8 @@ The application is designed to be used whenever possible.
 * Option to change the notification update interval
 * A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
 * Proxy chain
-* Advanced routing with outbound profile selection support
+* Advanced routing with outbound profile selection
+* Reverse proxy
 
 ## OPEN SOURCE LICENSES
 

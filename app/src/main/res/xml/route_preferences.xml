@@ -30,9 +30,9 @@
             app:title="sourcePort"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:entries="@array/route_protocol_entry"
             app:entryValues="@array/route_protocol_value"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="routeNetwork"
             app:title="network"
             app:useSimpleSummaryProvider="true" />
@@ -51,6 +51,14 @@
             app:key="routeOutbound"
             app:title="outbound"
             app:useSimpleSummaryProvider="true" />
-
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_domain_24"
+            app:key="routeReverse"
+            app:title="@string/route_reverse" />
+        <EditTextPreference
+            app:defaultValue="127.0.0.1:1080"
+            app:key="routeRedirect"
+            app:title="@string/route_reverse_redirect"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 </PreferenceScreen>

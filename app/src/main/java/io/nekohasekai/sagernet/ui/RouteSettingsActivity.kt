@@ -35,9 +35,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceDataStore
+import androidx.preference.*
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -82,6 +80,8 @@ class RouteSettingsActivity(
             -2L -> 2
             else -> 3
         }
+        DataStore.routeReverse = reverse
+        DataStore.routeRedirect = redirect
     }
 
     fun RuleEntity.serialize() {
@@ -97,6 +97,8 @@ class RouteSettingsActivity(
             2 -> -2L
             else -> DataStore.routeOutboundRule
         }
+        reverse = DataStore.routeReverse
+        redirect = DataStore.routeRedirect
     }
 
     fun needSave(): Boolean {
@@ -105,7 +107,8 @@ class RouteSettingsActivity(
             DataStore.routeIP.isBlank() &&
             DataStore.routeSourcePort.isBlank() &&
             DataStore.routeNetwork.isBlank() &&
-            DataStore.routeProtocol.isBlank()
+            DataStore.routeProtocol.isBlank() &&
+            !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())
         ) {
             return false
         }
@@ -119,7 +122,6 @@ class RouteSettingsActivity(
         addPreferencesFromResource(R.xml.route_preferences)
     }
 
-    lateinit var outbound: OutboundPreference
     val selectProfileForAdd = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { (resultCode, data) ->
@@ -137,10 +139,31 @@ class RouteSettingsActivity(
         }
     }
 
+    lateinit var outbound: OutboundPreference
+    lateinit var reverse: SwitchPreference
+    lateinit var redirect: EditTextPreference
+
     fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
         outbound = findPreference(Key.ROUTE_OUTBOUND)!!
+        reverse = findPreference(Key.ROUTE_REVERSE)!!
+        redirect = findPreference(Key.ROUTE_REDIRECT)!!
+        fun updateReverse(enabled: Boolean = outbound.value == "3") {
+            reverse.isVisible = enabled
+            redirect.isVisible = enabled
+
+            if (enabled) {
+                redirect.isEnabled = reverse.isEnabled
+            }
+        }
+        updateReverse()
+        reverse.setOnPreferenceChangeListener { _, newValue ->
+            redirect.isEnabled = newValue as Boolean
+            true
+        }
+
         outbound.setOnPreferenceChangeListener { _, newValue ->
             if (newValue.toString() == "3") {
+                updateReverse(true)
                 selectProfileForAdd.launch(
                     Intent(
                         this@RouteSettingsActivity,
@@ -148,7 +171,10 @@ class RouteSettingsActivity(
                     )
                 )
                 false
-            } else true
+            } else {
+                updateReverse(false)
+                true
+            }
         }
     }
 

@@ -186,6 +186,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverTLS by profileCacheStore.boolean(Key.SERVER_TLS)
     var serverEncryption by profileCacheStore.string(Key.SERVER_ENCRYPTION)
     var serverALPN by profileCacheStore.string(Key.SERVER_ALPN)
+    var serverCertificates by profileCacheStore.string(Key.SERVER_CERTIFICATES)
+    var serverPinnedCertificateChain by profileCacheStore.string(Key.SERVER_PINNED_CERTIFICATE_CHAIN)
     var serverFlow by profileCacheStore.string(Key.SERVER_FLOW)
     var serverQuicSecurity by profileCacheStore.string(Key.SERVER_QUIC_SECURITY)
     var serverWsMaxEarlyData by profileCacheStore.stringToInt(Key.SERVER_WS_MAX_EARLY_DATA)
@@ -202,6 +204,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeProtocol by profileCacheStore.string(Key.ROUTE_PROTOCOL)
     var routeOutbound by profileCacheStore.stringToInt(Key.ROUTE_OUTBOUND)
     var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND_RULE)
+    var routeReverse by profileCacheStore.boolean(Key.ROUTE_REVERSE)
+    var routeRedirect by profileCacheStore.string(Key.ROUTE_REDIRECT)
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
 

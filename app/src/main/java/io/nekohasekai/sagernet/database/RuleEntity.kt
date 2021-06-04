@@ -44,6 +44,8 @@ data class RuleEntity(
     var protocol: String = "",
     var attrs: String = "",
     var outbound: Long = 0,
+    var reverse: Boolean = false,
+    var redirect: String = "",
 ) : Parcelable {
 
     fun isBypassRule(): Boolean {
@@ -54,6 +56,8 @@ data class RuleEntity(
                 source.isBlank() &&
                 protocol.isBlank() &&
                 attrs.isBlank() &&
+                !reverse &&
+                redirect.isBlank() &&
                 outbound == -1L
     }
 
@@ -70,6 +74,7 @@ data class RuleEntity(
         if (source.isNotBlank()) summary += "$source\n"
         if (protocol.isNotBlank()) summary += "$protocol\n"
         if (attrs.isNotBlank()) summary += "$attrs\n"
+        if (reverse) summary += "$redirect\n"
         val lines = summary.trim().split("\n")
         return if (lines.size > 3) {
             lines.subList(0, 3).joinToString("\n", postfix = "\n...")
@@ -79,6 +84,9 @@ data class RuleEntity(
     }
 
     fun displayOutbound(): String {
+        if (reverse) {
+            return app.getString(R.string.route_reverse)
+        }
         return when (outbound) {
             0L -> app.getString(R.string.route_proxy)
             -1L -> app.getString(R.string.route_bypass)
