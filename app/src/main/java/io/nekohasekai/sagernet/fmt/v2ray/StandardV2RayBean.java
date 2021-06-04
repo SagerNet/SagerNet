@@ -151,6 +151,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public String grpcServiceName;
     public Integer wsMaxEarlyData;
+
+    public String certificates;
+    public String pinnedPeerCertificateChainSha256;
+
     public Boolean wsUseBrowserForwarder;
 
     // --------------------------------------- //
@@ -183,13 +187,15 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (StrUtil.isBlank(grpcServiceName)) grpcServiceName = "";
         if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
         if (wsUseBrowserForwarder == null) wsUseBrowserForwarder = false;
+        if (certificates == null) certificates = "";
+        if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
         if (StrUtil.isBlank(flow)) flow = "";
 
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -236,6 +242,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
             case "tls": {
                 output.writeString(sni);
                 output.writeString(alpn);
+                output.writeString(certificates);
+                output.writeString(pinnedPeerCertificateChainSha256);
                 break;
             }
             case "xtls": {
@@ -294,6 +302,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
             case "tls": {
                 sni = input.readString();
                 alpn = input.readString();
+                if (version >= 1) {
+                    certificates = input.readString();
+                    pinnedPeerCertificateChainSha256 = input.readString();
+                }
                 break;
             }
             case "xtls": {
