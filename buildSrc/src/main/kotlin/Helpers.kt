@@ -12,6 +12,7 @@ import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 private val Project.android get() = extensions.getByName<BaseExtension>("android")
@@ -440,7 +441,11 @@ fun Project.setupApp() {
 
         tasks.register("downloadAssets") {
             doLast {
-                downloadAssets()
+                try {
+                    downloadAssets()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             }
         }
         tasks.whenTaskAdded {
