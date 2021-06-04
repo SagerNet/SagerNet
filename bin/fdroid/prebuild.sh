@@ -24,5 +24,3 @@ echo "sdk.dir=$ANDROID_HOME" >>local.properties
 echo "ndk.dir=$ANDROID_NDK_HOME" >>local.properties
 
 bin/lib/v2ray/init.sh
-
-bin/update_assets.sh

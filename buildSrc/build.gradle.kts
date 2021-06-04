@@ -14,4 +14,6 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("cn.hutool:hutool-crypto:5.6.6")
     implementation("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
+    implementation("org.kohsuke:github-api:1.130")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
 }

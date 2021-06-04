@@ -437,6 +437,17 @@ fun Project.setupApp() {
 
             }
         }
+
+        tasks.register("downloadAssets") {
+            doLast {
+                downloadAssets()
+            }
+        }
+        tasks.whenTaskAdded {
+            if (name == "pre${requireFlavor()}Build") {
+                dependsOn("downloadAssets")
+            }
+        }
     }
 
     dependencies {

@@ -44,7 +44,6 @@ dependencies {
     implementation(project(":external:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.3.0")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
     implementation("cn.hutool:hutool-core:5.6.6")
     implementation("cn.hutool:hutool-json:5.6.6")
     implementation("cn.hutool:hutool-crypto:5.6.6")
