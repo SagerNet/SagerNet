@@ -37,11 +37,11 @@ import android.widget.TextView
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -248,7 +248,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
 
             if (!testProfileAllowed(profile)) {
                 onMainDispatcher {
-                    AlertDialog.Builder(this@ChainSettingsActivity)
+                    MaterialAlertDialogBuilder(this@ChainSettingsActivity)
                         .setTitle(R.string.circular_reference)
                         .setMessage(R.string.circular_reference_sum)
                         .setPositiveButton(android.R.string.ok, null)
@@ -334,7 +334,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                         shareButton.setColorFilter(Color.WHITE)
 
                         shareLayout.setOnClickListener {
-                            AlertDialog.Builder(this@ChainSettingsActivity)
+                            MaterialAlertDialogBuilder(this@ChainSettingsActivity)
                                 .setTitle(R.string.insecure)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
                                     .bufferedReader().use { it.readText() })
@@ -356,7 +356,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                         shareButton.setColorFilter(Color.GRAY)
 
                         shareLayout.setOnClickListener {
-                            AlertDialog.Builder(this@ChainSettingsActivity)
+                            MaterialAlertDialogBuilder(this@ChainSettingsActivity)
                                 .setTitle(R.string.deprecated)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
                                     .bufferedReader().use { it.readText() })

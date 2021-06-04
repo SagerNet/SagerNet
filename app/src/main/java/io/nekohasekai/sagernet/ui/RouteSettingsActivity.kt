@@ -34,12 +34,12 @@ import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -238,7 +238,7 @@ class RouteSettingsActivity(
 
         if (!needSave()) {
             onMainDispatcher {
-                AlertDialog.Builder(this@RouteSettingsActivity)
+                MaterialAlertDialogBuilder(this@RouteSettingsActivity)
                     .setTitle(R.string.empty_route)
                     .setMessage(R.string.empty_route_notice)
                     .setPositiveButton(android.R.string.ok, null)

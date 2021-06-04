@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * Based on: https://android.googlesource.com/platform/
@@ -64,7 +65,7 @@ abstract class AlertDialogFragment<Arg : Parcelable, Ret : Parcelable?> :
     fun key(resultKey: String = javaClass.name) = args().putString(KEY_RESULT, resultKey)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog =
-        AlertDialog.Builder(requireContext()).also { it.prepare(this) }.create()
+        MaterialAlertDialogBuilder(requireContext()).also { it.prepare(this) }.create()
 
     override fun onClick(dialog: DialogInterface?, which: Int) {
         setFragmentResult(resultKey ?: return, Bundle().apply {

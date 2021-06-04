@@ -37,7 +37,6 @@ import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.UiThread
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.util.contains
@@ -50,6 +49,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
@@ -361,7 +361,7 @@ class AppManagerActivity : ThemedActivity() {
 
         val text: TextView
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setView(layoutInflater.inflate(R.layout.layout_loading, null).apply {
                 text = findViewById(R.id.loadingText)
                 text.setText(R.string.scanning)

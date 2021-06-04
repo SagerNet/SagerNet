@@ -46,6 +46,7 @@ import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
@@ -382,7 +383,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                         )
                                     }
 
-                                    AlertDialog.Builder(activity)
+                                    MaterialAlertDialogBuilder(activity)
                                         .setTitle(app.getString(R.string.group_diff, proxyGroup.displayName()))
                                         .setMessage(status.trim())
                                         .setPositiveButton(android.R.string.ok, null)

@@ -36,7 +36,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
@@ -46,6 +45,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.nekohasekai.sagernet.R
@@ -878,7 +878,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     shareButton.setColorFilter(Color.WHITE)
 
                                     shareLayout.setOnClickListener {
-                                        AlertDialog.Builder(requireContext())
+                                        MaterialAlertDialogBuilder(requireContext())
                                             .setTitle(R.string.insecure)
                                             .setMessage(resources.openRawResource(validateResult.textRes)
                                                 .bufferedReader().use { it.readText() })
@@ -908,7 +908,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     shareButton.setColorFilter(Color.GRAY)
 
                                     shareLayout.setOnClickListener {
-                                        AlertDialog.Builder(requireContext())
+                                        MaterialAlertDialogBuilder(requireContext())
                                             .setTitle(R.string.deprecated)
                                             .setMessage(resources.openRawResource(validateResult.textRes)
                                                 .bufferedReader().use { it.readText() })
