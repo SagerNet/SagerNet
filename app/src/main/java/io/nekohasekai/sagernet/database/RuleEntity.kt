@@ -70,7 +70,12 @@ data class RuleEntity(
         if (source.isNotBlank()) summary += "$source\n"
         if (protocol.isNotBlank()) summary += "$protocol\n"
         if (attrs.isNotBlank()) summary += "$attrs\n"
-        return summary.trim()
+        val lines = summary.trim().split("\n")
+        return if (lines.size > 3) {
+            lines.subList(0, 3).joinToString("\n", postfix = "\n...")
+        } else {
+            summary.trim()
+        }
     }
 
     fun displayOutbound(): String {
@@ -78,7 +83,8 @@ data class RuleEntity(
             0L -> app.getString(R.string.route_proxy)
             -1L -> app.getString(R.string.route_bypass)
             -2L -> app.getString(R.string.route_block)
-            else -> ProfileManager.getProfile(outbound)?.displayName() ?: app.getString(R.string.route_proxy)
+            else -> ProfileManager.getProfile(outbound)?.displayName()
+                ?: app.getString(R.string.route_proxy)
         }
     }
 
