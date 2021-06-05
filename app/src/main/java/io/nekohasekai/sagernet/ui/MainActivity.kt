@@ -41,6 +41,7 @@ import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
+import io.nekohasekai.sagernet.ktx.launchCustomTab
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ServiceButton
@@ -96,7 +97,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.isChecked) drawer.closeDrawers() else {
-            displayFragmentWithId(item.itemId)
+            return displayFragmentWithId(item.itemId)
         }
         return true
     }
@@ -123,6 +124,10 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
             }
             R.id.nav_settings -> {
                 displayFragment(SettingsFragment())
+            }
+            R.id.nav_faq -> {
+                launchCustomTab("https://sagernet.org/")
+                return false
             }
             R.id.nav_about -> {
                 displayFragment(AboutFragment())

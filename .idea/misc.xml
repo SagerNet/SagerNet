@@ -16,6 +16,8 @@
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/menu/main_drawer_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/profile_config_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/brook_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/chain_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/global_preferences.xml" value="1.0" />

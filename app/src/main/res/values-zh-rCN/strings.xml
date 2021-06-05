@@ -302,5 +302,6 @@
     <string name="pinned_peer_certificate_chain_sha256">固定证书链散列</string>
     <string name="ignore_battery_optimizations">忽略电池优化</string>
     <string name="ignore_battery_optimizations_sum">移除一些限制</string>
+    <string name="document">文档</string>
 
 </resources>

@@ -16,6 +16,7 @@
     <string name="menu_group">Group</string>
     <string name="menu_about">About</string>
     <string name="theme">Theme</string>
+    <string name="document">Document</string>
 
     <string name="group_default">Default</string>
     <string name="profile_type">socks5</string>
