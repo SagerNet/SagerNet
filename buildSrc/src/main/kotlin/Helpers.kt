@@ -12,7 +12,6 @@ import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 private val Project.android get() = extensions.getByName<BaseExtension>("android")
@@ -26,9 +25,19 @@ fun Project.requireFlavor(): String {
     if (::flavor.isInitialized) return flavor
     if (gradle.startParameter.taskNames.isNotEmpty()) {
         val taskName = gradle.startParameter.taskNames[0]
-        if (taskName.contains("assemble")) {
-            flavor = taskName.substringAfter("assemble")
-            return flavor
+        when {
+            taskName.contains("assemble") -> {
+                flavor = taskName.substringAfter("assemble")
+                return flavor
+            }
+            taskName.contains("install") -> {
+                flavor = taskName.substringAfter("install")
+                return flavor
+            }
+            taskName.contains("publish") -> {
+                flavor = taskName.substringAfter("publish")
+                return flavor
+            }
         }
     }
 
@@ -441,11 +450,7 @@ fun Project.setupApp() {
 
         tasks.register("downloadAssets") {
             doLast {
-                try {
-                    downloadAssets()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+                downloadAssets()
             }
         }
         tasks.whenTaskAdded {
