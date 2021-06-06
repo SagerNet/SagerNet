@@ -123,15 +123,6 @@
             app:title="@string/dns_system"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="1.1.1.1"
-            app:key="remoteDns"
-            app:title="@string/dns_remote"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:defaultValue="false"
-            app:key="forceTcpInRemoteDns"
-            app:title="@string/dns_remote_tcp" />
-        <EditTextPreference
             app:defaultValue="https://1.1.1.1/dns-query"
             app:key="localDns"
             app:title="@string/dns_local"

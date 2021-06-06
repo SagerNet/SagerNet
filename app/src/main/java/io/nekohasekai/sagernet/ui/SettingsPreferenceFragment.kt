@@ -126,8 +126,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val dnsMode = findPreference<SimpleMenuPreference>(Key.DNS_MODE)!!
         val systemDns = findPreference<EditTextPreference>(Key.SYSTEM_DNS)!!
-        val remoteDns = findPreference<EditTextPreference>(Key.REMOTE_DNS)!!
-        val forceTcpRemoteDns = findPreference<SwitchPreference>(Key.FORCE_TCP_IN_REMOTE_DNS)!!
         val localDns = findPreference<EditTextPreference>(Key.LOCAL_DNS)!!
         val enableDomesticDns = findPreference<SwitchPreference>(Key.ENABLE_DOMESTIC_DNS)!!
         val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
@@ -148,8 +146,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         fun updateDnsMode(newMode: Int) {
             systemDns.isVisible = newMode == DnsMode.SYSTEM
-            remoteDns.isVisible = newMode == DnsMode.REMOTE
-            forceTcpRemoteDns.isVisible = newMode == DnsMode.REMOTE
             val useLocalDns = newMode in intArrayOf(DnsMode.LOCAL, DnsMode.FAKEDNS_LOCAL)
             localDns.isVisible = useLocalDns
             enableDomesticDns.isVisible = useLocalDns
@@ -203,8 +199,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         forceShadowsocksRust.onPreferenceChangeListener = reloadListener
 
         systemDns.onPreferenceChangeListener = reloadListener
-        remoteDns.onPreferenceChangeListener = reloadListener
-        forceTcpRemoteDns.onPreferenceChangeListener = reloadListener
         localDns.onPreferenceChangeListener = reloadListener
         domesticDns.onPreferenceChangeListener = reloadListener
 

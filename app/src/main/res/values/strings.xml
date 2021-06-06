@@ -88,15 +88,12 @@
 
     <string name="dns_mode">DNS Mode</string>
     <string name="dns_mode_system">System</string>
-    <string name="dns_mode_remote">Remote</string>
     <string name="dns_mode_local">Local</string>
     <string name="dns_mode_fakedns">FakeDNS</string>
     <string name="dns_mode_fakedns_local">FakeDNS + Local</string>
 
     <string name="dns_system">System DNS</string>
-    <string name="dns_remote">Remote DNS</string>
     <string name="dns_local">Local DNS</string>
-    <string name="dns_remote_tcp">Force TCP to remote DNS</string>
     <string name="enable_domestic_dns">Enable domestic DNS</string>
     <string name="dns_domestic">Domestic DNS</string>
     <string name="port_local_dns">Local DNS port</string>

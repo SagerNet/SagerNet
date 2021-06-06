@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.fmt
 
 import android.os.Build
+import cn.hutool.core.util.NumberUtil
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.bg.VpnService
@@ -86,8 +87,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
     val dnsMode = DataStore.dnsMode
     val systemDns = DataStore.systemDns.split("\n")
-    val remoteDns = DataStore.remoteDNS
-    val forceTcpInRemoteDns = DataStore.forceTcpInRemoteDns
     val localDns = DataStore.localDns.split("\n")
     val domesticDns = DataStore.domesticDns.split("\n")
     val enableDomesticDns = DataStore.enableDomesticDns
@@ -847,13 +846,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     protocol = "dokodemo-door"
                     settings = LazyInboundConfigurationObject(this,
                         DokodemoDoorInboundConfigurationObject().apply {
-                            if (useLocalDns) {
-                                address = if (localDns.first().startsWith("https")) {
+                                address = if (!localDns.first().isIpAddress()) {
                                     "1.1.1.1"
                                 } else {
                                     localDns.first()
                                 }
-                            }
                             network = "tcp,udp"
                             port = 53
                         })
@@ -864,15 +861,23 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 OutboundObject().apply {
                     protocol = "dns"
                     tag = TAG_DNS_OUT
-                    if (dnsMode == DnsMode.REMOTE) {
-                        settings = LazyOutboundConfigurationObject(this,
-                            DNSOutboundConfigurationObject().apply {
-                                address = remoteDns
-                                if (forceTcpInRemoteDns) {
-                                    network = "tcp"
+                    if (useLocalDns) {
+                        settings = LazyOutboundConfigurationObject(this,  DNSOutboundConfigurationObject().apply {
+                            var dns = localDns.first()
+                            if (dns.contains(":")) {
+                                val lPort = dns.substringAfterLast(":")
+                                dns = dns.substringBeforeLast(":")
+                                if (NumberUtil.isInteger(lPort)) {
+                                    port = lPort.toInt()
                                 }
                             }
-                        )
+                            if (dns.isIpAddress()) {
+                                address = dns
+                            } else if (dns.contains("://")) {
+                                network = "tcp"
+                                address = dns.substringAfter("://")
+                            }
+                        })
                     }
                 }
             )
@@ -912,7 +917,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     (proxies + extraProxies.values.flatten()).forEach {
                         it.requireBean().apply {
                             if (!serverAddress.isIpAddress()) {
-                                bypassDomain.add(serverAddress)
+                                bypassDomain.add("full:$serverAddress")
                             }
                         }
                     }
@@ -951,8 +956,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 //            }
 
             if (dnsMode == DnsMode.FAKEDNS_LOCAL) {
-                val domainsToRoute = dns.servers.flatMap { it.valueY?.domains ?: listOf() }
-                    .toHashSet().toList()
+//                val domainsToRoute = dns.servers.flatMap { it.valueY?.domains ?: listOf() }
+//                    .toHashSet().toList()
                 dns.servers.add(0, /*if (domainsToRoute.isNotEmpty()) {
                     DnsObject.StringOrServerObject().apply {
                         valueY = DnsObject.ServerObject().apply {

@@ -88,7 +88,7 @@ fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
         if (DataStore.dnsMode != DnsMode.SYSTEM) {
             it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
         } else {
-            it["dns"] = DataStore.remoteDNS
+            it["dns"] = DataStore.systemDns
         }
     }.toStringPretty()
 }

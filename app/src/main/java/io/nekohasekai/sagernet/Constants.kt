@@ -40,8 +40,6 @@ object Key {
 
     const val DNS_MODE = "dnsMode"
     const val SYSTEM_DNS = "systemDns"
-    const val REMOTE_DNS = "remoteDns"
-    const val FORCE_TCP_IN_REMOTE_DNS = "forceTcpInRemoteDns"
     const val LOCAL_DNS = "localDns"
     const val ENABLE_DOMESTIC_DNS = "enableDomesticDns"
     const val DOMESTIC_DNS = "domesticDns"
@@ -140,6 +138,7 @@ object Key {
 
 object DnsMode {
     const val SYSTEM = 0
+    @Deprecated("unavailable")
     const val REMOTE = 1
     const val LOCAL = 2
     const val FAKEDNS = 3

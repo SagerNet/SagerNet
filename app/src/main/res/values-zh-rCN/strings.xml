@@ -277,14 +277,10 @@
     <string name="donate_info">世界很可爱 请给世界钱</string>
     <string name="dns_mode">DNS 模式</string>
     <string name="dns_mode_system">系统</string>
-    <string name="dns_mode_remote">远程</string>
     <string name="dns_mode_local">本地</string>
     <string name="dns_mode_fakedns_local">FakeDNS + 本地</string>
-    <string name="dns_mode_fakedns" translatable="false">FakeDNS</string>
     <string name="dns_system">系统 DNS</string>
-    <string name="dns_remote">远程 DNS</string>
     <string name="dns_local">本地 DNS</string>
-    <string name="dns_remote_tcp">"强制使用 TCP 连接远程 DNS "</string>
     <string name="enable_domestic_dns">启用国内 DNS</string>
     <string name="dns_domestic">国内 DNS</string>
     <string name="extra_headers">附加标头</string>
