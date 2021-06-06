@@ -69,10 +69,12 @@ class RouteSettingsActivity(
         DataStore.routeName = name
         DataStore.routeDomain = domains
         DataStore.routeIP = ip
+        DataStore.routePort = port
         DataStore.routeSourcePort = sourcePort
         DataStore.routeNetwork = network
         DataStore.routeSource = source
         DataStore.routeProtocol = protocol
+        DataStore.routeAttrs = attrs
         DataStore.routeOutboundRule = outbound
         DataStore.routeOutbound = when (outbound) {
             0L -> 0
@@ -88,9 +90,12 @@ class RouteSettingsActivity(
         name = DataStore.routeName
         domains = DataStore.routeDomain
         ip = DataStore.routeIP
+        port = DataStore.routePort
         sourcePort = DataStore.routeSourcePort
         network = DataStore.routeNetwork
+        source = DataStore.routeSource
         protocol = DataStore.routeProtocol
+        attrs = DataStore.routeAttrs
         outbound = when (DataStore.routeOutbound) {
             0 -> 0L
             1 -> -1L
@@ -105,9 +110,12 @@ class RouteSettingsActivity(
         if (!DataStore.dirty) return false
         if (DataStore.routeDomain.isBlank() &&
             DataStore.routeIP.isBlank() &&
+            DataStore.routePort.isBlank() &&
             DataStore.routeSourcePort.isBlank() &&
             DataStore.routeNetwork.isBlank() &&
+            DataStore.routeSource.isBlank() &&
             DataStore.routeProtocol.isBlank() &&
+            DataStore.routeAttrs.isBlank() &&
             !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())
         ) {
             return false
