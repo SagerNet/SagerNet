@@ -30,7 +30,7 @@
             android:visibility="invisible"
             app:layout_anchor="@+id/fab"
             app:layout_anchorGravity="center"
-            app:layout_behavior=".widget.FabProgressBehavior"
+            app:layout_behavior="io.nekohasekai.sagernet.widget.FabProgressBehavior"
             app:indicatorColor="?colorMaterial100"
             app:trackThickness="8dp"
             app:trackCornerRadius="@dimen/mtrl_progress_track_thickness" />
