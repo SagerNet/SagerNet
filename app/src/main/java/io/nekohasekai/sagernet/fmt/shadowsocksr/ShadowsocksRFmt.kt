@@ -85,11 +85,13 @@ fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
         it["obfs"] = obfs
         it["obfs_param"] = obfsParam
         it["ipv6"] = DataStore.ipv6Route
+        it["udp"] = true
         if (DataStore.dnsMode != DnsMode.SYSTEM) {
             it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
         } else {
             it["dns"] = DataStore.systemDns
         }
+        it["udpdns"] = true
     }.toStringPretty()
 }
 
