@@ -947,14 +947,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 }
             }
 
-//            if (useFakeDns) {
-            routing.rules.add(0, RoutingObject.RuleObject().apply {
-                type = "field"
-                port = "53"
-                outboundTag = TAG_DNS_OUT
-            })
-//            }
-
             if (dnsMode == DnsMode.FAKEDNS_LOCAL) {
 //                val domainsToRoute = dns.servers.flatMap { it.valueY?.domains ?: listOf() }
 //                    .toHashSet().toList()
