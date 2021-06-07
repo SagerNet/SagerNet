@@ -48,14 +48,14 @@
     <string name="group_duplicate">Duplicate: \n%s</string>
 
     <!-- misc -->
-    <string name="service_mode">Service mode</string>
+    <string name="service_mode">Service Mode</string>
     <string name="service_mode_proxy">Proxy only</string>
     <string name="service_mode_vpn">VPN</string>
-    <string name="port_proxy">SOCKS5 proxy port</string>
-    <string name="port_http">HTTP proxy port</string>
-    <string name="port_transproxy">Transproxy port</string>
+    <string name="port_proxy">SOCKS5 Proxy Port</string>
+    <string name="port_http">HTTP Proxy Port</string>
+    <string name="port_transproxy">Transproxy Port</string>
     <string name="cag_route">Route Settings</string>
-    <string name="allow_access">Allow connections from the LAN</string>
+    <string name="allow_access">Allow Connections from the LAN</string>
     <string name="allow_access_sum">Bind inbound servers to 0.0.0.0</string>
     <string name="force_ss_rust">No v2ray-core shadowsocks</string>
     <string name="force_ss_sum">Force all shadowsocks profiles to use the same shadowsocks-rust backend as Shadowsocks Android</string>
@@ -66,12 +66,12 @@
     <string name="ws_max_early_data">Max early data</string>
     <string name="ws_browser_forwarding">Browser Forwarding</string>
     <string name="ws_browser_forwarding_sum">Forward corresponding WebSockets through the browser.</string>
-    <string name="speed_interval">Speed notification update interval</string>
+    <string name="speed_interval">Speed Notification Update Interval</string>
     <string name="disable">Disable</string>
     <string name="cag_misc">Misc Settings</string>
-    <string name="show_stop">Show stop button</string>
+    <string name="show_stop">Show Stop Button</string>
     <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
-    <string name="show_direct_speed">Show direct speed</string>
+    <string name="show_direct_speed">Show Direct Speed</string>
     <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as well</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
@@ -94,12 +94,12 @@
 
     <string name="dns_system">System DNS</string>
     <string name="dns_local">Local DNS</string>
-    <string name="enable_domestic_dns">Enable domestic DNS</string>
+    <string name="enable_domestic_dns">Enable Domestic DNS</string>
     <string name="dns_domestic">Domestic DNS</string>
-    <string name="port_local_dns">Local DNS port</string>
-    <string name="require_transproxy">Enable Transproxy inbound</string>
+    <string name="port_local_dns">Local DNS Port</string>
+    <string name="require_transproxy">Enable Transproxy Inbound</string>
     <string name="transproxy_mode">Transproxy Mode</string>
-    <string name="connection_test_url">Connection test URL</string>
+    <string name="connection_test_url">Connection Test URL</string>
 
     <!-- proxy category -->
     <string name="profile_name">Profile Name</string>
@@ -169,14 +169,14 @@
     <string name="route_opt_bypass_lan">Bypass LAN</string>
     <string name="route_opt_block_ads">Block ADs</string>
 
-    <string name="domain_strategy">Domain resolution strategy</string>
-    <string name="domain_matcher">Domain matching algorithm</string>
+    <string name="domain_strategy">Domain Resolution Strategy</string>
+    <string name="domain_matcher">Domain Matching Algorithm</string>
     <string name="dm_linear">Linear matching</string>
     <string name="dm_mph">Minimal perfect hash</string>
-    <string name="traffic_sniffing">Enable traffic sniffing</string>
-    <string name="enable_mux">Enable multiplexer</string>
+    <string name="traffic_sniffing">Enable Traffic Sniffing</string>
+    <string name="enable_mux">Enable Multiplexer</string>
     <string name="mux_sum">Mux is designed to reduce TCP handshake latency, not to increase connection throughput. Using Mux to watch videos, download or speed test is usually counter productive</string>
-    <string name="mux_concurrency">Mux concurrent connections</string>
+    <string name="mux_concurrency">Mux Concurrent Connections</string>
     <string name="mux_for_all">Enable Mux for all possible supported protocols</string>
     <string name="mux_for_all_sum">If the server does not support Mux, we will not be able to connect to it.</string>
     <string name="tcp_keep_alive_interval">TCP keep active packet delivery interval</string>
