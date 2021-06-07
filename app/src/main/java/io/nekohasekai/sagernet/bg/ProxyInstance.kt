@@ -227,7 +227,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                             ).absolutePath,
                             "-b", "127.0.0.1",
                             "-c", configFile.absolutePath,
-                            "-l", "$port"
+                            "-l", "$port", "-u"
                         )
 
                         val env = mutableMapOf<String, String>()

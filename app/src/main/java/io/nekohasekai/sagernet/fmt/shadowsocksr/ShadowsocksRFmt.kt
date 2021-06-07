@@ -23,7 +23,6 @@ package io.nekohasekai.sagernet.fmt.shadowsocksr
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
-import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
@@ -85,11 +84,6 @@ fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
         it["obfs"] = obfs
         it["obfs_param"] = obfsParam
         it["ipv6"] = DataStore.ipv6Route
-        if (DataStore.dnsMode != DnsMode.SYSTEM) {
-            it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
-        } else {
-            it["dns"] = DataStore.systemDns
-        }
     }.toStringPretty()
 }
 
