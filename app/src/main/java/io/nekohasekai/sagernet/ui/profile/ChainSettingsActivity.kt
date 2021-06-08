@@ -231,6 +231,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
         return false
     }
 
+    var replacing = 0
 
     val selectProfileForAdd = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -256,8 +257,13 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                 }
             } else {
                 configurationList.post {
-                    proxyList.add(profile)
-                    configurationAdapter.notifyItemInserted(proxyList.size)
+                    if (replacing != 0) {
+                        proxyList[replacing - 1] = profile
+                        configurationAdapter.notifyItemChanged(replacing)
+                    } else {
+                        proxyList.add(profile)
+                        configurationAdapter.notifyItemInserted(proxyList.size)
+                    }
                 }
             }
         }
@@ -266,6 +272,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
     inner class AddHolder(val view: View) : RecyclerView.ViewHolder(view) {
         fun bind() {
             view.setOnClickListener {
+                replacing = 0
                 selectProfileForAdd.launch(
                     Intent(
                         this@ChainSettingsActivity,
@@ -315,7 +322,18 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                 )
             }
 
-            editButton.isVisible = false
+            editButton.setOnClickListener {
+                replacing = bindingAdapterPosition
+                selectProfileForAdd.launch(
+                    Intent(
+                        this@ChainSettingsActivity,
+                        ProfileSelectActivity::class.java
+                    ).apply {
+                        putExtra(ProfileSelectActivity.EXTRA_SELECTED, proxyEntity)
+                    }
+                )
+            }
+
             shareLayout.isVisible = false
 
             if (proxyEntity.type != 8) runOnDefaultDispatcher {

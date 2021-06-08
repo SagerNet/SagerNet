@@ -69,6 +69,7 @@ import kotlin.properties.Delegates
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false,
+    val selectedItem: ProxyEntity? = null,
 ) : ToolbarFragment(R.layout.layout_group_list),
     PopupMenu.OnMenuItemClickListener, Toolbar.OnMenuItemClickListener {
 
@@ -97,19 +98,21 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         groupPager.adapter = adapter
         groupPager.offscreenPageLimit = 2
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                runOnDefaultDispatcher {
-                    DataStore.selectedGroup = selectedGroup.id
+        if (!select) {
+            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    runOnDefaultDispatcher {
+                        DataStore.selectedGroup = selectedGroup.id
+                    }
                 }
-            }
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-            }
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                }
 
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
-        })
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                }
+            })
+        }
 
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             if (adapter.groupList.size > position) {
@@ -130,7 +133,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
 
             if (fragment != null) {
-                val selectedProxy = DataStore.selectedProxy
+                val selectedProxy = selectedItem?.id ?: DataStore.selectedProxy
                 val selectedProfileIndex =
                     fragment.adapter.configurationIdList.indexOf(selectedProxy)
                 if (selectedProfileIndex != -1) {
@@ -349,7 +352,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
 
-                val selectedGroup = DataStore.selectedGroup
+                val selectedGroup = selectedItem?.groupId ?: DataStore.selectedGroup
                 if (selectedGroup != 0L) {
                     val selectedIndex = groupList.indexOfFirst { it.id == selectedGroup }
                     selectedGroupIndex = selectedIndex
@@ -475,6 +478,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         lateinit var configurationListView: RecyclerView
 
         val select by lazy { (parentFragment as ConfigurationFragment).select }
+        val selectedItem by lazy { (parentFragment as ConfigurationFragment).selectedItem }
 
         override fun onResume() {
             super.onResume()
@@ -733,7 +737,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 if (selected && !scrolled) {
                     scrolled = true
-                    val selectedProxy = DataStore.selectedProxy
+                    val selectedProxy = selectedItem?.id ?: DataStore.selectedProxy
                     selectedProfileIndex = newProfiles.indexOf(selectedProxy)
                 }
 
@@ -851,15 +855,14 @@ class ConfigurationFragment @JvmOverloads constructor(
                     editButton.isGone = select
 
                     runOnDefaultDispatcher {
-                        if (!select) {
-                            val selected = DataStore.selectedProxy == proxyEntity.id
-                            val started =
-                                serviceStarted() && DataStore.startedProxy == proxyEntity.id
-                            onMainDispatcher {
-                                editButton.isEnabled = !started
-                                selectedView.visibility =
-                                    if (selected) View.VISIBLE else View.INVISIBLE
-                            }
+                        val selected =
+                            (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
+                        val started =
+                            serviceStarted() && DataStore.startedProxy == proxyEntity.id
+                        onMainDispatcher {
+                            editButton.isEnabled = !started
+                            selectedView.visibility =
+                                if (selected) View.VISIBLE else View.INVISIBLE
                         }
 
                         if (!(select || proxyEntity.type == 8)) {
