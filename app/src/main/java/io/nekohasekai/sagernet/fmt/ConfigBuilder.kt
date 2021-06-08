@@ -337,14 +337,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         outbounds.add(outbound)
                     }
 
-                    if (!bean.serverAddress.isIpAddress()) {
-                        routing.rules.add(RoutingObject.RuleObject().apply {
-                            type = "field"
-                            domain = listOf(bean.serverAddress)
-                            outboundTag = TAG_DIRECT
-                        })
-                    }
-
                     pastExternal = true
                     return@forEachIndexed
                 } else {
@@ -837,6 +829,34 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
         )
 
+        val bypassIP = HashSet<String>()
+        val bypassDomain = HashSet<String>()
+
+        (proxies + extraProxies.values.flatten()).forEach {
+            it.requireBean().apply {
+                if (!serverAddress.isIpAddress()) {
+                    bypassDomain.add("full:$serverAddress")
+                } else {
+                    bypassIP.add(serverAddress)
+                }
+            }
+        }
+
+        if (bypassIP.isNotEmpty()) {
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                ip = bypassIP.toList()
+                outboundTag = TAG_DIRECT
+            })
+        }
+        if (bypassDomain.isNotEmpty()) {
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                domain = bypassDomain.toList()
+                outboundTag = TAG_DIRECT
+            })
+        }
+
         if (dnsMode != DnsMode.SYSTEM) {
             inbounds.add(
                 InboundObject().apply {
@@ -846,11 +866,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     protocol = "dokodemo-door"
                     settings = LazyInboundConfigurationObject(this,
                         DokodemoDoorInboundConfigurationObject().apply {
-                                address = if (!localDns.first().isIpAddress()) {
-                                    "1.1.1.1"
-                                } else {
-                                    localDns.first()
-                                }
+                            address = if (!localDns.first().isIpAddress()) {
+                                "1.1.1.1"
+                            } else {
+                                localDns.first()
+                            }
                             network = "tcp,udp"
                             port = 53
                         })
@@ -862,22 +882,23 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     protocol = "dns"
                     tag = TAG_DNS_OUT
                     if (useLocalDns) {
-                        settings = LazyOutboundConfigurationObject(this,  DNSOutboundConfigurationObject().apply {
-                            var dns = localDns.first()
-                            if (dns.contains(":")) {
-                                val lPort = dns.substringAfterLast(":")
-                                dns = dns.substringBeforeLast(":")
-                                if (NumberUtil.isInteger(lPort)) {
-                                    port = lPort.toInt()
+                        settings =
+                            LazyOutboundConfigurationObject(this, DNSOutboundConfigurationObject().apply {
+                                var dns = localDns.first()
+                                if (dns.contains(":")) {
+                                    val lPort = dns.substringAfterLast(":")
+                                    dns = dns.substringBeforeLast(":")
+                                    if (NumberUtil.isInteger(lPort)) {
+                                        port = lPort.toInt()
+                                    }
                                 }
-                            }
-                            if (dns.isIpAddress()) {
-                                address = dns
-                            } else if (dns.contains("://")) {
-                                network = "tcp"
-                                address = dns.substringAfter("://")
-                            }
-                        })
+                                if (dns.isIpAddress()) {
+                                    address = dns
+                                } else if (dns.contains("://")) {
+                                    network = "tcp"
+                                    address = dns.substringAfter("://")
+                                }
+                            })
                     }
                 }
             )
@@ -904,21 +925,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         })
                     }
 
-                    val bypassIP = HashSet<String>()
-                    val bypassDomain = HashSet<String>()
                     for (bypassRule in extraRules.filter { it.isBypassRule() }) {
                         if (bypassRule.domains.isNotBlank()) {
                             bypassDomain.addAll(bypassRule.domains.split("\n"))
                         } else if (bypassRule.ip.isNotBlank()) {
                             bypassIP.addAll(bypassRule.ip.split("\n"))
-                        }
-                    }
-
-                    (proxies + extraProxies.values.flatten()).forEach {
-                        it.requireBean().apply {
-                            if (!serverAddress.isIpAddress()) {
-                                bypassDomain.add("full:$serverAddress")
-                            }
                         }
                     }
 
