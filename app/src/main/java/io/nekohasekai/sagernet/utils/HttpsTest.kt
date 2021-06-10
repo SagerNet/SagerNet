@@ -26,10 +26,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.requireProxy
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.*
 import okhttp3.internal.closeQuietly
 import java.io.IOException
@@ -104,30 +101,34 @@ class HttpsTest : ViewModel() {
                     .addHeader("User-Agent", "curl/7.74.0")
                     .build()
             ).apply {
-                enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        runOnMainDispatcher {
+                val response = try {
+                    execute()
+                } catch (e: IOException) {
+                    if (!isCanceled()) {
+                        onMainDispatcher {
                             status.value = Status.Error.IOFailure(e)
                             running = null
                         }
                     }
+                    return@runOnDefaultDispatcher
+                }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        val code = response.code
-                        val elapsed = SystemClock.elapsedRealtime() - start
-                        response.closeQuietly()
-                        runOnMainDispatcher {
-                            status.value =
-                                if (code == 204 || code == 200) {
-                                    Status.Success(elapsed)
-                                } else {
-                                    Status.Error.UnexpectedResponseCode(code)
-                                }
-                            running = null
+                if (isCanceled()) {
+                    return@runOnDefaultDispatcher
+                }
+
+                val code = response.code
+                val elapsed = SystemClock.elapsedRealtime() - start
+                response.closeQuietly()
+                runOnMainDispatcher {
+                    status.value =
+                        if (code == 204 || code == 200) {
+                            Status.Success(elapsed)
+                        } else {
+                            Status.Error.UnexpectedResponseCode(code)
                         }
-
-                    }
-                })
+                    running = null
+                }
             }
         }
 
