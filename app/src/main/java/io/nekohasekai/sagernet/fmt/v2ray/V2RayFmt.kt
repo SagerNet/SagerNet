@@ -245,7 +245,7 @@ fun parseV2RayN(link: String): VMessBean {
     bean.host = json.getStr("host") ?: ""
     bean.path = json.getStr("path") ?: ""
     bean.name = json.getStr("ps") ?: ""
-    bean.sni = json.getStr("sni") ?: ""
+    bean.sni = json.getStr("sni") ?: bean.host
     bean.security = if (!json.getStr("tls").isNullOrBlank()) "tls" else ""
 
     if (json.getInt("v", 2) < 2) {
