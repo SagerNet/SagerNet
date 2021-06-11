@@ -78,7 +78,9 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
         set(value) {
             field = value
-            if (active) setUnderlyingNetworks(underlyingNetworks)
+            if (active && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                setUnderlyingNetworks(underlyingNetworks)
+            }
         }
     private val underlyingNetworks
         get() =
