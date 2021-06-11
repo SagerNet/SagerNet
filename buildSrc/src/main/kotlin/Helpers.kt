@@ -204,15 +204,13 @@ fun Project.setupAppCommon() {
             }
         }
         buildTypes {
-            val key = if (keystorePwd != null) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
+            val key = signingConfigs.findByName("release")
+            if (key != null) {
+                if (requireTargetAbi().isBlank()) {
+                    getByName("release").signingConfig = key
+                }
+                getByName("debug").signingConfig = key
             }
-            if (requireTargetAbi().isBlank()) {
-                getByName("release").signingConfig = key
-            }
-            getByName("debug").signingConfig = key
         }
         val calculateTaskName = "calculate${requireFlavor()}APKsSHA256"
         (this as? AbstractAppExtension)?.apply {
