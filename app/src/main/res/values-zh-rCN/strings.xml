@@ -237,7 +237,6 @@
     <string name="group_duplicate">重复:\n%s</string>
     <string name="deduplication">去重</string>
     <string name="version_x">版本 (%s)</string>
-    <string name="flow">流控</string>
     <string name="show_stop">显示停止按钮</string>
     <string name="show_stop_sum">如果您不想使用快捷图块</string>
     <string name="ss_cat">Shadowsocks 设置</string>

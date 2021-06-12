@@ -67,7 +67,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverALPN = alpn
         DataStore.serverCertificates = certificates
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
-        DataStore.serverFlow = flow
         DataStore.serverQuicSecurity = quicSecurity
         DataStore.serverWsMaxEarlyData = wsMaxEarlyData
         DataStore.serverWsBrowserForwarding = wsUseBrowserForwarder
@@ -97,7 +96,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         alpn = DataStore.serverALPN
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
-        flow = DataStore.serverFlow
         quicSecurity = DataStore.serverQuicSecurity
         wsMaxEarlyData = DataStore.serverWsMaxEarlyData
         wsUseBrowserForwarder = DataStore.serverWsBrowserForwarding
@@ -115,7 +113,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var tlsAlpn: EditTextPreference
     lateinit var certificates: EditTextPreference
     lateinit var pinnedCertificateChain: EditTextPreference
-    lateinit var xtlsFlow: SimpleMenuPreference
 
     lateinit var wsCategory: PreferenceCategory
 
@@ -140,7 +137,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         tlsAlpn = findPreference(Key.SERVER_ALPN)!!
         certificates = findPreference(Key.SERVER_CERTIFICATES)!!
         pinnedCertificateChain = findPreference(Key.SERVER_PINNED_CERTIFICATE_CHAIN)!!
-        xtlsFlow = findPreference(Key.SERVER_FLOW)!!
 
         wsCategory = findPreference(Key.SERVER_WS_CATEGORY)!!
 
@@ -185,7 +181,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     val tcpHeadersValue = app.resources.getStringArray(R.array.tcp_headers_value)
     val kcpQuicHeadersValue = app.resources.getStringArray(R.array.kcp_quic_headers_value)
-    val xtlsFlowValue = app.resources.getStringArray(R.array.xtls_flow_value)
 
     fun updateView(network: String) {
         if (bean is VLESSBean) {
@@ -318,19 +313,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     fun updateTle(tle: String) {
         val isTLS = tle == "tls"
-        val isXTLS = tle == "xtls"
-        tlsSni.isVisible = isTLS || isXTLS
-        tlsAlpn.isVisible = isTLS || isXTLS
+        tlsSni.isVisible = isTLS
+        tlsAlpn.isVisible = isTLS
         certificates.isVisible = isTLS
         pinnedCertificateChain.isVisible = isTLS
-        xtlsFlow.isVisible = isXTLS
-        if (isXTLS) {
-            if (DataStore.serverFlow !in xtlsFlowValue) {
-                xtlsFlow.value = xtlsFlowValue[0]
-            } else {
-                xtlsFlow.value = DataStore.serverFlow
-            }
-        }
     }
 
 }

@@ -40,13 +40,6 @@
             app:key="serverALPN"
             app:title="@string/alpn"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/xtls_flow_entry"
-            app:entryValues="@array/xtls_flow_value"
-            app:icon="@drawable/ic_baseline_stream_24"
-            app:key="serverFlow"
-            app:title="@string/flow"
-            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 

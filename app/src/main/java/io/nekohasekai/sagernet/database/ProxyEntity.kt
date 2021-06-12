@@ -254,8 +254,8 @@ data class ProxyEntity(
             TYPE_SS -> useExternalShadowsocks()
             TYPE_SSR -> true
             TYPE_VMESS -> false
-            TYPE_VLESS -> useXray()
-            TYPE_TROJAN -> useXray()
+            TYPE_VLESS -> false
+            TYPE_TROJAN -> false
             TYPE_TROJAN_GO -> true
             TYPE_NAIVE -> true
             TYPE_CHAIN -> false
@@ -277,7 +277,7 @@ data class ProxyEntity(
     fun needCoreMux(): Boolean {
         val enableMuxForAll by lazy { DataStore.enableMuxForAll }
         return when (type) {
-            TYPE_VMESS,TYPE_VLESS -> isV2RayNetworkTcp()
+            TYPE_VMESS, TYPE_VLESS -> isV2RayNetworkTcp()
             TYPE_TROJAN_GO -> false
             else -> enableMuxForAll
         }
@@ -291,22 +291,6 @@ data class ProxyEntity(
             return true
         }
         if (bean.method !in methodsV2fly) return true
-        return false
-    }
-
-    fun useXray(): Boolean {
-        when (val bean = requireBean()) {
-            is VLESSBean -> {
-                if (bean.security != "xtls") return false
-                if (bean.type != "tcp") return false
-                if (bean.headerType.isNotBlank() && bean.headerType != "none") return false
-                return true
-            }
-            is TrojanBean -> {
-                if (bean.security == "xtls") return true
-            }
-        }
-
         return false
     }
 

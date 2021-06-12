@@ -3,7 +3,6 @@ include(":library:shadowsocks")
 include(":library:shadowsocksr")
 
 include(":plugin:api")
-include(":plugin:xtls")
 include(":plugin:trojan-go")
 include(":plugin:naive")
 include(":plugin:pingtunnel")

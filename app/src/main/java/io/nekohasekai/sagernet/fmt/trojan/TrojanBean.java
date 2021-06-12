@@ -37,7 +37,6 @@ public class TrojanBean extends AbstractBean {
     public String security;
     public String sni;
     public String alpn;
-    public String flow;
 
     @Override
     public void initDefaultValues() {
@@ -47,7 +46,6 @@ public class TrojanBean extends AbstractBean {
         if (StrUtil.isBlank(security)) security = "tls";
         if (sni == null) sni = "";
         if (alpn == null) alpn = "";
-        if (flow == null) flow = "";
 
     }
 
@@ -59,10 +57,6 @@ public class TrojanBean extends AbstractBean {
         output.writeString(security);
         output.writeString(sni);
         output.writeString(alpn);
-
-        if ("xtls".equals(security)) {
-            output.writeString(flow);
-        }
     }
 
     @Override
@@ -73,11 +67,6 @@ public class TrojanBean extends AbstractBean {
         security = input.readString();
         sni = input.readString();
         alpn = input.readString();
-
-        if ("xtls".equals(security)) {
-            flow = input.readString();
-        }
-
         initDefaultValues();
     }
 

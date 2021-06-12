@@ -37,7 +37,6 @@ import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
-import io.nekohasekai.sagernet.fmt.buildXrayConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
@@ -117,13 +116,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                         pluginConfigs[port] = bean.buildShadowsocksRConfig().also {
                             Logs.d(it)
                         }
-                    }
-                    profile.useXray() -> {
-                        initPlugin("xtls-plugin")
-                        pluginConfigs[port] =
-                            gson.toJson(buildXrayConfig(profile, port, needChain)).also {
-                                Logs.d(it)
-                            }
                     }
                     bean is TrojanGoBean -> {
                         initPlugin("trojan-go-plugin")
@@ -250,22 +242,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                         }
 
                         base.data.processes!!.start(commands, env)
-                    }
-                    profile.useXray() -> {
-                        val configFile =
-                            File(
-                                context.noBackupFilesDir,
-                                "xray_" + SystemClock.elapsedRealtime() + ".json"
-                            )
-                        configFile.parentFile.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("xtls-plugin").path, "-c", configFile.absolutePath
-                        )
-
-                        base.data.processes!!.start(commands)
                     }
                     bean is TrojanGoBean -> {
                         val configFile = File(

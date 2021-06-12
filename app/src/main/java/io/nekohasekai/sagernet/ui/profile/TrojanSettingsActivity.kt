@@ -45,7 +45,6 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         DataStore.serverSecurity = security
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn
-        DataStore.serverFlow = flow
     }
 
     override fun TrojanBean.serialize() {
@@ -56,13 +55,11 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         security = DataStore.serverSecurity
         sni = DataStore.serverSNI
         alpn = DataStore.serverALPN
-        flow = DataStore.serverFlow
     }
 
     lateinit var security: SimpleMenuPreference
     lateinit var tlsSni: EditTextPreference
     lateinit var tlsAlpn: EditTextPreference
-    lateinit var xtlsFlow: SimpleMenuPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -79,32 +76,6 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         security = findPreference(Key.SERVER_SECURITY)!!
         tlsSni = findPreference(Key.SERVER_SNI)!!
         tlsAlpn = findPreference(Key.SERVER_ALPN)!!
-        xtlsFlow = findPreference(Key.SERVER_FLOW)!!
-
-        updateTle(security.value)
-        security.setOnPreferenceChangeListener { _, newValue ->
-            updateTle(newValue as String)
-            true
-        }
-    }
-
-    val xtlsFlowValue = app.resources.getStringArray(R.array.xtls_flow_value)
-
-    fun updateTle(tle: String) {
-        when (tle) {
-            "tls" -> {
-                xtlsFlow.isVisible = false
-            }
-            "xtls" -> {
-                xtlsFlow.isVisible = true
-
-                if (DataStore.serverFlow !in xtlsFlowValue) {
-                    xtlsFlow.value = xtlsFlowValue[0]
-                } else {
-                    xtlsFlow.value = DataStore.serverFlow
-                }
-            }
-        }
     }
 
 }

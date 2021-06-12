@@ -32,7 +32,6 @@
             <option value="$PROJECT_DIR$/plugin/pingtunnel" />
             <option value="$PROJECT_DIR$/plugin/relaybaton" />
             <option value="$PROJECT_DIR$/plugin/trojan-go" />
-            <option value="$PROJECT_DIR$/plugin/xtls" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

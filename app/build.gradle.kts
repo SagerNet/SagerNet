@@ -28,7 +28,12 @@ android {
 
 dependencies {
 
-    implementation(fileTree("libs"))
+    implementation(files(
+        "libs/libv2ray.aar",
+        "libs/core-release.aar",
+        "libs/shadowsocks-release.aar",
+        "libs/shadowsocksr-release.aar"
+    ))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
     implementation("androidx.core:core-ktx:1.5.0")

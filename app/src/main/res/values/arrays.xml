@@ -440,41 +440,19 @@
     <string-array name="transport_layer_encryption_xray_entry" translatable="false">
         <item>NONE</item>
         <item>TLS</item>
-        <item>XTLS</item>
     </string-array>
 
     <string-array name="transport_layer_encryption_xray_value" translatable="false">
         <item>none</item>
         <item>tls</item>
-        <item>xtls</item>
     </string-array>
 
     <string-array name="trojan_transport_layer_encryption_entry" translatable="false">
         <item>TLS</item>
-        <item>XTLS</item>
     </string-array>
 
     <string-array name="trojan_transport_layer_encryption_value" translatable="false">
         <item>tls</item>
-        <item>xtls</item>
-    </string-array>
-
-    <string-array name="xtls_flow_entry" translatable="false">
-        <item>XTLS-RPRX-ORIGIN</item>
-        <item>XTLS-RPRX-ORIGIN-UDP443</item>
-        <item>XTLS-RPRX-DIRECT</item>
-        <item>XTLS-RPRX-DIRECT-UDP443</item>
-        <item>XTLS-RPRX-SPLICE</item>
-        <item>XTLS-RPRX-SPLICE-UDP443</item>
-    </string-array>
-
-    <string-array name="xtls_flow_value" translatable="false">
-        <item>xtls-rprx-origin</item>
-        <item>xtls-rprx-origin-udp443</item>
-        <item>xtls-rprx-direct</item>
-        <item>xtls-rprx-direct-udp443</item>
-        <item>xtls-rprx-splice</item>
-        <item>xtls-rprx-splice-udp443</item>
     </string-array>
 
     <string-array name="notification_entry">

@@ -119,7 +119,6 @@
     <string name="alter_id">Alter ID</string>
     <string name="security">Transport layer encryption</string>
     <string name="network">Network</string>
-    <string name="flow">Flow control algorithm</string>
 
     <string name="header_type">Header Type</string>
     <string name="ws_host">WebSocket Host</string>
