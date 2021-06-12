@@ -34,11 +34,8 @@ import android.util.SparseBooleanArray
 import android.view.*
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.UiThread
-import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.Toolbar
 import androidx.core.util.contains
 import androidx.core.util.set
 import androidx.core.view.ViewCompat
@@ -47,15 +44,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.databinding.LayoutAppsBinding
+import io.nekohasekai.sagernet.databinding.LayoutAppsItemBinding
+import io.nekohasekai.sagernet.databinding.LayoutLoadingBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ListListener
@@ -87,18 +84,16 @@ class AppManagerActivity : ThemedActivity() {
                     cachedApps = null
                 }
                 instance?.loadApps()
-            }
-            // Labels and icons can change on configuration (locale, etc.) changes, therefore they are not cached.
-            val cachedApps = cachedApps ?: pm.getInstalledPackages(
-                PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
+            } // Labels and icons can change on configuration (locale, etc.) changes, therefore they are not cached.
+            val cachedApps = cachedApps ?: pm
+                .getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
                 .filter {
                     when (it.packageName) {
                         app.packageName -> false
                         "android" -> true
                         else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
                     }
-                }
-                .associateBy { it.packageName }
+                }.associateBy { it.packageName }
             this.cachedApps = cachedApps
             cachedApps
         }
@@ -114,25 +109,23 @@ class AppManagerActivity : ThemedActivity() {
         val sys get() = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
     }
 
-    private inner class AppViewHolder(view: View) : RecyclerView.ViewHolder(view),
-        View.OnClickListener {
+    private inner class AppViewHolder(val binding: LayoutAppsItemBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         private lateinit var item: ProxiedApp
 
         init {
-            view.setOnClickListener(this)
+            binding.root.setOnClickListener(this)
         }
 
         fun bind(app: ProxiedApp) {
             item = app
-            itemView.findViewById<ImageView>(R.id.itemicon).setImageDrawable(app.icon)
-            itemView.findViewById<TextView>(R.id.title).text = app.name
-            itemView.findViewById<TextView>(R.id.desc).text = "${app.packageName} (${app.uid})"
-            itemView.findViewById<SwitchCompat>(R.id.itemcheck).isChecked = isProxiedApp(app)
+            binding.itemicon.setImageDrawable(app.icon)
+            binding.title.text = app.name
+            binding.desc.text = "${app.packageName} (${app.uid})"
+            binding.itemcheck.isChecked = isProxiedApp(app)
         }
 
         fun handlePayload(payloads: List<String>) {
-            if (payloads.contains(SWITCH)) itemView.findViewById<SwitchCompat>(R.id.itemcheck).isChecked =
-                isProxiedApp(item)
+            if (payloads.contains(SWITCH)) binding.itemcheck.isChecked = isProxiedApp(item)
         }
 
         override fun onClick(v: View?) {
@@ -144,8 +137,7 @@ class AppManagerActivity : ThemedActivity() {
         }
     }
 
-    private inner class AppsAdapter : RecyclerView.Adapter<AppViewHolder>(), Filterable,
-        FastScrollRecyclerView.SectionedAdapter {
+    private inner class AppsAdapter : RecyclerView.Adapter<AppViewHolder>(), Filterable, FastScrollRecyclerView.SectionedAdapter {
         var filteredApps = apps
 
         suspend fun reload() {
@@ -160,8 +152,7 @@ class AppManagerActivity : ThemedActivity() {
 
         override fun onBindViewHolder(holder: AppViewHolder, position: Int, payloads: List<Any>) {
             if (payloads.isNotEmpty()) {
-                @Suppress("UNCHECKED_CAST")
-                holder.handlePayload(payloads as List<String>)
+                @Suppress("UNCHECKED_CAST") holder.handlePayload(payloads as List<String>)
                 return
             }
 
@@ -169,17 +160,15 @@ class AppManagerActivity : ThemedActivity() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder =
-            AppViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.layout_apps_item, parent, false))
+            AppViewHolder(LayoutAppsItemBinding.inflate(layoutInflater, parent, false))
 
         override fun getItemCount(): Int = filteredApps.size
 
         private val filterImpl = object : Filter() {
             override fun performFiltering(constraint: CharSequence) = FilterResults().apply {
                 var filteredApps = if (constraint.isEmpty()) apps else apps.filter {
-                    it.name.contains(constraint, true) ||
-                            it.packageName.contains(constraint, true) ||
-                            it.uid.toString().contains(constraint)
+                    it.name.contains(constraint, true) || it.packageName.contains(constraint, true) || it.uid
+                        .toString().contains(constraint)
                 }
                 if (!sysApps) filteredApps = filteredApps.filter { !it.sys }
                 count = filteredApps.size
@@ -187,8 +176,7 @@ class AppManagerActivity : ThemedActivity() {
             }
 
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
-                @Suppress("UNCHECKED_CAST")
-                filteredApps = results.values as List<ProxiedApp>
+                @Suppress("UNCHECKED_CAST") filteredApps = results.values as List<ProxiedApp>
                 notifyDataSetChanged()
             }
         }
@@ -202,11 +190,8 @@ class AppManagerActivity : ThemedActivity() {
     }
 
     private val loading by lazy { findViewById<View>(R.id.loading) }
-    private lateinit var toolbar: Toolbar
-    private lateinit var bypassGroup: ChipGroup
-    private lateinit var list: RecyclerView
 
-    private lateinit var search: TextInputEditText
+    private lateinit var binding: LayoutAppsBinding
     private val proxiedUids = SparseBooleanArray()
     private var loader: Job? = null
     private var apps = emptyList<ProxiedApp>()
@@ -225,30 +210,31 @@ class AppManagerActivity : ThemedActivity() {
     private fun loadApps() {
         loader?.cancel()
         loader = lifecycleScope.launchWhenCreated {
-            loading.crossFadeFrom(list)
-            val adapter = list.adapter as AppsAdapter
+            loading.crossFadeFrom(binding.list)
+            val adapter = binding.list.adapter as AppsAdapter
             withContext(Dispatchers.IO) { adapter.reload() }
-            adapter.filter.filter(search.text?.toString() ?: "")
-            list.crossFadeFrom(loading)
+            adapter.filter.filter(binding.search.text?.toString() ?: "")
+            binding.list.crossFadeFrom(loading)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_apps)
+
+        binding = LayoutAppsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         ListHolderListener.setup(this)
-        toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar.setTitle(R.string.proxied_apps)
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setTitle(R.string.proxied_apps)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (!DataStore.proxyApps) {
             DataStore.proxyApps = true
         }
 
-        bypassGroup = findViewById(R.id.bypassGroup)
-        bypassGroup.check(if (DataStore.bypass) R.id.appProxyModeBypass else R.id.appProxyModeOn)
-        bypassGroup.setOnCheckedChangeListener { _, checkedId ->
+        binding.bypassGroup.check(if (DataStore.bypass) R.id.appProxyModeBypass else R.id.appProxyModeOn)
+        binding.bypassGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.appProxyModeDisable -> {
                     DataStore.proxyApps = false
@@ -260,22 +246,19 @@ class AppManagerActivity : ThemedActivity() {
         }
 
         initProxiedUids()
-        list = findViewById(R.id.list)
-        list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        list.itemAnimator = DefaultItemAnimator()
-        list.adapter = appsAdapter
+        binding.list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        binding.list.itemAnimator = DefaultItemAnimator()
+        binding.list.adapter = appsAdapter
 
-        ViewCompat.setOnApplyWindowInsetsListener(list.parent as View, ListListener)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root, ListListener)
 
-        search = findViewById(R.id.search)
-        search.addTextChangedListener {
+        binding.search.addTextChangedListener {
             appsAdapter.filter.filter(it?.toString() ?: "")
         }
 
-        val showSysApps = findViewById<Chip>(R.id.show_system_apps)
-        showSysApps.setOnCheckedChangeListener { _, isChecked ->
+        binding.showSystemApps.setOnCheckedChangeListener { _, isChecked ->
             sysApps = isChecked
-            appsAdapter.filter.filter(search.text?.toString() ?: "")
+            appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
         }
 
         instance = this
@@ -308,7 +291,7 @@ class AppManagerActivity : ThemedActivity() {
                         apps.filter { isProxiedApp(it) }.joinToString("\n") { it.packageName }
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
-                        appsAdapter.filter.filter(search.text?.toString() ?: "")
+                        appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
                     }
                 }
 
@@ -320,16 +303,16 @@ class AppManagerActivity : ThemedActivity() {
                     DataStore.individual = ""
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
-                        appsAdapter.filter.filter(search.text?.toString() ?: "")
+                        appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
                     }
                 }
             }
             R.id.action_export_clipboard -> {
                 val success =
                     SagerNet.trySetPrimaryClip("${DataStore.bypass}\n${DataStore.individual}")
-                Snackbar.make(list,
-                    if (success) R.string.action_export_msg else R.string.action_export_err,
-                    Snackbar.LENGTH_LONG).show()
+                Snackbar
+                    .make(binding.list, if (success) R.string.action_export_msg else R.string.action_export_err, Snackbar.LENGTH_LONG)
+                    .show()
                 return true
             }
             R.id.action_import_clipboard -> {
@@ -340,17 +323,18 @@ class AppManagerActivity : ThemedActivity() {
                     try {
                         val (enabled, apps) = if (i < 0) {
                             proxiedAppString to ""
-                        } else proxiedAppString.substring(0, i) to proxiedAppString.substring(i + 1)
-                        //bypassGroup.check(if (enabled.toBoolean()) R.id.btn_bypass else R.id.btn_on)
+                        } else proxiedAppString.substring(0, i) to proxiedAppString.substring(i + 1) //bypassGroup.check(if (enabled.toBoolean()) R.id.btn_bypass else R.id.btn_on)
                         DataStore.individual = apps
-                        Snackbar.make(list, R.string.action_import_msg, Snackbar.LENGTH_LONG).show()
+                        Snackbar
+                            .make(binding.list, R.string.action_import_msg, Snackbar.LENGTH_LONG)
+                            .show()
                         initProxiedUids(apps)
                         appsAdapter.notifyItemRangeChanged(0, appsAdapter.itemCount, SWITCH)
                         return true
                     } catch (_: IllegalArgumentException) {
                     }
                 }
-                Snackbar.make(list, R.string.action_import_err, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.list, R.string.action_import_err, Snackbar.LENGTH_LONG).show()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -362,47 +346,16 @@ class AppManagerActivity : ThemedActivity() {
         val text: TextView
 
         val dialog = MaterialAlertDialogBuilder(this)
-            .setView(layoutInflater.inflate(R.layout.layout_loading, null).apply {
-                text = findViewById(R.id.loadingText)
-                text.setText(R.string.scanning)
-            })
-            .setCancelable(false)
-            .show()
+            .setView(LayoutLoadingBinding.inflate(layoutInflater).apply {
+                text = loadingText
+            }.root).setCancelable(false).show()
 
         val txt = text.text.toString()
 
         runOnDefaultDispatcher {
             val chinaApps = ArrayList<Pair<PackageInfo, String>>()
-            val chinaRegex = ("(" + arrayOf(
-                "com.tencent",
-                "com.alibaba",
-                "com.umeng",
-                "com.qihoo",
-                "com.ali",
-                "com.alipay",
-                "com.amap",
-                "com.sina",
-                "com.weibo",
-                "com.vivo",
-                "com.xiaomi",
-                "com.huawei",
-                "com.taobao",
-                "com.secneo",
-                "s.h.e.l.l",
-                "com.stub",
-                "com.kiwisec",
-                "com.secshell",
-                "com.wrapper",
-                "cn.securitystack",
-                "com.mogosec",
-                "com.secoen",
-                "com.netease",
-                "com.mx",
-                "com.qq.e",
-                "com.baidu",
-                "com.bytedance",
-                "com.bugly"
-            ).joinToString("|") { "${it.replace(".", "\\.")}\\." } + ").*").toRegex()
+            val chinaRegex =
+                ("(" + arrayOf("com.tencent", "com.alibaba", "com.umeng", "com.qihoo", "com.ali", "com.alipay", "com.amap", "com.sina", "com.weibo", "com.vivo", "com.xiaomi", "com.huawei", "com.taobao", "com.secneo", "s.h.e.l.l", "com.stub", "com.kiwisec", "com.secshell", "com.wrapper", "cn.securitystack", "com.mogosec", "com.secoen", "com.netease", "com.mx", "com.qq.e", "com.baidu", "com.bytedance", "com.bugly").joinToString("|") { "${it.replace(".", "\\.")}\\." } + ").*").toRegex()
 
             val bypass = DataStore.bypass
 
@@ -421,9 +374,8 @@ class AppManagerActivity : ThemedActivity() {
                 var changed = false
 
                 onMainDispatcher {
-                    text.text = (txt + " " + app.packageName + "\n\n" +
-                            chinaApps.map { it.second }.reversed()
-                                .joinToString("\n", postfix = "\n")).trim()
+                    text.text = (txt + " " + app.packageName + "\n\n" + chinaApps.map { it.second }
+                        .reversed().joinToString("\n", postfix = "\n")).trim()
                 }
 
                 try {
@@ -442,14 +394,13 @@ class AppManagerActivity : ThemedActivity() {
                                 break
                             }
                             for (clazz in dexFile.classes) {
-                                val clazzName = clazz.type.substring(1, clazz.type.length - 1)
-                                    .replace("/", ".")
-                                    .replace("$", ".")
+                                val clazzName =
+                                    clazz.type.substring(1, clazz.type.length - 1).replace("/", ".")
+                                        .replace("$", ".")
 
                                 if (clazzName.matches(chinaRegex)) {
-                                    chinaApps.add(app to app.applicationInfo.loadLabel(
-                                        packageManager)
-                                        .toString())
+                                    chinaApps.add(app to app.applicationInfo
+                                        .loadLabel(packageManager).toString())
                                     zipFile.closeQuietly()
 
                                     if (bypass) {
@@ -486,7 +437,7 @@ class AppManagerActivity : ThemedActivity() {
             apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
 
             onMainDispatcher {
-                appsAdapter.filter.filter(search.text?.toString() ?: "")
+                appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
 
                 dialog.dismiss()
             }
@@ -499,10 +450,9 @@ class AppManagerActivity : ThemedActivity() {
     override fun supportNavigateUpTo(upIntent: Intent) =
         super.supportNavigateUpTo(upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?) =
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (toolbar.isOverflowMenuShowing) toolbar.hideOverflowMenu() else toolbar.showOverflowMenu()
-        } else super.onKeyUp(keyCode, event)
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?) = if (keyCode == KeyEvent.KEYCODE_MENU) {
+        if (binding.toolbar.isOverflowMenuShowing) binding.toolbar.hideOverflowMenu() else binding.toolbar.showOverflowMenu()
+    } else super.onKeyUp(keyCode, event)
 
     override fun onDestroy() {
         instance = null

@@ -31,7 +31,6 @@ import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.component1
@@ -47,14 +46,14 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.databinding.LayoutAddEntityBinding
+import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.fmt.chain.ChainBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
 import java.util.*
 
-class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
-    R.layout.layout_chain_settings
-) {
+class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout_chain_settings) {
 
     override fun createEntity() = ChainBean()
 
@@ -93,11 +92,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
         configurationAdapter = ProxiesAdapter()
         configurationList.adapter = configurationAdapter
 
-        ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.START
-            ) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START) {
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -118,10 +113,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                 target: RecyclerView.ViewHolder,
             ): Boolean {
                 return if (target !is ProfileHolder) false else {
-                    configurationAdapter.move(
-                        viewHolder.bindingAdapterPosition,
-                        target.bindingAdapterPosition
-                    )
+                    configurationAdapter.move(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
                     true
                 }
             }
@@ -186,9 +178,9 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             return if (viewType == 0) {
-                AddHolder(layoutInflater.inflate(R.layout.layout_add_entity, parent, false))
+                AddHolder(LayoutAddEntityBinding.inflate(layoutInflater, parent, false))
             } else {
-                ProfileHolder(layoutInflater.inflate(R.layout.layout_profile, parent, false))
+                ProfileHolder(LayoutProfileBinding.inflate(layoutInflater, parent, false))
             }
         }
 
@@ -233,72 +225,59 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
 
     var replacing = 0
 
-    val selectProfileForAdd = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { (resultCode, data) ->
-        if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
-            DataStore.dirty = true
+    val selectProfileForAdd =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
+            if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
+                DataStore.dirty = true
 
-            val profile =
-                ProfileManager.getProfile(
-                    data!!.getLongExtra(
-                        ProfileSelectActivity.EXTRA_PROFILE_ID,
-                        0
-                    )
-                )!!
+                val profile =
+                    ProfileManager.getProfile(data!!.getLongExtra(ProfileSelectActivity.EXTRA_PROFILE_ID, 0))!!
 
-            if (!testProfileAllowed(profile)) {
-                onMainDispatcher {
-                    MaterialAlertDialogBuilder(this@ChainSettingsActivity)
-                        .setTitle(R.string.circular_reference)
-                        .setMessage(R.string.circular_reference_sum)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
-                }
-            } else {
-                configurationList.post {
-                    if (replacing != 0) {
-                        proxyList[replacing - 1] = profile
-                        configurationAdapter.notifyItemChanged(replacing)
-                    } else {
-                        proxyList.add(profile)
-                        configurationAdapter.notifyItemInserted(proxyList.size)
+                if (!testProfileAllowed(profile)) {
+                    onMainDispatcher {
+                        MaterialAlertDialogBuilder(this@ChainSettingsActivity)
+                            .setTitle(R.string.circular_reference)
+                            .setMessage(R.string.circular_reference_sum)
+                            .setPositiveButton(android.R.string.ok, null).show()
+                    }
+                } else {
+                    configurationList.post {
+                        if (replacing != 0) {
+                            proxyList[replacing - 1] = profile
+                            configurationAdapter.notifyItemChanged(replacing)
+                        } else {
+                            proxyList.add(profile)
+                            configurationAdapter.notifyItemInserted(proxyList.size)
+                        }
                     }
                 }
             }
         }
-    }
 
-    inner class AddHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class AddHolder(val binding: LayoutAddEntityBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
-            view.setOnClickListener {
+            binding.root.setOnClickListener {
                 replacing = 0
-                selectProfileForAdd.launch(
-                    Intent(
-                        this@ChainSettingsActivity,
-                        ProfileSelectActivity::class.java
-                    )
-                )
+                selectProfileForAdd.launch(Intent(this@ChainSettingsActivity, ProfileSelectActivity::class.java))
             }
         }
     }
 
-    inner class ProfileHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ProfileHolder(binding: LayoutProfileBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        val profileName: TextView = view.findViewById(R.id.profile_name)
-        val profileType: TextView = view.findViewById(R.id.profile_type)
-        val profileAddress: TextView = view.findViewById(R.id.profile_address)
-        val trafficText: TextView = view.findViewById(R.id.traffic_text)
-        val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
-        val editButton: ImageView = view.findViewById(R.id.edit)
-        val shareLayout: LinearLayout = view.findViewById(R.id.share)
-        val shareLayer: LinearLayout = view.findViewById(R.id.share_layer)
-        val shareButton: ImageView = view.findViewById(R.id.shareIcon)
+        val profileName = binding.profileName
+        val profileType = binding.profileType
+        val profileAddress = binding.profileAddress
+        val trafficText: TextView = binding.trafficText
+        val selectedView = binding.selectedView
+        val editButton = binding.edit
+        val shareLayout = binding.share
+        val shareLayer = binding.shareLayer
+        val shareButton = binding.shareIcon
 
         fun bind(proxyEntity: ProxyEntity) {
 
-            view.setOnClickListener {
-            }
+            itemView.setOnClickListener {}
 
             profileName.text = proxyEntity.displayName()
             profileType.text = proxyEntity.displayType()
@@ -315,33 +294,24 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
             val showTraffic = rx + tx != 0L
             trafficText.isVisible = showTraffic
             if (showTraffic) {
-                trafficText.text = view.context.getString(
-                    R.string.traffic,
-                    Formatter.formatFileSize(view.context, tx),
-                    Formatter.formatFileSize(view.context, rx)
-                )
+                trafficText.text =
+                    itemView.context.getString(R.string.traffic, Formatter.formatFileSize(itemView.context, tx), Formatter.formatFileSize(itemView.context, rx))
             }
 
             editButton.setOnClickListener {
                 replacing = bindingAdapterPosition
-                selectProfileForAdd.launch(
-                    Intent(
-                        this@ChainSettingsActivity,
-                        ProfileSelectActivity::class.java
-                    ).apply {
-                        putExtra(ProfileSelectActivity.EXTRA_SELECTED, proxyEntity)
-                    }
-                )
+                selectProfileForAdd.launch(Intent(this@ChainSettingsActivity, ProfileSelectActivity::class.java).apply {
+                    putExtra(ProfileSelectActivity.EXTRA_SELECTED, proxyEntity)
+                })
             }
 
             shareLayout.isVisible = false
 
             if (proxyEntity.type != 8) runOnDefaultDispatcher {
 
-                val validateResult =
-                    if (DataStore.securityAdvisory) {
-                        proxyEntity.requireBean().isInsecure()
-                    } else ResultLocal
+                val validateResult = if (DataStore.securityAdvisory) {
+                    proxyEntity.requireBean().isInsecure()
+                } else ResultLocal
 
                 when (validateResult) {
                     is ResultInsecure -> onMainDispatcher {
@@ -356,12 +326,10 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                                 .setTitle(R.string.insecure)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
                                     .bufferedReader().use { it.readText() })
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show().apply {
+                                .setPositiveButton(android.R.string.ok, null).show().apply {
                                     findViewById<TextView>(android.R.id.message)?.apply {
                                         Linkify.addLinks(this, Linkify.WEB_URLS)
-                                        movementMethod =
-                                            LinkMovementMethod.getInstance()
+                                        movementMethod = LinkMovementMethod.getInstance()
                                     }
                                 }
                         }
@@ -378,12 +346,10 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(
                                 .setTitle(R.string.deprecated)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
                                     .bufferedReader().use { it.readText() })
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show().apply {
+                                .setPositiveButton(android.R.string.ok, null).show().apply {
                                     findViewById<TextView>(android.R.id.message)?.apply {
                                         Linkify.addLinks(this, Linkify.WEB_URLS)
-                                        movementMethod =
-                                            LinkMovementMethod.getInstance()
+                                        movementMethod = LinkMovementMethod.getInstance()
                                     }
                                 }
                         }

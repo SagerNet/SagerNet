@@ -25,9 +25,7 @@ import android.os.Bundle
 import android.os.RemoteException
 import android.view.MenuItem
 import androidx.annotation.IdRes
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceDataStore
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -41,34 +39,23 @@ import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
+import io.nekohasekai.sagernet.databinding.LayoutMainBinding
 import io.nekohasekai.sagernet.ktx.launchCustomTab
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
-import io.nekohasekai.sagernet.widget.ServiceButton
-import io.nekohasekai.sagernet.widget.StatsBar
 
-class MainActivity : ThemedActivity(), SagerConnection.Callback,
-    OnPreferenceDataStoreChangeListener,
-    NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : ThemedActivity(), SagerConnection.Callback, OnPreferenceDataStoreChangeListener, NavigationView.OnNavigationItemSelectedListener {
 
-    lateinit var fab: ServiceButton
-    lateinit var stats: StatsBar
-    lateinit var drawer: DrawerLayout
-    lateinit var coordinator: CoordinatorLayout
+    lateinit var binding: LayoutMainBinding
     lateinit var navigation: NavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.layout_main)
+        binding = LayoutMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        coordinator = findViewById(R.id.coordinator)
-
-        fab = findViewById(R.id.fab)
-        fab.initProgress(findViewById(R.id.fabProgress))
-
-        stats = findViewById(R.id.stats)
-        drawer = findViewById(R.id.drawer_layout)
+        binding.fab.initProgress(findViewById(R.id.fabProgress))
 
         navigation = findViewById(R.id.nav_view)
         navigation.setNavigationItemSelectedListener(this)
@@ -77,10 +64,10 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
             displayFragmentWithId(R.id.nav_configuration)
         }
 
-        fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
-        stats.setOnClickListener { if (state == BaseService.State.Connected) stats.testConnection() }
+        binding.fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
+        binding.stats.setOnClickListener { if (state == BaseService.State.Connected) binding.stats.testConnection() }
 
-        ViewCompat.setOnApplyWindowInsetsListener(coordinator, ListHolderListener)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.coordinator, ListHolderListener)
 
         /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
              view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -96,42 +83,32 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.isChecked) drawer.closeDrawers() else {
+        if (item.isChecked) binding.drawerLayout.closeDrawers() else {
             return displayFragmentWithId(item.itemId)
         }
         return true
     }
 
     fun displayFragment(fragment: ToolbarFragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_holder, fragment)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment)
             .commitAllowingStateLoss()
-        drawer.closeDrawers()
+        binding.drawerLayout.closeDrawers()
     }
 
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
         when (id) {
             R.id.nav_configuration -> {
-                displayFragment(ConfigurationFragment())
-                // request stats update
+                displayFragment(ConfigurationFragment()) // request stats update
                 connection.bandwidthTimeout = connection.bandwidthTimeout
             }
-            R.id.nav_group -> {
-                displayFragment(GroupFragment())
-            }
-            R.id.nav_route -> {
-                displayFragment(RouteFragment())
-            }
-            R.id.nav_settings -> {
-                displayFragment(SettingsFragment())
-            }
+            R.id.nav_group -> displayFragment(GroupFragment())
+            R.id.nav_route -> displayFragment(RouteFragment())
+            R.id.nav_settings -> displayFragment(SettingsFragment())
             R.id.nav_faq -> {
                 launchCustomTab("https://sagernet.org/")
                 return false
             }
-            R.id.nav_about -> {
-                displayFragment(AboutFragment())
-            }
+            R.id.nav_about -> displayFragment(AboutFragment())
             else -> return false
         }
         navigation.menu.findItem(id).isChecked = true
@@ -145,15 +122,15 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         msg: String? = null,
         animate: Boolean = false,
     ) {
-        fab.changeState(state, this.state, animate)
-        stats.changeState(state)
+        binding.fab.changeState(state, this.state, animate)
+        binding.stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
         this.state = state
     }
 
     fun snackbar(text: CharSequence = ""): Snackbar {
-        return Snackbar.make(coordinator, text, Snackbar.LENGTH_LONG).apply {
-            anchorView = fab
+        return Snackbar.make(binding.coordinator, text, Snackbar.LENGTH_LONG).apply {
+            anchorView = binding.fab
         }
     }
 
@@ -162,13 +139,11 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
     }
 
     val connection = SagerConnection(true)
-    override fun onServiceConnected(service: IShadowsocksService) = changeState(
-        try {
-            BaseService.State.values()[service.state]
-        } catch (_: RemoteException) {
-            BaseService.State.Idle
-        }
-    )
+    override fun onServiceConnected(service: IShadowsocksService) = changeState(try {
+        BaseService.State.values()[service.state]
+    } catch (_: RemoteException) {
+        BaseService.State.Idle
+    })
 
     override fun onServiceDisconnected() = changeState(BaseService.State.Idle)
     override fun onBinderDied() {
@@ -181,9 +156,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
     }
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
-        if (profileId != 0L) this@MainActivity.stats.updateTraffic(
-            stats.txRateProxy, stats.rxRateProxy
-        )
+        if (profileId != 0L) this@MainActivity.binding.stats.updateTraffic(stats.txRateProxy, stats.rxRateProxy)
         runOnDefaultDispatcher {
             ProfileManager.postTrafficUpdated(profileId, stats)
         }

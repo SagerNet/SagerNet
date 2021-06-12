@@ -28,11 +28,8 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
@@ -46,25 +43,25 @@ import com.github.shadowsocks.plugin.Plugin
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.databinding.LayoutIconListItem2Binding
 
 class PluginPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
     companion object {
         const val KEY_SELECTED_ID = "id"
     }
 
-    private inner class IconListViewHolder(val dialog: BottomSheetDialog, view: View) : RecyclerView.ViewHolder(view),
-            View.OnClickListener, View.OnLongClickListener {
+    private inner class IconListViewHolder(val dialog: BottomSheetDialog, binding: LayoutIconListItem2Binding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
         private lateinit var plugin: Plugin
-        private val text1 = view.findViewById<TextView>(android.R.id.text1)
-        private val text2 = view.findViewById<TextView>(android.R.id.text2)
-        private val icon = view.findViewById<ImageView>(android.R.id.icon)
-        private val unlock = view.findViewById<View>(R.id.unlock).apply {
+        private val text1 = binding.text1
+        private val text2 = binding.text2
+        private val icon = binding.icon
+        private val unlock = binding.unlock.apply {
             TooltipCompat.setTooltipText(this, getText(R.string.plugin_auto_connect_unlock_only))
         }
 
         init {
-            view.setOnClickListener(this)
-            view.setOnLongClickListener(this)
+            binding.root.setOnClickListener(this)
+            binding.root.setOnLongClickListener(this)
         }
 
         fun bind(plugin: Plugin, selected: Boolean = false) {
@@ -87,19 +84,18 @@ class PluginPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
 
         override fun onLongClick(v: View?) = try {
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.Builder()
-                    .scheme("package")
-                    .opaquePart(plugin.packageName)
-                    .build()))
+                .scheme("package").opaquePart(plugin.packageName).build()))
             true
         } catch (_: ActivityNotFoundException) {
             false
         }
     }
-    private inner class IconListAdapter(private val dialog: BottomSheetDialog) :
-            RecyclerView.Adapter<IconListViewHolder>() {
+
+    private inner class IconListAdapter(private val dialog: BottomSheetDialog) : RecyclerView.Adapter<IconListViewHolder>() {
         override fun getItemCount(): Int = preference.plugins.size
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = IconListViewHolder(dialog,
-                LayoutInflater.from(parent.context).inflate(R.layout.layout_icon_list_item_2, parent, false))
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            IconListViewHolder(dialog, LayoutIconListItem2Binding.inflate(layoutInflater, parent, false))
+
         override fun onBindViewHolder(holder: IconListViewHolder, position: Int) {
             if (selected < 0) holder.bind(preference.plugins[position]) else when (position) {
                 0 -> holder.bind(preference.selectedEntry!!, true)
@@ -127,8 +123,8 @@ class PluginPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.itemAnimator = DefaultItemAnimator()
         recycler.adapter = IconListAdapter(dialog)
-        recycler.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        recycler.layoutParams =
+            ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.setContentView(recycler)
         return dialog
     }

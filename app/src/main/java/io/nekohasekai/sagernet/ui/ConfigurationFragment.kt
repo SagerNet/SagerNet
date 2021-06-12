@@ -53,6 +53,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.*
@@ -70,8 +71,7 @@ import kotlin.properties.Delegates
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false,
     val selectedItem: ProxyEntity? = null,
-) : ToolbarFragment(R.layout.layout_group_list),
-    PopupMenu.OnMenuItemClickListener, Toolbar.OnMenuItemClickListener {
+) : ToolbarFragment(R.layout.layout_group_list), PopupMenu.OnMenuItemClickListener, Toolbar.OnMenuItemClickListener {
 
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
@@ -117,8 +117,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             if (adapter.groupList.size > position) {
                 tab.text = adapter.groupList[position].displayName()
-            }
-            /* tab.view.setOnLongClickListener { tabView ->
+            }/* tab.view.setOnLongClickListener { tabView ->
                  val popup = PopupMenu(requireContext(), tabView)
                  popup.menuInflater.inflate(R.menu.tab_edit_menu, popup.menu)
                  popup.setOnMenuItemClickListener(this)
@@ -200,13 +199,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 tabLayout.getTabAt(targetIndex)?.select()
             }
 
-            snackbar(
-                requireContext().resources.getQuantityString(
-                    R.plurals.added,
-                    proxies.size,
-                    proxies.size
-                )
-            ).show()
+            snackbar(requireContext().resources.getQuantityString(R.plurals.added, proxies.size, proxies.size)).show()
         }
 
     }
@@ -322,8 +315,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 try {
                     (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
                         .bufferedWriter().use {
-                            it.write(links)
-                        }
+                        it.write(links)
+                    }
                     onMainDispatcher {
                         snackbar(getString(R.string.copy_toast_msg)).show()
                     }
@@ -440,7 +433,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             container: ViewGroup?,
             savedInstanceState: Bundle?,
         ): View? {
-            return inflater.inflate(R.layout.layout_profile_list, container, false)
+            return LayoutProfileListBinding.inflate(inflater).root
         }
 
         lateinit var undoManager: UndoSnackbarManager<ProxyEntity>
@@ -465,13 +458,13 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         private val isEnabled: Boolean
             get() {
-                return ((activity as? MainActivity) ?: return false)
-                    .state.let { it.canStop || it == BaseService.State.Stopped }
+                return ((activity as? MainActivity)
+                    ?: return false).state.let { it.canStop || it == BaseService.State.Stopped }
             }
 
         private fun isProfileEditable(id: Long): Boolean {
-            return ((activity as? MainActivity) ?: return false)
-                .state == BaseService.State.Stopped || id != DataStore.selectedProxy
+            return ((activity as? MainActivity)
+                ?: return false).state == BaseService.State.Stopped || id != DataStore.selectedProxy
         }
 
         lateinit var layoutManager: LinearLayoutManager
@@ -510,14 +503,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             if (!select && !proxyGroup.isSubscription) {
 
-                undoManager =
-                    UndoSnackbarManager(activity as MainActivity, adapter)
+                undoManager = UndoSnackbarManager(activity as MainActivity, adapter)
 
-                ItemTouchHelper(object :
-                    ItemTouchHelper.SimpleCallback(
-                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                        ItemTouchHelper.START
-                    ) {
+                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START) {
                     override fun getSwipeDirs(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -570,8 +558,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             undoManager.flush()
         }
 
-        inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
-            ProfileManager.Listener, UndoSnackbarManager.Interface<ProxyEntity> {
+        inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(), ProfileManager.Listener, UndoSnackbarManager.Interface<ProxyEntity> {
 
             var configurationIdList: MutableList<Long> = mutableListOf()
             val configurationList = HashMap<Long, ProxyEntity>()
@@ -593,14 +580,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 parent: ViewGroup,
                 viewType: Int,
             ): ConfigurationHolder {
-                return ConfigurationHolder(
-                    LayoutInflater.from(parent.context)
-                        .inflate(
-                            if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
-                            parent,
-                            false
-                        )
-                )
+                return ConfigurationHolder(LayoutInflater.from(parent.context)
+                    .inflate(if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash, parent, false))
             }
 
             override fun getItemId(position: Int): Long {
@@ -610,8 +591,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             override fun onBindViewHolder(holder: ConfigurationHolder, position: Int) {
                 try {
                     holder.bind(getItemAt(position))
-                } catch (ignored: NullPointerException) {
-                    // when group deleted
+                } catch (ignored: NullPointerException) { // when group deleted
                 }
             }
 
@@ -624,10 +604,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun move(from: Int, to: Int) {
                 val first = getItemAt(from)
                 var previousOrder = first.userOrder
-                val (step, range) = if (from < to) Pair(1, from until to) else Pair(
-                    -1,
-                    to + 1 downTo from
-                )
+                val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1, to + 1 downTo from)
                 for (i in range) {
                     val next = getItemAt(i + step)
                     val order = next.userOrder
@@ -753,11 +730,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 if (newProfiles.isEmpty() && proxyGroup.isDefault) {
-                    val created = ProfileManager.createProfile(groupId,
-                        SOCKSBean().apply {
-                            name = "Local tunnel"
-                            initDefaultValues()
-                        })
+                    val created = ProfileManager.createProfile(groupId, SOCKSBean().apply {
+                        name = "Local tunnel"
+                        initDefaultValues()
+                    })
                     if (DataStore.selectedProxy == 0L) {
                         DataStore.selectedProxy = created.id
                     }
@@ -770,8 +746,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun bind(proxyEntity: ProxyEntity)
         }
 
-        inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
-            PopupMenu.OnMenuItemClickListener {
+        inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view), PopupMenu.OnMenuItemClickListener {
 
             lateinit var entity: ProxyEntity
             val impl =
@@ -798,9 +773,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                     if (select) {
                         view.setOnClickListener {
-                            (requireActivity() as ProfileSelectActivity).returnProfile(
-                                proxyEntity.id
-                            )
+                            (requireActivity() as ProfileSelectActivity).returnProfile(proxyEntity.id)
                         }
                     } else {
                         view.setOnClickListener {
@@ -834,21 +807,12 @@ class ConfigurationFragment @JvmOverloads constructor(
                     val showTraffic = rx + tx != 0L
                     trafficText.isVisible = showTraffic
                     if (showTraffic) {
-                        trafficText.text = view.context.getString(
-                            R.string.traffic,
-                            Formatter.formatFileSize(view.context, tx),
-                            Formatter.formatFileSize(view.context, rx)
-                        )
-                    }
-                    //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
+                        trafficText.text =
+                            view.context.getString(R.string.traffic, Formatter.formatFileSize(view.context, tx), Formatter.formatFileSize(view.context, rx))
+                    } //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
                     editButton.setOnClickListener {
-                        it.context.startActivity(
-                            proxyEntity.settingIntent(
-                                it.context,
-                                proxyGroup.isSubscription
-                            )
-                        )
+                        it.context.startActivity(proxyEntity.settingIntent(it.context, proxyGroup.isSubscription))
                     }
 
                     shareLayout.isGone = select || proxyEntity.type == 8
@@ -857,20 +821,17 @@ class ConfigurationFragment @JvmOverloads constructor(
                     runOnDefaultDispatcher {
                         val selected =
                             (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
-                        val started =
-                            serviceStarted() && DataStore.startedProxy == proxyEntity.id
+                        val started = serviceStarted() && DataStore.startedProxy == proxyEntity.id
                         onMainDispatcher {
                             editButton.isEnabled = !started
-                            selectedView.visibility =
-                                if (selected) View.VISIBLE else View.INVISIBLE
+                            selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
                         }
 
                         if (!(select || proxyEntity.type == 8)) {
 
-                            val validateResult =
-                                if (DataStore.securityAdvisory) {
-                                    proxyEntity.requireBean().isInsecure()
-                                } else ResultLocal
+                            val validateResult = if (DataStore.securityAdvisory) {
+                                proxyEntity.requireBean().isInsecure()
+                            } else ResultLocal
 
                             when (validateResult) {
                                 is ResultInsecure -> onMainDispatcher {
@@ -882,25 +843,20 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         MaterialAlertDialogBuilder(requireContext())
-                                            .setTitle(R.string.insecure)
-                                            .setMessage(resources.openRawResource(validateResult.textRes)
-                                                .bufferedReader().use { it.readText() })
+                                            .setTitle(R.string.insecure).setMessage(resources
+                                            .openRawResource(validateResult.textRes)
+                                            .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(
-                                                    R.menu.socks_share_menu,
-                                                    popup.menu
-                                                )
+                                                popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
+                                            }.show().apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
                                             }
-                                            .show().apply {
-                                                findViewById<TextView>(android.R.id.message)?.apply {
-                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                    movementMethod =
-                                                        LinkMovementMethod.getInstance()
-                                                }
-                                            }
+                                        }
                                     }
                                 }
                                 is ResultDeprecated -> onMainDispatcher {
@@ -912,25 +868,20 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         MaterialAlertDialogBuilder(requireContext())
-                                            .setTitle(R.string.deprecated)
-                                            .setMessage(resources.openRawResource(validateResult.textRes)
-                                                .bufferedReader().use { it.readText() })
+                                            .setTitle(R.string.deprecated).setMessage(resources
+                                            .openRawResource(validateResult.textRes)
+                                            .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(
-                                                    R.menu.socks_share_menu,
-                                                    popup.menu
-                                                )
+                                                popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
+                                            }.show().apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
                                             }
-                                            .show().apply {
-                                                findViewById<TextView>(android.R.id.message)?.apply {
-                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                    movementMethod =
-                                                        LinkMovementMethod.getInstance()
-                                                }
-                                            }
+                                        }
                                     }
                                 }
                                 else -> onMainDispatcher {
@@ -940,10 +891,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         val popup = PopupMenu(requireContext(), it)
-                                        popup.menuInflater.inflate(
-                                            R.menu.socks_share_menu,
-                                            popup.menu
-                                        )
+                                        popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
                                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                         popup.show()
                                     }
@@ -1007,16 +955,14 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             fun export(link: String) {
                 val success = SagerNet.trySetPrimaryClip(link)
-                (activity as MainActivity)
-                    .snackbar()
+                (activity as MainActivity).snackbar()
                     .setText(if (success) R.string.action_export_msg else R.string.action_export_err)
                     .show()
             }
 
             override fun onMenuItemClick(item: MenuItem): Boolean {
                 try {
-                    when (item.itemId) {
-                        // socks
+                    when (item.itemId) { // socks
                         R.id.action_qr_code -> {
                             showCode(entity.toLink()!!)
                         }

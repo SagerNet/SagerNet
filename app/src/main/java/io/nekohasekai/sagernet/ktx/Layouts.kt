@@ -57,11 +57,11 @@ class FixedLinearLayoutManager(val recyclerView: RecyclerView) :
                 (recyclerView.findViewHolderForAdapterPosition(findLastVisibleItemPosition())
                     ?: return scrollRange).itemView
             val itemLocation = Rect().also { view.getGlobalVisibleRect(it) }
-            val fabLocation = Rect().also { activity.fab.getGlobalVisibleRect(it) }
+            val fabLocation = Rect().also { activity.binding.fab.getGlobalVisibleRect(it) }
             if (!itemLocation.contains(fabLocation.left, fabLocation.top) && !itemLocation.contains(fabLocation.right, fabLocation.bottom)) {
                 return scrollRange
             }
-            activity.fab.apply {
+            activity.binding.fab.apply {
                 if (isShown) hide()
             }
         } else {
@@ -77,7 +77,7 @@ class FixedLinearLayoutManager(val recyclerView: RecyclerView) :
                 return scrollRange
             }*/
 
-            activity.fab.apply {
+            activity.binding.fab.apply {
                 if (!isShown) show()
             }
         }
@@ -116,11 +116,11 @@ class FixedGridLayoutManager(val recyclerView: RecyclerView, spanCount: Int) :
                 (recyclerView.findViewHolderForAdapterPosition(findLastVisibleItemPosition())
                     ?: return scrollRange).itemView
             val itemLocation = Rect().also { view.getGlobalVisibleRect(it) }
-            val fabLocation = Rect().also { activity.fab.getGlobalVisibleRect(it) }
+            val fabLocation = Rect().also { activity.binding.fab.getGlobalVisibleRect(it) }
             if (!itemLocation.contains(fabLocation.left, fabLocation.top) && !itemLocation.contains(fabLocation.right, fabLocation.bottom)) {
                 return scrollRange
             }
-            activity.fab.apply {
+            activity.binding.fab.apply {
                 if (isShown) hide()
             }
         } else {
@@ -136,7 +136,7 @@ class FixedGridLayoutManager(val recyclerView: RecyclerView, spanCount: Int) :
                 return scrollRange
             }*/
 
-            activity.fab.apply {
+            activity.binding.fab.apply {
                 if (!isShown) show()
             }
         }

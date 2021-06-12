@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Parcelable
@@ -30,9 +29,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
@@ -44,14 +41,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.databinding.LayoutEditGroupBinding
+import io.nekohasekai.sagernet.databinding.LayoutGroupItemBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
@@ -97,14 +94,9 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         ProfileManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter
 
-        undoManager =
-            UndoSnackbarManager(activity, groupAdapter)
+        undoManager = UndoSnackbarManager(activity, groupAdapter)
 
-        ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.START
-            ) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START) {
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -178,28 +170,23 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         runOnDefaultDispatcher {
-            createHttpClient().newCall(
-                Request.Builder()
-                    .url(proxyGroup.subscriptionLink)
-                    .build()
-            ).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnMainDispatcher {
-                        onRefreshFinished.run()
-                        Logs.d("onFailure", e)
+            createHttpClient().newCall(Request.Builder().url(proxyGroup.subscriptionLink).build())
+                .enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        runOnMainDispatcher {
+                            onRefreshFinished.run()
+                            Logs.d("onFailure", e)
 
-                        activity.snackbar(e.readableMessage).show()
+                            activity.snackbar(e.readableMessage).show()
+                        }
                     }
-                }
 
-                override fun onResponse(call: Call, response: Response) {
+                    override fun onResponse(call: Call, response: Response) {
                     Logs.d("onResponse: $response")
 
                     var (subType, proxies) = try {
-                        ProfileManager.parseSubscription(
-                            (response.body
-                                ?: error("Empty response")).string()
-                        )
+                        ProfileManager.parseSubscription((response.body
+                            ?: error("Empty response")).string())
                             ?: error(getString(R.string.no_proxies_found))
                     } catch (e: Exception) {
                         Logs.w(e)
@@ -306,10 +293,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             }
                         } else {
                             changed++
-                            SagerDatabase.proxyDao.addProxy(ProxyEntity(
-                                groupId = proxyGroup.id,
-                                userOrder = userOrder
-                            ).apply {
+                            SagerDatabase.proxyDao.addProxy(ProxyEntity(groupId = proxyGroup.id, userOrder = userOrder).apply {
                                 putBean(bean)
                             })
                             added.add(name)
@@ -326,8 +310,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         Logs.d("Deleted profiles: $it")
                     }
 
-                    val existCount =
-                        SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
+                        val existCount = SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
 
                     if (existCount != proxies.size) {
 
@@ -346,49 +329,35 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             onRefreshFinished.run()
 
                             if (changed == 0 && duplicate.isEmpty()) {
-                                activity.snackbar(activity.getString(R.string.group_no_difference, proxyGroup.displayName()))
+                                activity
+                                    .snackbar(activity.getString(R.string.group_no_difference, proxyGroup.displayName()))
                                     .show()
                             } else {
-                                activity.snackbar(
-                                    activity.getString(
-                                        R.string.group_updated,
-                                        proxyGroup.name,
-                                        changed
-                                    )
-                                ).setAction(R.string.group_show_diff) {
+                                activity
+                                    .snackbar(activity.getString(R.string.group_updated, proxyGroup.name, changed))
+                                    .setAction(R.string.group_show_diff) {
 
-                                    var status = ""
-                                    if (added.isNotEmpty()) {
-                                        status += activity.getString(
-                                            R.string.group_added,
-                                            added.joinToString("\n", postfix = "\n\n")
-                                        )
-                                    }
-                                    if (updated.isNotEmpty()) {
-                                        status += activity.getString(R.string.group_changed,
-                                            updated.map { it }
-                                                .joinToString("\n", postfix = "\n\n") {
-                                                    if (it.key == it.value) it.key else "${it.key} => ${it.value}"
-                                                })
-                                    }
+                                        var status = ""
+                                        if (added.isNotEmpty()) {
+                                            status += activity.getString(R.string.group_added, added.joinToString("\n", postfix = "\n\n"))
+                                        }
+                                        if (updated.isNotEmpty()) {
+                                            status += activity.getString(R.string.group_changed, updated
+                                                .map { it }.joinToString("\n", postfix = "\n\n") {
+                                                if (it.key == it.value) it.key else "${it.key} => ${it.value}"
+                                            })
+                                        }
                                     if (deleted.isNotEmpty()) {
-                                        status += activity.getString(
-                                            R.string.group_deleted,
-                                            deleted.joinToString("\n", postfix = "\n\n")
-                                        )
+                                        status += activity.getString(R.string.group_deleted, deleted.joinToString("\n", postfix = "\n\n"))
                                     }
                                     if (duplicate.isNotEmpty()) {
-                                        status += activity.getString(
-                                            R.string.group_duplicate,
-                                            duplicate.joinToString("\n", postfix = "\n\n")
-                                        )
+                                        status += activity.getString(R.string.group_duplicate, duplicate.joinToString("\n", postfix = "\n\n"))
                                     }
 
-                                    MaterialAlertDialogBuilder(activity)
-                                        .setTitle(app.getString(R.string.group_diff, proxyGroup.displayName()))
-                                        .setMessage(status.trim())
-                                        .setPositiveButton(android.R.string.ok, null)
-                                        .show()
+                                        MaterialAlertDialogBuilder(activity)
+                                            .setTitle(app.getString(R.string.group_diff, proxyGroup.displayName()))
+                                            .setMessage(status.trim())
+                                            .setPositiveButton(android.R.string.ok, null).show()
                                 }.show()
                             }
                         }
@@ -414,12 +383,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
             val activity = requireActivity()
 
-            @SuppressLint("InflateParams")
-            val view = activity.layoutInflater.inflate(R.layout.layout_edit_group, null)
+            val binding = LayoutEditGroupBinding.inflate(layoutInflater)
             val proxyGroup = arg.proxyGroup
 
-            nameLayout = view.findViewById(R.id.group_name_layout)
-            nameEditText = view.findViewById(R.id.group_name)
+            nameLayout = binding.groupNameLayout
+            nameEditText = binding.groupName
             if (proxyGroup != null) {
                 nameEditText.setText(proxyGroup.displayName())
             }
@@ -428,11 +396,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 validate()
             }
 
-            linkLayout = view.findViewById(R.id.group_links_layout)
+            linkLayout = binding.groupLinksLayout
             if (!arg.isSubscription) {
                 linkLayout.isGone = true
             } else {
-                linkEditText = view.findViewById(R.id.group_subscription_link)
+                linkEditText = binding.groupSubscriptionLink
                 if (proxyGroup != null) {
                     linkEditText.setText(proxyGroup.subscriptionLink)
                 }
@@ -441,8 +409,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 }
             }
 
-            deduplicationCard = view.findViewById(R.id.deduplication_card)
-            deduplication = view.findViewById(R.id.deduplication)
+            deduplicationCard = binding.deduplicationCard
+            deduplication = binding.deduplication
             if (!arg.isSubscription) {
                 deduplicationCard.isVisible = false
             }
@@ -459,21 +427,19 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 validate()
             }
 
-            setTitle(
-                if (arg.proxyGroup == null) {
-                    if (!arg.isSubscription) {
-                        R.string.group_create
-                    } else {
-                        R.string.group_create_subscription
-                    }
+            setTitle(if (arg.proxyGroup == null) {
+                if (!arg.isSubscription) {
+                    R.string.group_create
                 } else {
-                    if (!arg.isSubscription) {
-                        R.string.group_edit
-                    } else {
-                        R.string.group_edit_subscription
-                    }
+                    R.string.group_create_subscription
                 }
-            )
+            } else {
+                if (!arg.isSubscription) {
+                    R.string.group_edit
+                } else {
+                    R.string.group_edit_subscription
+                }
+            })
 
             setPositiveButton(android.R.string.ok, listener)
             setNegativeButton(android.R.string.cancel, null)
@@ -482,7 +448,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 setNeutralButton(R.string.delete, listener)
             }
 
-            setView(view)
+            setView(binding.root)
         }
 
         override fun onStart() {
@@ -567,8 +533,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
     }
 
-    inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>(), ProfileManager.GroupListener,
-        UndoSnackbarManager.Interface<ProxyGroup> {
+    inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>(), ProfileManager.GroupListener, UndoSnackbarManager.Interface<ProxyGroup> {
 
         val groupList = ArrayList<ProxyGroup>()
 
@@ -588,9 +553,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupHolder {
-            return GroupHolder(
-                layoutInflater.inflate(R.layout.layout_group_item, parent, false)
-            )
+            return GroupHolder(LayoutGroupItemBinding.inflate(layoutInflater, parent, false))
         }
 
         override fun onBindViewHolder(holder: GroupHolder, position: Int) {
@@ -610,10 +573,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         fun move(from: Int, to: Int) {
             val first = groupList[from]
             var previousOrder = first.userOrder
-            val (step, range) = if (from < to) Pair(1, from until to) else Pair(
-                -1,
-                to + 1 downTo from
-            )
+            val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1, to + 1 downTo from)
             for (i in range) {
                 val next = groupList[i + step]
                 val order = next.userOrder
@@ -743,16 +703,15 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         undoManager.flush()
     }
 
-    inner class GroupHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class GroupHolder(binding: LayoutGroupItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         lateinit var proxyGroup: ProxyGroup
-        val groupName: TextView = view.findViewById(R.id.group_name)
-        val groupStatus: TextView = view.findViewById(R.id.group_status)
-        val editButton: AppCompatImageView = view.findViewById(R.id.edit)
-        val shareButton: AppCompatImageView = view.findViewById(R.id.share)
-        val updateButton: MaterialButton = view.findViewById(R.id.group_update)
-        val subscriptionUpdateProgress: LinearProgressIndicator =
-            view.findViewById(R.id.subscription_update_progress)
+        val groupName = binding.groupName
+        val groupStatus = binding.groupStatus
+        val editButton = binding.edit
+        val shareButton = binding.share
+        val updateButton = binding.groupUpdate
+        val subscriptionUpdateProgress = binding.subscriptionUpdateProgress
         var refreshing = false
 
         val refreshRunnable = { needGo: Boolean ->
@@ -760,46 +719,43 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                 var uVisible = false
 
                 ProfileManager.groupIterator {
-                    refreshSubscription(proxyGroup,
-                        {
-                            refreshing = true
-                            runOnMainDispatcher {
-                                (groupName.parent as LinearLayout).apply {
-                                    setPadding(paddingLeft, paddingTop - dp2px(4), paddingRight, paddingBottom)
-                                }
+                    refreshSubscription(proxyGroup, {
+                        refreshing = true
+                        runOnMainDispatcher {
+                            (groupName.parent as LinearLayout).apply {
+                                setPadding(paddingLeft, paddingTop - dp2px(4), paddingRight, paddingBottom)
+                            }
 
-                                subscriptionUpdateProgress.isVisible = true
-                                updateButton.isInvisible = true
-                                if (editButton.isVisible) {
-                                    uVisible = true
-                                    editButton.isVisible = false
-                                    //    shareButton.isVisible = false
+                            subscriptionUpdateProgress.isVisible = true
+                            updateButton.isInvisible = true
+                            if (editButton.isVisible) {
+                                uVisible = true
+                                editButton.isVisible = false //    shareButton.isVisible = false
+                            }
+                        }
+                    }, {
+                        DataStore.selectedGroup = proxyGroup.id
+
+                        runOnMainDispatcher {
+                            (groupName.parent as LinearLayout).apply {
+                                setPadding(paddingLeft, paddingTop + dp2px(4), paddingRight, paddingBottom)
+                            }
+
+                            // shareButton.isVisible = true
+
+                            if (needGo) {
+                                activity.displayFragmentWithId(R.id.nav_configuration)
+                            } else {
+                                subscriptionUpdateProgress.isVisible = false
+                                updateButton.isInvisible = false
+                                if (uVisible) {
+                                    editButton.isVisible = true
                                 }
                             }
-                        },
-                        {
-                            DataStore.selectedGroup = proxyGroup.id
 
-                            runOnMainDispatcher {
-                                (groupName.parent as LinearLayout).apply {
-                                    setPadding(paddingLeft, paddingTop + dp2px(4), paddingRight, paddingBottom)
-                                }
-
-                                // shareButton.isVisible = true
-
-                                if (needGo) {
-                                    activity.displayFragmentWithId(R.id.nav_configuration)
-                                } else {
-                                    subscriptionUpdateProgress.isVisible = false
-                                    updateButton.isInvisible = false
-                                    if (uVisible) {
-                                        editButton.isVisible = true
-                                    }
-                                }
-
-                                refreshing = false
-                            }
-                        })
+                            refreshing = false
+                        }
+                    })
                 }
             }
         }
@@ -807,7 +763,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         fun bind(group: ProxyGroup) {
             proxyGroup = group
 
-            view.setOnClickListener { }
+            itemView.setOnClickListener { }
 
             updateButton.isInvisible = !proxyGroup.isSubscription
             groupName.text = proxyGroup.displayName()
@@ -842,13 +798,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                             groupStatus.setText(R.string.group_status_empty_subscription)
                         } else {
                             val date = Date(group.lastUpdate)
-                            @Suppress("DEPRECATION")
-                            groupStatus.text =
-                                app.resources.getString(
-                                    R.string.group_status_proxies_subscription,
-                                    size,
-                                    "${date.month + 1} - ${date.date}"
-                                )
+                            @Suppress("DEPRECATION") groupStatus.text =
+                                app.resources.getString(R.string.group_status_proxies_subscription, size, "${date.month + 1} - ${date.date}")
                         }
                     }
                 }

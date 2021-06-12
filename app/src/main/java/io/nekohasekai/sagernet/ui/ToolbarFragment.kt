@@ -40,7 +40,7 @@ open class ToolbarFragment : Fragment {
         toolbar = view.findViewById(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_navigation_menu)
         toolbar.setNavigationOnClickListener {
-            (activity as MainActivity).drawer.openDrawer(GravityCompat.START)
+            (activity as MainActivity).binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 

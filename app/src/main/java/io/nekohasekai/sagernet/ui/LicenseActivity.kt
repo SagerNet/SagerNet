@@ -22,7 +22,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.mikepenz.aboutlibraries.LibsBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.widget.ListHolderListener
@@ -42,14 +41,9 @@ class LicenseActivity : ThemedActivity() {
         }
         ListHolderListener.setup(this)
 
-        val libs = LibsBuilder()
-            .withAboutIconShown(false)
-            .withExcludedLibraries(
-                // Can't parse ${project.artifactId} in pom.xml
-                "cn_hutool__hutool_core",
-                "cn_hutool__hutool_json",
-                "cn_hutool__hutool_crypto"
-            )
+        val libs = LibsBuilder().withAboutIconShown(false)
+            .withExcludedLibraries( // Can't parse ${project.artifactId} in pom.xml
+                "cn_hutool__hutool_core", "cn_hutool__hutool_json", "cn_hutool__hutool_crypto")
             .supportFragment()
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, libs)

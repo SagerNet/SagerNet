@@ -6,15 +6,20 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_http_24.xml" value="0.3375" />
+        <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_edit_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group_item.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group_list.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_license.xml" value="0.26033755274261605" />
         <entry key="app/src/main/res/layout/layout_link_dialog.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_password_dialog.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/main_drawer_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/profile_config_menu.xml" value="0.2636752136752137" />

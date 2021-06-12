@@ -26,10 +26,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -39,6 +35,8 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.databinding.LayoutEmptyRouteBinding
+import io.nekohasekai.sagernet.databinding.LayoutRouteItemBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
@@ -67,11 +65,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         ruleListView.adapter = ruleAdapter
         undoManager = UndoSnackbarManager(activity, ruleAdapter)
 
-        ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.START
-            ) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START) {
 
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
@@ -142,9 +136,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         return true
     }
 
-    inner class RuleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
-        ProfileManager.RuleListener,
-        UndoSnackbarManager.Interface<RuleEntity> {
+    inner class RuleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ProfileManager.RuleListener, UndoSnackbarManager.Interface<RuleEntity> {
 
         val ruleList = ArrayList<RuleEntity>()
         suspend fun reload() {
@@ -167,13 +159,9 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             viewType: Int,
         ): RecyclerView.ViewHolder {
             return if (viewType == 0) {
-                DocumentHolder(
-                    layoutInflater.inflate(R.layout.layout_empty_route, parent, false)
-                )
+                DocumentHolder(LayoutEmptyRouteBinding.inflate(layoutInflater, parent, false))
             } else {
-                RuleHolder(
-                    layoutInflater.inflate(R.layout.layout_route_item, parent, false)
-                )
+                RuleHolder(LayoutRouteItemBinding.inflate(layoutInflater, parent, false))
             }
         }
 
@@ -203,10 +191,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         fun move(from: Int, to: Int) {
             val first = ruleList[from - 1]
             var previousOrder = first.userOrder
-            val (step, range) = if (from < to) Pair(1, from - 1 until to - 1) else Pair(
-                -1,
-                to downTo from - 1
-            )
+            val (step, range) = if (from < to) Pair(1, from - 1 until to - 1) else Pair(-1, to downTo from - 1)
             for (i in range) {
                 val next = ruleList[i + step]
                 val order = next.userOrder
@@ -287,30 +272,30 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             }
         }
 
-        inner class DocumentHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        inner class DocumentHolder(binding: LayoutEmptyRouteBinding) : RecyclerView.ViewHolder(binding.root) {
             fun bind() {
-                view.setOnClickListener {
+                itemView.setOnClickListener {
                     it.context.launchCustomTab("https://www.v2fly.org/config/routing.html#ruleobject")
                 }
             }
         }
 
-        inner class RuleHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        inner class RuleHolder(binding: LayoutRouteItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
             lateinit var rule: RuleEntity
-            val profileName: TextView = view.findViewById(R.id.profile_name)
-            val profileType: TextView = view.findViewById(R.id.profile_type)
-            val routeOutbound: TextView = view.findViewById(R.id.route_outbound)
-            val editButton: ImageView = view.findViewById(R.id.edit)
-            val shareLayout: LinearLayout = view.findViewById(R.id.share)
-            val enableSwitch: SwitchCompat = view.findViewById(R.id.enable)
+            val profileName = binding.profileName
+            val profileType = binding.profileType
+            val routeOutbound = binding.routeOutbound
+            val editButton = binding.edit
+            val shareLayout = binding.share
+            val enableSwitch = binding.enable
 
             fun bind(ruleEntity: RuleEntity) {
                 rule = ruleEntity
                 profileName.text = rule.displayName()
                 profileType.text = rule.mkSummary()
                 routeOutbound.text = rule.displayOutbound()
-                view.setOnClickListener {
+                itemView.setOnClickListener {
                     enableSwitch.performClick()
                 }
                 enableSwitch.isChecked = rule.enabled
@@ -324,11 +309,9 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                     }
                 }
                 editButton.setOnClickListener {
-                    startActivity(
-                        Intent(it.context, RouteSettingsActivity::class.java).apply {
-                            putExtra(RouteSettingsActivity.EXTRA_ROUTE_ID, rule.id)
-                        }
-                    )
+                    startActivity(Intent(it.context, RouteSettingsActivity::class.java).apply {
+                        putExtra(RouteSettingsActivity.EXTRA_ROUTE_ID, rule.id)
+                    })
                 }
             }
         }
