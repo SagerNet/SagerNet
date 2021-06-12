@@ -70,6 +70,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverQuicSecurity = quicSecurity
         DataStore.serverWsMaxEarlyData = wsMaxEarlyData
         DataStore.serverWsBrowserForwarding = wsUseBrowserForwarder
+        DataStore.serverEarlyDataHeaderName = earlyDataHeaderName
 
     }
 
@@ -99,6 +100,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         quicSecurity = DataStore.serverQuicSecurity
         wsMaxEarlyData = DataStore.serverWsMaxEarlyData
         wsUseBrowserForwarder = DataStore.serverWsBrowserForwarding
+        earlyDataHeaderName = DataStore.serverEarlyDataHeaderName
     }
 
     lateinit var encryption: SimpleMenuPreference

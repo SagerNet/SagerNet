@@ -116,6 +116,8 @@ object Key {
     const val SERVER_QUIC_SECURITY = "serverQuicSecurity"
     const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
     const val SERVER_WS_BROWSER_FORWARDING = "serverWsBrowserForwarding"
+    const val SERVER_EARLY_DATA_HEADER_NAME = "serverEarlyDataHeaderName"
+
     const val SERVER_WS_CATEGORY = "serverWsCategory"
     const val SERVER_SS_CATEGORY = "serverSsCategory"
     const val SERVER_HEADERS = "serverHeaders"
@@ -138,6 +140,7 @@ object Key {
 
 object DnsMode {
     const val SYSTEM = 0
+
     @Deprecated("unavailable")
     const val REMOTE = 1
     const val LOCAL = 2

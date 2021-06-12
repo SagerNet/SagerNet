@@ -298,5 +298,6 @@
     <string name="ignore_battery_optimizations">忽略电池优化</string>
     <string name="ignore_battery_optimizations_sum">移除一些限制</string>
     <string name="document">文档</string>
+    <string name="early_data_header_name">前置数据标头</string>
 
 </resources>

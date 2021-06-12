@@ -177,8 +177,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 url.queryParameter("path")?.let {
                     bean.path = it
                 }
-                url.queryParameter("ed")?.let {
-                    bean.wsMaxEarlyData = it.toInt()
+                url.queryParameter("ed")?.let { ed ->
+                    bean.wsMaxEarlyData = ed.toInt()
+
+                    url.queryParameter("eh")?.let {
+                        bean.earlyDataHeaderName = it
+                    }
                 }
             }
             "quic" -> {
@@ -373,6 +377,9 @@ fun StandardV2RayBean.toUri(standard: Boolean = true): String {
             if (type == "ws") {
                 if (wsMaxEarlyData > 0) {
                     builder.addQueryParameter("ed", "$wsMaxEarlyData")
+                    if (earlyDataHeaderName.isNotBlank()) {
+                        builder.addQueryParameter("eh", earlyDataHeaderName)
+                    }
                 }
             }
         }

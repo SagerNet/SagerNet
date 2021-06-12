@@ -156,6 +156,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public String pinnedPeerCertificateChainSha256;
 
     public Boolean wsUseBrowserForwarder;
+    public String earlyDataHeaderName;
 
     @Override
     public void initDefaultValues() {
@@ -180,12 +181,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (wsUseBrowserForwarder == null) wsUseBrowserForwarder = false;
         if (certificates == null) certificates = "";
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
+        if (earlyDataHeaderName == null) earlyDataHeaderName = "";
 
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -209,6 +211,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(path);
                 output.writeInt(wsMaxEarlyData);
                 output.writeBoolean(wsUseBrowserForwarder);
+                output.writeString(earlyDataHeaderName);
                 break;
             }
             case "http": {
@@ -264,6 +267,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 path = input.readString();
                 wsMaxEarlyData = input.readInt();
                 wsUseBrowserForwarder = input.readBoolean();
+                if (version >= 2) {
+                    earlyDataHeaderName = input.readString();
+                }
                 break;
             }
             case "http": {

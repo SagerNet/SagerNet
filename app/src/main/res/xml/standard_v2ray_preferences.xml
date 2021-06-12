@@ -105,6 +105,12 @@
             app:title="@string/ws_max_early_data"
             app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_stream_24"
+            app:key="serverEarlyDataHeaderName"
+            app:title="@string/early_data_header_name"
+            app:useSimpleSummaryProvider="true" />
+
         <SwitchPreference
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="serverWsBrowserForwarding"

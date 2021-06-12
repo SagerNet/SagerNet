@@ -89,7 +89,7 @@
     <string name="dns_mode">DNS Mode</string>
     <string name="dns_mode_system">System</string>
     <string name="dns_mode_local">Local</string>
-    <string name="dns_mode_fakedns">FakeDNS</string>
+    <string name="dns_mode_fakedns" translatable="false">FakeDNS</string>
     <string name="dns_mode_fakedns_local">FakeDNS + Local</string>
 
     <string name="dns_system">System DNS</string>
@@ -135,6 +135,7 @@
     <string name="alpn">Application-Layer Protocol Negotiation</string>
     <string name="certificates">Certificates</string>
     <string name="pinned_peer_certificate_chain_sha256">Pinned Certificate Chain</string>
+    <string name="early_data_header_name">Early Data Header Name</string>
 
     <string name="encryption">Encryption</string>
 
@@ -294,7 +295,7 @@
 
     <string name="donate">Donate</string>
     <string name="donate_info">I love money</string>
-    
+
     <string name="ignore_battery_optimizations">Ignore battery optimizations</string>
     <string name="ignore_battery_optimizations_sum">Remove some restrictions</string>
 
