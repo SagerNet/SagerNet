@@ -287,7 +287,7 @@ public class V2RayConfig {
         @SerializedName("default")
         public DefaultObject defaultObject;
         public DetourObject detour;
-        public Boolean disableInsecureEncryption;
+        public Boolean disableInsecureEncryption = false;
 
 
         public static class ClientObject {
@@ -645,7 +645,7 @@ public class V2RayConfig {
     public static class TLSObject {
 
         public String serverName;
-        public Boolean allowInsecure;
+        public Boolean allowInsecure = true;
         public List<String> alpn;
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
