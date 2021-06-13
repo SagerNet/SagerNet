@@ -15,5 +15,11 @@ include(":external:flexbox")
 include(":external:colorpicker")
 include(":external:preferencex-colorpicker")
 
+includeBuild("external/editorkit") {
+    dependencySubstitution {
+        substitute(module("com.blacksquircle.ui:editorkit:2.0.0")).with(project(":editorkit"))
+    }
+}
+
 include(":app")
 rootProject.name = "SagerNet"

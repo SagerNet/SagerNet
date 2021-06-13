@@ -33,6 +33,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 import io.nekohasekai.sagernet.fmt.chain.ChainBean;
+import io.nekohasekai.sagernet.fmt.config.ConfigBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean;
@@ -63,7 +64,7 @@ public class KryoConverters {
     public static <T extends AbstractBean> T deserializeWithoutName(T bean, byte[] bytes) {
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
-        bean.deserializeFull(buffer);
+        bean.deserialize(buffer);
         IoUtil.close(buffer);
         return bean;
     }
@@ -84,6 +85,8 @@ public class KryoConverters {
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
         bean.deserializeFull(buffer);
         IoUtil.close(buffer);
+
+        bean.initDefaultValues();
         return bean;
     }
 
@@ -136,12 +139,6 @@ public class KryoConverters {
     }
 
     @TypeConverter
-    public static ChainBean chainDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
-        return deserialize(new ChainBean(), bytes);
-    }
-
-    @TypeConverter
     public static NaiveBean naiveDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new NaiveBean(), bytes);
@@ -163,6 +160,18 @@ public class KryoConverters {
     public static BrookBean brookDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new BrookBean(), bytes);
+    }
+
+    @TypeConverter
+    public static ChainBean chainDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new ChainBean(), bytes);
+    }
+
+    @TypeConverter
+    public static ConfigBean configDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new ConfigBean(), bytes);
     }
 
 }

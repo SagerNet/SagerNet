@@ -34,6 +34,7 @@ import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.toUri
 import io.nekohasekai.sagernet.fmt.chain.ChainBean
+import io.nekohasekai.sagernet.fmt.config.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
@@ -87,6 +88,7 @@ data class ProxyEntity(
     var rbBean: RelayBatonBean? = null,
     var brookBean: BrookBean? = null,
     var chainBean: ChainBean? = null,
+    var configBean: ConfigBean? = null
 ) : Parcelable {
 
     companion object {
@@ -104,8 +106,10 @@ data class ProxyEntity(
         const val TYPE_BROOK = 12
 
         const val TYPE_CHAIN = 8
+        const val TYPE_CONFIG = 13
 
         val chainName by lazy { app.getString(R.string.proxy_chain) }
+        val configName by lazy { app.getString(R.string.custom_config) }
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<ProxyEntity> {
@@ -151,8 +155,8 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> ptBean = KryoConverters.pingTunnelDeserialize(byteArray)
             TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
             TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
-
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
+            TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
         }
     }
 
@@ -184,6 +188,7 @@ data class ProxyEntity(
             TYPE_RELAY_BATON -> "relaybaton"
             TYPE_BROOK -> "Brook"
             TYPE_CHAIN -> chainName
+            TYPE_CONFIG -> configName
             else -> "Undefined type $type"
         }
     }
@@ -225,6 +230,7 @@ data class ProxyEntity(
             TYPE_BROOK -> brookBean
 
             TYPE_CHAIN -> chainBean
+            TYPE_CONFIG -> configBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -308,6 +314,7 @@ data class ProxyEntity(
         rbBean = null
         brookBean = null
         chainBean = null
+        configBean = null
         when (bean) {
             is SOCKSBean -> {
                 type = TYPE_SOCKS
@@ -360,6 +367,10 @@ data class ProxyEntity(
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
+            }
+            is ConfigBean -> {
+                type = TYPE_CONFIG
+                configBean = bean
             }
             else -> error("Undefined type $type")
         }

@@ -46,3 +46,6 @@
 [submodule "plugin/brook/src/main/go/brook"]
 	path = plugin/brook/src/main/go/brook
 	url = https://github.com/txthinking/brook
+[submodule "external/editorkit"]
+	path = external/editorkit
+	url = https://github.com/nekohasekai/Squircle-IDE
