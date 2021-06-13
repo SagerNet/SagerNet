@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/editorkit" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/badvpn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/proxychains" vcs="Git" />
@@ -18,6 +19,5 @@
     <mapping directory="$PROJECT_DIR$/plugin/pingtunnel/src/main/go/pingtunnel" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/relaybaton/src/main/go/relaybaton" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan-go/src/main/go/trojan-go" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/plugin/xtls/src/main/go/Xray-core" vcs="Git" />
   </component>
 </project>

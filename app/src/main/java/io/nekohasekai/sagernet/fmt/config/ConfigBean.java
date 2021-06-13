@@ -19,68 +19,56 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.chain;
+package io.nekohasekai.sagernet.fmt.config;
+
+import androidx.annotation.NonNull;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
-import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class ChainBean extends AbstractBean {
+public class ConfigBean extends AbstractBean {
 
-    public List<Long> proxies;
+    public String type;
+    public String content;
 
     @Override
     public String displayName() {
         if (StrUtil.isNotBlank(name)) {
             return name;
         } else {
-            return "Chain " + Math.abs(hashCode());
+            return "Config " + Math.abs(hashCode());
         }
     }
 
     @Override
     public void initDefaultValues() {
         if (name == null) name = "";
-
-        if (proxies == null) {
-            proxies = new LinkedList<>();
-        }
+        if (type == null) type = "v2ray";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
-        output.writeInt(proxies.size());
-        for (Long proxy : proxies) {
-            output.writeLong(proxy);
-        }
+        output.writeInt(0);
+
+        output.writeString(type);
+        output.writeString(content);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
         int version = input.readInt();
-        if (version < 1) {
-            input.readString();
-            input.readInt();
-        }
-        int length = input.readInt();
-        proxies = new LinkedList<>();
-        for (int i = 0; i < length; i++) {
-            proxies.add(input.readLong());
-        }
+
+        type = input.readString();
+        content = input.readString();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public AbstractBean clone() {
-        return KryoConverters.deserialize(new ChainBean(), KryoConverters.serialize(this));
+        return null;
     }
+
 }
