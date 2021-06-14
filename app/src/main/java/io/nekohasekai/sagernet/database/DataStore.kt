@@ -137,7 +137,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var meteredNetwork by configurationStore.boolean(Key.METERED_NETWORK)
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
     var bypass by configurationStore.boolean(Key.BYPASS_MODE)
-    var individual by configurationStore.string("")
+    var individual by configurationStore.string(Key.INDIVIDUAL)
     var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
     var enableMuxForAll by configurationStore.boolean(Key.ENABLE_MUX_FOR_ALL)
