@@ -1,8 +1,8 @@
 # SagerNet for Android
 
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
-[![Releases](https://img.shields.io/github/downloads/nekohasekai/SagerNet/total.svg)](https://github.com/nekohasekai/SagerNet/releases)
-[![Language: Kotlin](https://img.shields.io/github/languages/top/nekohasekai/SagerNet.svg)](https://github.com/nekohasekai/SagerNet/search?l=kotlin)
+[![Releases](https://img.shields.io/github/downloads/SagerNet/SagerNet/total.svg)](https://github.com/SagerNet/SagerNet/releases)
+[![Language: Kotlin](https://img.shields.io/github/languages/top/SagerNet/SagerNet.svg)](https://github.com/SagerNet/SagerNet/search?l=kotlin)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-orange.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 The universal proxy toolchain for Android, written in Kotlin.
