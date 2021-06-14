@@ -193,8 +193,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                     )
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            val pm =
-                                requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+                            val pm = app.getSystemService(Context.POWER_SERVICE) as PowerManager
                             if (!pm.isIgnoringBatteryOptimizations(app.packageName)) {
                                 addItem(
                                     MaterialAboutActionItem.Builder()
