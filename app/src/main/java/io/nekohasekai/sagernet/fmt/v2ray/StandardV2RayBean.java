@@ -165,6 +165,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (StrUtil.isBlank(uuid)) uuid = "";
 
         if (StrUtil.isBlank(type)) type = "tcp";
+        else if ("h2".equals(type)) type = "http";
+
         if (StrUtil.isBlank(host)) host = "";
         if (StrUtil.isBlank(path)) path = "";
         if (StrUtil.isBlank(headerType)) headerType = "";

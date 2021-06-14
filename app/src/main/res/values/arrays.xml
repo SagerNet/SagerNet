@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="bypass_private_route" translatable="false">
+    <string-array name="bypass_private_route">
         <item>1.0.0.0/8</item>
         <item>2.0.0.0/7</item>
         <item>4.0.0.0/6</item>
@@ -158,7 +158,7 @@
         <item>208.0.0.0/4</item>
     </string-array>
 
-    <string-array name="enc_method_entry" translatable="false">
+    <string-array name="enc_method_entry">
         <item>NONE</item>
         <item>RC4-MD5</item>
         <item>AES-128-CFB</item>
@@ -178,7 +178,7 @@
         <item>XCHACHA20-IETF-POLY1305</item>
     </string-array>
 
-    <string-array name="enc_method_value" translatable="false">
+    <string-array name="enc_method_value">
         <item>none</item>
         <item>rc4-md5</item>
         <item>aes-128-cfb</item>
@@ -205,7 +205,7 @@
                 <item>@string/service_mode_transproxy</item>
         -->
     </string-array>
-    <string-array name="service_mode_values" translatable="false">
+    <string-array name="service_mode_values">
         <item>vpn</item>
         <item>proxy</item>
         <!--
@@ -229,13 +229,13 @@
         <item>@string/route_block</item>
         <item>@string/route_profile</item>
     </string-array>
-    <string-array name="outbound_value" translatable="false">
+    <string-array name="outbound_value">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
-    <string-array name="enc_method_entry_ssr" translatable="false">
+    <string-array name="enc_method_entry_ssr">
         <item>NONE</item>
         <item>TABLE</item>
         <item>RC4</item>
@@ -256,7 +256,7 @@
         <item>CHACHA20-IETF</item>
     </string-array>
 
-    <string-array name="enc_method_value_ssr" translatable="false">
+    <string-array name="enc_method_value_ssr">
         <item>none</item>
         <item>table</item>
         <item>rc4</item>
@@ -277,7 +277,7 @@
         <item>chacha20-ietf</item>
     </string-array>
 
-    <string-array name="protocol_entry" translatable="false">
+    <string-array name="protocol_entry">
         <item>ORIGIN</item>
         <item>VERIFY_SIMPLE</item>
         <item>VERIFY_SHA1</item>
@@ -290,7 +290,7 @@
         <item>AUTH_CHAIN_B</item>
     </string-array>
 
-    <string-array name="protocol_value" translatable="false">
+    <string-array name="protocol_value">
         <item>origin</item>
         <item>verify_simple</item>
         <item>verify_sha1</item>
@@ -303,7 +303,7 @@
         <item>auth_chain_b</item>
     </string-array>
 
-    <string-array name="obfs_entry" translatable="false">
+    <string-array name="obfs_entry">
         <item>PLAIN</item>
         <item>HTTP_SIMPLE</item>
         <item>HTTP_POST</item>
@@ -311,7 +311,7 @@
         <item>TLS1.2_TICKET_AUTH</item>
     </string-array>
 
-    <string-array name="obfs_value" translatable="false">
+    <string-array name="obfs_value">
         <item>plain</item>
         <item>http_simple</item>
         <item>http_post</item>
@@ -319,7 +319,7 @@
         <item>tls1.2_ticket_auth</item>
     </string-array>
 
-    <string-array name="networks_entry" translatable="false">
+    <string-array name="networks_entry">
         <item>TCP</item>
         <item>KCP</item>
         <item>WS</item>
@@ -328,7 +328,7 @@
         <item>GRPC</item>
     </string-array>
 
-    <string-array name="networks_value" translatable="false">
+    <string-array name="networks_value">
         <item>tcp</item>
         <item>kcp</item>
         <item>ws</item>
@@ -337,17 +337,17 @@
         <item>grpc</item>
     </string-array>
 
-    <string-array name="trojan_go_networks_entry" translatable="false">
+    <string-array name="trojan_go_networks_entry">
         <item>NONE</item>
         <item>WEBSOCKET</item>
     </string-array>
 
-    <string-array name="trojan_go_networks_value" translatable="false">
+    <string-array name="trojan_go_networks_value">
         <item>none</item>
         <item>ws</item>
     </string-array>
 
-    <string-array name="tcp_headers_entry" translatable="false">
+    <string-array name="tcp_headers_entry">
         <item>NONE</item>
         <item>HTTP</item>
     </string-array>
@@ -368,12 +368,12 @@
         <item>CHACHA20-IETF-POLY1305</item>
     </string-array>
 
-    <string-array name="tcp_headers_value" translatable="false">
+    <string-array name="tcp_headers_value">
         <item>none</item>
         <item>http</item>
     </string-array>
 
-    <string-array name="kcp_quic_headers_entry" translatable="false">
+    <string-array name="kcp_quic_headers_entry">
         <item>NONE</item>
         <item>SRTP</item>
         <item>UTP</item>
@@ -382,7 +382,7 @@
         <item>WIREGUARD</item>
     </string-array>
 
-    <string-array name="kcp_quic_headers_value" translatable="false">
+    <string-array name="kcp_quic_headers_value">
         <item>none</item>
         <item>srtp</item>
         <item>utp</item>
@@ -391,19 +391,19 @@
         <item>wireguard</item>
     </string-array>
 
-    <string-array name="quic_security_entry" translatable="false">
+    <string-array name="quic_security_entry">
         <item>CHACHA20-POLY1305</item>
         <item>AES-128-GCM</item>
         <item>NONE</item>
     </string-array>
 
-    <string-array name="quic_security_value" translatable="false">
+    <string-array name="quic_security_value">
         <item>chacha20-poly1305</item>
         <item>aes-128-gcm</item>
         <item>none</item>
     </string-array>
 
-    <string-array name="vmess_encryption_entry" translatable="false">
+    <string-array name="vmess_encryption_entry">
         <item>CHACHA20-POLY1305</item>
         <item>AES-128-GCM</item>
         <item>AUTO</item>
@@ -411,7 +411,7 @@
         <item>ZERO</item>
     </string-array>
 
-    <string-array name="vmess_encryption_value" translatable="false">
+    <string-array name="vmess_encryption_value">
         <item>chacha20-poly1305</item>
         <item>aes-128-gcm</item>
         <item>auto</item>
@@ -419,39 +419,39 @@
         <item>zero</item>
     </string-array>
 
-    <string-array name="vless_encryption_entry" translatable="false">
+    <string-array name="vless_encryption_entry">
         <item>NONE</item>
     </string-array>
 
-    <string-array name="vless_encryption_value" translatable="false">
+    <string-array name="vless_encryption_value">
         <item>none</item>
     </string-array>
 
-    <string-array name="transport_layer_encryption_entry" translatable="false">
+    <string-array name="transport_layer_encryption_entry">
         <item>NONE</item>
         <item>TLS</item>
     </string-array>
 
-    <string-array name="transport_layer_encryption_value" translatable="false">
-        <item>none</item>
-        <item>tls</item>
-    </string-array>
-
-    <string-array name="transport_layer_encryption_xray_entry" translatable="false">
-        <item>NONE</item>
-        <item>TLS</item>
-    </string-array>
-
-    <string-array name="transport_layer_encryption_xray_value" translatable="false">
+    <string-array name="transport_layer_encryption_value">
         <item>none</item>
         <item>tls</item>
     </string-array>
 
-    <string-array name="trojan_transport_layer_encryption_entry" translatable="false">
+    <string-array name="transport_layer_encryption_xray_entry">
+        <item>NONE</item>
         <item>TLS</item>
     </string-array>
 
-    <string-array name="trojan_transport_layer_encryption_value" translatable="false">
+    <string-array name="transport_layer_encryption_xray_value">
+        <item>none</item>
+        <item>tls</item>
+    </string-array>
+
+    <string-array name="trojan_transport_layer_encryption_entry">
+        <item>TLS</item>
+    </string-array>
+
+    <string-array name="trojan_transport_layer_encryption_value">
         <item>tls</item>
     </string-array>
 
@@ -463,7 +463,7 @@
         <item>10s</item>
     </string-array>
 
-    <string-array name="notification_value" translatable="false">
+    <string-array name="notification_value">
         <item>0</item>
         <item>500</item>
         <item>1000</item>
@@ -471,7 +471,7 @@
         <item>10000</item>
     </string-array>
 
-    <string-array name="domain_strategy" translatable="false">
+    <string-array name="domain_strategy">
         <item>AsIs</item>
         <item>IPIfNonMatch</item>
         <item>IPOnDemand</item>
@@ -482,7 +482,7 @@
         <item>@string/dm_mph</item>
     </string-array>
 
-    <string-array name="domain_matcher_value" translatable="false">
+    <string-array name="domain_matcher_value">
         <item>linear</item>
         <item>mph</item>
     </string-array>
@@ -532,6 +532,13 @@
         <item />
         <item>ws</item>
         <item>wss</item>
+    </string-array>
+
+    <string-array name="config_type_entry">
+        <item>V2Ray</item>
+    </string-array>
+    <string-array name="config_type_value">
+        <item>v2ray </item>
     </string-array>
 
 </resources>

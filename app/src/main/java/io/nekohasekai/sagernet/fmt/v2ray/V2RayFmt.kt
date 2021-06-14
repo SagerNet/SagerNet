@@ -25,7 +25,6 @@ import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseV2Ray(link: String): StandardV2RayBean {
     if (!link.contains("@")) {
@@ -37,16 +36,13 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     } else {
         VLESSBean()
     }
-    val url = link.replace("vmess://", "https://")
-        .replace("vless://", "https://")
-        .toHttpUrl()
+    val url = link.replace("vmess://", "https://").replace("vless://", "https://").toHttpUrl()
 
     bean.serverAddress = url.host
     bean.serverPort = url.port
     bean.name = url.fragment
 
-    if (url.password.isNotBlank()) {
-        // https://github.com/v2fly/v2fly-github-io/issues/26
+    if (url.password.isNotBlank()) { // https://github.com/v2fly/v2fly-github-io/issues/26
         (bean as VMessBean?) ?: error("Invalid vless url: $link")
 
         var protocol = url.username
@@ -112,8 +108,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 }
             }
         }
-    } else {
-        // https://github.com/XTLS/Xray-core/issues/91
+    } else { // https://github.com/XTLS/Xray-core/issues/91
 
         bean.uuid = url.username
         if (url.pathSegments.size > 1 || url.pathSegments[0].isNotBlank()) {
@@ -219,7 +214,7 @@ fun parseV2RayN(link: String): VMessBean {
 
     bean.serverAddress = json.getStr("add") ?: ""
     bean.serverPort = json.getInt("port") ?: 1080
-    bean.security = json.getStr("scy") ?: ""
+    bean.encryption = json.getStr("scy") ?: ""
     bean.uuid = json.getStr("id") ?: ""
     bean.alterId = json.getInt("aid") ?: 0
     bean.type = json.getStr("net") ?: ""
@@ -275,7 +270,7 @@ private fun parseCsvVMess(csv: String): VMessBean {
 
     bean.serverAddress = args[1]
     bean.serverPort = args[2].toInt()
-    bean.security = args[3]
+    bean.encryption = args[3]
     bean.uuid = args[4].replace("\"", "")
 
     args.subList(5, args.size).forEach {
@@ -286,14 +281,10 @@ private fun parseCsvVMess(csv: String): VMessBean {
             it.startsWith("obfs=") -> bean.type = it.substringAfter("=")
             it.startsWith("obfs-path=") || it.contains("Host:") -> {
                 runCatching {
-                    bean.path = it
-                        .substringAfter("obfs-path=\"")
-                        .substringBefore("\"obfs")
+                    bean.path = it.substringAfter("obfs-path=\"").substringBefore("\"obfs")
                 }
                 runCatching {
-                    bean.host = it
-                        .substringAfter("Host:")
-                        .substringBefore("[")
+                    bean.host = it.substringAfter("Host:").substringBefore("[")
                 }
 
             }
@@ -322,7 +313,7 @@ fun VMessBean.toV2rayN(): String {
         it["path"] = path
         it["tls"] = if (security == "tls") "tls" else ""
         it["sni"] = sni
-        it["scy"] = security
+        it["scy"] = encryption
 
     }.toString().let { Base64.encodeUrlSafe(it) }
 
@@ -331,8 +322,7 @@ fun VMessBean.toV2rayN(): String {
 fun StandardV2RayBean.toUri(standard: Boolean = true): String {
     if (this is VMessBean && alterId > 0) return toV2rayN()
 
-    val builder = linkBuilder()
-        .username(uuid)
+    val builder = linkBuilder().username(uuid)
         .host(serverAddress)
         .port(serverPort)
         .addQueryParameter("type", type)

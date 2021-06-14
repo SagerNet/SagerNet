@@ -138,8 +138,9 @@
     <string name="early_data_header_name">Early Data Header Name</string>
 
     <string name="encryption">Encryption</string>
-
     <string name="extra_headers">Extra Headers</string>
+
+    <string name="config_type">Config Type</string>
 
     <!-- feature category -->
     <string name="ipv6_settings">IPv6 Settings</string>
@@ -237,6 +238,7 @@
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="chain_settings">Chain Settings</string>
+    <string name="config_settings">Config Settings</string>
     <string name="circular_reference">Circular reference</string>
     <string name="circular_reference_sum">The route cannot contain itself.</string>
     <string name="clear_profiles">Clear</string>

@@ -293,7 +293,7 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle') }}
       - name: Debug Build
         run: |
-          git submodule update --init library/v2ray
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+          ./run init library
           ./gradlew app:assembleOssDebug

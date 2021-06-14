@@ -98,6 +98,7 @@
         <activity android:name="io.nekohasekai.sagernet.ui.profile.RelayBatonSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.BrookSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity" />
+        <activity android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity" />
         <activity android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity" />
 
         <activity

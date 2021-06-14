@@ -206,7 +206,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeReverse by profileCacheStore.boolean(Key.ROUTE_REVERSE)
     var routeRedirect by profileCacheStore.string(Key.ROUTE_REDIRECT)
 
+    var serverConfig by profileCacheStore.string("serverConfig")
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
+    var dnsModeFinal by profileCacheStore.int("dnsModeFinal")
+    var systemDnsFinal by profileCacheStore.string("systemDnsFinal")
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {

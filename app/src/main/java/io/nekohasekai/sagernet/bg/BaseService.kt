@@ -29,6 +29,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.RemoteCallbackList
 import android.os.RemoteException
+import cn.hutool.json.JSONException
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.BootReceiver
 import io.nekohasekai.sagernet.R
@@ -314,7 +315,11 @@ class BaseService {
                 try {
                     Executable.killAll()    // clean up old processes
                     preInit()
-                    proxy.init(this@Interface)
+                    try {
+                        proxy.init(this@Interface)
+                    } catch (jsonEx: JSONException) {
+                        error(jsonEx.readableMessage.replace("cn.hutool.json.", ""))
+                    }
                     data.processes = GuardedProcessPool {
                         Logs.w(it)
                         stopRunner(false, it.readableMessage)

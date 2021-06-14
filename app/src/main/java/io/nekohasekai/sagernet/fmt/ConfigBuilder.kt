@@ -23,6 +23,9 @@ package io.nekohasekai.sagernet.fmt
 
 import android.os.Build
 import cn.hutool.core.util.NumberUtil
+import cn.hutool.json.JSONArray
+import cn.hutool.json.JSONObject
+import com.google.gson.JsonSyntaxException
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.bg.VpnService
@@ -30,6 +33,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.chain.ChainBean
+import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -39,14 +43,13 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.formatObject
 import io.nekohasekai.sagernet.ktx.isIpAddress
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashMap
 
-const val TAG_SOCKS = "in"
+const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
 const val TAG_TRANS = "trans"
 
@@ -58,12 +61,16 @@ const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
 class V2rayBuildResult(
-    var config: V2RayConfig,
+    var config: String,
     var index: ArrayList<LinkedHashMap<Int, ProxyEntity>>,
     var requireWs: Boolean,
+    var outboundTags: ArrayList<String>,
+    var directTag: String
 )
 
 fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
+
+    val outboundTags = ArrayList<String>()
 
     fun ProxyEntity.resolveChain(): MutableList<ProxyEntity> {
         val bean = requireBean()
@@ -86,6 +93,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
 
     val dnsMode = DataStore.dnsMode
+    DataStore.dnsModeFinal = dnsMode
     val systemDns = DataStore.systemDns.split("\n")
     val localDns = DataStore.localDns.split("\n")
     val domesticDns = DataStore.domesticDns.split("\n")
@@ -96,6 +104,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = ArrayList<LinkedHashMap<Int, ProxyEntity>>()
     var requireWs = false
+    val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
+    val requireTransproxy = DataStore.requireTransproxy
 
     return V2RayConfig().apply {
 
@@ -106,6 +116,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             servers = mutableListOf()
 
             if (dnsMode == DnsMode.SYSTEM) {
+                DataStore.systemDnsFinal = systemDns.joinToString("\n")
                 servers.addAll(systemDns.map {
                     DnsObject.StringOrServerObject().apply {
                         valueX = it
@@ -180,7 +191,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
         })
 
-        val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
         if (requireHttp) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_HTTP
@@ -206,7 +216,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             })
         }
 
-        val requireTransproxy = DataStore.requireTransproxy
         if (requireTransproxy) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_TRANS
@@ -292,6 +301,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         fun requirePort() = currentPort++
 
         fun buildChain(tagInbound: String, profileList: List<ProxyEntity>) {
+            outboundTags.add(tagInbound)
+
             var pastExternal = false
             lateinit var pastOutbound: OutboundObject
             val chainMap = LinkedHashMap<Int, ProxyEntity>()
@@ -352,8 +363,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                             port = bean.serverPort
                                             if (!bean.username.isNullOrBlank()) {
                                                 users =
-                                                    listOf(SocksOutboundConfigurationObject.ServerObject
-                                                        .UserObject().apply {
+                                                    listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
+                                                        .apply {
                                                             user = bean.username
                                                             pass = bean.password
                                                         })
@@ -388,11 +399,12 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                             address = bean.serverAddress
                                             port = bean.serverPort
                                             if (!bean.username.isNullOrBlank()) {
-                                                users = listOf(HTTPInboundConfigurationObject
-                                                    .AccountObject().apply {
-                                                        user = bean.username
-                                                        pass = bean.password
-                                                    })
+                                                users =
+                                                    listOf(HTTPInboundConfigurationObject.AccountObject()
+                                                        .apply {
+                                                            user = bean.username
+                                                            pass = bean.password
+                                                        })
                                             }
                                         })
                                 })
@@ -420,14 +432,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                 settings = LazyOutboundConfigurationObject(
                                     this,
                                     VMessOutboundConfigurationObject().apply {
-                                        vnext =
-                                            listOf(VMessOutboundConfigurationObject.ServerObject()
-                                                .apply {
+                                        vnext = listOf(
+                                            VMessOutboundConfigurationObject.ServerObject().apply {
                                                     address = bean.serverAddress
                                                     port = bean.serverPort
                                                     users =
-                                                        listOf(VMessOutboundConfigurationObject.ServerObject
-                                                            .UserObject().apply {
+                                                        listOf(VMessOutboundConfigurationObject.ServerObject.UserObject()
+                                                            .apply {
                                                                 id = bean.uuidOrGenerate()
                                                                 alterId = bean.alterId
                                                                 security =
@@ -442,14 +453,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                 settings = LazyOutboundConfigurationObject(
                                     this,
                                     VLESSOutboundConfigurationObject().apply {
-                                        vnext =
-                                            listOf(VLESSOutboundConfigurationObject.ServerObject()
-                                                .apply {
+                                        vnext = listOf(
+                                            VLESSOutboundConfigurationObject.ServerObject().apply {
                                                     address = bean.serverAddress
                                                     port = bean.serverPort
                                                     users =
-                                                        listOf(VLESSOutboundConfigurationObject.ServerObject
-                                                            .UserObject().apply {
+                                                        listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
+                                                            .apply {
                                                                 id = bean.uuidOrGenerate()
                                                                 encryption = bean.encryption
                                                                 level = 8
@@ -498,23 +508,27 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                                 header = TcpObject.HeaderObject().apply {
                                                     type = "http"
                                                     if (bean.host.isNotBlank() || bean.path.isNotBlank()) {
-                                                        request = TcpObject.HeaderObject
-                                                            .HTTPRequestObject().apply {
-                                                                headers = mutableMapOf()
-                                                                if (bean.host.isNotBlank()) {
-                                                                    headers["Host"] =
-                                                                        TcpObject.HeaderObject
-                                                                            .StringOrListObject()
-                                                                            .apply {
-                                                                                valueY = bean.host
-                                                                                    .split(",")
-                                                                                    .map { it.trim() }
-                                                                            }
+                                                        request =
+                                                            TcpObject.HeaderObject.HTTPRequestObject()
+                                                                .apply {
+                                                                    headers = mutableMapOf()
+                                                                    if (bean.host.isNotBlank()) {
+                                                                        headers["Host"] =
+                                                                            TcpObject.HeaderObject.StringOrListObject()
+                                                                                .apply {
+                                                                                    valueY =
+                                                                                        bean.host.split(
+                                                                                            ","
+                                                                                        )
+                                                                                            .map { it.trim() }
+                                                                                }
+                                                                    }
+                                                                    if (bean.path.isNotBlank()) {
+                                                                        path = bean.path.split(
+                                                                            ","
+                                                                        )
+                                                                    }
                                                                 }
-                                                                if (bean.path.isNotBlank()) {
-                                                                    path = bean.path.split(",")
-                                                                }
-                                                            }
                                                     }
                                                 }
                                             }
@@ -557,8 +571,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                             }
                                         }
                                     }
-                                    "http", "h2" -> {
-                                        network = "h2"
+                                    "http" -> {
+                                        network = "http"
 
                                         httpSettings = HttpObject().apply {
                                             if (bean.host.isNotBlank()) {
@@ -691,6 +705,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     pastOutbound = outbound
                     outbounds.add(outbound)
                 }
+
             }
         }
 
@@ -787,12 +802,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             tag = TAG_BLOCK
             protocol = "blackhole"
 
-            settings = LazyOutboundConfigurationObject(
-                this,
-                BlackholeOutboundConfigurationObject().apply {
+            settings =
+                LazyOutboundConfigurationObject(this, BlackholeOutboundConfigurationObject().apply {
                     response = BlackholeOutboundConfigurationObject.ResponseObject().apply {
-                            type = "http"
-                        }
+                        type = "http"
+                    }
                 })
         })
 
@@ -925,7 +939,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
             if (dnsMode == DnsMode.FAKEDNS_LOCAL) { //                val domainsToRoute = dns.servers.flatMap { it.valueY?.domains ?: listOf() }
                 //                    .toHashSet().toList()
-                dns.servers.add(0, /*if (domainsToRoute.isNotEmpty()) {
+                dns.servers.add(
+                    0, /*if (domainsToRoute.isNotEmpty()) {
                     DnsObject.StringOrServerObject().apply {
                         valueY = DnsObject.ServerObject().apply {
                             address = "fakedns"
@@ -935,7 +950,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 } else {*/
                     DnsObject.StringOrServerObject().apply {
                         valueX = "fakedns"
-                    }/*}*/)
+                    }/*}*/
+                )
             }
 
             routing.rules.add(0, RoutingObject.RuleObject().apply {
@@ -949,8 +965,282 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
     }.let {
         V2rayBuildResult(
-            it, indexMap, requireWs
+            gson.toJson(it), indexMap, requireWs, outboundTags, TAG_DIRECT
         )
     }
+
+}
+
+fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
+
+    val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
+    val trafficSniffing = DataStore.trafficSniffing
+
+    val bean = proxy.configBean!!
+
+    val config = JSONObject(bean.content)
+    val inbounds = config.getJSONArray("inbounds")?.filterIsInstance<JSONObject>()
+        ?.map { gson.fromJson(it.toString(), InboundObject::class.java) }?.toMutableList()
+        ?: ArrayList()
+
+    val dnsArr = config.getJSONObject("dns")?.getJSONArray("servers")
+        ?.map { gson.fromJson(it.toString(), DnsObject.StringOrServerObject::class.java) }
+    val ipv6Route = DataStore.ipv6Route
+    var useFakeDns = false
+
+    val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
+    val requireTransproxy = DataStore.requireTransproxy
+
+    val dnsInbound = inbounds.find { it.tag == TAG_DNS_IN }?.also {
+        it.listen = bind
+        it.port = DataStore.localDNSPort
+
+        if (dnsArr?.any { it.valueX == "fakedns" } == true) {
+            DataStore.dnsModeFinal = DnsMode.FAKEDNS_LOCAL
+            useFakeDns = true
+
+            config.set("fakedns", JSONArray(
+                listOf(
+                    JSONObject(gson.toJson(FakeDnsObject().apply {
+                        ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
+                        poolSize = 65535
+                    }))
+                )
+            ).apply {
+                if (ipv6Route) {
+                    add(JSONObject(gson.toJson(FakeDnsObject().apply {
+                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
+                        poolSize = 65535
+                    })))
+                }
+            })
+        } else {
+            DataStore.dnsModeFinal = DnsMode.LOCAL
+        }
+    }
+
+    if (dnsInbound == null) {
+        DataStore.dnsModeFinal = DnsMode.SYSTEM
+
+        val dns = dnsArr?.filter {
+            it.valueX.isIpAddress() || (it.valueY != null && it.valueY.address.isIpAddress() && (it.valueY.port in arrayOf(
+                null, 53
+            )) && it.valueY.domains.isNullOrEmpty() && it.valueY.expectIPs.isNullOrEmpty())
+        }?.map { it.valueX ?: it.valueY.address }
+
+        if (dns.isNullOrEmpty()) {
+            DataStore.systemDnsFinal = DataStore.systemDns
+        } else {
+            DataStore.systemDnsFinal = dns.joinToString("\n")
+        }
+    }
+
+    var socksInbound = inbounds.find { it.tag == TAG_SOCKS }?.apply {
+        if (protocol != "socks") error("Inbound $tag with type $protocol, excepted socks.")
+    }
+
+    if (socksInbound == null) {
+        val socksInbounds = inbounds.filter { it.protocol == "socks" }
+        if (socksInbounds.size == 1) {
+            socksInbound = socksInbounds[0]
+        }
+    }
+
+    if (socksInbound != null) {
+        socksInbound.apply {
+            listen = bind
+            port = DataStore.socksPort
+        }
+    } else {
+        inbounds.add(InboundObject().apply {
+
+            tag = TAG_SOCKS
+            listen = bind
+            port = DataStore.socksPort
+            protocol = "socks"
+            settings =
+                LazyInboundConfigurationObject(this, SocksInboundConfigurationObject().apply {
+                    auth = "noauth"
+                    udp = true
+                    userLevel = 8
+                })
+            if (trafficSniffing) {
+                sniffing = InboundObject.SniffingObject().apply {
+                    enabled = true
+                    destOverride = if (useFakeDns) {
+                        listOf("fakedns", "http", "tls")
+                    } else {
+                        listOf("http", "tls")
+                    }
+                    metadataOnly = false
+                }
+            }
+        })
+    }
+
+    if (requireHttp) {
+
+        var httpInbound = inbounds.find { it.tag == TAG_HTTP }?.apply {
+            if (protocol != "http") error("Inbound $tag with type $protocol, excepted http.")
+
+        }
+
+        if (httpInbound == null) {
+            val httpInbounds = inbounds.filter { it.protocol == "http" }
+            if (httpInbounds.size == 1) {
+                httpInbound = httpInbounds[0]
+            }
+        }
+
+        if (httpInbound != null) {
+            httpInbound.apply {
+                listen = bind
+                port = DataStore.socksPort
+            }
+        } else {
+            inbounds.add(InboundObject().apply {
+
+                tag = TAG_HTTP
+                listen = bind
+                port = DataStore.httpPort
+                protocol = "http"
+                settings =
+                    LazyInboundConfigurationObject(this, HTTPInboundConfigurationObject().apply {
+                        allowTransparent = true
+                        userLevel = 8
+                    })
+                if (trafficSniffing) {
+                    sniffing = InboundObject.SniffingObject().apply {
+                        enabled = true
+                        destOverride = if (useFakeDns) {
+                            listOf("fakedns", "http", "tls")
+                        } else {
+                            listOf("http", "tls")
+                        }
+                        metadataOnly = false
+                    }
+                }
+            })
+        }
+
+    }
+
+    if (requireTransproxy) {
+
+        val transInbound = inbounds.find { it.tag == TAG_TRANS }?.apply {
+            if (protocol != "dokodemo-door") error("Inbound $tag with type $protocol, excepted dokodemo-door.")
+            listen = bind
+            port = DataStore.transproxyPort
+        }
+
+        if (transInbound == null) {
+
+            inbounds.add(InboundObject().apply {
+                tag = TAG_TRANS
+                listen = bind
+                port = DataStore.transproxyPort
+                protocol = "dokodemo-door"
+                settings = LazyInboundConfigurationObject(
+                    this,
+                    DokodemoDoorInboundConfigurationObject().apply {
+                        network = "tcp,udp"
+                        followRedirect = true
+                        userLevel = 8
+                    })
+                if (trafficSniffing) {
+                    sniffing = InboundObject.SniffingObject().apply {
+                        enabled = true
+                        destOverride = if (useFakeDns) {
+                            listOf("fakedns", "http", "tls")
+                        } else {
+                            listOf("http", "tls")
+                        }
+                        metadataOnly = false
+                    }
+                }
+                when (DataStore.transproxyMode) {
+                    1 -> streamSettings = StreamSettingsObject().apply {
+                        sockopt = StreamSettingsObject.SockoptObject().apply {
+                            tproxy = "tproxy"
+                        }
+                    }
+                }
+            })
+
+        }
+
+    }
+
+    inbounds.forEach { it.init() }
+    config.set("inbounds", JSONArray(inbounds.map { JSONObject(gson.toJson(it)) }))
+
+    config.set("stats", JSONObject())
+    config.getOrPut("policy") {
+        JSONObject().apply {
+            set("system", JSONObject(gson.toJson(PolicyObject.SystemPolicyObject().apply {
+                statsOutboundDownlink = true
+                statsOutboundUplink = true
+            })))
+        }
+    }
+
+    var requireWs = false
+    if (config.contains("browserForwarder")) {
+        config.set("browserForwarder", JSONObject(gson.toJson(BrowserForwarderObject().apply {
+            requireWs = true
+            listenAddr = "127.0.0.1"
+            listenPort = DataStore.socksPort + 1
+        })))
+    }
+
+    val outbounds = try {
+        config.getJSONArray("outbounds")?.filterIsInstance<JSONObject>()?.map {
+            gson.fromJson(it.toString().takeIf { it.isNotBlank() } ?: "{}",
+                OutboundObject::class.java)
+        }?.toMutableList()
+    } catch (e: JsonSyntaxException) {
+        null
+    }
+    var flushOutbounds = false
+
+    val outboundTags = ArrayList<String>()
+    val firstOutbound = outbounds?.get(0)
+    if (firstOutbound != null) {
+        if (firstOutbound.tag == null) {
+            firstOutbound.tag = TAG_AGENT
+            outboundTags.add(TAG_AGENT)
+            flushOutbounds = true
+        } else {
+            outboundTags.add(firstOutbound.tag)
+        }
+    }
+
+    var directTag = ""
+    val directOutbounds = outbounds?.filter { it.protocol == "freedom" }
+    if (!directOutbounds.isNullOrEmpty()) {
+        val directOutbound = if (directOutbounds.size == 1) {
+            directOutbounds[0]
+        } else {
+            val directOutboundsWithTag = directOutbounds.filter { it.tag != null }
+            if (directOutboundsWithTag.isNotEmpty()) {
+                directOutboundsWithTag[0]
+            } else {
+                directOutbounds[0]
+            }
+        }
+        if (directOutbound.tag.isNullOrBlank()) {
+            directOutbound.tag = TAG_DIRECT
+            flushOutbounds = true
+        }
+        directTag = directOutbound.tag
+    }
+
+    if (flushOutbounds) {
+        config.set("outbounds", JSONArray(outbounds!!.map { JSONObject(gson.toJson(it)) }))
+    }
+
+    return V2rayBuildResult(
+        config.toStringPretty(), ArrayList(), requireWs, outboundTags, directTag
+    )
 
 }

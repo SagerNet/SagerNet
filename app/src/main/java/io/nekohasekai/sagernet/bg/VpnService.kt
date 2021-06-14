@@ -139,7 +139,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             .setSession(profile.displayName())
             .setMtu(VPN_MTU)
             .addAddress(PRIVATE_VLAN4_CLIENT, 30)
-        val useFakeDns = DataStore.dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+        val useFakeDns = DataStore.dnsModeFinal in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
 
         if (useFakeDns) {
             builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
@@ -173,7 +173,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         // https://issuetracker.google.com/issues/149636790
 
-        val useSystemDns = DataStore.dnsMode == DnsMode.SYSTEM
+        val useSystemDns = DataStore.dnsModeFinal == DnsMode.SYSTEM
 
         val me = packageName
         if (DataStore.proxyApps) {
@@ -194,7 +194,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         }
 
         if (useSystemDns) {
-            DataStore.systemDns.split("\n").forEach {
+            DataStore.systemDnsFinal.split("\n").forEach {
                 builder.addDnsServer(it)
             }
         } else {

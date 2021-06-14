@@ -222,10 +222,10 @@ fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
         it["local_udp_address"] = "127.0.0.1"
         it["local_udp_port"] = port
         it["mode"] = "tcp_and_udp"
-        if (DataStore.dnsMode != DnsMode.SYSTEM) {
+        if (DataStore.dnsModeFinal != DnsMode.SYSTEM) {
             it["dns"] = "127.0.0.1:${DataStore.localDNSPort}"
         } else {
-            it["dns"] = DataStore.systemDns
+            it["dns"] = DataStore.systemDnsFinal
         }
 
         if (DataStore.ipv6Route && DataStore.preferIpv6) {

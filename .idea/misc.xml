@@ -9,6 +9,8 @@
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/layout/layout_chain_settings.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_config_settings.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_edit_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group_item.xml" value="0.32135416666666666" />
@@ -25,11 +27,17 @@
         <entry key="app/src/main/res/menu/profile_config_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/brook_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/chain_preferences.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/xml/config_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/global_preferences.xml" value="1.0" />
         <entry key="app/src/main/res/xml/http_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/route_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/standard_v2ray_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/trojan_preferences.xml" value="0.192481884057971" />
+        <entry key="external/editorkit/app/src/main/res/layout/activity_main.xml" value="0.2636752136752137" />
+        <entry key="external/editorkit/features/feature-editor/src/main/res/drawable/autocomplete_bg.xml" value="0.2315" />
+        <entry key="external/editorkit/features/feature-editor/src/main/res/layout/dialog_save_as.xml" value="0.2636752136752137" />
+        <entry key="external/editorkit/features/feature-editor/src/main/res/layout/fragment_editor.xml" value="0.2636752136752137" />
+        <entry key="external/editorkit/features/feature-editor/src/main/res/layout/item_keyboard_key.xml" value="0.2636752136752137" />
         <entry key="naive-plugin/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.20925925925925926" />
       </map>
     </option>

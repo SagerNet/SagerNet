@@ -270,6 +270,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
+            R.id.action_new_config -> {
+                startActivity(Intent(requireActivity(), ConfigSettingsActivity::class.java))
+            }
             R.id.action_export_clipboard -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
@@ -815,7 +818,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         it.context.startActivity(proxyEntity.settingIntent(it.context, proxyGroup.isSubscription))
                     }
 
-                    shareLayout.isGone = select || proxyEntity.type == 8
+                    shareLayout.isGone = select || !proxyEntity.haveLink()
                     editButton.isGone = select
 
                     runOnDefaultDispatcher {

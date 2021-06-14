@@ -235,6 +235,14 @@ data class ProxyEntity(
         } ?: error("Null ${displayType()} profile")
     }
 
+    fun haveLink(): Boolean {
+        return when (type) {
+            TYPE_CHAIN -> false
+            TYPE_CONFIG -> false
+            else -> true
+        }
+    }
+
     fun toLink(): String? = with(requireBean()) {
         when (this) {
             is SOCKSBean -> toUri()
@@ -268,6 +276,7 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> true
             TYPE_RELAY_BATON -> true
             TYPE_BROOK -> true
+            TYPE_CONFIG -> false
             else -> error("Undefined type $type")
         }
     }
@@ -392,6 +401,7 @@ data class ProxyEntity(
                 TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
                 TYPE_BROOK -> BrookSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
+                TYPE_CONFIG -> ConfigSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {

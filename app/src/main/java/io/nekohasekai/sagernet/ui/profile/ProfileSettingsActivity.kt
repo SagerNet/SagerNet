@@ -141,7 +141,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
     }
 
-    suspend fun saveAndExit() {
+    open suspend fun saveAndExit() {
 
         val editingId = DataStore.editingId
         if (editingId == 0L) {

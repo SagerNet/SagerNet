@@ -48,6 +48,7 @@ public class ChainBean extends AbstractBean {
 
     @Override
     public void initDefaultValues() {
+        super.initDefaultValues();
         if (name == null) name = "";
 
         if (proxies == null) {
@@ -76,6 +77,7 @@ public class ChainBean extends AbstractBean {
         for (int i = 0; i < length; i++) {
             proxies.add(input.readLong());
         }
+        initDefaultValues();
     }
 
     @NotNull

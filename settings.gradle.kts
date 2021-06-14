@@ -14,10 +14,15 @@ include(":external:preferencex-simplemenu")
 include(":external:flexbox")
 include(":external:colorpicker")
 include(":external:preferencex-colorpicker")
+include(":external:editor")
 
 includeBuild("external/editorkit") {
+    name = "editorkit"
     dependencySubstitution {
-        substitute(module("com.blacksquircle.ui:editorkit:2.0.0")).with(project(":editorkit"))
+        substitute(module("editorkit:editorkit:2.0.0")).with(project(":editorkit"))
+        substitute(module("editorkit:feature-editor:2.0.0")).with(project(":features:feature-editor"))
+        substitute(module("editorkit:language-json:2.0.0")).with(project(":languages:language-json"))
+
     }
 }
 

@@ -45,8 +45,10 @@ public class ConfigBean extends AbstractBean {
 
     @Override
     public void initDefaultValues() {
+        super.initDefaultValues();
         if (name == null) name = "";
         if (type == null) type = "v2ray";
+        if (content == null) content = "{}";
     }
 
     @Override
@@ -63,6 +65,8 @@ public class ConfigBean extends AbstractBean {
 
         type = input.readString();
         content = input.readString();
+
+        initDefaultValues();
     }
 
     @NonNull

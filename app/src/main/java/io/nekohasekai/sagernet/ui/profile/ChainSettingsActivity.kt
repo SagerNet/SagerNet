@@ -74,7 +74,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.chain_preferences)
+        addPreferencesFromResource(R.xml.name_preferences)
     }
 
     lateinit var configurationList: RecyclerView

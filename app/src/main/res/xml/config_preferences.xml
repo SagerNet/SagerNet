@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:icon="@drawable/ic_social_emoji_symbols"
+        app:key="profileName"
+        app:title="@string/profile_name"
+        app:useSimpleSummaryProvider="true" />
+
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:defaultValue="v2ray"
+        app:entries="@array/config_type_entry"
+        app:entryValues="@array/config_type_value"
+        app:icon="@drawable/ic_baseline_nfc_24"
+        app:key="serverConfigType"
+        app:title="@string/config_type"
+        app:useSimpleSummaryProvider="true" />
+
+</PreferenceScreen>

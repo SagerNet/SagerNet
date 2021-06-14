@@ -80,8 +80,9 @@ dependencies {
     kapt("com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4")
 
     implementation("com.esotericsoftware:kryo:5.1.1")
-
-    implementation("com.blacksquircle.ui:editorkit:2.0.0")
+    implementation("editorkit:editorkit:2.0.0")
+    implementation("editorkit:feature-editor:2.0.0")
+    implementation("editorkit:language-json:2.0.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }

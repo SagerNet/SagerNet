@@ -36,8 +36,8 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
+import io.nekohasekai.sagernet.fmt.buildCustomConfig
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
-import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
@@ -83,8 +83,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(
             SagerSupportClass(
-                if (service is VpnService)
-                    service else null
+                if (service is VpnService) service else null
             ), false
         )
         val socksPort = DataStore.socksPort + 10
@@ -93,69 +92,75 @@ class ProxyInstance(val profile: ProxyEntity) {
         } else {
             v2rayPoint.domainName = profile.urlFixed()
         }
-        config = buildV2RayConfig(profile)
 
-        val jsonContent = gson.toJson(config.config).also {
-            Logs.d(it)
-        }
+        if (profile.type != ProxyEntity.TYPE_CONFIG) {
+            config = buildV2RayConfig(profile)
+            Logs.d(config.config)
 
-        Libv2ray.testConfig(jsonContent)
-        v2rayPoint.configureFileContent = jsonContent
-        for (chain in config.index) {
-            chain.entries.forEachIndexed { index, (port, profile) ->
-                val needChain = index != chain.size - 1
-                val bean = profile.requireBean()
-                when {
-                    profile.useExternalShadowsocks() -> {
-                        bean as ShadowsocksBean
-                        pluginConfigs[port] = bean.buildShadowsocksConfig(port).also {
-                            Logs.d(it)
+            Libv2ray.testConfig(config.config)
+            v2rayPoint.configureFileContent = config.config
+
+            for (chain in config.index) {
+                chain.entries.forEachIndexed { index, (port, profile) ->
+                    val needChain = index != chain.size - 1
+                    val bean = profile.requireBean()
+                    when {
+                        profile.useExternalShadowsocks() -> {
+                            bean as ShadowsocksBean
+                            pluginConfigs[port] = bean.buildShadowsocksConfig(port).also {
+                                Logs.d(it)
+                            }
                         }
-                    }
-                    bean is ShadowsocksRBean -> {
-                        pluginConfigs[port] = bean.buildShadowsocksRConfig().also {
-                            Logs.d(it)
+                        bean is ShadowsocksRBean -> {
+                            pluginConfigs[port] = bean.buildShadowsocksRConfig().also {
+                                Logs.d(it)
+                            }
                         }
-                    }
-                    bean is TrojanGoBean -> {
-                        initPlugin("trojan-go-plugin")
-                        pluginConfigs[port] =
-                            bean.buildTrojanGoConfig(port, needChain, index).also {
+                        bean is TrojanGoBean -> {
+                            initPlugin("trojan-go-plugin")
+                            pluginConfigs[port] =
+                                bean.buildTrojanGoConfig(port, needChain, index).also {
+                                    Logs.d(it)
+                                }
+                        }
+                        bean is NaiveBean -> {
+                            initPlugin("naive-plugin")
+                            pluginConfigs[port] = bean.buildNaiveConfig(port).also {
                                 Logs.d(it)
                             }
-                    }
-                    bean is NaiveBean -> {
-                        initPlugin("naive-plugin")
-                        pluginConfigs[port] =
-                            bean.buildNaiveConfig(port).also {
+                        }
+                        bean is PingTunnelBean -> {
+                            initPlugin("pingtunnel-plugin")
+                        }
+                        bean is RelayBatonBean -> {
+                            initPlugin("relaybaton-plugin")
+                            pluginConfigs[port] = bean.buildRelayBatonConfig(port).also {
                                 Logs.d(it)
                             }
-                    }
-                    bean is PingTunnelBean -> {
-                        initPlugin("pingtunnel-plugin")
-                    }
-                    bean is RelayBatonBean -> {
-                        initPlugin("relaybaton-plugin")
-                        pluginConfigs[port] =
-                            bean.buildRelayBatonConfig(port).also {
-                                Logs.d(it)
-                            }
-                    }
-                    bean is BrookBean -> {
-                        initPlugin("brook-plugin")
+                        }
+                        bean is BrookBean -> {
+                            initPlugin("brook-plugin")
+                        }
                     }
                 }
             }
+
+        } else {
+            config = buildCustomConfig(profile)
+            Logs.d(config.config)
+
+            Libv2ray.testConfig(config.config)
+            v2rayPoint.configureFileContent = config.config
         }
     }
 
     var cacheFiles = ArrayList<File>()
 
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    @SuppressLint("SetJavaScriptEnabled")
     fun start() {
         val context =
-            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked)
-                SagerNet.application else SagerNet.deviceStorage
+            if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
 
         for (chain in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
@@ -165,11 +170,12 @@ class ProxyInstance(val profile: ProxyEntity) {
 
                 when {
                     profile.useExternalShadowsocks() -> {
-                        val configFile =
-                            File(
-                                context.noBackupFilesDir,
-                                "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
-                            )
+                        if (needChain) error("shadowsocks-rust is incompatible with chain")
+
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
+                        )
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
@@ -177,37 +183,16 @@ class ProxyInstance(val profile: ProxyEntity) {
                             File(
                                 SagerNet.application.applicationInfo.nativeLibraryDir,
                                 Executable.SS_LOCAL
-                            ).absolutePath,
-                            "-c", configFile.absolutePath
+                            ).absolutePath, "-c", configFile.absolutePath
                         )
 
-                        val env = mutableMapOf<String, String>()
-
-                        if (needChain) {
-                            val proxychainsConfigFile =
-                                File(
-                                    context.noBackupFilesDir,
-                                    "proxychains_ss_" + SystemClock.elapsedRealtime() + ".json"
-                                )
-                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                            cacheFiles.add(proxychainsConfigFile)
-
-                            env["LD_PRELOAD"] =
-                                File(
-                                    SagerNet.application.applicationInfo.nativeLibraryDir,
-                                    Executable.PROXYCHAINS
-                                ).absolutePath
-                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
-                        }
-
-                        base.data.processes!!.start(commands, env)
+                        base.data.processes!!.start(commands)
                     }
                     bean is ShadowsocksRBean -> {
-                        val configFile =
-                            File(
-                                context.noBackupFilesDir,
-                                "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json"
-                            )
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json"
+                        )
 
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
@@ -217,27 +202,29 @@ class ProxyInstance(val profile: ProxyEntity) {
                                 SagerNet.application.applicationInfo.nativeLibraryDir,
                                 Executable.SSR_LOCAL
                             ).absolutePath,
-                            "-b", "127.0.0.1",
-                            "-c", configFile.absolutePath,
-                            "-l", "$port", "-u"
+                            "-b",
+                            "127.0.0.1",
+                            "-c",
+                            configFile.absolutePath,
+                            "-l",
+                            "$port",
+                            "-u"
                         )
 
                         val env = mutableMapOf<String, String>()
 
                         if (needChain) {
-                            val proxychainsConfigFile =
-                                File(
-                                    context.noBackupFilesDir,
-                                    "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
-                                )
+                            val proxychainsConfigFile = File(
+                                context.noBackupFilesDir,
+                                "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
+                            )
                             proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
                             cacheFiles.add(proxychainsConfigFile)
 
-                            env["LD_PRELOAD"] =
-                                File(
-                                    SagerNet.application.applicationInfo.nativeLibraryDir,
-                                    Executable.PROXYCHAINS
-                                ).absolutePath
+                            env["LD_PRELOAD"] = File(
+                                SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.PROXYCHAINS
+                            ).absolutePath
                             env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
                         }
 
@@ -259,11 +246,10 @@ class ProxyInstance(val profile: ProxyEntity) {
                         base.data.processes!!.start(commands)
                     }
                     bean is NaiveBean -> {
-                        val configFile =
-                            File(
-                                context.noBackupFilesDir,
-                                "naive_" + SystemClock.elapsedRealtime() + ".json"
-                            )
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "naive_" + SystemClock.elapsedRealtime() + ".json"
+                        )
 
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
@@ -275,19 +261,17 @@ class ProxyInstance(val profile: ProxyEntity) {
                         val env = mutableMapOf<String, String>()
 
                         if (needChain) {
-                            val proxychainsConfigFile =
-                                File(
-                                    context.noBackupFilesDir,
-                                    "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
-                                )
+                            val proxychainsConfigFile = File(
+                                context.noBackupFilesDir,
+                                "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
+                            )
                             proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
                             cacheFiles.add(proxychainsConfigFile)
 
-                            env["LD_PRELOAD"] =
-                                File(
-                                    SagerNet.application.applicationInfo.nativeLibraryDir,
-                                    Executable.PROXYCHAINS
-                                ).absolutePath
+                            env["LD_PRELOAD"] = File(
+                                SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.PROXYCHAINS
+                            ).absolutePath
                             env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
                         }
 
@@ -298,10 +282,14 @@ class ProxyInstance(val profile: ProxyEntity) {
 
                         val commands = mutableListOf(
                             initPlugin("pingtunnel-plugin").path,
-                            "-type", "client",
-                            "-sock5", "1",
-                            "-l", "127.0.0.1:$port",
-                            "-s", bean.serverAddress
+                            "-type",
+                            "client",
+                            "-sock5",
+                            "1",
+                            "-l",
+                            "127.0.0.1:$port",
+                            "-s",
+                            bean.serverAddress
                         )
 
                         if (bean.key.isNotBlank() && bean.key != "1") {
@@ -314,18 +302,19 @@ class ProxyInstance(val profile: ProxyEntity) {
                     bean is RelayBatonBean -> {
                         if (needChain) error("RelayBaton is incompatible with chain")
 
-                        val configFile =
-                            File(
-                                context.noBackupFilesDir,
-                                "rb_" + SystemClock.elapsedRealtime() + ".toml"
-                            )
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "rb_" + SystemClock.elapsedRealtime() + ".toml"
+                        )
 
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
                         val commands = mutableListOf(
                             initPlugin("relaybaton-plugin").path,
-                            "client", "--config", configFile.absolutePath
+                            "client",
+                            "--config",
+                            configFile.absolutePath
                         )
 
                         base.data.processes!!.start(commands)
@@ -374,7 +363,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                 val url = "http://127.0.0.1:" + (DataStore.socksPort + 1) + "/"
                 onMainDispatcher {
                     wsForwarder = WebView(base as Context)
-                    @SuppressLint("SetJavaScriptEnabled")
                     wsForwarder.settings.javaScriptEnabled = true
                     wsForwarder.webViewClient = object : WebViewClient() {
                         override fun onReceivedError(
@@ -418,30 +406,38 @@ class ProxyInstance(val profile: ProxyEntity) {
         DataStore.startedProxy = 0L
     }
 
-    fun stats(tag: String, direct: String): Long {
-        if (!::v2rayPoint.isInitialized) {
+    fun stats(direct: String): Long {
+        if (!::config.isInitialized) {
             return 0L
         }
-        return v2rayPoint.queryStats(tag, direct)
+        return config.outboundTags.map { v2rayPoint.queryStats(it, direct) }
+            .fold(0L) { acc, l -> acc + l }
+    }
+
+    fun statsDirect(direct: String): Long {
+        if (!::config.isInitialized) {
+            return 0L
+        }
+        return v2rayPoint.queryStats(config.directTag, direct)
     }
 
     val uplinkProxy
-        get() = stats("out", "uplink").also {
+        get() = stats("uplink").also {
             uplinkTotalProxy += it
         }
 
     val downlinkProxy
-        get() = stats("out", "downlink").also {
+        get() = stats("downlink").also {
             downlinkTotalProxy += it
         }
 
     val uplinkDirect
-        get() = stats("bypass", "uplink").also {
+        get() = statsDirect("uplink").also {
             uplinkTotalDirect += it
         }
 
     val downlinkDirect
-        get() = stats("bypass", "downlink").also {
+        get() = statsDirect("downlink").also {
             downlinkTotalDirect += it
         }
 

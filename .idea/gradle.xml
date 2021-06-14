@@ -66,6 +66,7 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/external" />
             <option value="$PROJECT_DIR$/external/colorpicker" />
+            <option value="$PROJECT_DIR$/external/editor" />
             <option value="$PROJECT_DIR$/external/editorkit" />
             <option value="$PROJECT_DIR$/external/editorkit/app" />
             <option value="$PROJECT_DIR$/external/editorkit/data" />
