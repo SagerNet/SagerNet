@@ -37,10 +37,10 @@ fun parseTrojan(server: String): TrojanBean {
     return TrojanBean().apply {
         serverAddress = link.host
         serverPort = link.port
-        password = link.username.unUrlSafe()
+        password = link.username
 
         if (link.password.isNotBlank()) {
-            password += ":" + link.password.unUrlSafe()
+            password += ":" + link.password
         }
 
         security = link.queryParameter("security") ?: "tls"
@@ -54,7 +54,7 @@ fun parseTrojan(server: String): TrojanBean {
 fun TrojanBean.toUri(): String {
 
     val builder = linkBuilder()
-        .username(password.urlSafe())
+        .username(password)
         .host(serverAddress)
         .port(serverPort)
 
