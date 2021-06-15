@@ -69,6 +69,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     }
 
     var appTheme by configurationStore.int(Key.APP_THEME) { 0 }
+    var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME) { 0 }
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }

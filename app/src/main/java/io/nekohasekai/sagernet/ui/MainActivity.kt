@@ -44,7 +44,8 @@ import io.nekohasekai.sagernet.ktx.launchCustomTab
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
-class MainActivity : ThemedActivity(), SagerConnection.Callback, OnPreferenceDataStoreChangeListener, NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : ThemedActivity(), SagerConnection.Callback,
+    OnPreferenceDataStoreChangeListener, NavigationView.OnNavigationItemSelectedListener {
 
     lateinit var binding: LayoutMainBinding
     lateinit var navigation: NavigationView
@@ -64,7 +65,11 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback, OnPreferenceDat
             displayFragmentWithId(R.id.nav_configuration)
         }
 
-        binding.fab.setOnClickListener { if (state.canStop) SagerNet.stopService() else connect.launch(null) }
+        binding.fab.setOnClickListener {
+            if (state.canStop) SagerNet.stopService() else connect.launch(
+                null
+            )
+        }
         binding.stats.setOnClickListener { if (state == BaseService.State.Connected) binding.stats.testConnection() }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.coordinator, ListHolderListener)
@@ -130,7 +135,9 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback, OnPreferenceDat
 
     fun snackbar(text: CharSequence = ""): Snackbar {
         return Snackbar.make(binding.coordinator, text, Snackbar.LENGTH_LONG).apply {
-            anchorView = binding.fab
+            if (binding.fab.isShown) {
+                anchorView = binding.fab
+            }
         }
     }
 
@@ -139,11 +146,13 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback, OnPreferenceDat
     }
 
     val connection = SagerConnection(true)
-    override fun onServiceConnected(service: IShadowsocksService) = changeState(try {
-        BaseService.State.values()[service.state]
-    } catch (_: RemoteException) {
-        BaseService.State.Idle
-    })
+    override fun onServiceConnected(service: IShadowsocksService) = changeState(
+        try {
+            BaseService.State.values()[service.state]
+        } catch (_: RemoteException) {
+            BaseService.State.Idle
+        }
+    )
 
     override fun onServiceDisconnected() = changeState(BaseService.State.Idle)
     override fun onBinderDied() {
@@ -156,7 +165,10 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback, OnPreferenceDat
     }
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
-        if (profileId != 0L) this@MainActivity.binding.stats.updateTraffic(stats.txRateProxy, stats.rxRateProxy)
+        if (profileId != 0L) this@MainActivity.binding.stats.updateTraffic(
+            stats.txRateProxy,
+            stats.rxRateProxy
+        )
         runOnDefaultDispatcher {
             ProfileManager.postTrafficUpdated(profileId, stats)
         }

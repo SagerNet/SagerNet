@@ -28,12 +28,12 @@
             android:layout_height="wrap_content"
             android:max="1"
             android:visibility="invisible"
+            app:indicatorColor="?colorMaterial100"
             app:layout_anchor="@+id/fab"
             app:layout_anchorGravity="center"
             app:layout_behavior="io.nekohasekai.sagernet.widget.FabProgressBehavior"
-            app:indicatorColor="?colorMaterial100"
-            app:trackThickness="8dp"
-            app:trackCornerRadius="@dimen/mtrl_progress_track_thickness" />
+            app:trackCornerRadius="@dimen/mtrl_progress_track_thickness"
+            app:trackThickness="8dp" />
 
         <io.nekohasekai.sagernet.widget.ServiceButton
             android:id="@+id/fab"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:elevation="6dp"
             android:nextFocusDown="@+id/stats"
-            app:backgroundTint="?colorPrimary"
+            app:backgroundTint="?colorPrimaryDark"
             app:layout_anchor="@id/stats"
             app:pressedTranslationZ="6dp"
             app:srcCompat="@drawable/ic_service_idle" />
@@ -77,7 +77,7 @@
                     android:layout_gravity="fill_horizontal"
                     android:ellipsize="marquee"
                     android:singleLine="true"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
                 <TextView
@@ -90,7 +90,7 @@
                     android:layout_gravity="fill_horizontal"
                     android:ellipsize="marquee"
                     android:singleLine="true"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
                 <TextView
@@ -103,7 +103,7 @@
                     android:layout_gravity="fill_horizontal"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textColor="?android:attr/textColorPrimaryInverse"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     tools:text="@string/connection_test_available" />
 
@@ -119,6 +119,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:itemIconTint="@color/navigation_icon"
+        app:itemTextColor="@color/navigation_icon"
         app:menu="@menu/main_drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -23,6 +23,7 @@
         <item>@color/material_brown_500</item>
         <item>@color/material_grey_500</item>
         <item>@color/material_blue_grey_500</item>
+        <item>@color/material_light_black</item>
     </integer-array>
 
     <color name="material_amber_100">#FFECB3</color>
@@ -147,7 +148,7 @@
     <color name="material_indigo_accent_200">#536DFE</color>
     <color name="material_indigo_accent_400">#3D5AFE</color>
     <color name="material_indigo_accent_700">#304FFE</color>
-    <color name="material_light_black">#000000</color>
+    <color name="material_light_black">#212121</color>
     <color name="material_light_blue_100">#B3E5FC</color>
     <color name="material_light_blue_200">#81D4FA</color>
     <color name="material_light_blue_300">#4FC3F7</color>
@@ -278,4 +279,8 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="fab_color_progress">@color/black</color>
+
+
 </resources>

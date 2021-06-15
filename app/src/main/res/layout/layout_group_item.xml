@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?colorAccent"
+                    android:textColor="?textColorAccent" />
                     tools:text="@string/group_status_empty" />
 
             </LinearLayout>

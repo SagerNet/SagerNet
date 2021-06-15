@@ -31,6 +31,7 @@ abstract class ThemedActivity : AppCompatActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Theme.apply(this)
+        Theme.applyNightTheme()
 
         super.onCreate(savedInstanceState)
     }

@@ -33,6 +33,7 @@ object Key {
     const val DIRECT_BOOT_AWARE = "directBootAware"
 
     const val APP_THEME = "appTheme"
+    const val NIGHT_THEME = "nightTheme"
     const val SERVICE_MODE = "serviceMode"
     const val MODE_VPN = "vpn"
     const val MODE_PROXY = "proxy"
