@@ -61,8 +61,13 @@ class SagerNet : Application() {
         val configureIntent: (Context) -> PendingIntent by lazy {
             {
                 PendingIntent.getActivity(
-                    it, 0, Intent(application, MainActivity::class.java)
-                        .setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
+                    it,
+                    0,
+                    Intent(
+                        application,
+                        MainActivity::class.java
+                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                    0
                 )
             }
         }
@@ -74,8 +79,7 @@ class SagerNet : Application() {
         val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
         val directBootSupported by lazy {
             Build.VERSION.SDK_INT >= 24 && try {
-                app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus ==
-                        DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
+                app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus == DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
             } catch (_: RuntimeException) {
                 false
             }
@@ -84,11 +88,8 @@ class SagerNet : Application() {
         val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
 
         fun getClipboardText(): String {
-            return clipboard.primaryClip
-                ?.takeIf { it.itemCount > 0 }
-                ?.getItemAt(0)
-                ?.text
-                ?.toString() ?: ""
+            return clipboard.primaryClip?.takeIf { it.itemCount > 0 }
+                ?.getItemAt(0)?.text?.toString() ?: ""
         }
 
         fun trySetPrimaryClip(clip: String) = try {
@@ -103,7 +104,8 @@ class SagerNet : Application() {
                 notification.createNotificationChannels(
                     listOf(
                         NotificationChannel(
-                            "service-vpn", application.getText(R.string.service_vpn),
+                            "service-vpn",
+                            application.getText(R.string.service_vpn),
                             if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
                             else NotificationManager.IMPORTANCE_LOW
                         ),   // #1355
@@ -111,8 +113,7 @@ class SagerNet : Application() {
                             "service-proxy",
                             application.getText(R.string.service_proxy),
                             NotificationManager.IMPORTANCE_LOW
-                        ),
-                        NotificationChannel(
+                        ), NotificationChannel(
                             "service-transproxy",
                             application.getText(R.string.service_transproxy),
                             NotificationManager.IMPORTANCE_LOW
@@ -123,8 +124,7 @@ class SagerNet : Application() {
         }
 
         fun startService() = ContextCompat.startForegroundService(
-            application,
-            Intent(application, SagerConnection.serviceClass)
+            application, Intent(application, SagerConnection.serviceClass)
         )
 
         fun reloadService() =
@@ -150,19 +150,20 @@ class SagerNet : Application() {
 
         Seq.setContext(this)
         val externalAssets = getExternalFilesDir(null) ?: filesDir
-        externalAssets.mkdirs()
         Libv2ray.setAssetsPath(externalAssets.absolutePath, "v2ray/")
 
         runOnMainDispatcher {
+            externalAssets.mkdirs()
+
             checkMT()
         }
 
         Theme.apply(this)
+        Theme.applyNightTheme()
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
-        packageName,
-        if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
+        packageName, if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
         else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES
     )!!
 

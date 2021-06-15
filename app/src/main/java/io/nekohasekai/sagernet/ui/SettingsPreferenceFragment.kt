@@ -76,7 +76,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 true
             }
         }
-
+        val nightTheme = findPreference<SimpleMenuPreference>(Key.NIGHT_THEME)!!
+        nightTheme.setOnPreferenceChangeListener { _, newTheme ->
+            Theme.currentNightMode = (newTheme as String).toInt()
+            Theme.applyNightTheme()
+            true
+        }
         val portSocks5 = findPreference<EditTextPreference>(Key.SOCKS_PORT)!!
         val speedInterval = findPreference<Preference>(Key.SPEED_INTERVAL)!!
         val serviceMode = findPreference<Preference>(Key.SERVICE_MODE)!!
@@ -118,8 +123,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
 
-        val forceShadowsocksRust =
-            findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
+        val forceShadowsocksRust = findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
         if (!isExpert) {
             forceShadowsocksRust.remove()
         }

@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.utils
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.isExpert
@@ -48,6 +49,7 @@ object Theme {
     const val BROWN = 17
     const val GREY = 18
     const val BLUE_GREY = 19
+    const val BLACK = 20
 
     fun apply(context: Context) {
         if (isExpert) {
@@ -57,7 +59,9 @@ object Theme {
         }
     }
 
-    fun getTheme() = getTheme(DataStore.appTheme)
+    fun getTheme(): Int {
+        return getTheme(DataStore.appTheme)
+    }
 
     fun getTheme(theme: Int): Int {
         return when (theme) {
@@ -80,8 +84,30 @@ object Theme {
             BROWN -> R.style.Theme_SagerNet_Brown
             GREY -> R.style.Theme_SagerNet_Grey
             BLUE_GREY -> R.style.Theme_SagerNet_BlueGrey
+            BLACK -> R.style.Theme_SagerNet_Black
             else -> R.style.Theme_SagerNet
         }
+    }
+
+    var currentNightMode = -1
+    fun getNightMode(): Int {
+        if (currentNightMode == -1) {
+            currentNightMode = DataStore.nightTheme
+        }
+        return getNightMode(currentNightMode)
+    }
+
+    fun getNightMode(mode: Int): Int {
+        return when (mode) {
+            0 -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            1 -> AppCompatDelegate.MODE_NIGHT_YES
+            2 -> AppCompatDelegate.MODE_NIGHT_NO
+            else -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+        }
+    }
+
+    fun applyNightTheme() {
+        AppCompatDelegate.setDefaultNightMode(getNightMode())
     }
 
 }

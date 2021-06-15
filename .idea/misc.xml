@@ -4,8 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="../../.gradle/caches/transforms-3/60c79b6b6cf50df0de760b958b8bc3be/transformed/material-1.3.0/res/drawable/design_snackbar_background.xml" value="0.147" />
+        <entry key="../../.local/lib/android/sdk/platforms/android-30/data/res/layout-watch/preference_material.xml" value="0.17435897435897435" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_http_24.xml" value="0.3375" />
+        <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
+        <entry key="app/src/main/res/layout/layout_about.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />
@@ -38,6 +42,7 @@
         <entry key="external/editorkit/features/feature-editor/src/main/res/layout/dialog_save_as.xml" value="0.2636752136752137" />
         <entry key="external/editorkit/features/feature-editor/src/main/res/layout/fragment_editor.xml" value="0.2636752136752137" />
         <entry key="external/editorkit/features/feature-editor/src/main/res/layout/item_keyboard_key.xml" value="0.2636752136752137" />
+        <entry key="external/preferencex-simplemenu/src/main/res/drawable/simple_menu_background.xml" value="0.147" />
         <entry key="naive-plugin/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.20925925925925926" />
       </map>
     </option>

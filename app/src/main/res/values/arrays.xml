@@ -538,7 +538,20 @@
         <item>V2Ray</item>
     </string-array>
     <string-array name="config_type_value">
-        <item>v2ray </item>
+        <item>v2ray</item>
+    </string-array>
+
+    <string-array name="night_mode_entry">
+        <item>@string/follow_system</item>
+        <item>@string/enable</item>
+        <item>@string/disable</item>
+        <item>@string/auto</item>
+    </string-array>
+    <string-array name="night_mode_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
 </resources>

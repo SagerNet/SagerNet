@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_type"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?colorAccent" />
+                    android:textColor="?textColorAccent" />
 
                 <TextView
                     android:id="@+id/profile_address"

@@ -301,5 +301,9 @@
     <string name="early_data_header_name">前置数据标头</string>
     <string name="config_settings">配置设置</string>
     <string name="custom_config">自定义配置</string>
+    <string name="night_mode">夜间模式</string>
+    <string name="enable">启用</string>
+    <string name="auto">自动</string>
+    <string name="follow_system">跟随系统</string>
 
 </resources>
