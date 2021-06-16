@@ -61,7 +61,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             else -> DataStore.serverPath = path
         }
 
-        DataStore.serverHeader = headerType
         DataStore.serverSecurity = security
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn
@@ -183,6 +182,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     val tcpHeadersValue = app.resources.getStringArray(R.array.tcp_headers_value)
     val kcpQuicHeadersValue = app.resources.getStringArray(R.array.kcp_quic_headers_value)
+    val quicSecurityValue = app.resources.getStringArray(R.array.quic_security_value)
 
     fun updateView(network: String) {
         if (bean is VLESSBean) {
@@ -203,8 +203,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                     security.setEntryValues(R.array.transport_layer_encryption_value)
                     security.value = DataStore.serverSecurity
 
-                    val tlev =
-                        resources.getStringArray(R.array.transport_layer_encryption_value)
+                    val tlev = resources.getStringArray(R.array.transport_layer_encryption_value)
                     if (security.value !in tlev) {
                         security.value = tlev[0]
                     }
@@ -213,6 +212,20 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         }
 
         updateTle(security.value)
+
+        val isQuic = network == "quic"
+        val isGRPC = network == "grpc"
+        val isWs = network == "ws"
+        quicSecurity.isVisible = isQuic
+        if (isQuic) {
+            if (DataStore.serverQuicSecurity !in quicSecurityValue) {
+                quicSecurity.value = quicSecurityValue[0]
+            } else {
+                quicSecurity.value = DataStore.serverQuicSecurity
+            }
+        }
+
+        wsCategory.isVisible = isWs
 
         when (network) {
             "tcp" -> {
@@ -240,8 +253,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 path.setTitle(R.string.http_path)
 
                 header.isVisible = true
-                quicSecurity.isVisible = false
-                wsCategory.isVisible = false
             }
             "http" -> {
                 requestHost.setTitle(R.string.http_host)
@@ -250,8 +261,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 header.isVisible = false
                 requestHost.isVisible = true
                 path.isVisible = true
-                quicSecurity.isVisible = false
-                wsCategory.isVisible = false
             }
             "ws" -> {
                 requestHost.setTitle(R.string.ws_host)
@@ -260,8 +269,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 header.isVisible = false
                 requestHost.isVisible = true
                 path.isVisible = true
-                quicSecurity.isVisible = false
-                wsCategory.isVisible = true
             }
             "kcp" -> {
                 header.setEntries(R.array.kcp_quic_headers_entry)
@@ -279,12 +286,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 header.isVisible = true
                 requestHost.isVisible = false
                 path.isVisible = true
-                quicSecurity.isVisible = false
-                wsCategory.isVisible = false
             }
             "quic" -> {
                 header.setEntries(R.array.kcp_quic_headers_entry)
-                header.setEntryValues(R.array.kcp_quic_headers_entry)
+                header.setEntryValues(R.array.kcp_quic_headers_value)
                 path.setTitle(R.string.quic_key)
 
                 if (DataStore.serverHeader !in kcpQuicHeadersValue) {
@@ -298,8 +303,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 header.isVisible = true
                 requestHost.isVisible = false
                 path.isVisible = true
-                quicSecurity.isVisible = true
-                wsCategory.isVisible = false
             }
             "grpc" -> {
                 path.setTitle(R.string.grpc_service_name)
@@ -307,8 +310,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 header.isVisible = false
                 requestHost.isVisible = false
                 path.isVisible = true
-                quicSecurity.isVisible = false
-                wsCategory.isVisible = false
             }
         }
     }
