@@ -21,8 +21,8 @@
 
 <resources>
     <attr name="colorMaterial100" format="color" />
-    <attr name="colorMaterial200" format="color" />
     <attr name="colorMaterial300" format="color" />
     <attr name="textColorAccent" format="color" />
     <attr name="iconColorPrimary" format="color" />
+    <attr name="fabColorPrimary" format="color" />
 </resources>

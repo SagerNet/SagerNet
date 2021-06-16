@@ -453,7 +453,7 @@ fun Project.setupApp() {
             outputs.all {
                 this as BaseVariantOutputImpl
                 outputFileName =
-                    outputFileName.replace(project.name, "AX-$versionName").replace("-release", "")
+                    outputFileName.replace(project.name, "SN-$versionName").replace("-release", "")
                         .replace("-oss", "")
 
             }
