@@ -36,8 +36,9 @@ import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseTrojanGo(server: String): TrojanGoBean {
-    val link = server.replace("trojan-go://", "https://").toHttpUrlOrNull()
-        ?: error("invalid trojan-link link $server")
+    val link = server.replace("trojan-go://", "https://").toHttpUrlOrNull() ?: error(
+        "invalid trojan-link link $server"
+    )
     return TrojanGoBean().apply {
         serverAddress = link.host
         serverPort = link.port
@@ -74,10 +75,7 @@ fun parseTrojanGo(server: String): TrojanGoBean {
 }
 
 fun TrojanGoBean.toUri(): String {
-    val builder = linkBuilder()
-        .username(password)
-        .host(serverAddress)
-        .port(serverPort)
+    val builder = linkBuilder().username(password).host(serverAddress).port(serverPort)
     if (sni.isNotBlank()) {
         builder.addQueryParameter("sni", sni)
     }
@@ -126,10 +124,8 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
                 it["concurrency"] = DataStore.muxConcurrency
             }
         }
-        if (!DataStore.preferIpv6) {
-            conf["tcp"] = JSONObject().also {
-                it["prefer_ipv4"] = true
-            }
+        conf["tcp"] = JSONObject().also {
+            it["prefer_ipv4"] = DataStore.preferIpv6
         }
 
         when (type) {
@@ -151,8 +147,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
             }
             encryption.startsWith("ss;") -> conf["shadowsocks"] = JSONObject().also {
                 it["enabled"] = true
-                it["method"] =
-                    encryption.substringAfter(";").substringBefore(":")
+                it["method"] = encryption.substringAfter(";").substringBefore(":")
                 it["password"] = encryption.substringAfter(":")
             }
         }

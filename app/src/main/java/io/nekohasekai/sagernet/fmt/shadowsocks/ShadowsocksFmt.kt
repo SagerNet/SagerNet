@@ -32,10 +32,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import cn.hutool.json.JSONObject as HSONObject
 
 val methodsV2fly = arrayOf(
-    "none",
-    "aes-128-gcm",
-    "aes-256-gcm",
-    "chacha20-ietf-poly1305"
+    "none", "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305"
 )
 
 fun PluginConfiguration.fixInvalidParams() {
@@ -86,18 +83,16 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
     if (url.contains("@")) {
 
-        var link = url.replace("ss://", "https://").toHttpUrlOrNull()
-            ?: error("invalid ss-android link $url")
+        var link = url.replace("ss://", "https://").toHttpUrlOrNull() ?: error(
+            "invalid ss-android link $url"
+        )
 
-        if (link.username.isBlank()) {
-            // fix justmysocks's shit link
+        if (link.username.isBlank()) { // fix justmysocks's shit link
 
             link = (("https://" + url.substringAfter("ss://").substringBefore("#")
-                .decodeBase64UrlSafe())
-                .toHttpUrlOrNull() ?: error("invalid jms link $url"))
-                .newBuilder()
-                .fragment(url.substringAfter("#"))
-                .build()
+                .decodeBase64UrlSafe()).toHttpUrlOrNull() ?: error(
+                "invalid jms link $url"
+            )).newBuilder().fragment(url.substringAfter("#")).build()
         }
 
         // ss-android style
@@ -167,10 +162,9 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
 fun ShadowsocksBean.toUri(): String {
 
-    val builder = linkBuilder()
-        .username(Base64.encodeUrlSafe("$method:$password"))
-        .host(serverAddress)
-        .port(serverPort)
+    val builder =
+        linkBuilder().username(Base64.encodeUrlSafe("$method:$password")).host(serverAddress)
+            .port(serverPort)
 
     if (plugin.isNotBlank()) {
         builder.addQueryParameter("plugin", plugin)
@@ -227,10 +221,7 @@ fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
         } else {
             it["dns"] = DataStore.systemDnsFinal
         }
-
-        if (DataStore.ipv6Route && DataStore.preferIpv6) {
-            it["ipv6_first"] = true
-        }
+        it["ipv6_first"] = DataStore.ipv6Route && DataStore.preferIpv6
         it["keep_alive"] = DataStore.tcpKeepAliveInterval
     }
 
