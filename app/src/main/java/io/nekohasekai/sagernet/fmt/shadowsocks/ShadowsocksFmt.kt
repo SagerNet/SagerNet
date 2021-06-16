@@ -231,6 +231,7 @@ fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
         if (DataStore.ipv6Route && DataStore.preferIpv6) {
             it["ipv6_first"] = true
         }
+        it["keep_alive"] = DataStore.tcpKeepAliveInterval
     }
 
     if (plugin.isNotBlank()) {
