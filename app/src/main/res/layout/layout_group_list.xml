@@ -19,13 +19,13 @@
         android:background="?colorPrimary"
         android:elevation="4dp"
         android:visibility="gone"
-        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorColor="?tabIndicatorColor"
         app:tabIndicatorFullWidth="false"
         app:tabMode="scrollable"
         app:tabPaddingStart="16dp"
-        app:tabRippleColor="@color/white"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="#99FFFFFF"
+        app:tabRippleColor="?tabRippleColor"
+        app:tabSelectedTextColor="?tabSelectedTextColor"
+        app:tabTextColor="?tabTextColor"
         app:tabUnboundedRipple="false" />
 
     <androidx.viewpager2.widget.ViewPager2

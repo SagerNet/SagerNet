@@ -25,6 +25,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.app.ActivityCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
@@ -71,7 +72,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 app.setTheme(theme)
                 requireActivity().apply {
                     setTheme(theme)
-                    recreate()
+                    ActivityCompat.recreate(this)
                 }
                 true
             }

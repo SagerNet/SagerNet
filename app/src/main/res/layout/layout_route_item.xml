@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_type"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?textColorAccent" />
+                    android:textColor="?attr/accentOrTextSecondary" />
 
                 <TextView
                     android:layout_marginTop="4dp"
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_type"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?textColorAccent" />
+                    android:textColor="?attr/accentOrTextSecondary" />
 
             </LinearLayout>
 

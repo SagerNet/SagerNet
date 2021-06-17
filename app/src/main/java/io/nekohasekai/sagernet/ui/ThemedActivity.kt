@@ -21,19 +21,47 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.utils.Theme
 
 abstract class ThemedActivity : AppCompatActivity {
     constructor() : super()
     constructor(contentLayoutId: Int) : super(contentLayoutId)
 
+    var themeResId = 0
+    var uiMode = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Theme.apply(this)
         Theme.applyNightTheme()
 
         super.onCreate(savedInstanceState)
+
+        uiMode = resources.configuration.uiMode
+    }
+
+    override fun setTheme(resId: Int) {
+        super.setTheme(resId)
+
+        themeResId = resId
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        if (newConfig.uiMode != uiMode) {
+            uiMode = newConfig.uiMode
+
+            if (DataStore.appTheme == Theme.BLACK) {
+                Theme.apply(this)
+            }
+
+            ActivityCompat.recreate(this)
+        }
     }
 
 }

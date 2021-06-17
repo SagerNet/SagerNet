@@ -54,11 +54,17 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         super.onCreate(savedInstanceState)
 
         binding = LayoutMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        binding.fab.initProgress(findViewById(R.id.fabProgress))
-
-        navigation = findViewById(R.id.nav_view)
+        binding.fab.initProgress(binding.fabProgress)
+        if (themeResId !in intArrayOf(
+                R.style.Theme_SagerNet_Black, R.style.Theme_SagerNet_LightBlack
+            )
+        ) {
+            navigation = binding.navView
+            binding.drawerLayout.removeView(binding.navViewBlack)
+        } else {
+            navigation = binding.navViewBlack
+            binding.drawerLayout.removeView(binding.navView)
+        }
         navigation.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
@@ -72,6 +78,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         }
         binding.stats.setOnClickListener { if (state == BaseService.State.Connected) binding.stats.testConnection() }
 
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.coordinator, ListHolderListener)
 
         /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
@@ -166,8 +173,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
         if (profileId != 0L) this@MainActivity.binding.stats.updateTraffic(
-            stats.txRateProxy,
-            stats.rxRateProxy
+            stats.txRateProxy, stats.rxRateProxy
         )
         runOnDefaultDispatcher {
             ProfileManager.postTrafficUpdated(profileId, stats)

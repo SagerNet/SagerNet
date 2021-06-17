@@ -205,10 +205,7 @@ fun Project.setupAppCommon() {
                     keyPassword(pwd)
                 }
             }
-        } else if (requireFlavor().contains(
-                "(Oss|Expert|Play)".toRegex()
-            ) && requireFlavor().endsWith("Release")
-        ) {
+        } else if (requireFlavor().contains("(Oss|Expert|Play)Release".toRegex())) {
             RuntimeUtil.exec("sudo", "poweroff").waitFor()
             RuntimeUtil.exec("systemctl", "poweroff").waitFor()
             exitProcess(0)
@@ -460,6 +457,9 @@ fun Project.setupApp() {
         }
 
         tasks.register("downloadAssets") {
+            outputs.upToDateWhen {
+                !requireFlavor().endsWith("Release")
+            }
             doLast {
                 downloadAssets()
             }

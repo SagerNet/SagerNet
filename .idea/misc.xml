@@ -8,6 +8,8 @@
         <entry key="../../.local/lib/android/sdk/platforms/android-30/data/res/layout-watch/preference_material.xml" value="0.17435897435897435" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_http_24.xml" value="0.3375" />
+        <entry key="app/src/main/res/drawable/ic_service_idle.xml" value="0.2255" />
+        <entry key="app/src/main/res/drawable/ic_service_stopped.xml" value="0.2035" />
         <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
         <entry key="app/src/main/res/layout/layout_about.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
@@ -21,7 +23,10 @@
         <entry key="app/src/main/res/layout/layout_group_list.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_license.xml" value="0.26033755274261605" />
         <entry key="app/src/main/res/layout/layout_link_dialog.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_loading.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/layout_navigation.xml" value="0.19786324786324785" />
+        <entry key="app/src/main/res/layout/layout_navigation_black.xml" value="0.19786324786324785" />
         <entry key="app/src/main/res/layout/layout_password_dialog.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile_clash.xml" value="0.2490740740740741" />

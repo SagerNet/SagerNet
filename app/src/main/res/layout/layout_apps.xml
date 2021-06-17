@@ -23,10 +23,10 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:elevation="4dp"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                android:theme="?actionBarTheme"
                 android:touchscreenBlocksFocus="false"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
                 app:title="@string/app_name" />
 
             <LinearLayout

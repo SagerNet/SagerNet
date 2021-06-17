@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:indicatorColor="?selectedColorPrimary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?textColorAccent" />
+                    android:textColor="?attr/accentOrTextSecondary"
                     tools:text="@string/group_status_empty" />
 
             </LinearLayout>
@@ -103,7 +104,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="@string/group_update" />
+                android:text="@string/group_update"
+                android:textColor="?accentOrTextSecondary" />
         </LinearLayout>
 
     </LinearLayout>
