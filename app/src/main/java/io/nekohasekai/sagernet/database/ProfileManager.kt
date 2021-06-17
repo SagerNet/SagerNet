@@ -73,7 +73,7 @@ object ProfileManager {
         suspend fun refreshSubscription(
             proxyGroup: ProxyGroup,
             onRefreshStarted: Runnable,
-            onRefreshFinished: Runnable,
+            onRefreshFinished: (success: Boolean) -> Unit,
         ) {
         }
     }
