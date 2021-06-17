@@ -9,12 +9,11 @@ include(":plugin:pingtunnel")
 include(":plugin:relaybaton")
 include(":plugin:brook")
 
-include(":external:preferencex")
-include(":external:preferencex-simplemenu")
-include(":external:flexbox")
-include(":external:colorpicker")
-include(":external:preferencex-colorpicker")
-include(":external:editor")
+include(":external:preferencex:preferencex")
+include(":external:preferencex:preferencex-simplemenu")
+include(":external:preferencex:flexbox")
+include(":external:preferencex:colorpicker")
+include(":external:preferencex:preferencex-colorpicker")
 
 includeBuild("external/editorkit") {
     name = "editorkit"
@@ -22,7 +21,6 @@ includeBuild("external/editorkit") {
         substitute(module("editorkit:editorkit:2.0.0")).with(project(":editorkit"))
         substitute(module("editorkit:feature-editor:2.0.0")).with(project(":features:feature-editor"))
         substitute(module("editorkit:language-json:2.0.0")).with(project(":languages:language-json"))
-
     }
 }
 

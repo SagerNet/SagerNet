@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="simple_menu_unit">56dp</dimen>
-    <dimen name="simple_menu_margin">15dp</dimen>
-    <dimen name="simple_menu_dialog_max_width">600dp</dimen>
-
-    <integer name="simple_menu_max_units">5</integer>
-</resources>

@@ -65,8 +65,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/external" />
-            <option value="$PROJECT_DIR$/external/colorpicker" />
-            <option value="$PROJECT_DIR$/external/editor" />
             <option value="$PROJECT_DIR$/external/editorkit" />
             <option value="$PROJECT_DIR$/external/editorkit/app" />
             <option value="$PROJECT_DIR$/external/editorkit/data" />
@@ -106,10 +104,12 @@
             <option value="$PROJECT_DIR$/external/editorkit/languages/language-typescript" />
             <option value="$PROJECT_DIR$/external/editorkit/languages/language-visualbasic" />
             <option value="$PROJECT_DIR$/external/editorkit/languages/language-xml" />
-            <option value="$PROJECT_DIR$/external/flexbox" />
             <option value="$PROJECT_DIR$/external/preferencex" />
-            <option value="$PROJECT_DIR$/external/preferencex-colorpicker" />
-            <option value="$PROJECT_DIR$/external/preferencex-simplemenu" />
+            <option value="$PROJECT_DIR$/external/preferencex/colorpicker" />
+            <option value="$PROJECT_DIR$/external/preferencex/flexbox" />
+            <option value="$PROJECT_DIR$/external/preferencex/preferencex" />
+            <option value="$PROJECT_DIR$/external/preferencex/preferencex-colorpicker" />
+            <option value="$PROJECT_DIR$/external/preferencex/preferencex-simplemenu" />
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/library/core" />
             <option value="$PROJECT_DIR$/library/shadowsocks" />
