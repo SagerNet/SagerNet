@@ -158,7 +158,9 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         }
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        if (DataStore.bypassLan) {
+        // https://github.com/SagerNet/SagerNet/issues/124
+
+        /*if (DataStore.bypassLan) {
             resources.getStringArray(R.array.bypass_private_route).forEach {
                 val subnet = Subnet.fromString(it)!!
                 builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
@@ -166,10 +168,10 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
             // https://issuetracker.google.com/issues/149636790
             if (DataStore.ipv6Route) builder.addRoute("2000::", 3)
-        } else {
+        } else {*/
             builder.addRoute("0.0.0.0", 0)
             if (DataStore.ipv6Route) builder.addRoute("::", 0)
-        }
+//        }
 
         // https://issuetracker.google.com/issues/149636790
 
