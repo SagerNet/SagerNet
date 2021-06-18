@@ -24,9 +24,12 @@ package io.nekohasekai.sagernet.ktx
 import androidx.annotation.RawRes
 import cn.hutool.core.lang.Validator
 import cn.hutool.core.net.NetUtil
+import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.config.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -80,6 +83,16 @@ fun AbstractBean.isInsecure(): ValidateResult {
             return ResultInsecure(R.raw.mkcp_no_seed)
         }
         if (allowInsecure) return ResultInsecure(R.raw.insecure)
+    } else if (this is ConfigBean) {
+        try {
+            val profiles = ProfileManager.parseJSON(JSONObject(content))
+            val results = profiles.map { it.isInsecure() }
+            (results.find { it is ResultInsecure } ?: results.find { it is ResultDeprecated }
+            ?: results.find { it is ResultLocal })?.also {
+                return it
+            }
+        } catch (ignored: Exception) {
+        }
     }
     return ResultSecure
 }
