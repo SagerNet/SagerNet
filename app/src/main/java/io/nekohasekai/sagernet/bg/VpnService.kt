@@ -40,7 +40,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
-import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import java.io.File
@@ -75,16 +74,14 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
     @Volatile
     private var underlyingNetwork: Network? = null
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-        set(value) {
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1) set(value) {
             field = value
             if (active && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 setUnderlyingNetworks(underlyingNetworks)
             }
         }
     private val underlyingNetworks
-        get() =
-            // clearing underlyingNetworks makes Android 9 consider the network to be metered
+        get() = // clearing underlyingNetworks makes Android 9 consider the network to be metered
             if (Build.VERSION.SDK_INT == 28 && metered) null else underlyingNetwork?.let {
                 arrayOf(it)
             }
@@ -116,8 +113,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             if (prepare(this) != null) {
                 startActivity(
                     Intent(
-                        this,
-                        VpnRequestActivity::class.java
+                        this, VpnRequestActivity::class.java
                     ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
             } else return super<BaseService.Interface>.onStartCommand(intent, flags, startId)
@@ -134,18 +130,17 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
     private suspend fun startVpn(): FileDescriptor {
         val profile = data.proxy!!.profile
-        val builder = Builder()
-            .setConfigureIntent(SagerNet.configureIntent(this))
-            .setSession(profile.displayName())
-            .setMtu(VPN_MTU)
-            .addAddress(PRIVATE_VLAN4_CLIENT, 30)
-        val useFakeDns = DataStore.dnsModeFinal in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+        val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
+            .setSession(profile.displayName()).setMtu(VPN_MTU).addAddress(PRIVATE_VLAN4_CLIENT, 30)
+        val dnsMode = DataStore.dnsModeFinal
+        val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+        val ipv6Route = DataStore.ipv6Route
 
         if (useFakeDns) {
             builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
         }
 
-        if (DataStore.ipv6Route) {
+        if (ipv6Route) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
 
             if (useFakeDns) {
@@ -167,15 +162,14 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             }
             builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
             // https://issuetracker.google.com/issues/149636790
-            if (DataStore.ipv6Route) builder.addRoute("2000::", 3)
+            if (ipv6Route) builder.addRoute("2000::", 3)
         } else {*/
-            builder.addRoute("0.0.0.0", 0)
-            if (DataStore.ipv6Route) builder.addRoute("::", 0)
-//        }
+        builder.addRoute("0.0.0.0", 0)
+        if (ipv6Route) builder.addRoute("::", 0) //        }
 
         // https://issuetracker.google.com/issues/149636790
 
-        val useSystemDns = DataStore.dnsModeFinal == DnsMode.SYSTEM
+        val useSystemDns = dnsMode == DnsMode.SYSTEM
 
         val me = packageName
         if (DataStore.proxyApps) {
@@ -210,24 +204,24 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         val conn = builder.establish() ?: throw NullConnectionException()
         this.conn = conn
 
-        val cmd =
-            arrayListOf(
-                File(applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS).canonicalPath,
-                "--netif-ipaddr",
-                PRIVATE_VLAN4_ROUTER,
-                "--socks-server-addr",
-                "127.0.0.1:${DataStore.socksPort}",
-                "--tunmtu",
-                VPN_MTU.toString(),
-                "--sock-path",
-                File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
-                "--loglevel", "warning"
-            )
+        val cmd = arrayListOf(
+            File(applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS).canonicalPath,
+            "--netif-ipaddr",
+            PRIVATE_VLAN4_ROUTER,
+            "--socks-server-addr",
+            "127.0.0.1:${DataStore.socksPort}",
+            "--tunmtu",
+            VPN_MTU.toString(),
+            "--sock-path",
+            File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
+            "--loglevel",
+            "warning"
+        )
         if (!useSystemDns) {
             cmd += "--dnsgw"
             cmd += "127.0.0.1:${DataStore.localDNSPort}"
         }
-        if (DataStore.ipv6Route) {
+        if (ipv6Route) {
             cmd += "--netif-ip6addr"
             cmd += PRIVATE_VLAN6_ROUTER
         }
@@ -250,8 +244,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             LocalSocket().use { localSocket ->
                 localSocket.connect(
                     LocalSocketAddress(
-                        path,
-                        LocalSocketAddress.Namespace.FILESYSTEM
+                        path, LocalSocketAddress.Namespace.FILESYSTEM
                     )
                 )
                 localSocket.setFileDescriptorsForSend(arrayOf(fd))
