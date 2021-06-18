@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean;
 
 public class TrojanBean extends AbstractBean {
 
@@ -38,6 +39,10 @@ public class TrojanBean extends AbstractBean {
     public String sni;
     public String alpn;
 
+    // --------------------------------------- //
+
+    public Boolean allowInsecure;
+
     @Override
     public void initDefaultValues() {
         super.initDefaultValues();
@@ -46,17 +51,19 @@ public class TrojanBean extends AbstractBean {
         if (StrUtil.isBlank(security)) security = "tls";
         if (sni == null) sni = "";
         if (alpn == null) alpn = "";
+        if (allowInsecure == null) allowInsecure = false;
 
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(password);
         output.writeString(security);
         output.writeString(sni);
         output.writeString(alpn);
+        output.writeBoolean(allowInsecure);
     }
 
     @Override
@@ -67,7 +74,16 @@ public class TrojanBean extends AbstractBean {
         security = input.readString();
         sni = input.readString();
         alpn = input.readString();
-        initDefaultValues();
+        if (version >= 1) {
+            allowInsecure = input.readBoolean();
+        }
+    }
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof TrojanBean)) return;
+        TrojanBean bean = ((TrojanBean) other);
+        bean.allowInsecure = allowInsecure;
     }
 
     @NotNull

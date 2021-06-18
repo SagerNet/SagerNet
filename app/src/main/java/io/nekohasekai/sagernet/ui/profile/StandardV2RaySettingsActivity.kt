@@ -68,8 +68,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverQuicSecurity = quicSecurity
         DataStore.serverWsMaxEarlyData = wsMaxEarlyData
-        DataStore.serverWsBrowserForwarding = wsUseBrowserForwarder
         DataStore.serverEarlyDataHeaderName = earlyDataHeaderName
+
+        DataStore.serverWsBrowserForwarding = wsUseBrowserForwarder
+        DataStore.serverAllowInsecure = allowInsecure
 
     }
 
@@ -98,8 +100,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         quicSecurity = DataStore.serverQuicSecurity
         wsMaxEarlyData = DataStore.serverWsMaxEarlyData
-        wsUseBrowserForwarder = DataStore.serverWsBrowserForwarding
         earlyDataHeaderName = DataStore.serverEarlyDataHeaderName
+
+        wsUseBrowserForwarder = DataStore.serverWsBrowserForwarding
+        allowInsecure = DataStore.serverAllowInsecure
     }
 
     lateinit var encryption: SimpleMenuPreference
@@ -108,13 +112,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var requestHost: EditTextPreference
     lateinit var path: EditTextPreference
     lateinit var quicSecurity: SimpleMenuPreference
-
     lateinit var security: SimpleMenuPreference
-    lateinit var tlsSni: EditTextPreference
-    lateinit var tlsAlpn: EditTextPreference
-    lateinit var certificates: EditTextPreference
-    lateinit var pinnedCertificateChain: EditTextPreference
 
+    lateinit var securityCategory: PreferenceCategory
     lateinit var wsCategory: PreferenceCategory
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -134,11 +134,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         path = findPreference(Key.SERVER_PATH)!!
         quicSecurity = findPreference(Key.SERVER_QUIC_SECURITY)!!
         security = findPreference(Key.SERVER_SECURITY)!!
-        tlsSni = findPreference(Key.SERVER_SNI)!!
-        tlsAlpn = findPreference(Key.SERVER_ALPN)!!
-        certificates = findPreference(Key.SERVER_CERTIFICATES)!!
-        pinnedCertificateChain = findPreference(Key.SERVER_PINNED_CERTIFICATE_CHAIN)!!
 
+        securityCategory = findPreference(Key.SERVER_SECURITY_CATEGORY)!!
         wsCategory = findPreference(Key.SERVER_WS_CATEGORY)!!
 
         val alterId = findPreference<EditTextPreference>(Key.SERVER_ALTER_ID)!!
@@ -316,10 +313,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     fun updateTle(tle: String) {
         val isTLS = tle == "tls"
-        tlsSni.isVisible = isTLS
-        tlsAlpn.isVisible = isTLS
-        certificates.isVisible = isTLS
-        pinnedCertificateChain.isVisible = isTLS
+        securityCategory.isVisible = isTLS
     }
 
 }

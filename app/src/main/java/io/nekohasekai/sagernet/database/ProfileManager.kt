@@ -42,7 +42,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.error.YAMLException
@@ -415,6 +414,7 @@ object ProfileManager {
                                     "network" -> bean.type = opt.value as String
                                     "tls" -> bean.security =
                                         if (opt.value?.toString() == "true") "tls" else ""
+                                    "skip-cert-verify" -> bean.allowInsecure = true
                                     "ws-path" -> bean.path = opt.value as String
                                     "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
                                         when (wsOpt.key.lowercase()) {
@@ -454,6 +454,7 @@ object ProfileManager {
                                     "port" -> bean.serverPort = opt.value.toString().toInt()
                                     "password" -> bean.password = opt.value as String
                                     "sni" -> bean.sni = opt.value as String?
+                                    "skip-cert-verify" -> bean.allowInsecure = true
                                 }
                             }
                             proxies.add(bean)
@@ -660,6 +661,9 @@ object ProfileManager {
                                     alpn?.also {
                                         v2rayBean.alpn = it.joinToString(",")
                                     }
+                                    allowInsecure?.also {
+                                        v2rayBean.allowInsecure = it
+                                    }
                                 }
                             }
                         }
@@ -810,6 +814,9 @@ object ProfileManager {
                                     }
                                     alpn?.also {
                                         trojanBean.alpn = it.joinToString(",")
+                                    }
+                                    allowInsecure?.also {
+                                        trojanBean.allowInsecure = it
                                     }
                                 }
                             }

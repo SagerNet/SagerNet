@@ -151,12 +151,15 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public String grpcServiceName;
     public Integer wsMaxEarlyData;
+    public String earlyDataHeaderName;
 
     public String certificates;
     public String pinnedPeerCertificateChainSha256;
 
+    // --------------------------------------- //
+
     public Boolean wsUseBrowserForwarder;
-    public String earlyDataHeaderName;
+    public Boolean allowInsecure;
 
     @Override
     public void initDefaultValues() {
@@ -184,12 +187,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (certificates == null) certificates = "";
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
         if (earlyDataHeaderName == null) earlyDataHeaderName = "";
+        if (allowInsecure == null) allowInsecure = false;
 
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -239,6 +243,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(alpn);
                 output.writeString(certificates);
                 output.writeString(pinnedPeerCertificateChainSha256);
+                output.writeBoolean(allowInsecure);
                 break;
             }
         }
@@ -298,11 +303,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     certificates = input.readString();
                     pinnedPeerCertificateChainSha256 = input.readString();
                 }
+                if (version >= 3) {
+                    allowInsecure = input.readBoolean();
+                }
                 break;
             }
         }
-
-        initDefaultValues();
     }
 
     @Override
@@ -310,6 +316,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (!(other instanceof StandardV2RayBean)) return;
         StandardV2RayBean bean = ((StandardV2RayBean) other);
         bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
+        bean.allowInsecure = allowInsecure;
     }
 
     public String uuidOrGenerate() {

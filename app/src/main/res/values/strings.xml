@@ -72,6 +72,9 @@
     <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
     <string name="show_direct_speed">Show Direct Speed</string>
     <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as well</string>
+    <string name="security_settings">Security Settings</string>
+    <string name="allow_insecure">Allow Insecure</string>
+    <string name="allow_insecure_sum">Disable certificate checking. When enabled, this configuration is as secure as plaintext.</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="speed_detail">Proxy： %1$s↑ %2$s↓\nDirect： %3$s↑ %4$s↓</string>
@@ -85,7 +88,7 @@
 
     <string name="cag_dns">DNS Settings</string>
 
-    <string name="dns_mode">DNS Mode</string>
+    <string name="dns_mode" translatable="false">DNS Mode</string>
     <string name="dns_mode_system">System</string>
     <string name="dns_mode_local">Local</string>
     <string name="dns_mode_fakedns" translatable="false">FakeDNS</string>
