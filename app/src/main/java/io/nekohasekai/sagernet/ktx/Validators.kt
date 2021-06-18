@@ -43,7 +43,10 @@ class ResultInsecure(@RawRes val textRes: Int) : ValidateResult
 private val ssSecureList = "(gcm|poly1305)".toRegex()
 
 fun AbstractBean.isInsecure(): ValidateResult {
-    if (Validator.isIpv4(serverAddress) && NetUtil.isInnerIP(serverAddress) || serverAddress in arrayOf("localhost")) {
+    if (Validator.isIpv4(serverAddress) && NetUtil.isInnerIP(serverAddress) || serverAddress in arrayOf(
+            "localhost"
+        )
+    ) {
         return ResultLocal
     }
     if (this is ShadowsocksBean) {
@@ -67,6 +70,7 @@ fun AbstractBean.isInsecure(): ValidateResult {
         if (type == "kcp" && mKcpSeed.isBlank()) {
             return ResultInsecure(R.raw.mkcp_no_seed)
         }
+        if (allowInsecure) return ResultInsecure(R.raw.insecure)
         if (alterId > 0) return ResultDeprecated(R.raw.vmess_md5_auth)
     } else if (this is VLESSBean) {
         if (security in arrayOf("", "none")) {
@@ -75,6 +79,7 @@ fun AbstractBean.isInsecure(): ValidateResult {
         if (type == "kcp" && mKcpSeed.isBlank()) {
             return ResultInsecure(R.raw.mkcp_no_seed)
         }
+        if (allowInsecure) return ResultInsecure(R.raw.insecure)
     }
     return ResultSecure
 }
