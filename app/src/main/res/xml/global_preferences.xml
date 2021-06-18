@@ -34,6 +34,7 @@
             app:title="@string/service_mode"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_security_24"
             app:key="securityAdvisory"
             app:summary="@string/insecure_warn_sum"

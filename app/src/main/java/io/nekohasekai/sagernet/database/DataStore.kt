@@ -89,7 +89,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS) { false }
     var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "https+local://223.5.5.5/dns-query" }
 
-    var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY)
+    var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
