@@ -70,7 +70,7 @@ import io.nekohasekai.sagernet.ui.profile.*
 data class ProxyEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
-    var groupId: Long,
+    var groupId: Long = 0L,
     var type: Int = 0,
     var userOrder: Long = 0L,
     var tx: Long = 0L,

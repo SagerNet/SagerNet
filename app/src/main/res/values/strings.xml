@@ -143,6 +143,7 @@
     <string name="extra_headers">Extra Headers</string>
 
     <string name="config_type">Config Type</string>
+    <string name="edit_config">Edit Config</string>
 
     <!-- feature category -->
     <string name="ipv6_settings">IPv6 Settings</string>
@@ -322,11 +323,13 @@
 
     <string name="license">License</string>
     <string name="route_warn">Make sure you have read the documentation before adding custom rules, otherwise you may not be able to connect to the Internet.</string>
+    <string name="lines">%d Lines</string>
 
     <string name="night_mode">Night Mode</string>
     <string name="follow_system">Follow System</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
     <string name="auto">Auto</string>
+
 
 </resources>

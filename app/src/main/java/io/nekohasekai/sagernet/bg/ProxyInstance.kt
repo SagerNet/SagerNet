@@ -48,11 +48,9 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
+import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager.InitResult
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.CoroutineScope
@@ -95,10 +93,6 @@ class ProxyInstance(val profile: ProxyEntity) {
 
         if (profile.type != ProxyEntity.TYPE_CONFIG) {
             config = buildV2RayConfig(profile)
-            Logs.d(config.config)
-
-            Libv2ray.testConfig(config.config)
-            v2rayPoint.configureFileContent = config.config
 
             for (chain in config.index) {
                 chain.entries.forEachIndexed { index, (port, profile) ->
@@ -144,14 +138,25 @@ class ProxyInstance(val profile: ProxyEntity) {
                     }
                 }
             }
-
         } else {
-            config = buildCustomConfig(profile)
-            Logs.d(config.config)
+            val bean = profile.configBean!!
 
-            Libv2ray.testConfig(config.config)
-            v2rayPoint.configureFileContent = config.config
+            when (bean.type) {
+                "trojan-go" -> {
+                    initPlugin("trojan-go-plugin")
+                    config = buildV2RayConfig(ProxyEntity(type = ProxyEntity.TYPE_TROJAN_GO, trojanGoBean = TrojanGoBean().applyDefaultValues()))
+                    val (port, _) = config.index[0].entries.first()
+                    pluginConfigs[port] = buildCustomTrojanConfig(bean.content, port)
+                } //"v2ray" -> {
+                else -> {
+                    config = buildCustomConfig(profile)
+                }
+            }
         }
+
+        Logs.d(config.config)
+        Libv2ray.testConfig(config.config)
+        v2rayPoint.configureFileContent = config.config
     }
 
     var cacheFiles = ArrayList<File>()

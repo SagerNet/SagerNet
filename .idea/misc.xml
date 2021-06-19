@@ -8,6 +8,7 @@
         <entry key="../../.local/lib/android/sdk/platforms/android-30/data/res/layout-watch/preference_material.xml" value="0.17435897435897435" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_http_24.xml" value="0.3375" />
+        <entry key="app/src/main/res/drawable/ic_image_edit.xml" value="0.2265" />
         <entry key="app/src/main/res/drawable/ic_service_idle.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_service_stopped.xml" value="0.2035" />
         <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
@@ -17,6 +18,7 @@
         <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_chain_settings.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_config_settings.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_edit_config.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_edit_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_group_item.xml" value="0.32135416666666666" />
@@ -33,9 +35,14 @@
         <entry key="app/src/main/res/layout/layout_route.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/menu/add_group_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/main_drawer_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/per_app_proxy_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/profile_apply_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/profile_config_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/scanner_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/socks_share_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/brook_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/chain_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/config_preferences.xml" value="0.33" />

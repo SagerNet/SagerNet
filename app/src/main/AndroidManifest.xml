@@ -128,7 +128,12 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity"
             android:configChanges="uiMode" />
-        <activity android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.ConfigEditActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity"
+            android:configChanges="uiMode" />
 
         <activity
             android:name=".QuickToggleShortcut"

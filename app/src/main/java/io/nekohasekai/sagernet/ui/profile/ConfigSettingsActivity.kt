@@ -21,29 +21,18 @@
 
 package io.nekohasekai.sagernet.ui.profile
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import cn.hutool.json.JSONObject
-import com.blacksquircle.ui.editorkit.listener.OnChangeListener
-import com.blacksquircle.ui.editorkit.model.ColorScheme
-import com.blacksquircle.ui.editorkit.theme.EditorTheme
-import com.blacksquircle.ui.editorkit.widget.TextProcessor
-import com.blacksquircle.ui.feature.editor.customview.ExtendedKeyboard
-import com.blacksquircle.ui.language.base.model.SyntaxScheme
-import com.blacksquircle.ui.language.json.JsonLanguage
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.service.autofill.Dataset
+import androidx.preference.DialogPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.config.ConfigBean
-import io.nekohasekai.sagernet.ktx.loadColor
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.widget.EditConfigPreference
 
-class ConfigSettingsActivity :
-    ProfileSettingsActivity<ConfigBean>(R.layout.layout_config_settings) {
+class ConfigSettingsActivity : ProfileSettingsActivity<ConfigBean>() {
 
     override fun createEntity() = ConfigBean()
 
@@ -52,101 +41,46 @@ class ConfigSettingsActivity :
 
     override fun ConfigBean.init() {
         DataStore.profileName = name
+        DataStore.serverProtocol = type
+        DataStore.serverConfig = content
         config = content
     }
 
     override fun ConfigBean.serialize() {
         name = DataStore.profileName
+        type = DataStore.serverProtocol
         content = config
     }
 
-    override suspend fun saveAndExit() {
-        try {
-            JSONObject(config)
-        } catch (e: Exception) {
-            onMainDispatcher {
-                MaterialAlertDialogBuilder(this@ConfigSettingsActivity)
-                    .setTitle(R.string.error_title)
-                    .setMessage(e.readableMessage)
-                    .show()
-            }
-            return
-        }
-
-        super.saveAndExit()
-    }
-
-    override fun PreferenceFragmentCompat.createPreferences(
-        savedInstanceState: Bundle?,
-        rootKey: String?,
-    ) {
-        addPreferencesFromResource(R.xml.name_preferences)
-    }
-
-    fun mkTheme(): ColorScheme {
-        val colorPrimary = loadColor(R.attr.colorPrimary)
-        val colorPrimaryDark = loadColor(R.attr.colorPrimaryDark)
-        EditorTheme.DARCULA
-
-        return ColorScheme(
-            textColor = colorPrimary,
-            backgroundColor = Color.WHITE,
-            gutterColor = colorPrimary,
-            gutterDividerColor = Color.WHITE,
-            gutterCurrentLineNumberColor = Color.WHITE,
-            gutterTextColor = Color.WHITE,
-            selectedLineColor = Color.parseColor("#D3D3D3"),
-            selectionColor = colorPrimary,
-            suggestionQueryColor = Color.parseColor("#7CE0F3"),
-            findResultBackgroundColor = Color.parseColor("#5F5E5A"),
-            delimiterBackgroundColor = Color.parseColor("#5F5E5A"),
-            syntaxScheme = SyntaxScheme(
-                numberColor = Color.parseColor("#BB8FF8"),
-                operatorColor = Color.BLACK,
-                keywordColor = Color.parseColor("#EB347E"),
-                typeColor = Color.parseColor("#7FD0E4"),
-                langConstColor = Color.parseColor("#EB347E"),
-                preprocessorColor = Color.parseColor("#EB347E"),
-                variableColor = Color.parseColor("#7FD0E4"),
-                methodColor = Color.parseColor("#B6E951"),
-                stringColor = colorPrimaryDark,
-                commentColor = Color.parseColor("#89826D"),
-                tagColor = Color.parseColor("#F8F8F8"),
-                tagNameColor = Color.parseColor("#EB347E"),
-                attrNameColor = Color.parseColor("#B6E951"),
-                attrValueColor = Color.parseColor("#EBE48C"),
-                entityRefColor = Color.parseColor("#BB8FF8")
-            )
-        )
-    }
-
-    @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar!!.setTitle(R.string.config_settings)
-
-        val editor = findViewById<TextProcessor>(R.id.editor)
-        val extendedKeyboard = findViewById<ExtendedKeyboard>(R.id.extended_keyboard)
-        extendedKeyboard.setKeyListener { char -> editor.insert(char) }
-        extendedKeyboard.setHasFixedSize(true)
-        extendedKeyboard.submitList("{}();,.=|&![]<>+-/*?:_".map { it.toString() })
-        extendedKeyboard.setBackgroundColor(loadColor(R.attr.colorPrimary))
     }
 
-    override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
-        val editor = findViewById<TextProcessor>(R.id.editor)
-        editor.colorScheme = mkTheme()
-        editor.language = JsonLanguage()
-        editor.setTextContent(config)
-        editor.onChangeListener = OnChangeListener {
-            config = editor.text.toString()
-            if (!dirty) {
-                dirty = true
-                DataStore.dirty = true
+    lateinit var editConfigPreference: EditConfigPreference
+    override fun PreferenceFragmentCompat.createPreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
+        addPreferencesFromResource(R.xml.config_preferences)
+        editConfigPreference = findPreference(Key.SERVER_CONFIG)!!
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (::editConfigPreference.isInitialized) {
+            runOnDefaultDispatcher {
+                val newConfig = DataStore.serverConfig
+
+                if (newConfig != config) {
+                    config = newConfig
+
+                    editConfigPreference.notifyChanged()
+                }
             }
         }
-        editor.setHorizontallyScrolling(true)
     }
 
 }

@@ -536,9 +536,11 @@
 
     <string-array name="config_type_entry">
         <item>V2Ray</item>
+        <item>Trojan-Go</item>
     </string-array>
     <string-array name="config_type_value">
         <item>v2ray</item>
+        <item>trojan-go</item>
     </string-array>
 
     <string-array name="night_mode_entry">

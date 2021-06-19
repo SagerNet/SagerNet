@@ -11,8 +11,13 @@
         app:entries="@array/config_type_entry"
         app:entryValues="@array/config_type_value"
         app:icon="@drawable/ic_baseline_nfc_24"
-        app:key="serverConfigType"
+        app:key="serverProtocol"
         app:title="@string/config_type"
         app:useSimpleSummaryProvider="true" />
+
+    <io.nekohasekai.sagernet.widget.EditConfigPreference
+        app:icon="@drawable/ic_image_edit"
+        app:key="serverConfig"
+        app:title="@string/edit" />
 
 </PreferenceScreen>

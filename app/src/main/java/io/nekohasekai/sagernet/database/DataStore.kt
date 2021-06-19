@@ -207,8 +207,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND_RULE)
     var routeReverse by profileCacheStore.boolean(Key.ROUTE_REVERSE)
     var routeRedirect by profileCacheStore.string(Key.ROUTE_REDIRECT)
+    var serverConfig by profileCacheStore.string(Key.SERVER_CONFIG)
 
-    var serverConfig by profileCacheStore.string("serverConfig")
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
     var dnsModeFinal by profileCacheStore.int("dnsModeFinal")
     var systemDnsFinal by profileCacheStore.string("systemDnsFinal")
