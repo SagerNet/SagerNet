@@ -94,7 +94,7 @@ class ConfigEditActivity : ThemedActivity() {
         extendedKeyboard.setKeyListener { char -> binding.editor.insert(char) }
         extendedKeyboard.setHasFixedSize(true)
         extendedKeyboard.submitList("{}();,.=|&![]<>+-/*?:_".map { it.toString() })
-        extendedKeyboard.setBackgroundColor(loadColor(R.attr.colorPrimary))
+        extendedKeyboard.setBackgroundColor(loadColor(R.attr.primaryOrTextPrimary))
 
         runOnDefaultDispatcher {
             config = DataStore.serverConfig
