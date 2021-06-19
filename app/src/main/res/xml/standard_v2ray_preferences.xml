@@ -51,7 +51,7 @@
             app:title="@string/header_type"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="aes-128-gcm"
+            app:defaultValue="none"
             app:entries="@array/quic_security_entry"
             app:entryValues="@array/quic_security_value"
             app:icon="@drawable/ic_baseline_security_24"
