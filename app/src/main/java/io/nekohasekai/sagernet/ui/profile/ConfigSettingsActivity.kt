@@ -29,6 +29,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.config.ConfigBean
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.EditConfigPreference
 
@@ -77,7 +78,9 @@ class ConfigSettingsActivity : ProfileSettingsActivity<ConfigBean>() {
                 if (newConfig != config) {
                     config = newConfig
 
-                    editConfigPreference.notifyChanged()
+                    onMainDispatcher {
+                        editConfigPreference.notifyChanged()
+                    }
                 }
             }
         }
