@@ -92,7 +92,6 @@
         <item name="colorAccent">@color/black</item>
         <item name="colorMaterial300">@color/white</item>
 
-        <item name="android:colorBackground">#FAFAFA</item>
         <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="selectedColorPrimary">@color/black</item>
         <item name="whiteOrTextPrimary">?android:textColorPrimary</item>
