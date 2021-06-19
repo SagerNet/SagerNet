@@ -32,6 +32,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
+        <item name="chipStyle">@style/Widget.MaterialComponents.Chip.Choice.SagerNet</item>
+
         <item name="itemShapeAppearance">
             @style/ShapeAppearance.MaterialComponents.MediumComponent
         </item>
@@ -64,6 +66,15 @@
 
     <style name="Widget.MaterialComponents.Button.TextButton.Dialog.Flush.Primary">
         <item name="android:textColor">?primaryOrTextPrimary</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Chip.Choice.SagerNet">
+        <item name="textStartPadding">30dp</item>
+        <item name="textEndPadding">30dp</item>
+        <item name="chipBackgroundColor">@color/chip_background</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconTint">?primaryOrTextPrimary</item>
+        <item name="rippleColor">@color/chip_ripple_color</item>
     </style>
 
     <style name="Theme.SagerNet.Black">
