@@ -38,7 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
     implementation("androidx.core:core-ktx:1.5.0")
     implementation("androidx.activity:activity-ktx:1.2.3")
-    implementation("androidx.fragment:fragment-ktx:1.3.4")
+    implementation("androidx.fragment:fragment-ktx:1.3.5")
     implementation("androidx.browser:browser:1.3.0")
 
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
@@ -52,13 +52,13 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.3.0")
-    implementation("cn.hutool:hutool-core:5.6.6")
-    implementation("cn.hutool:hutool-json:5.6.6")
-    implementation("cn.hutool:hutool-crypto:5.6.6")
+    implementation("cn.hutool:hutool-core:5.7.2")
+    implementation("cn.hutool:hutool-json:5.7.2")
+    implementation("cn.hutool:hutool-crypto:5.7.2")
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
-    implementation("org.yaml:snakeyaml:1.28")
+    implementation("org.yaml:snakeyaml:1.29")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.mikepenz:aboutlibraries:8.9.0")
 

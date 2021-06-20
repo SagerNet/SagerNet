@@ -23,7 +23,7 @@ buildscript {
         classpath("com.android.tools.build:gradle:$androidPluginVersion")
         classpath(kotlin("gradle-plugin", kotlinVersion))
         classpath("org.mozilla.rust-android-gradle:plugin:0.8.6")
-        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.8.4")
+        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.0")
         classpath("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
     }
 }
