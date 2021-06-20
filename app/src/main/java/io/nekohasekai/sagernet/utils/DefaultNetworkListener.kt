@@ -27,8 +27,9 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.ktx.Logs
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -42,12 +43,14 @@ object DefaultNetworkListener {
         class Get : NetworkMessage() {
             val response = CompletableDeferred<Network>()
         }
+
         class Stop(val key: Any) : NetworkMessage()
 
         class Put(val network: Network) : NetworkMessage()
         class Update(val network: Network) : NetworkMessage()
         class Lost(val network: Network) : NetworkMessage()
     }
+
     private val networkActor = GlobalScope.actor<NetworkMessage>(Dispatchers.Unconfined) {
         val listeners = mutableMapOf<Any, (Network?) -> Unit>()
         var network: Network? = null
@@ -60,10 +63,13 @@ object DefaultNetworkListener {
             }
             is NetworkMessage.Get -> {
                 check(listeners.isNotEmpty()) { "Getting network without any listeners is not supported" }
-                if (network == null) pendingRequests += message else message.response.complete(network)
+                if (network == null) pendingRequests += message else message.response.complete(
+                    network
+                )
             }
             is NetworkMessage.Stop -> if (listeners.isNotEmpty() && // was not empty
-                    listeners.remove(message.key) != null && listeners.isEmpty()) {
+                listeners.remove(message.key) != null && listeners.isEmpty()
+            ) {
                 network = null
                 unregister()
             }
@@ -74,7 +80,11 @@ object DefaultNetworkListener {
                 pendingRequests.clear()
                 listeners.values.forEach { it(network) }
             }
-            is NetworkMessage.Update -> if (network == message.network) listeners.values.forEach { it(network) }
+            is NetworkMessage.Update -> if (network == message.network) listeners.values.forEach {
+                it(
+                    network
+                )
+            }
             is NetworkMessage.Lost -> if (network == message.network) {
                 network = null
                 listeners.values.forEach { it(null) }
@@ -82,23 +92,33 @@ object DefaultNetworkListener {
         }
     }
 
-    suspend fun start(key: Any, listener: (Network?) -> Unit) = networkActor.send(NetworkMessage.Start(key, listener))
+    suspend fun start(key: Any, listener: (Network?) -> Unit) =
+        networkActor.send(NetworkMessage.Start(key, listener))
+
     suspend fun get() = if (fallback) @TargetApi(23) {
-        SagerNet.connectivity.activeNetwork ?: throw UnknownHostException() // failed to listen, return current if available
+        SagerNet.connectivity.activeNetwork
+            ?: throw UnknownHostException() // failed to listen, return current if available
     } else NetworkMessage.Get().run {
         networkActor.send(this)
         response.await()
     }
+
     suspend fun stop(key: Any) = networkActor.send(NetworkMessage.Stop(key))
 
     // NB: this runs in ConnectivityThread, and this behavior cannot be changed until API 26
     private object Callback : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) = runBlocking { networkActor.send(NetworkMessage.Put(network)) }
-        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-            // it's a good idea to refresh capabilities
+        override fun onAvailable(network: Network) =
+            runBlocking { networkActor.send(NetworkMessage.Put(network)) }
+
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: NetworkCapabilities
+        ) { // it's a good idea to refresh capabilities
             runBlocking { networkActor.send(NetworkMessage.Update(network)) }
         }
-        override fun onLost(network: Network) = runBlocking { networkActor.send(NetworkMessage.Lost(network)) }
+
+        override fun onLost(network: Network) =
+            runBlocking { networkActor.send(NetworkMessage.Lost(network)) }
     }
 
     private var fallback = false
@@ -110,6 +130,8 @@ object DefaultNetworkListener {
             removeCapability(NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL)
         }
     }.build()
+    private val mainHandler = Handler(Looper.getMainLooper())
+
     /**
      * Unfortunately registerDefaultNetworkCallback is going to return VPN interface since Android P DP1:
      * https://android.googlesource.com/platform/frameworks/base/+/dda156ab0c5d66ad82bdcf76cda07cbc0a9c8a2e
@@ -121,17 +143,32 @@ object DefaultNetworkListener {
      * Source: https://android.googlesource.com/platform/frameworks/base/+/2df4c7d/services/core/java/com/android/server/ConnectivityService.java#887
      */
     private fun register() {
-        if (Build.VERSION.SDK_INT in 24..27) @TargetApi(24) {
-            SagerNet.connectivity.registerDefaultNetworkCallback(Callback)
-        } else try {
-            fallback = false
-            // we want REQUEST here instead of LISTEN
-            SagerNet.connectivity.requestNetwork(request, Callback)
-        } catch (e: SecurityException) {
-            // known bug: https://stackoverflow.com/a/33509180/2245107
-            if (Build.VERSION.SDK_INT != 23) Logs.w(e)
-            fallback = true
+        when (Build.VERSION.SDK_INT) {
+            in 31..Int.MAX_VALUE -> @TargetApi(31) {
+                SagerNet.connectivity.registerBestMatchingNetworkCallback(
+                    request,
+                    Callback,
+                    mainHandler
+                )
+            }
+            in 28 until 31 -> @TargetApi(28) {  // we want REQUEST here instead of LISTEN
+                SagerNet.connectivity.requestNetwork(request, Callback, mainHandler)
+            }
+            in 26 until 28 -> @TargetApi(26) {
+                SagerNet.connectivity.registerDefaultNetworkCallback(Callback, mainHandler)
+            }
+            in 24 until 26 -> @TargetApi(24) {
+                SagerNet.connectivity.registerDefaultNetworkCallback(Callback)
+            }
+            else -> try {
+                fallback = false
+                SagerNet.connectivity.requestNetwork(request, Callback)
+            } catch (e: SecurityException) {
+                fallback =
+                    true     // known bug on API 23: https://stackoverflow.com/a/33509180/2245107
+            }
         }
     }
+
     private fun unregister() = SagerNet.connectivity.unregisterNetworkCallback(Callback)
 }
