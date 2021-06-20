@@ -41,10 +41,10 @@ class LicenseActivity : ThemedActivity() {
         }
         ListHolderListener.setup(this)
 
-        val libs = LibsBuilder().withAboutIconShown(false)
-            .withExcludedLibraries( // Can't parse ${project.artifactId} in pom.xml
-                "cn_hutool__hutool_core", "cn_hutool__hutool_json", "cn_hutool__hutool_crypto")
-            .supportFragment()
+        val libs =
+            LibsBuilder().withExcludedLibraries( // Can't parse ${project.artifactId} in pom.xml
+                "cn_hutool__hutool_core", "cn_hutool__hutool_json", "cn_hutool__hutool_crypto"
+            ).withAboutIconShown(false).withFields(R.string::class.java.fields).supportFragment()
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, libs)
             .commitAllowingStateLoss()
