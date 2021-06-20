@@ -29,7 +29,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 val kinds = arrayOf("server", "wsserver", "wssserver", "socks5")
 
 fun parseBrook(text: String): AbstractBean {
-    if (!text.contains("?")) {
+    if (!(text.contains("([?@])".toRegex()))) {
 
         // https://txthinking.github.io/brook/#/brook-link
         // old brook scheme
