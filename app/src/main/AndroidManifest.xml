@@ -67,6 +67,7 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
             android:configChanges="uiMode"
+            android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
@@ -85,55 +86,72 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.VpnRequestActivity"
             android:excludeFromRecents="true"
+            android:exported="false"
             android:taskAffinity="" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.VMessSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.VLESSSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.PingTunnelSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.RelayBatonSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.BrookSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigEditActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:exported="false" />
 
         <activity
             android:name=".QuickToggleShortcut"
@@ -148,29 +166,37 @@
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.AppManagerActivity"
             android:configChanges="uiMode"
             android:excludeFromRecents="true"
+            android:exported="false"
             android:label="@string/proxied_apps"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.MainActivity" />
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.ScannerActivity"
             android:configChanges="uiMode"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:label="@string/add_profile_methods_scan_qr_code"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.LicenseActivity"
             android:configChanges="uiMode"
+            android:exported="false"
             android:label="@string/oss_licenses"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
+
         <activity
             android:name="io.nekohasekai.sagernet.ui.ProfileSelectActivity"
             android:configChanges="uiMode"
+            android:exported="false"
             android:label="@string/select_profile"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
@@ -197,6 +223,7 @@
         <service
             android:name="io.nekohasekai.sagernet.bg.TileService"
             android:directBootAware="true"
+            android:exported="true"
             android:icon="@drawable/ic_service_active"
             android:label="@string/quick_toggle"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
@@ -224,6 +251,7 @@
             android:name="io.nekohasekai.sagernet.BootReceiver"
             android:directBootAware="true"
             android:enabled="false"
+            android:exported="true"
             android:process=":bg">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -235,6 +263,14 @@
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />
+
+        <activity
+            android:name="com.mikepenz.aboutlibraries.ui.LibsActivity"
+            tools:node="remove" />
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            tools:node="remove" />
 
     </application>
 
