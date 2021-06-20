@@ -66,20 +66,14 @@ class ServiceNotification(
                 builder.apply {
                     if (showDirectSpeed) {
                         val speedDetail = (service as Context).getString(
-                            R.string.speed_detail,
-                            service.getString(
-                                R.string.speed,
-                                Formatter.formatFileSize(service, stats.txRateProxy)
-                            ),
-                            service.getString(
-                                R.string.speed,
-                                Formatter.formatFileSize(service, stats.rxRateProxy)
-                            ),
-                            service.getString(
+                            R.string.speed_detail, service.getString(
+                                R.string.speed, Formatter.formatFileSize(service, stats.txRateProxy)
+                            ), service.getString(
+                                R.string.speed, Formatter.formatFileSize(service, stats.rxRateProxy)
+                            ), service.getString(
                                 R.string.speed,
                                 Formatter.formatFileSize(service, stats.txRateDirect)
-                            ),
-                            service.getString(
+                            ), service.getString(
                                 R.string.speed,
                                 Formatter.formatFileSize(service, stats.rxRateDirect)
                             )
@@ -88,14 +82,10 @@ class ServiceNotification(
                         setContentText(speedDetail)
                     } else {
                         val speedSimple = (service as Context).getString(
-                            R.string.traffic,
-                            service.getString(
-                                R.string.speed,
-                                Formatter.formatFileSize(service, stats.txRateProxy)
-                            ),
-                            service.getString(
-                                R.string.speed,
-                                Formatter.formatFileSize(service, stats.rxRateProxy)
+                            R.string.traffic, service.getString(
+                                R.string.speed, Formatter.formatFileSize(service, stats.txRateProxy)
+                            ), service.getString(
+                                R.string.speed, Formatter.formatFileSize(service, stats.rxRateProxy)
                             )
                         )
                         setContentText(speedSimple)
@@ -116,13 +106,10 @@ class ServiceNotification(
     }
     private var callbackRegistered = false
 
-    private val builder = NotificationCompat.Builder(service as Context, channel)
-        .setWhen(0)
-        .setTicker(service.getString(R.string.forward_success))
-        .setContentTitle(profileName)
+    private val builder = NotificationCompat.Builder(service as Context, channel).setWhen(0)
+        .setTicker(service.getString(R.string.forward_success)).setContentTitle(profileName)
         .setContentIntent(SagerNet.configureIntent(service))
-        .setSmallIcon(R.drawable.ic_service_active)
-        .setCategory(NotificationCompat.CATEGORY_SERVICE)
+        .setSmallIcon(R.drawable.ic_service_active).setCategory(NotificationCompat.CATEGORY_SERVICE)
         .setPriority(if (visible) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_MIN)
 
     init {
@@ -134,7 +121,7 @@ class ServiceNotification(
                 service,
                 0,
                 Intent(Action.CLOSE).setPackage(service.packageName),
-                0
+                PendingIntent.FLAG_IMMUTABLE
             )
         ).apply {
             setShowsUserInterface(false)
@@ -162,8 +149,7 @@ class ServiceNotification(
         if (screenOn) {
             service.data.binder.registerCallback(callback)
             service.data.binder.startListeningForBandwidth(
-                callback,
-                DataStore.speedInterval.toLong()
+                callback, DataStore.speedInterval.toLong()
             )
             callbackRegistered = true
         } else if (callbackRegistered) {    // unregister callback to save battery

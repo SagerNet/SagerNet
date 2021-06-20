@@ -126,7 +126,7 @@ class SagerNet : Application(),
                 PendingIntent.getActivity(
                     it, 0, Intent(
                         application, MainActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
+                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), PendingIntent.FLAG_IMMUTABLE
                 )
             }
         }
