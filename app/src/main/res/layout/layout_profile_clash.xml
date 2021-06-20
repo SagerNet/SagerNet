@@ -19,7 +19,7 @@
             android:id="@+id/selected_view"
             android:layout_width="4dp"
             android:layout_height="match_parent"
-            android:background="?colorPrimary"
+            android:background="?primaryOrTextPrimary"
             android:orientation="horizontal"
             android:visibility="invisible"
             tools:visibility="visible" />
