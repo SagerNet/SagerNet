@@ -145,11 +145,7 @@ object DefaultNetworkListener {
     private fun register() {
         when (Build.VERSION.SDK_INT) {
             in 31..Int.MAX_VALUE -> @TargetApi(31) {
-                SagerNet.connectivity.registerBestMatchingNetworkCallback(
-                    request,
-                    Callback,
-                    mainHandler
-                )
+                SagerNet.connectivity.registerBestMatchingNetworkCallback(request, Callback, mainHandler)
             }
             in 28 until 31 -> @TargetApi(28) {  // we want REQUEST here instead of LISTEN
                 SagerNet.connectivity.requestNetwork(request, Callback, mainHandler)
@@ -164,8 +160,7 @@ object DefaultNetworkListener {
                 fallback = false
                 SagerNet.connectivity.requestNetwork(request, Callback)
             } catch (e: SecurityException) {
-                fallback =
-                    true     // known bug on API 23: https://stackoverflow.com/a/33509180/2245107
+                fallback = true     // known bug on API 23: https://stackoverflow.com/a/33509180/2245107
             }
         }
     }
