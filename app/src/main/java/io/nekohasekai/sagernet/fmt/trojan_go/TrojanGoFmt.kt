@@ -27,6 +27,7 @@ import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
@@ -125,7 +126,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
             }
         }
         conf["tcp"] = JSONObject().also {
-            it["prefer_ipv4"] = DataStore.preferIpv6
+            it["prefer_ipv4"] =  DataStore.ipv6Mode <= IPv6Mode.ENABLE
         }
 
         when (type) {

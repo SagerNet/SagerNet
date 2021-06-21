@@ -84,6 +84,7 @@ public class V2RayConfig {
         public String tag;
         public List<String> domains;
         public List<String> expectIPs;
+        public String queryStrategy;
 
     }
 

@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt.shadowsocksr
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
@@ -83,7 +84,7 @@ fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
         it["protocol_param"] = protocolParam
         it["obfs"] = obfs
         it["obfs_param"] = obfsParam
-        it["ipv6"] = DataStore.ipv6Route
+        it["ipv6"] =  DataStore.ipv6Mode >= IPv6Mode.ENABLE
     }.toStringPretty()
 }
 

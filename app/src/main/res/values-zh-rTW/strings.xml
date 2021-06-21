@@ -94,10 +94,6 @@
     <string name="encryption">加密</string>
 
     <!-- feature category -->
-    <string name="ipv6">IPv6 路由</string>
-    <string name="ipv6_summary">向遠端重新導向 IPv6 流量。</string>
-    <string name="ipv6_prefer">偏好 IPv6</string>
-    <string name="ipv6_prefer_summary">偏好 IPv6 位址和路由。</string>
 
     <string name="metered">計量付費提示</string>
     <string name="metered_summary">提示系統將 VPN 視為計量付費。</string>

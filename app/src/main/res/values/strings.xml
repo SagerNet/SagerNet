@@ -146,11 +146,9 @@
     <string name="edit_config">Edit Config</string>
 
     <!-- feature category -->
-    <string name="ipv6_settings">IPv6 Settings</string>
     <string name="ipv6">IPv6 Route</string>
-    <string name="ipv6_summary">Redirect IPv6 traffic to remote</string>
-    <string name="ipv6_prefer">Prefer IPv6</string>
-    <string name="ipv6_prefer_summary">Prefer IPv6 address and routes</string>
+    <string name="prefer">Prefer</string>
+    <string name="only">Only</string>
 
     <string name="metered">Metered Hint</string>
     <string name="metered_summary">Hint system to treat VPN as metered</string>

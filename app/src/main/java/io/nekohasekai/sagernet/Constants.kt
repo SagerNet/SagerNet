@@ -45,8 +45,7 @@ object Key {
     const val ENABLE_DOMESTIC_DNS = "enableDomesticDns"
     const val DOMESTIC_DNS = "domesticDns"
 
-    const val IPV6_ROUTE = "ipv6Route"
-    const val PREFER_IPV6 = "preferIpv6"
+    const val IPV6_MODE = "ipv6Mode"
 
     const val PROXY_APPS = "proxyApps"
     const val BYPASS_MODE = "bypassMode"
@@ -144,12 +143,16 @@ object Key {
 
 object DnsMode {
     const val SYSTEM = 0
-
-    @Deprecated("unavailable")
-    const val REMOTE = 1
     const val LOCAL = 2
     const val FAKEDNS = 3
     const val FAKEDNS_LOCAL = 4
+}
+
+object IPv6Mode {
+    const val DISABLE = 0
+    const val ENABLE = 1
+    const val PREFER = 2
+    const val ONLY = 3
 }
 
 object Action {

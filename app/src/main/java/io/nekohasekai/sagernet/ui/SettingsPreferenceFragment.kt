@@ -108,8 +108,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             showStopButton.remove()
         }
         val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
-        val ipv6Route = findPreference<Preference>(Key.IPV6_ROUTE)!!
-        val preferIpv6 = findPreference<Preference>(Key.PREFER_IPV6)!!
+        val ipv6Mode = findPreference<Preference>(Key.IPV6_MODE)!!
         val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
         val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
         if (!isExpert) {
@@ -208,8 +207,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         domesticDns.onPreferenceChangeListener = reloadListener
 
         portLocalDns.onPreferenceChangeListener = reloadListener
-        ipv6Route.onPreferenceChangeListener = reloadListener
-        preferIpv6.onPreferenceChangeListener = reloadListener
+        ipv6Mode.onPreferenceChangeListener = reloadListener
         allowAccess.onPreferenceChangeListener = reloadListener
 
         transproxyPort.onPreferenceChangeListener = reloadListener

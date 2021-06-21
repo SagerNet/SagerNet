@@ -102,19 +102,14 @@
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="trafficSniffing"
             app:title="@string/traffic_sniffing" />
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/ipv6_settings">
-        <SwitchPreference
-            app:defaultValue="true"
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="1"
+            app:entries="@array/ipv6_mode_entry"
+            app:entryValues="@array/ipv6_mode_value"
             app:icon="@drawable/ic_image_looks_6"
-            app:key="ipv6Route"
-            app:summary="@string/ipv6_summary"
-            app:title="@string/ipv6" />
-        <SwitchPreference
-            app:key="preferIpv6"
-            app:summary="@string/ipv6_prefer_summary"
-            app:title="@string/ipv6_prefer" />
+            app:key="ipv6Mode"
+            app:title="@string/ipv6"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">

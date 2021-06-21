@@ -32,10 +32,7 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import androidx.annotation.RequiresApi
-import io.nekohasekai.sagernet.DnsMode
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
@@ -131,43 +128,32 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     private suspend fun startVpn(): FileDescriptor {
         val profile = data.proxy!!.profile
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
-            .setSession(profile.displayName()).setMtu(VPN_MTU).addAddress(PRIVATE_VLAN4_CLIENT, 30)
+            .setSession(profile.displayName()).setMtu(VPN_MTU)
         val dnsMode = DataStore.dnsModeFinal
         val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
-        val ipv6Route = DataStore.ipv6Route
+        val ipv6Mode = DataStore.ipv6Mode
 
-        if (useFakeDns) {
-            builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
+        builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
+        builder.addRoute("0.0.0.0", 0)
+        if (ipv6Mode != IPv6Mode.ONLY) {
+            if (useFakeDns) {
+                builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
+            }
         }
 
-        if (ipv6Route) {
+        if (ipv6Mode != IPv6Mode.DISABLE) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
 
             if (useFakeDns) {
                 builder.addAddress(FAKEDNS_VLAN6_CLIENT, 18)
             }
+            builder.addRoute("::", 0)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             builder.setUnderlyingNetworks(underlyingNetworks)
         }
-        if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
-
-        // https://github.com/SagerNet/SagerNet/issues/124
-
-        /*if (DataStore.bypassLan) {
-            resources.getStringArray(R.array.bypass_private_route).forEach {
-                val subnet = Subnet.fromString(it)!!
-                builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
-            }
-            builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
-            // https://issuetracker.google.com/issues/149636790
-            if (ipv6Route) builder.addRoute("2000::", 3)
-        } else {*/
-        builder.addRoute("0.0.0.0", 0)
-        if (ipv6Route) builder.addRoute("::", 0) //        }
-
-        // https://issuetracker.google.com/issues/149636790
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) builder.setMetered(metered)
 
         val useSystemDns = dnsMode == DnsMode.SYSTEM
 
@@ -221,7 +207,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             cmd += "--dnsgw"
             cmd += "127.0.0.1:${DataStore.localDNSPort}"
         }
-        if (ipv6Route) {
+        if (ipv6Mode != IPv6Mode.DISABLE) {
             cmd += "--netif-ip6addr"
             cmd += PRIVATE_VLAN6_ROUTER
         }

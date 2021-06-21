@@ -556,4 +556,17 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="ipv6_mode_entry">
+        <item>@string/disable</item>
+        <item>@string/enable</item>
+        <item>@string/prefer</item>
+        <item>@string/only</item>
+    </string-array>
+    <string-array name="ipv6_mode_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
 </resources>

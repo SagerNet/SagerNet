@@ -96,9 +96,6 @@
 
     <!-- feature category -->
     <string name="ipv6">IPv6 路由</string>
-    <string name="ipv6_summary">向服务器重定向 IPv6 流量</string>
-    <string name="ipv6_prefer">IPv6 优先</string>
-    <string name="ipv6_prefer_summary">优先使用 IPv6 地址和路由</string>
 
     <string name="metered">按流量计费</string>
     <string name="metered_summary">让系统认为此 VPN 按流量计费</string>
@@ -255,7 +252,6 @@
     <string name="mux_for_all">为所有可能支持的协议启用多路复用</string>
     <string name="mux_for_all_sum">如果服务器不支持, 则将无法连接</string>
     <string name="tcp_keep_alive_interval">TCP 保持活跃数据包发送间隔</string>
-    <string name="ipv6_settings">IPv6 设置</string>
     <string name="route_add">新建路由规则</string>
     <string name="delete_route_prompt">您确定要移除此路吗?</string>
     <string name="route_name">路由名称</string>
@@ -311,5 +307,7 @@
     <string name="config_type">配置类型</string>
     <string name="edit_config">编辑配置</string>
     <string name="lines">%d 行</string>
+    <string name="only">仅</string>
+    <string name="prefer">优先</string>
 
 </resources>
