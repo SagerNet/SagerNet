@@ -40,8 +40,7 @@ val devKeys = arrayOf(
 
 fun Context.getSignature(): Signature {
     val appInfo = packageManager.getPackageInfo(
-        packageName,
-        if (Build.VERSION.SDK_INT >= 28) GET_SIGNING_CERTIFICATES else GET_SIGNATURES
+        packageName, if (Build.VERSION.SDK_INT >= 28) GET_SIGNING_CERTIFICATES else GET_SIGNATURES
     )
     return if (Build.VERSION.SDK_INT >= 28) {
         appInfo.signingInfo.apkContentsSigners[0]
@@ -55,11 +54,6 @@ fun Context.getSha256Signature(): String {
 }
 
 fun Context.isVerified(): Boolean {
-    val packageName = packageName
-    if (!packageName.contains("sagernet")) {
-        Logs.w("packageName changed, don't check signature")
-        return true
-    }
     when (val s = getSha256Signature()) {
         in devKeys,
         -> return true
@@ -74,11 +68,9 @@ fun Context.checkMT() {
     val fuckMT = block {
         Thread.setDefaultUncaughtExceptionHandler(null)
         Thread.currentThread().uncaughtExceptionHandler = null
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                Process.killProcess(Process.myPid())
-            } catch (e: Exception) {
-            }
+        try {
+            Process.killProcess(Process.myPid())
+        } catch (e: Exception) {
         }
         Runtime.getRuntime().exit(0)
     }
