@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder
 
 val gson = GsonBuilder()
     .setPrettyPrinting()
+    .setLenient()
     .registerTypeAdapterFactory(JsonOrAdapterFactory())
     .registerTypeAdapterFactory(JsonLazyFactory())
     .create()

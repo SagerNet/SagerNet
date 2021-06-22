@@ -1015,8 +1015,13 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         ?.map { gson.fromJson(it.toString(), InboundObject::class.java) }?.toMutableList()
         ?: ArrayList()
 
-    val dnsArr = config.getJSONObject("dns")?.getJSONArray("servers")
-        ?.map { gson.fromJson(it.toString(), DnsObject.StringOrServerObject::class.java) }
+    val dnsArr = config.getJSONObject("dns")?.getJSONArray("servers")?.map {
+        if (it is String) DnsObject.StringOrServerObject().apply {
+            valueX = it
+        } else DnsObject.StringOrServerObject().apply {
+            valueY = gson.fromJson(it.toString(), DnsObject.ServerObject::class.java)
+        }
+    }
     val ipv6Mode = DataStore.ipv6Mode
     var useFakeDns = false
 
