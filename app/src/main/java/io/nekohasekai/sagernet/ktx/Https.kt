@@ -32,10 +32,7 @@ import okhttp3.OkHttpClient
 import java.net.InetSocketAddress
 import java.net.Proxy
 
-val okHttpClient = OkHttpClient.Builder()
-    .followRedirects(true)
-    .followSslRedirects(true)
-    .build()
+val okHttpClient = OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build()
 
 private lateinit var proxyClient: OkHttpClient
 fun Fragment.createHttpClient(): OkHttpClient {
@@ -67,10 +64,9 @@ fun HttpUrl.Builder.toLink(scheme: String, appendDefaultPort: Boolean = true): S
         url = url.newBuilder().port(14514).build()
         replace = true
     }
-    return url.toString()
-        .replace("${url.scheme}://", "$scheme://").let {
-            if (replace) it.replace("${url.host}:14514", "${url.host}:$defaultPort") else it
-        }
+    return url.toString().replace("${url.scheme}://", "$scheme://").let {
+        if (replace) it.replace(":14514", ":$defaultPort") else it
+    }
 }
 
 fun String.isIpAddress(): Boolean {
