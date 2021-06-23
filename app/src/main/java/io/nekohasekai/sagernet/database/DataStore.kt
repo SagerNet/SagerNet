@@ -92,6 +92,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
 
+    var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
+
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
     var socksPort: Int

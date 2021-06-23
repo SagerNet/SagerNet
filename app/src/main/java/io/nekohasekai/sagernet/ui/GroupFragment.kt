@@ -172,7 +172,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
         }
 
         runOnDefaultDispatcher {
-            createHttpClient().newCall(Request.Builder().url(proxyGroup.subscriptionLink).build())
+            createProxyClient().newCall(Request.Builder().url(proxyGroup.subscriptionLink).build())
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         runOnMainDispatcher {

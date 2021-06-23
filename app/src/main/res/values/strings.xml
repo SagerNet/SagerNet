@@ -167,6 +167,14 @@
     <string name="route_reset">Reset</string>
     <string name="route_reverse">Reverse Proxy</string>
     <string name="route_reverse_redirect">Reverse Redirect</string>
+    <string name="route_manage_assets">Manage Route Assets</string>
+    <string name="route_assets">Assets</string>
+    <string name="route_rules_provider">Rule Assets Provider</string>
+    <string name="route_rules_official">Official</string>
+    <string name="route_asset_status">Local version: %s</string>
+    <string name="route_asset_no_update">No update</string>
+    <string name="route_asset_updated">Updated</string>
+    <string name="route_not_asset">Not an asset file: excepted .dat, but %s</string>
 
     <string name="route_opt_bypass_lan">Bypass LAN</string>
     <string name="route_opt_block_ads">Block ADs</string>

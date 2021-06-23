@@ -71,7 +71,8 @@ import kotlin.properties.Delegates
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false,
     val selectedItem: ProxyEntity? = null,
-) : ToolbarFragment(R.layout.layout_group_list), PopupMenu.OnMenuItemClickListener, Toolbar.OnMenuItemClickListener {
+) : ToolbarFragment(R.layout.layout_group_list), PopupMenu.OnMenuItemClickListener,
+    Toolbar.OnMenuItemClickListener {
 
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
@@ -199,7 +200,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                 tabLayout.getTabAt(targetIndex)?.select()
             }
 
-            snackbar(requireContext().resources.getQuantityString(R.plurals.added, proxies.size, proxies.size)).show()
+            snackbar(
+                requireContext().resources.getQuantityString(
+                    R.plurals.added, proxies.size, proxies.size
+                )
+            ).show()
         }
 
     }
@@ -318,8 +323,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 try {
                     (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
                         .bufferedWriter().use {
-                        it.write(links)
-                    }
+                            it.write(links)
+                        }
                     onMainDispatcher {
                         snackbar(getString(R.string.copy_toast_msg)).show()
                     }
@@ -508,7 +513,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 undoManager = UndoSnackbarManager(activity as MainActivity, adapter)
 
-                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START) {
+                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+                    ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START
+                ) {
                     override fun getSwipeDirs(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -533,7 +540,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder,
                     ): Boolean {
-                        adapter.move(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
+                        adapter.move(
+                            viewHolder.bindingAdapterPosition, target.bindingAdapterPosition
+                        )
                         return true
                     }
 
@@ -561,7 +570,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             undoManager.flush()
         }
 
-        inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(), ProfileManager.Listener, UndoSnackbarManager.Interface<ProxyEntity> {
+        inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
+            ProfileManager.Listener, UndoSnackbarManager.Interface<ProxyEntity> {
 
             var configurationIdList: MutableList<Long> = mutableListOf()
             val configurationList = HashMap<Long, ProxyEntity>()
@@ -583,8 +593,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                 parent: ViewGroup,
                 viewType: Int,
             ): ConfigurationHolder {
-                return ConfigurationHolder(LayoutInflater.from(parent.context)
-                    .inflate(if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash, parent, false))
+                return ConfigurationHolder(
+                    LayoutInflater.from(parent.context).inflate(
+                        if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
+                        parent,
+                        false
+                    )
+                )
             }
 
             override fun getItemId(position: Int): Long {
@@ -607,7 +622,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun move(from: Int, to: Int) {
                 val first = getItemAt(from)
                 var previousOrder = first.userOrder
-                val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1, to + 1 downTo from)
+                val (step, range) = if (from < to) Pair(1, from until to) else Pair(
+                    -1, to + 1 downTo from
+                )
                 for (i in range) {
                     val next = getItemAt(i + step)
                     val order = next.userOrder
@@ -749,7 +766,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun bind(proxyEntity: ProxyEntity)
         }
 
-        inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view), PopupMenu.OnMenuItemClickListener {
+        inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
+            PopupMenu.OnMenuItemClickListener {
 
             lateinit var entity: ProxyEntity
             val impl =
@@ -810,12 +828,19 @@ class ConfigurationFragment @JvmOverloads constructor(
                     val showTraffic = rx + tx != 0L
                     trafficText.isVisible = showTraffic
                     if (showTraffic) {
-                        trafficText.text =
-                            view.context.getString(R.string.traffic, Formatter.formatFileSize(view.context, tx), Formatter.formatFileSize(view.context, rx))
+                        trafficText.text = view.context.getString(
+                            R.string.traffic,
+                            Formatter.formatFileSize(view.context, tx),
+                            Formatter.formatFileSize(view.context, rx)
+                        )
                     } //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
 
                     editButton.setOnClickListener {
-                        it.context.startActivity(proxyEntity.settingIntent(it.context, proxyGroup.isSubscription))
+                        it.context.startActivity(
+                            proxyEntity.settingIntent(
+                                it.context, proxyGroup.isSubscription
+                            )
+                        )
                     }
 
                     shareLayout.isGone = select || !proxyEntity.haveLink()
@@ -845,21 +870,23 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     shareButton.setColorFilter(Color.WHITE)
 
                                     shareLayout.setOnClickListener {
-                                        MaterialAlertDialogBuilder(requireContext())
-                                            .setTitle(R.string.insecure).setMessage(resources
-                                            .openRawResource(validateResult.textRes)
-                                            .bufferedReader().use { it.readText() })
+                                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.insecure)
+                                            .setMessage(resources.openRawResource(validateResult.textRes)
+                                                .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                                                popup.menuInflater.inflate(
+                                                    R.menu.socks_share_menu, popup.menu
+                                                )
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
                                             }.show().apply {
-                                            findViewById<TextView>(android.R.id.message)?.apply {
-                                                Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                movementMethod = LinkMovementMethod.getInstance()
+                                                findViewById<TextView>(android.R.id.message)?.apply {
+                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                    movementMethod =
+                                                        LinkMovementMethod.getInstance()
+                                                }
                                             }
-                                        }
                                     }
                                 }
                                 is ResultDeprecated -> onMainDispatcher {
@@ -870,21 +897,23 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     shareButton.setColorFilter(Color.GRAY)
 
                                     shareLayout.setOnClickListener {
-                                        MaterialAlertDialogBuilder(requireContext())
-                                            .setTitle(R.string.deprecated).setMessage(resources
-                                            .openRawResource(validateResult.textRes)
-                                            .bufferedReader().use { it.readText() })
+                                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.deprecated)
+                                            .setMessage(resources.openRawResource(validateResult.textRes)
+                                                .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                                                popup.menuInflater.inflate(
+                                                    R.menu.socks_share_menu, popup.menu
+                                                )
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
                                             }.show().apply {
-                                            findViewById<TextView>(android.R.id.message)?.apply {
-                                                Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                movementMethod = LinkMovementMethod.getInstance()
+                                                findViewById<TextView>(android.R.id.message)?.apply {
+                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                    movementMethod =
+                                                        LinkMovementMethod.getInstance()
+                                                }
                                             }
-                                        }
                                     }
                                 }
                                 else -> onMainDispatcher {
@@ -894,7 +923,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                     shareLayout.setOnClickListener {
                                         val popup = PopupMenu(requireContext(), it)
-                                        popup.menuInflater.inflate(R.menu.socks_share_menu, popup.menu)
+                                        popup.menuInflater.inflate(
+                                            R.menu.socks_share_menu, popup.menu
+                                        )
                                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                         popup.show()
                                     }
@@ -958,8 +989,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             fun export(link: String) {
                 val success = SagerNet.trySetPrimaryClip(link)
-                (activity as MainActivity).snackbar()
-                    .setText(if (success) R.string.action_export_msg else R.string.action_export_err)
+                (activity as MainActivity).snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
                     .show()
             }
 
@@ -975,7 +1005,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 } catch (e: Exception) {
                     Logs.w(e)
-                    (activity as MainActivity).snackbar().setText(e.readableMessage).show()
+                    (activity as MainActivity).snackbar(e.readableMessage).show()
                     return true
                 }
                 return true

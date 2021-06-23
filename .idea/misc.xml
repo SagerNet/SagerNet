@@ -8,6 +8,7 @@
         <entry key="../../.local/lib/android/sdk/platforms/android-30/data/res/layout-watch/preference_material.xml" value="0.17435897435897435" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_http_24.xml" value="0.3375" />
+        <entry key="app/src/main/res/drawable/ic_baseline_system_update_alt_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_image_edit.xml" value="0.2265" />
         <entry key="app/src/main/res/drawable/ic_service_idle.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_service_stopped.xml" value="0.2035" />
@@ -16,6 +17,8 @@
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/layout/layout_asset_item.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_assets.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_chain_settings.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_config_settings.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_edit_config.xml" value="0.2636752136752137" />
@@ -32,11 +35,14 @@
         <entry key="app/src/main/res/layout/layout_password_dialog.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile_clash.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/layout/layout_profile_list.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_route.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/menu/add_group_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/menu/add_route_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/import_asset_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/main_drawer_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/per_app_proxy_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/profile_apply_menu.xml" value="0.2636752136752137" />
@@ -59,6 +65,7 @@
         <entry key="external/editorkit/features/feature-editor/src/main/res/layout/fragment_editor.xml" value="0.2636752136752137" />
         <entry key="external/editorkit/features/feature-editor/src/main/res/layout/item_keyboard_key.xml" value="0.2636752136752137" />
         <entry key="external/preferencex-simplemenu/src/main/res/drawable/simple_menu_background.xml" value="0.147" />
+        <entry key="external/preferencex/preferencex-simplemenu/src/main/res/layout/simple_menu_list.xml" value="0.2636752136752137" />
         <entry key="naive-plugin/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.20925925925925926" />
       </map>
     </option>

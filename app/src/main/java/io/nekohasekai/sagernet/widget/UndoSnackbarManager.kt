@@ -23,17 +23,17 @@ package io.nekohasekai.sagernet.widget
 
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ui.MainActivity
+import io.nekohasekai.sagernet.ui.ThemedActivity
 
 /**
- * @param activity MainActivity.
+ * @param activity ThemedActivity.
  * //@param view The view to find a parent from.
  * @param undo Callback for undoing removals.
  * @param commit Callback for committing removals.
  * @tparam T Item type.
  */
 class UndoSnackbarManager<in T>(
-    private val activity: MainActivity,
+    private val activity: ThemedActivity,
     private val callback: Interface<T>,
 ) {
 

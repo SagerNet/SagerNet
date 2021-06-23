@@ -309,5 +309,15 @@
     <string name="lines">%d 行</string>
     <string name="only">仅</string>
     <string name="prefer">优先</string>
+    <string name="route_not_asset">不是资源文件: 预期 .dat 为扩展名, 但 %s</string>
+    <string name="route_asset_no_update">已为最新</string>
+    <string name="route_asset_updated">已更新</string>
+    <string name="route_asset_status">本地版本: %s</string>
+    <string name="route_rules_provider">路由资源更新源</string>
+    <string name="route_assets">资源</string>
+    <string name="route_manage_assets">管理路由资源</string>
+    <string name="enable_log">启用日志</string>
+    <string name="enable_log_sum">调试用途</string>
+    <string name="route_rules_official">官方</string>
 
 </resources>

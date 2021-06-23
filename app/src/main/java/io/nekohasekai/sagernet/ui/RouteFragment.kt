@@ -132,6 +132,9 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                     ruleAdapter.reload()
                 }
             }
+            R.id.action_manage_assets -> {
+                startActivity(Intent(requireContext(), AssetsActivity::class.java))
+            }
         }
         return true
     }

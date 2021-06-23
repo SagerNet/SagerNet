@@ -73,7 +73,7 @@ packages/apps/Settings/+/8a9ccfd/src/com/android/settings/wifi/dpp/WifiDppQrCode
         }
     } catch (e: WriterException) {
         Logs.w(e)
-        (activity as MainActivity).snackbar().setText(e.readableMessage).show()
+        (activity as MainActivity).snackbar(e.readableMessage).show()
         dismiss()
         null
     }

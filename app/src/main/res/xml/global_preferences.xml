@@ -110,6 +110,14 @@
             app:key="ipv6Mode"
             app:title="@string/ipv6"
             app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/rules_dat_provider_entry"
+            app:entryValues="@array/rules_dat_provider_value"
+            app:icon="@drawable/ic_baseline_rule_folder_24"
+            app:key="rulesProvider"
+            app:title="@string/route_rules_provider"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">
