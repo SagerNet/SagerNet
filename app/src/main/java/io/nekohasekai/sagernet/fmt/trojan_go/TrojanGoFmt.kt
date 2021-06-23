@@ -26,7 +26,6 @@ import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
@@ -118,7 +117,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
         conf["password"] = JSONArray().apply {
             add(password)
         }
-        conf["log_level"] = if (BuildConfig.DEBUG) 0 else 2
+        conf["log_level"] = if (DataStore.enableLog) 0 else 2
         if (index == 0 && DataStore.enableMux) {
             conf["mux"] = JSONObject().also {
                 it["enabled"] = true
@@ -126,7 +125,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
             }
         }
         conf["tcp"] = JSONObject().also {
-            it["prefer_ipv4"] =  DataStore.ipv6Mode <= IPv6Mode.ENABLE
+            it["prefer_ipv4"] = DataStore.ipv6Mode <= IPv6Mode.ENABLE
         }
 
         when (type) {

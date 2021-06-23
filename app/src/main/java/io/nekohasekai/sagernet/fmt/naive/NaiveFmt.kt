@@ -22,7 +22,7 @@
 package io.nekohasekai.sagernet.fmt.naive
 
 import cn.hutool.json.JSONObject
-import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.unUrlSafe
@@ -76,7 +76,7 @@ fun NaiveBean.buildNaiveConfig(port: Int): String {
         if (extraHeaders.isNotBlank()) {
             it["extra-headers"] = extraHeaders.split("\n").joinToString("\r\n")
         }
-        if (BuildConfig.DEBUG) {
+        if (DataStore.enableLog) {
             it["log"] = ""
         }
     }.toStringPretty()

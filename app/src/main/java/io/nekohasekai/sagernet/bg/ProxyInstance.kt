@@ -194,8 +194,10 @@ class ProxyInstance(val profile: ProxyEntity) {
                             File(
                                 SagerNet.application.applicationInfo.nativeLibraryDir,
                                 Executable.SS_LOCAL
-                            ).absolutePath, "-c", configFile.absolutePath
+                            ).absolutePath, "-c", configFile.absolutePath, "--log-without-time"
                         )
+
+                        if (DataStore.enableLog) commands.add("-v")
 
                         base.data.processes!!.start(commands)
                     }

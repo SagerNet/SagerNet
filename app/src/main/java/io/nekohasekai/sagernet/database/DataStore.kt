@@ -24,10 +24,7 @@ package io.nekohasekai.sagernet.database
 import android.os.Binder
 import android.os.Build
 import androidx.preference.PreferenceDataStore
-import io.nekohasekai.sagernet.CONNECTION_TEST_URL
-import io.nekohasekai.sagernet.IPv6Mode
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
@@ -91,8 +88,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "https+local://223.5.5.5/dns-query" }
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
-
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
+    var enableLog by configurationStore.boolean(Key.ENABLE_LOG) { BuildConfig.DEBUG }
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }

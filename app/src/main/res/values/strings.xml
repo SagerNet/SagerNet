@@ -337,5 +337,8 @@
     <string name="disable">Disable</string>
     <string name="auto">Auto</string>
 
+    <string name="enable_log">Enable Log</string>
+    <string name="enable_log_sum">For debugging purposes</string>
+
 
 </resources>

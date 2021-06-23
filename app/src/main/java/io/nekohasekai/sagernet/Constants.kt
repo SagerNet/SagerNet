@@ -80,6 +80,7 @@ object Key {
     const val SECURITY_ADVISORY = "securityAdvisory"
     const val TCP_KEEP_ALIVE_INTERVAL = "tcpKeepAliveInterval"
     const val RULES_PROVIDER = "rulesProvider"
+    const val ENABLE_LOG = "enableLog"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"

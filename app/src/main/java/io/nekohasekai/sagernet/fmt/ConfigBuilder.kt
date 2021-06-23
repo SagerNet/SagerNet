@@ -26,7 +26,6 @@ import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import com.google.gson.JsonSyntaxException
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.bg.VpnService
@@ -163,7 +162,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         }
 
         log = LogObject().apply {
-            loglevel = if (BuildConfig.DEBUG) "debug" else "warning"
+            loglevel = if (DataStore.enableLog) "debug" else "warning"
         }
 
         policy = PolicyObject().apply {

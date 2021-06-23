@@ -68,6 +68,11 @@
             app:key="allowAccess"
             app:summary="@string/allow_access_sum"
             app:title="@string/allow_access" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_bug_report_24"
+            app:key="enableLog"
+            app:summary="@string/enable_log_sum"
+            app:title="@string/enable_log" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_route">
