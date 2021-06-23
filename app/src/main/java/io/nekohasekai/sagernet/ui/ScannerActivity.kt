@@ -36,7 +36,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.getSystemService
 import androidx.core.view.isGone
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
 import com.google.zxing.NotFoundException
@@ -53,7 +52,6 @@ import io.nekohasekai.sagernet.widget.ListHolderListener
 
 class ScannerActivity : ThemedActivity(), BarcodeCallback {
 
-    lateinit var toolbar: MaterialToolbar
     lateinit var capture: CaptureManager
     lateinit var barcodeScanner: DecoratedBarcodeView
 
@@ -67,10 +65,11 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
         setContentView(R.layout.layout_scanner)
         ListHolderListener.setup(this)
 
-        toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+        }
 
         barcodeScanner = findViewById(R.id.barcode_scanner)
         barcodeScanner.statusView.isGone = true

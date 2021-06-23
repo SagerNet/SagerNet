@@ -31,7 +31,6 @@ import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.json.JSONObject
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.R
@@ -60,11 +59,12 @@ class AssetsActivity : ThemedActivity() {
         layout = binding
         setContentView(binding.root)
 
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setTitle(R.string.route_assets)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.apply {
+            setTitle(R.string.route_assets)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+        }
 
         binding.recyclerView.layoutManager = FixedLinearLayoutManager(binding.recyclerView)
         adapter = AssetAdapter()
@@ -147,9 +147,10 @@ class AssetsActivity : ThemedActivity() {
         when (item.itemId) {
             R.id.action_import_file -> {
                 importFile.launch("*/*")
+                return true
             }
         }
-        return true
+        return false
     }
 
     inner class AssetAdapter : RecyclerView.Adapter<AssetHolder>(),
@@ -338,6 +339,10 @@ class AssetsActivity : ThemedActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 
     override fun onResume() {

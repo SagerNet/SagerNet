@@ -36,7 +36,6 @@ import com.blacksquircle.ui.language.base.model.SyntaxScheme
 import com.blacksquircle.ui.language.json.JsonLanguage
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -71,11 +70,13 @@ class ConfigEditActivity : ThemedActivity() {
         val binding = LayoutEditConfigBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setTitle(R.string.config_settings)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.apply {
+            setTitle(R.string.config_settings)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+        }
 
         binding.editor.colorScheme = mkTheme()
         binding.editor.language = JsonLanguage()
