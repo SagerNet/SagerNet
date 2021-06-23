@@ -175,7 +175,11 @@ fun Project.setupNdkLibrary() {
 fun Project.setupPlay(): PlayPublisherExtension {
     apply(plugin = "com.github.triplet.play")
     return (extensions.getByName("play") as PlayPublisherExtension).apply {
-        track.set("beta")
+        if (android.defaultConfig.versionName?.contains("beta") == true) {
+            track.set("beta")
+        } else {
+            track.set("production")
+        }
         defaultToAppBundles.set(true)
     }
 }
