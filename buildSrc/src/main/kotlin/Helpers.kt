@@ -172,7 +172,16 @@ fun Project.setupNdkLibrary() {
     }
 }
 
-fun Project.setupPlay(): PlayPublisherExtension {
+fun Project.setupPlay() {
+    val serviceAccountCredentialsFile = rootProject.file("service_account_credentials.json")
+    if (serviceAccountCredentialsFile.isFile) {
+        setupPlayInternal().serviceAccountCredentials.set(serviceAccountCredentialsFile)
+    } else if (System.getenv().containsKey("ANDROID_PUBLISHER_CREDENTIALS")) {
+        setupPlayInternal()
+    }
+}
+
+private fun Project.setupPlayInternal(): PlayPublisherExtension {
     apply(plugin = "com.github.triplet.play")
     return (extensions.getByName("play") as PlayPublisherExtension).apply {
         if (android.defaultConfig.versionName?.contains("beta") == true) {
@@ -191,13 +200,6 @@ fun Project.setupAppCommon() {
     val keystorePwd = lp.getProperty("KEYSTORE_PASS") ?: System.getenv("KEYSTORE_PASS")
     val alias = lp.getProperty("ALIAS_NAME") ?: System.getenv("ALIAS_NAME")
     val pwd = lp.getProperty("ALIAS_PASS") ?: System.getenv("ALIAS_PASS")
-
-    val serviceAccountCredentialsFile = rootProject.file("service_account_credentials.json")
-    if (serviceAccountCredentialsFile.isFile) {
-        setupPlay().serviceAccountCredentials.set(serviceAccountCredentialsFile)
-    } else if (System.getenv().containsKey("ANDROID_PUBLISHER_CREDENTIALS")) {
-        setupPlay()
-    }
 
     android.apply {
         if (keystorePwd != null) {
@@ -386,6 +388,8 @@ fun Project.setupPlugin(projectName: String) {
 
     dependencies.add("implementation", project(":plugin:api"))
 
+    setupPlay()
+
 }
 
 fun Project.setupApp() {
@@ -488,4 +492,6 @@ fun Project.setupApp() {
             add("implementation", project(":library:shadowsocksr"))
         }
     }
+
+    setupPlay()
 }
