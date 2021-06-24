@@ -128,12 +128,19 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
     }
 
     var state = BaseService.State.Idle
+    var doStop = false
 
     private fun changeState(
         state: BaseService.State,
         msg: String? = null,
         animate: Boolean = false,
     ) {
+        if (doStop && state != BaseService.State.Idle) {
+            doStop = false
+            if (state == BaseService.State.Stopped) {
+                DataStore.selectedProxy = 0L
+            }
+        }
         binding.fab.changeState(state, this.state, animate)
         binding.stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()

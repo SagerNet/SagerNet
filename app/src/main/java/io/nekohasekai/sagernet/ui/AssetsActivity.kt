@@ -221,6 +221,8 @@ class AssetsActivity : ThemedActivity() {
 
         fun bind(file: File) {
             this.file = file
+            binding.root.setOnClickListener {
+            }
 
             binding.assetName.text = file.name
             val versionFile = File(file.parentFile, "${file.nameWithoutExtension}.version.txt")
