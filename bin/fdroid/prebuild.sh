@@ -2,6 +2,7 @@
 
 source "bin/init/env.sh"
 
+git submodule update --init 'external/*'
 git submodule update --init 'library/*'
 
 ## Install rust

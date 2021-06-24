@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run init library
+          ./run init action library
           ./run lib core
   v2ray:
     name: Native Build (V2Ray)
@@ -218,7 +218,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run init library
+          ./run init action library
           ./run lib shadowsocks
   shadowsocksr:
     name: Native Build (ShadowsocksR)
@@ -246,7 +246,7 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run init library
+          ./run init action library
           ./run lib shadowsocksr
   build:
     name: Gradle Build
@@ -298,5 +298,5 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run init library
+          ./run init action library
           ./gradlew app:assembleOssDebug
