@@ -159,7 +159,7 @@ class RouteSettingsActivity(
         fun updateReverse(enabled: Boolean = outbound.value == "3") {
             reverse.isVisible = enabled
             redirect.isVisible = enabled
-            redirect.isEnabled = reverse.isEnabled
+            redirect.isEnabled = reverse.isChecked
         }
 
         updateReverse()
