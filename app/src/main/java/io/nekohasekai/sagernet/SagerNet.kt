@@ -53,6 +53,8 @@ import libv2ray.Libv2ray
 class SagerNet : Application() {
 
     companion object {
+        var started = false
+
         lateinit var application: SagerNet
         val deviceStorage by lazy {
             if (Build.VERSION.SDK_INT < 24) application else DeviceStorageApp(application)

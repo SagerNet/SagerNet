@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.ktx
 
 import android.os.Build
 import cn.hutool.core.lang.Validator
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -33,9 +34,7 @@ val okHttpClient = OkHttpClient.Builder().followRedirects(true).followSslRedirec
 
 private lateinit var proxyClient: OkHttpClient
 fun createProxyClient(): OkHttpClient {
-    if (DataStore.startedProxy == 0L) {
-        return okHttpClient
-    }
+    if (!SagerNet.started) return okHttpClient
 
     if (!::proxyClient.isInitialized) {
         proxyClient = okHttpClient.newBuilder().proxy(requireProxy()).build()
