@@ -53,17 +53,16 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         SagerNet.currentProfile?.groupId ?: 0L
     }
 
-    suspend fun selectedGroupForImport(): Long {
+    fun selectedGroupForImport(): Long {
         val groups = SagerDatabase.groupDao.allGroups()
         val selectedGroup = SagerDatabase.groupDao.getById(selectedGroup) ?: groups[0]
         var targetIndex by Delegates.notNull<Int>()
-        val targetId = if (!selectedGroup.isSubscription) {
+        return if (!selectedGroup.isSubscription) {
             selectedGroup.id
         } else {
             targetIndex = groups.indexOfFirst { !it.isSubscription }
             groups[targetIndex].id
         }
-        return targetId
     }
 
     var appTheme by configurationStore.int(Key.APP_THEME) { 0 }

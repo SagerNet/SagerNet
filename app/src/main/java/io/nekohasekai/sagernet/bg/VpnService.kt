@@ -126,6 +126,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     }
 
     private suspend fun startVpn(): FileDescriptor {
+
         val profile = data.proxy!!.profile
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
             .setSession(profile.displayName()).setMtu(VPN_MTU)
@@ -163,8 +164,13 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
             DataStore.individual.split('\n').filter { it.isNotBlank() && it != me }.forEach {
                 try {
-                    if (bypass) builder.addDisallowedApplication(it)
-                    else builder.addAllowedApplication(it)
+                    if (bypass) {
+                        builder.addDisallowedApplication(it)
+                        Logs.d("Add bypass: $it")
+                    } else {
+                        builder.addAllowedApplication(it)
+                        Logs.d("Add allow: $it")
+                    }
                 } catch (ex: PackageManager.NameNotFoundException) {
                     Logs.w(ex)
                 }
