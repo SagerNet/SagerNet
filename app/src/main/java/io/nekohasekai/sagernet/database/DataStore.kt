@@ -106,6 +106,13 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var transproxyPort: Int
         get() = getLocalPort(Key.TRANSPROXY_PORT, 9200)
         set(value) = saveLocalPort(Key.TRANSPROXY_PORT, value)
+    var apiPort: Int
+        get() = getLocalPort(Key.API_PORT, 9002)
+        set(value) {
+            saveLocalPort(Key.API_PORT, value)
+        }
+
+    var probeInterval by configurationStore.stringToInt(Key.PROBE_INTERVAL) { 0 }
 
     fun initGlobal() {
         if (configurationStore.getString(Key.SOCKS_PORT) == null) {
@@ -120,7 +127,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         if (configurationStore.getString(Key.TRANSPROXY_PORT) == null) {
             transproxyPort = transproxyPort
         }
-
+        if (configurationStore.getString(Key.API_PORT) == null) {
+            apiPort = apiPort
+        }
     }
 
 
@@ -194,7 +203,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverAllowInsecure by profileCacheStore.boolean(Key.SERVER_ALLOW_INSECURE)
 
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
-    var balancerGroup  by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
+    var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
     var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)
 
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)

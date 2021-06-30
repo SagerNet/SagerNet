@@ -134,10 +134,10 @@ class BaseService {
                 val proxy = data?.proxy ?: continue
                 lastQueryTime = queryTime
                 val stats = TrafficStats(
-                    (proxy.uplinkProxy / sinceLastQueryInSeconds).toLong(),
-                    (proxy.downlinkProxy / sinceLastQueryInSeconds).toLong(),
-                    if (showDirectSpeed) (proxy.uplinkDirect / sinceLastQueryInSeconds).toLong() else 0L,
-                    if (showDirectSpeed) (proxy.downlinkDirect / sinceLastQueryInSeconds).toLong() else 0L,
+                    (proxy.uplinkProxy() / sinceLastQueryInSeconds).toLong(),
+                    (proxy.downlinkProxy() / sinceLastQueryInSeconds).toLong(),
+                    if (showDirectSpeed) (proxy.uplinkDirect() / sinceLastQueryInSeconds).toLong() else 0L,
+                    if (showDirectSpeed) (proxy.downlinkDirect() / sinceLastQueryInSeconds).toLong() else 0L,
                     proxy.uplinkTotalProxy,
                     proxy.downlinkTotalProxy
                 )

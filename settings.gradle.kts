@@ -1,6 +1,8 @@
 include(":library:core")
 include(":library:shadowsocks")
 include(":library:shadowsocksr")
+include(":library:proto")
+include(":library:proto-stub")
 
 include(":plugin:api")
 include(":plugin:trojan-go")

@@ -325,5 +325,8 @@
     <string name="balancer_strategy">策略</string>
     <string name="list">列表</string>
     <string name="random">随机</string>
+    <string name="api_port">API 端口</string>
+    <string name="experimental_api">使用实验性的 API</string>
+    <string name="probe_interval">负载均衡观测间隔</string>
 
 </resources>

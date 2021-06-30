@@ -349,4 +349,8 @@
     <string name="random">Random</string>
     <string name="leastPing" translatable="false">Ping</string>
 
+    <string name="api_port">API Port</string>
+    <string name="experimental_api">Use Experimental API</string>
+    <string name="probe_interval">Balancer observation interval</string>
+
 </resources>

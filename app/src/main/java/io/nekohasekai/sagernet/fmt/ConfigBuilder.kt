@@ -61,6 +61,11 @@ const val TAG_BLOCK = "block"
 const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
+const val TAG_API_IN = "api-in"
+const val TAG_API = "api"
+
+const val LOCALHOST = "127.0.0.1"
+
 class V2rayBuildResult(
     var config: String,
     var index: ArrayList<Pair<Boolean, LinkedHashMap<Int, ProxyEntity>>>,
@@ -121,7 +126,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         })) to it.resolveChain()
     }.toMap()
 
-    val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
+    val bind = if (DataStore.allowAccess) "0.0.0.0" else LOCALHOST
 
     val dnsMode = DataStore.dnsMode
     DataStore.dnsModeFinal = dnsMode
@@ -365,7 +370,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 val needGlobal: Boolean
 
                 if (isBalancer || index == profileList.size - 1 && !pastExternal) {
-                    tagIn = "$TAG_DIRECT-global-${proxyEntity.id}"
+                    tagIn = "$TAG_AGENT-global-${proxyEntity.id}"
                     needGlobal = true
                 } else {
                     tagIn = if (index == 0) tagOutbound else {
@@ -395,7 +400,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                                 SocksOutboundConfigurationObject().apply {
                                     servers = listOf(
                                         SocksOutboundConfigurationObject.ServerObject().apply {
-                                                address = "127.0.0.1"
+                                                address = LOCALHOST
                                                 port = localPort
                                             })
                                 })
@@ -740,7 +745,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                             chainMap[localPort] = proxyEntity
                             inbounds.add(InboundObject().apply {
                                 tag = "$tagIn-in"
-                                listen = "127.0.0.1"
+                                listen = LOCALHOST
                                 port = localPort
                                 protocol = "socks"
                                 settings = LazyInboundConfigurationObject(this,
@@ -785,7 +790,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     tag = "balancer-$tagOutbound"
                     selector = chainOutbounds.map { it.tag }
 
-                    if (observatory == null) observatory = ObservatoryObject()
+                    if (observatory == null) observatory = ObservatoryObject().apply {
+                        probeUrl = DataStore.connectionTestURL
+                        val testInterval = DataStore.probeInterval
+                        if (testInterval > 0) {
+                            probeInterval = testInterval
+                        }
+                    }
                     if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
                     observatory.subjectSelector.addAll(selector)
 
@@ -891,7 +902,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
         if (requireWs) {
             browserForwarder = BrowserForwarderObject().apply {
-                listenAddr = "127.0.0.1"
+                listenAddr = LOCALHOST
                 listenPort = DataStore.socksPort + 1
             }
         }
@@ -954,7 +965,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         if (dnsMode != DnsMode.SYSTEM) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_DNS_IN
-                listen = "127.0.0.1"
+                listen = LOCALHOST
                 port = DataStore.localDNSPort
                 protocol = "dokodemo-door"
                 settings = LazyInboundConfigurationObject(this,
@@ -1074,6 +1085,36 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
         stats = emptyMap()
 
+        val apiPort = DataStore.apiPort
+
+        api = ApiObject().apply {
+            tag = TAG_API
+            services = mutableListOf("StatsService")
+            if (!observatory?.subjectSelector.isNullOrEmpty()) {
+                services.add("ObservatoryService")
+            }
+        }
+
+        inbounds.add(InboundObject().apply {
+            protocol = "dokodemo-door"
+            listen = LOCALHOST
+            port = apiPort
+            tag = TAG_API_IN
+            settings = LazyInboundConfigurationObject(
+                this,
+                DokodemoDoorInboundConfigurationObject().apply {
+                    address = LOCALHOST
+                    port = apiPort
+                    network = "tcp"
+                })
+        })
+
+        routing.rules.add(0, RoutingObject.RuleObject().apply {
+            type = "field"
+            inboundTag = listOf(TAG_API_IN)
+            outboundTag = TAG_API
+        })
+
     }.let {
         V2rayBuildResult(
             gson.toJson(it), indexMap, requireWs, outboundTags, TAG_DIRECT
@@ -1084,7 +1125,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
 fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
 
-    val bind = if (DataStore.allowAccess) "0.0.0.0" else "127.0.0.1"
+    val bind = if (DataStore.allowAccess) "0.0.0.0" else LOCALHOST
     val trafficSniffing = DataStore.trafficSniffing
 
     val bean = proxy.configBean!!
@@ -1302,7 +1343,7 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
     if (config.contains("browserForwarder")) {
         config.set("browserForwarder", JSONObject(gson.toJson(BrowserForwarderObject().apply {
             requireWs = true
-            listenAddr = "127.0.0.1"
+            listenAddr = LOCALHOST
             listenPort = DataStore.socksPort + 1
         })))
     }

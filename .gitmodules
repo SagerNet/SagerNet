@@ -52,3 +52,6 @@
 [submodule "external/preferencex"]
 	path = external/preferencex
 	url = https://github.com/SagerNet/preferencex-android
+[submodule "external/v2ray-core"]
+	path = external/v2ray-core
+	url = https://github.com/v2fly/v2ray-core

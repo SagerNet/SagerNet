@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.mikepenz.aboutlibraries.plugin")
+    id("com.google.protobuf")
 }
 
 setupApp()
@@ -78,6 +79,9 @@ dependencies {
     implementation("editorkit:editorkit:2.0.0")
     implementation("editorkit:feature-editor:2.0.0")
     implementation("editorkit:language-json:2.0.0")
+
+    implementation(project(":library:proto-stub"))
+    implementation("io.grpc:grpc-okhttp:1.39.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }

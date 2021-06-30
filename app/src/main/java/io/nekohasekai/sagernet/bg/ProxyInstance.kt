@@ -29,13 +29,17 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
+import com.v2ray.core.app.stats.command.GetStatsRequest
+import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
+import io.grpc.ManagedChannel
+import io.grpc.StatusException
+import io.grpc.okhttp.OkHttpChannelBuilder
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
@@ -56,8 +60,7 @@ import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager.InitResult
 import io.nekohasekai.sagernet.utils.DirectBoot
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import libv2ray.Libv2ray
 import libv2ray.V2RayPoint
 import libv2ray.V2RayVPNServiceSupportsSet
@@ -72,6 +75,9 @@ class ProxyInstance(val profile: ProxyEntity) {
     lateinit var config: V2rayBuildResult
     lateinit var base: BaseService.Interface
     lateinit var wsForwarder: WebView
+
+    lateinit var managedChannel: ManagedChannel
+    val statsService by lazy { StatsServiceGrpcKt.StatsServiceCoroutineStub(managedChannel) }
 
     val pluginPath = hashMapOf<String, InitResult>()
     fun initPlugin(name: String): InitResult {
@@ -100,8 +106,7 @@ class ProxyInstance(val profile: ProxyEntity) {
                     when {
                         profile.useExternalShadowsocks() -> {
                             bean as ShadowsocksBean
-                            pluginConfigs[port] =
-                                profile.type to bean.buildShadowsocksConfig(port)
+                            pluginConfigs[port] = profile.type to bean.buildShadowsocksConfig(port)
                         }
                         bean is ShadowsocksRBean -> {
                             pluginConfigs[port] =
@@ -178,7 +183,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val bean = profile.requireBean()
                 val needChain = !isBalancer && index != chain.size - 1
-                val (_,config) = pluginConfigs[port] ?: return@forEachIndexed
+                val (_, config) = pluginConfigs[port] ?: return@forEachIndexed
 
                 when {
                     profile.useExternalShadowsocks() -> {
@@ -408,11 +413,19 @@ class ProxyInstance(val profile: ProxyEntity) {
             }
         }
 
+        managedChannel =
+            OkHttpChannelBuilder.forAddress(LOCALHOST, DataStore.apiPort).usePlaintext()
+                .executor(Dispatchers.Default.asExecutor()).build()
+
         DataStore.startedProxy = profile.id
     }
 
     fun stop() {
         v2rayPoint.stopLoop()
+
+        if (::managedChannel.isInitialized) {
+            managedChannel.shutdownNow()
+        }
 
         if (::wsForwarder.isInitialized) {
             wsForwarder.loadUrl("about:blank")
@@ -422,41 +435,56 @@ class ProxyInstance(val profile: ProxyEntity) {
         DataStore.startedProxy = 0L
     }
 
-    fun stats(direct: String): Long {
+    private suspend fun queryStats(tag: String, direct: String): Long {
+        try {
+            return queryStatsGrpc(tag, direct)
+        } catch (e: StatusException) {
+            Logs.w(e)
+            if (isExpert) return 0L
+        }
+        return v2rayPoint.queryStats(tag, direct)
+    }
+
+    private suspend fun queryStatsGrpc(tag: String, direct: String): Long {
+        if (!::managedChannel.isInitialized) {
+            return 0L
+        }
+        val result = statsService.getStats(
+            GetStatsRequest.newBuilder().setName("outbound>>>$tag>>>traffic>>>$direct")
+                .setReset(true).build()
+        )
+        return result.stat.value
+    }
+
+    private suspend fun outboundStats(direct: String): Long {
         if (!::config.isInitialized) {
             return 0L
         }
-        return config.outboundTags.map { v2rayPoint.queryStats(it, direct) }
-            .fold(0L) { acc, l -> acc + l }
+        return config.outboundTags.map { queryStats(it, direct) }.fold(0L) { acc, l -> acc + l }
     }
 
-    fun statsDirect(direct: String): Long {
+    suspend fun directStats(direct: String): Long {
         if (!::config.isInitialized) {
             return 0L
         }
-        return v2rayPoint.queryStats(config.directTag, direct)
+        return queryStats(config.directTag, direct)
     }
 
-    val uplinkProxy
-        get() = stats("uplink").also {
-            uplinkTotalProxy += it
-        }
+    suspend fun uplinkProxy() = outboundStats("uplink").also {
+        uplinkTotalProxy += it
+    }
 
-    val downlinkProxy
-        get() = stats("downlink").also {
-            downlinkTotalProxy += it
-        }
+    suspend fun downlinkProxy() = outboundStats("downlink").also {
+        downlinkTotalProxy += it
+    }
 
-    val uplinkDirect
-        get() = statsDirect("uplink").also {
-            uplinkTotalDirect += it
-        }
+    suspend fun uplinkDirect() = directStats("uplink").also {
+        uplinkTotalDirect += it
+    }
 
-    val downlinkDirect
-        get() = statsDirect("downlink").also {
-            downlinkTotalDirect += it
-        }
-
+    suspend fun downlinkDirect() = directStats("downlink").also {
+        downlinkTotalDirect += it
+    }
 
     var uplinkTotalProxy = 0L
     var downlinkTotalProxy = 0L
@@ -464,20 +492,22 @@ class ProxyInstance(val profile: ProxyEntity) {
     var downlinkTotalDirect = 0L
 
     fun persistStats() {
-        try {
-            uplinkProxy
-            downlinkProxy
-            profile.tx += uplinkTotalProxy
-            profile.rx += downlinkTotalProxy
-            SagerDatabase.proxyDao.updateProxy(profile)
-        } catch (e: IOException) {
-            if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot
-            val profile = DirectBoot.getDeviceProfile()!!
-            profile.tx += uplinkTotalProxy
-            profile.rx += downlinkTotalProxy
-            profile.dirty = true
-            DirectBoot.update(profile)
-            DirectBoot.listenForUnlock()
+        runBlocking {
+            try {
+                uplinkProxy()
+                downlinkProxy()
+                profile.tx += uplinkTotalProxy
+                profile.rx += downlinkTotalProxy
+                SagerDatabase.proxyDao.updateProxy(profile)
+            } catch (e: IOException) {
+                if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot
+                val profile = DirectBoot.getDeviceProfile()!!
+                profile.tx += uplinkTotalProxy
+                profile.rx += downlinkTotalProxy
+                profile.dirty = true
+                DirectBoot.update(profile)
+                DirectBoot.listenForUnlock()
+            }
         }
     }
 
