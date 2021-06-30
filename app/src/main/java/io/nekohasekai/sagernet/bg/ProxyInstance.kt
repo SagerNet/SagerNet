@@ -86,11 +86,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             ), false
         )
         val socksPort = DataStore.socksPort + 10
-        if (profile.needExternal()) {
-            v2rayPoint.domainName = "127.0.0.1:$socksPort"
-        } else {
-            v2rayPoint.domainName = profile.urlFixed()
-        }
+        v2rayPoint.domainName = "127.0.0.1:$socksPort"
 
         if (profile.type != ProxyEntity.TYPE_CONFIG) {
             config = buildV2RayConfig(profile)
