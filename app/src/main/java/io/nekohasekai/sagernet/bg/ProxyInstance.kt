@@ -294,6 +294,8 @@ class ProxyInstance(val profile: ProxyEntity) {
                         if (needChain) error("PingTunnel is incompatible with chain")
 
                         val commands = mutableListOf(
+                            "su",
+                            "-c",
                             initPlugin("pingtunnel-plugin").path,
                             "-type",
                             "client",
