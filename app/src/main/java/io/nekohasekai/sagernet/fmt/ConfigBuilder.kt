@@ -1271,7 +1271,8 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
     }
 
     if (flushOutbounds) {
-        config.set("outbounds", JSONArray(outbounds!!.map { JSONObject(gson.toJson(it)) }))
+        outbounds!!.forEach { it.init() }
+        config.set("outbounds", JSONArray(outbounds.map { JSONObject(gson.toJson(it)) }))
     }
 
     return V2rayBuildResult(
