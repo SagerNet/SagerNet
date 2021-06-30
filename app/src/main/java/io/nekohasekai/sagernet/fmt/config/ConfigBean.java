@@ -65,8 +65,6 @@ public class ConfigBean extends AbstractBean {
 
         type = input.readString();
         content = input.readString();
-
-        initDefaultValues();
     }
 
     @NonNull

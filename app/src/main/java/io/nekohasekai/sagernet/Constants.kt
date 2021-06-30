@@ -127,6 +127,10 @@ object Key {
     const val SERVER_HEADERS = "serverHeaders"
     const val SERVER_ALLOW_INSECURE = "serverAllowInsecure"
 
+    const val BALANCER_TYPE = "balancerType"
+    const val BALANCER_GROUP = "balancerGroup"
+    const val BALANCER_STRATEGY = "balancerStrategy"
+
     const val ROUTE_NAME = "routeName"
     const val ROUTE_DOMAIN = "routeDomain"
     const val ROUTE_IP = "routeIP"

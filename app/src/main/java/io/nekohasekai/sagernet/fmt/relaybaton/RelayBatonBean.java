@@ -56,7 +56,6 @@ public class RelayBatonBean extends AbstractBean {
         serverAddress = input.readString();
         username = input.readString();
         password = input.readString();
-        initDefaultValues();
     }
 
     @NotNull

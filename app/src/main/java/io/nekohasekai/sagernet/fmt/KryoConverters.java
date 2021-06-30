@@ -32,9 +32,10 @@ import java.io.ByteArrayOutputStream;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import io.nekohasekai.sagernet.fmt.brook.BrookBean;
-import io.nekohasekai.sagernet.fmt.chain.ChainBean;
 import io.nekohasekai.sagernet.fmt.config.ConfigBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
+import io.nekohasekai.sagernet.fmt.internal.BalancerBean;
+import io.nekohasekai.sagernet.fmt.internal.ChainBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean;
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean;
@@ -163,15 +164,21 @@ public class KryoConverters {
     }
 
     @TypeConverter
+    public static ConfigBean configDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new ConfigBean(), bytes);
+    }
+
+    @TypeConverter
     public static ChainBean chainDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new ChainBean(), bytes);
     }
 
     @TypeConverter
-    public static ConfigBean configDeserialize(byte[] bytes) {
+    public static BalancerBean balancerBeanDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
-        return deserialize(new ConfigBean(), bytes);
+        return deserialize(new BalancerBean(), bytes);
     }
 
 }

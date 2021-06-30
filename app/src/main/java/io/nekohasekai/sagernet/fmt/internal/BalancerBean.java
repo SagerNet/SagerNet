@@ -19,70 +19,94 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.chain;
+package io.nekohasekai.sagernet.fmt.internal;
+
+import androidx.annotation.NonNull;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class ChainBean extends AbstractBean {
+public class BalancerBean extends AbstractBean {
 
+    public static final int TYPE_LIST = 0;
+    public static final int TYPE_GROUP = 1;
+
+    public Integer type;
+    public String strategy;
     public List<Long> proxies;
+    public Long groupId;
+
+    @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+        if (name == null) name = "";
+        if (strategy == null) strategy = "";
+        if (type == null) type = TYPE_LIST;
+        if (proxies == null) proxies = new ArrayList<>();
+        if (groupId == null) groupId = 0L;
+    }
 
     @Override
     public String displayName() {
         if (StrUtil.isNotBlank(name)) {
             return name;
         } else {
-            return "Chain " + Math.abs(hashCode());
-        }
-    }
-
-    @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
-        if (name == null) name = "";
-
-        if (proxies == null) {
-            proxies = new LinkedList<>();
+            return "Balancer " + Math.abs(hashCode());
         }
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
-        output.writeInt(proxies.size());
-        for (Long proxy : proxies) {
-            output.writeLong(proxy);
+        output.writeInt(0);
+        output.writeInt(type);
+        output.writeString(strategy);
+        switch (type) {
+            case TYPE_LIST: {
+                int length = proxies.size();
+                output.writeInt(length);
+                for (Long proxy : proxies) {
+                    output.writeLong(proxy);
+                }
+                break;
+            }
+            case TYPE_GROUP: {
+                output.writeLong(groupId);
+                break;
+            }
         }
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
         int version = input.readInt();
-        if (version < 1) {
-            input.readString();
-            input.readInt();
+        type = input.readInt();
+        strategy = input.readString();
+        switch (type) {
+            case TYPE_LIST: {
+                int length = input.readInt();
+                proxies = new ArrayList<>();
+                for (int i = 0; i < length; i++) {
+                    proxies.add(input.readLong());
+                }
+                break;
+            }
+            case TYPE_GROUP: {
+                groupId = input.readLong();
+                break;
+            }
         }
-        int length = input.readInt();
-        proxies = new LinkedList<>();
-        for (int i = 0; i < length; i++) {
-            proxies.add(input.readLong());
-        }
-        initDefaultValues();
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public AbstractBean clone() {
-        return KryoConverters.deserialize(new ChainBean(), KryoConverters.serialize(this));
+    public BalancerBean clone() {
+        return KryoConverters.deserialize(new BalancerBean(), KryoConverters.serialize(this));
     }
 }

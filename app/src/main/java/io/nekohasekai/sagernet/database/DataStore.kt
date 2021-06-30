@@ -193,6 +193,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverHeaders by profileCacheStore.string(Key.SERVER_HEADERS)
     var serverAllowInsecure by profileCacheStore.boolean(Key.SERVER_ALLOW_INSECURE)
 
+    var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
+    var balancerGroup  by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
+    var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)
+
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)
     var routeDomain by profileCacheStore.string(Key.ROUTE_DOMAIN)
     var routeIP by profileCacheStore.string(Key.ROUTE_IP)

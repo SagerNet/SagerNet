@@ -272,11 +272,14 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_brook -> {
                 startActivity(Intent(requireActivity(), BrookSettingsActivity::class.java))
             }
+            R.id.action_new_config -> {
+                startActivity(Intent(requireActivity(), ConfigSettingsActivity::class.java))
+            }
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
-            R.id.action_new_config -> {
-                startActivity(Intent(requireActivity(), ConfigSettingsActivity::class.java))
+            R.id.action_new_balancer -> {
+                startActivity(Intent(requireActivity(), BalancerSettingsActivity::class.java))
             }
             R.id.action_export_clipboard -> {
                 runOnDefaultDispatcher {

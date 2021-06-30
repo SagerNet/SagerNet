@@ -33,10 +33,11 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.toUri
-import io.nekohasekai.sagernet.fmt.chain.ChainBean
+import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.config.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
+import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
@@ -87,8 +88,9 @@ data class ProxyEntity(
     var ptBean: PingTunnelBean? = null,
     var rbBean: RelayBatonBean? = null,
     var brookBean: BrookBean? = null,
+    var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
-    var configBean: ConfigBean? = null
+    var balancerBean: BalancerBean? = null
 ) : Parcelable {
 
     companion object {
@@ -106,10 +108,12 @@ data class ProxyEntity(
         const val TYPE_BROOK = 12
 
         const val TYPE_CHAIN = 8
+        const val TYPE_BALANCER = 14
         const val TYPE_CONFIG = 13
 
         val chainName by lazy { app.getString(R.string.proxy_chain) }
         val configName by lazy { app.getString(R.string.custom_config) }
+        val balancerName by lazy { app.getString(R.string.balancer) }
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<ProxyEntity> {
@@ -155,8 +159,9 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> ptBean = KryoConverters.pingTunnelDeserialize(byteArray)
             TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
             TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
-            TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
+            TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
+            TYPE_BALANCER -> balancerBean = KryoConverters.balancerBeanDeserialize(byteArray)
         }
     }
 
@@ -189,6 +194,7 @@ data class ProxyEntity(
             TYPE_BROOK -> "Brook"
             TYPE_CHAIN -> chainName
             TYPE_CONFIG -> configName
+            TYPE_BALANCER -> balancerName
             else -> "Undefined type $type"
         }
     }
@@ -197,7 +203,7 @@ data class ProxyEntity(
         return requireBean().displayName()
     }
 
-    fun urlFixed(): String {
+    /*fun urlFixed(): String {
         val bean = requireBean()
         if (bean is ChainBean) {
             if (bean.proxies.isNotEmpty()) {
@@ -212,7 +218,7 @@ data class ProxyEntity(
         } else {
             "${bean.serverAddress}:${bean.serverPort}"
         }
-    }
+    }*/
 
     fun requireBean(): AbstractBean {
         return when (type) {
@@ -228,9 +234,10 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> ptBean
             TYPE_RELAY_BATON -> rbBean
             TYPE_BROOK -> brookBean
+            TYPE_CONFIG -> configBean
 
             TYPE_CHAIN -> chainBean
-            TYPE_CONFIG -> configBean
+            TYPE_BALANCER -> balancerBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -239,6 +246,7 @@ data class ProxyEntity(
         return when (type) {
             TYPE_CHAIN -> false
             TYPE_CONFIG -> false
+            TYPE_BALANCER -> false
             else -> true
         }
     }
@@ -272,11 +280,13 @@ data class ProxyEntity(
             TYPE_TROJAN -> false
             TYPE_TROJAN_GO -> true
             TYPE_NAIVE -> true
-            TYPE_CHAIN -> false
             TYPE_PING_TUNNEL -> true
             TYPE_RELAY_BATON -> true
             TYPE_BROOK -> true
             TYPE_CONFIG -> false
+
+            TYPE_CHAIN -> false
+            TYPE_BALANCER -> false
             else -> error("Undefined type $type")
         }
     }
@@ -322,8 +332,11 @@ data class ProxyEntity(
         ptBean = null
         rbBean = null
         brookBean = null
-        chainBean = null
         configBean = null
+
+        chainBean = null
+        balancerBean = null
+
         when (bean) {
             is SOCKSBean -> {
                 type = TYPE_SOCKS
@@ -373,13 +386,17 @@ data class ProxyEntity(
                 type = TYPE_BROOK
                 brookBean = bean
             }
+            is ConfigBean -> {
+                type = TYPE_CONFIG
+                configBean = bean
+            }
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
             }
-            is ConfigBean -> {
-                type = TYPE_CONFIG
-                configBean = bean
+            is BalancerBean -> {
+                type = TYPE_BALANCER
+                balancerBean = bean
             }
             else -> error("Undefined type $type")
         }
@@ -400,8 +417,10 @@ data class ProxyEntity(
                 TYPE_PING_TUNNEL -> PingTunnelSettingsActivity::class.java
                 TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
                 TYPE_BROOK -> BrookSettingsActivity::class.java
-                TYPE_CHAIN -> ChainSettingsActivity::class.java
                 TYPE_CONFIG -> ConfigSettingsActivity::class.java
+
+                TYPE_CHAIN -> ChainSettingsActivity::class.java
+                TYPE_BALANCER -> BalancerSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {

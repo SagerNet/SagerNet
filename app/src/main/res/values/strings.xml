@@ -246,6 +246,11 @@
     <string name="action_brook" translatable="false">Brook</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
+    <string name="balancer">Balancer</string>
+    <string name="balancer_settings">Balancer Settings</string>
+    <string name="balancer_type">Type</string>
+    <string name="balancer_strategy">Strategy</string>
+
     <string name="chain_settings">Chain Settings</string>
     <string name="config_settings">Config Settings</string>
     <string name="circular_reference">Circular reference</string>
@@ -340,5 +345,8 @@
     <string name="enable_log">Enable Log</string>
     <string name="enable_log_sum">For debugging purposes</string>
 
+    <string name="list">List</string>
+    <string name="random">Random</string>
+    <string name="leastPing" translatable="false">Ping</string>
 
 </resources>

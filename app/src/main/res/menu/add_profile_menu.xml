@@ -55,11 +55,14 @@
                         android:id="@+id/action_new_brook"
                         android:title="@string/action_brook" />
                     <item
+                        android:id="@+id/action_new_config"
+                        android:title="@string/custom_config" />
+                    <item
                         android:id="@+id/action_new_chain"
                         android:title="@string/proxy_chain" />
                     <item
-                        android:id="@+id/action_new_config"
-                        android:title="@string/custom_config" />
+                        android:id="@+id/action_new_balancer"
+                        android:title="@string/balancer" />
                 </menu>
             </item>
         </menu>

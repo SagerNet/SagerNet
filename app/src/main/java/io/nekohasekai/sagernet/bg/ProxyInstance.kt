@@ -29,6 +29,8 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import cn.hutool.json.JSONArray
+import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
@@ -76,7 +78,7 @@ class ProxyInstance(val profile: ProxyEntity) {
         return pluginPath.getOrPut(name) { PluginManagerS.init(name)!! }
     }
 
-    val pluginConfigs = hashMapOf<Int, String>()
+    val pluginConfigs = hashMapOf<Int, Pair<Int, String>>()
 
     fun init(service: BaseService.Interface) {
         base = service
@@ -91,32 +93,33 @@ class ProxyInstance(val profile: ProxyEntity) {
         if (profile.type != ProxyEntity.TYPE_CONFIG) {
             config = buildV2RayConfig(profile)
 
-            for (chain in config.index) {
+            for ((isBalancer, chain) in config.index) {
                 chain.entries.forEachIndexed { index, (port, profile) ->
-                    val needChain = index != chain.size - 1
+                    val needChain = !isBalancer && index != chain.size - 1
                     val bean = profile.requireBean()
                     when {
                         profile.useExternalShadowsocks() -> {
                             bean as ShadowsocksBean
-                            pluginConfigs[port] = bean.buildShadowsocksConfig(port).also {
-                                Logs.d(it)
-                            }
+                            pluginConfigs[port] =
+                                profile.type to bean.buildShadowsocksConfig(port)
                         }
                         bean is ShadowsocksRBean -> {
-                            pluginConfigs[port] = bean.buildShadowsocksRConfig().also {
-                                Logs.d(it)
-                            }
+                            pluginConfigs[port] =
+                                profile.type to bean.buildShadowsocksRConfig().also {
+                                    Logs.d(it)
+                                }
                         }
                         bean is TrojanGoBean -> {
                             initPlugin("trojan-go-plugin")
                             pluginConfigs[port] =
-                                bean.buildTrojanGoConfig(port, needChain, index).also {
-                                    Logs.d(it)
-                                }
+                                profile.type to bean.buildTrojanGoConfig(port, needChain, index)
+                                    .also {
+                                        Logs.d(it)
+                                    }
                         }
                         bean is NaiveBean -> {
                             initPlugin("naive-plugin")
-                            pluginConfigs[port] = bean.buildNaiveConfig(port).also {
+                            pluginConfigs[port] = profile.type to bean.buildNaiveConfig(port).also {
                                 Logs.d(it)
                             }
                         }
@@ -125,9 +128,10 @@ class ProxyInstance(val profile: ProxyEntity) {
                         }
                         bean is RelayBatonBean -> {
                             initPlugin("relaybaton-plugin")
-                            pluginConfigs[port] = bean.buildRelayBatonConfig(port).also {
-                                Logs.d(it)
-                            }
+                            pluginConfigs[port] =
+                                profile.type to bean.buildRelayBatonConfig(port).also {
+                                    Logs.d(it)
+                                }
                         }
                         bean is BrookBean -> {
                             initPlugin("brook-plugin")
@@ -147,8 +151,9 @@ class ProxyInstance(val profile: ProxyEntity) {
                             trojanGoBean = TrojanGoBean().applyDefaultValues()
                         )
                     )
-                    val (port, _) = config.index[0].entries.first()
-                    pluginConfigs[port] = buildCustomTrojanConfig(bean.content, port)
+                    val (port, _) = config.index[0].second.entries.first()
+                    pluginConfigs[port] =
+                        profile.type to buildCustomTrojanConfig(bean.content, port)
                 } //"v2ray" -> {
                 else -> {
                     config = buildCustomConfig(profile)
@@ -169,11 +174,11 @@ class ProxyInstance(val profile: ProxyEntity) {
         val context =
             if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
 
-        for (chain in config.index) {
+        for ((isBalancer, chain) in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val bean = profile.requireBean()
-                val needChain = index != chain.size - 1
-                val config = pluginConfigs[port] ?: ""
+                val needChain = !isBalancer && index != chain.size - 1
+                val (_,config) = pluginConfigs[port] ?: return@forEachIndexed
 
                 when {
                     profile.useExternalShadowsocks() -> {

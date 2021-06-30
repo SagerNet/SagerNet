@@ -19,28 +19,70 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.gson;
+package io.nekohasekai.sagernet.fmt.internal;
 
-import androidx.room.TypeConverter;
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-public class GsonConverters {
+import cn.hutool.core.util.StrUtil;
+import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-    @TypeConverter
-    public static String toJson(Object value) {
-        return GsonsKt.getGson().toJson(value);
+public class ChainBean extends AbstractBean {
+
+    public List<Long> proxies;
+
+    @Override
+    public String displayName() {
+        if (StrUtil.isNotBlank(name)) {
+            return name;
+        } else {
+            return "Chain " + Math.abs(hashCode());
+        }
     }
 
-    @TypeConverter
-    public static List toList(String value) {
-        return GsonsKt.getGson().fromJson(value, List.class);
+    @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+        if (name == null) name = "";
+
+        if (proxies == null) {
+            proxies = new ArrayList<>();
+        }
     }
 
-    @TypeConverter
-    public static Set toSet(String value) {
-        return GsonsKt.getGson().fromJson(value, Set.class);
+    @Override
+    public void serialize(ByteBufferOutput output) {
+        output.writeInt(1);
+        output.writeInt(proxies.size());
+        for (Long proxy : proxies) {
+            output.writeLong(proxy);
+        }
     }
 
+    @Override
+    public void deserialize(ByteBufferInput input) {
+        int version = input.readInt();
+        if (version < 1) {
+            input.readString();
+            input.readInt();
+        }
+        int length = input.readInt();
+        proxies = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            proxies.add(input.readLong());
+        }
+    }
+
+    @NotNull
+    @Override
+    public ChainBean clone() {
+        return KryoConverters.deserialize(new ChainBean(), KryoConverters.serialize(this));
+    }
 }

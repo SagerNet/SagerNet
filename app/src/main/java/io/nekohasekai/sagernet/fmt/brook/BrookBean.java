@@ -71,7 +71,6 @@ public class BrookBean extends AbstractBean {
                 break;
             }
         }
-        initDefaultValues();
     }
 
     @NonNull

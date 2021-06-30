@@ -42,41 +42,79 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
+import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.databinding.LayoutAddEntityBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
-import io.nekohasekai.sagernet.fmt.internal.ChainBean
+import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
+import io.nekohasekai.sagernet.widget.GroupPreference
 import java.util.*
 
-class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout_chain_settings) {
+class BalancerSettingsActivity :
+    ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
 
-    override fun createEntity() = ChainBean()
+    override fun createEntity() = BalancerBean()
 
     val proxyList = ArrayList<ProxyEntity>()
 
-    override fun ChainBean.init() {
+    override fun BalancerBean.init() {
         DataStore.profileName = name
+        DataStore.balancerType = type
+        DataStore.balancerStrategy = strategy
+        DataStore.balancerGroup = groupId
         DataStore.serverProtocol = proxies.joinToString(",")
     }
 
-    override fun ChainBean.serialize() {
+    override fun BalancerBean.serialize() {
         name = DataStore.profileName
+        type = DataStore.balancerType
+        strategy = DataStore.balancerStrategy
+        groupId = DataStore.balancerGroup
         proxies = proxyList.map { it.id }
         initDefaultValues()
     }
+
+    lateinit var balancerType: SimpleMenuPreference
+    lateinit var balancerGroup: GroupPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.name_preferences)
+        addPreferencesFromResource(R.xml.balancer_preferences)
+
+        balancerType = findPreference(Key.BALANCER_TYPE)!!
+        balancerGroup = findPreference(Key.BALANCER_GROUP)!!
+        itemView = findViewById(R.id.list_cell)
+
+        balancerType.setOnPreferenceChangeListener { _, newValue ->
+            updateType(newValue.toString().toInt())
+            true
+        }
     }
 
+    fun updateType(type: Int = DataStore.balancerType) {
+        when (type) {
+            BalancerBean.TYPE_LIST -> {
+                balancerGroup.isVisible = false
+                configurationList.isVisible = true
+                itemView.isVisible = true
+            }
+            BalancerBean.TYPE_GROUP -> {
+                balancerGroup.isVisible = true
+                configurationList.isVisible = false
+                itemView.isVisible = false
+            }
+        };
+    }
+
+    lateinit var itemView: LinearLayout
     lateinit var configurationList: RecyclerView
     lateinit var configurationAdapter: ProxiesAdapter
     lateinit var layoutManager: LinearLayoutManager
@@ -85,7 +123,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportActionBar!!.setTitle(R.string.chain_settings)
+        supportActionBar!!.setTitle(R.string.balancer_settings)
         configurationList = findViewById(R.id.configuration_list)
         layoutManager = FixedLinearLayoutManager(configurationList)
         configurationList.layoutManager = layoutManager
@@ -127,6 +165,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
             }
 
         }).attachToRecyclerView(configurationList)
+
     }
 
     override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
@@ -140,6 +179,8 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
         runOnDefaultDispatcher {
             configurationAdapter.reload()
         }
+
+        updateType()
     }
 
     inner class ProxiesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -242,7 +283,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
 
                 if (!testProfileAllowed(profile)) {
                     onMainDispatcher {
-                        MaterialAlertDialogBuilder(this@ChainSettingsActivity).setTitle(R.string.circular_reference)
+                        MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.circular_reference)
                             .setMessage(R.string.circular_reference_sum)
                             .setPositiveButton(android.R.string.ok, null).show()
                     }
@@ -267,7 +308,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
                 replacing = 0
                 selectProfileForAdd.launch(
                     Intent(
-                        this@ChainSettingsActivity, ProfileSelectActivity::class.java
+                        this@BalancerSettingsActivity, ProfileSelectActivity::class.java
                     )
                 )
             }
@@ -316,7 +357,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
             editButton.setOnClickListener {
                 replacing = bindingAdapterPosition
                 selectProfileForAdd.launch(Intent(
-                    this@ChainSettingsActivity, ProfileSelectActivity::class.java
+                    this@BalancerSettingsActivity, ProfileSelectActivity::class.java
                 ).apply {
                     putExtra(ProfileSelectActivity.EXTRA_SELECTED, proxyEntity)
                 })
@@ -339,7 +380,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
                         shareButton.setColorFilter(Color.WHITE)
 
                         shareLayout.setOnClickListener {
-                            MaterialAlertDialogBuilder(this@ChainSettingsActivity).setTitle(R.string.insecure)
+                            MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.insecure)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
                                     .bufferedReader().use { it.readText() })
                                 .setPositiveButton(android.R.string.ok, null).show().apply {
@@ -358,7 +399,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
                         shareButton.setColorFilter(Color.GRAY)
 
                         shareLayout.setOnClickListener {
-                            MaterialAlertDialogBuilder(this@ChainSettingsActivity).setTitle(R.string.deprecated)
+                            MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.deprecated)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
                                     .bufferedReader().use { it.readText() })
                                 .setPositiveButton(android.R.string.ok, null).show().apply {

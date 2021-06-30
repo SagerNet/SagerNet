@@ -573,9 +573,28 @@
         <item>@string/route_rules_official</item>
         <item>Loyalsoldier/v2ray-rules-dat</item>
     </string-array>
+
     <string-array name="rules_dat_provider_value">
         <item>0</item>
         <item>1</item>
+    </string-array>
+
+    <string-array name="balancer_type_entry">
+        <item>@string/list</item>
+        <item>@string/menu_group</item>
+    </string-array>
+    <string-array name="balancer_type_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="balancer_strategy_entry">
+        <item>@string/random</item>
+        <item>@string/leastPing</item>
+    </string-array>
+    <string-array name="balancer_strategy_value">
+        <item />
+        <item>leastPing</item>
     </string-array>
 
 </resources>

@@ -19,28 +19,37 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.gson;
+package io.nekohasekai.sagernet.widget
 
-import androidx.room.TypeConverter;
+import android.content.Context
+import android.util.AttributeSet
+import com.takisoft.preferencex.SimpleMenuPreference
+import io.nekohasekai.sagernet.database.SagerDatabase
 
-import java.util.List;
-import java.util.Set;
+class GroupPreference : SimpleMenuPreference {
 
-public class GsonConverters {
+    constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
+        context, attrs, defStyle
+    )
 
-    @TypeConverter
-    public static String toJson(Object value) {
-        return GsonsKt.getGson().toJson(value);
+    constructor(
+        context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
+
+    init {
+        val groups = SagerDatabase.groupDao.allGroups()
+
+        entries = groups.map { it.displayName() }.toTypedArray()
+        entryValues = groups.map { "${it.id}" }.toTypedArray()
     }
 
-    @TypeConverter
-    public static List toList(String value) {
-        return GsonsKt.getGson().fromJson(value, List.class);
-    }
-
-    @TypeConverter
-    public static Set toSet(String value) {
-        return GsonsKt.getGson().fromJson(value, Set.class);
+    override fun getSummary(): CharSequence {
+        if (value != "0") {
+            return SagerDatabase.groupDao.getById(value.toLong())?.displayName() ?: super.getSummary()
+        }
+        return super.getSummary()
     }
 
 }

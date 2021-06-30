@@ -28,6 +28,7 @@ import com.google.gson.stream.JsonToken;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
 import io.nekohasekai.sagernet.fmt.gson.JsonOr;
@@ -120,6 +121,13 @@ public class V2RayConfig {
 
             public String tag;
             public List<String> selector;
+            public StrategyObject strategy;
+
+            public static class StrategyObject {
+
+                public String type;
+
+            }
 
         }
 
@@ -807,6 +815,12 @@ public class V2RayConfig {
             public String tag;
             public String domain;
         }
+    }
+
+    public ObservatoryObject observatory;
+
+    public static class ObservatoryObject {
+        public Set<String> subjectSelector;
     }
 
     public void init() {

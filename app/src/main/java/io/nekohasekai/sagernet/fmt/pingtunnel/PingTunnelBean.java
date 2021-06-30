@@ -61,7 +61,6 @@ public class PingTunnelBean extends AbstractBean {
         int version = input.readInt();
         serverAddress = input.readString();
         key = input.readString();
-        initDefaultValues();
     }
 
     @NotNull

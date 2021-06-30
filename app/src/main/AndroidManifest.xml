@@ -123,9 +123,6 @@
             android:name="io.nekohasekai.sagernet.ui.profile.BrookSettingsActivity"
             android:configChanges="uiMode" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
-            android:configChanges="uiMode" />
-        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity"
             android:configChanges="uiMode" />
         <activity
@@ -136,6 +133,12 @@
             android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.AssetsActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.BalancerSettingsActivity"
             android:configChanges="uiMode" />
 
         <activity

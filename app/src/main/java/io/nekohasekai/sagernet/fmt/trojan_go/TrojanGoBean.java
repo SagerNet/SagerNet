@@ -153,8 +153,6 @@ public class TrojanGoBean extends AbstractBean {
         }
         encryption = input.readString();
         plugin = input.readString();
-
-        initDefaultValues();
     }
 
     @NotNull
