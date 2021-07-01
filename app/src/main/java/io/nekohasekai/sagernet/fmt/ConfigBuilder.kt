@@ -784,21 +784,22 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
             }
 
+            if (observatory == null) observatory = ObservatoryObject().apply {
+                probeUrl = DataStore.connectionTestURL
+                val testInterval = DataStore.probeInterval
+                if (testInterval > 0) {
+                    probeInterval = testInterval
+                }
+            }
+
+            if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
+            observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
+
             if (isBalancer) {
                 if (routing.balancers == null) routing.balancers = ArrayList()
                 routing.balancers.add(RoutingObject.BalancerObject().apply {
                     tag = "balancer-$tagOutbound"
                     selector = chainOutbounds.map { it.tag }
-
-                    if (observatory == null) observatory = ObservatoryObject().apply {
-                        probeUrl = DataStore.connectionTestURL
-                        val testInterval = DataStore.probeInterval
-                        if (testInterval > 0) {
-                            probeInterval = testInterval
-                        }
-                    }
-                    if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
-                    observatory.subjectSelector.addAll(selector)
 
                     strategy = RoutingObject.BalancerObject.StrategyObject().apply {
                         type = balancerStrategy().takeIf { it.isNotBlank() } ?: "random"

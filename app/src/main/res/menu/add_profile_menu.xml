@@ -81,6 +81,9 @@
         </menu>
     </item>
     <item
+        android:id="@+id/test"
+        android:title="Test" />
+    <item
         android:id="@+id/action_clear"
         android:title="@string/clear_profiles" />
 

@@ -48,6 +48,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.v2ray.core.app.observatory.command.GetOutboundStatusRequest
+import com.v2ray.core.app.observatory.command.ObservatoryServiceGrpcKt
+import io.grpc.StatusException
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -293,6 +296,29 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_export_file -> {
                 startFilesForResult(exportProfiles)
+            }
+            R.id.test -> {
+                runOnDefaultDispatcher {
+                    try {
+                        val managedChannel = createChannel()
+                        val observatoryService =
+                            ObservatoryServiceGrpcKt.ObservatoryServiceCoroutineStub(managedChannel)
+                        val status =
+                            observatoryService.getOutboundStatus(GetOutboundStatusRequest.getDefaultInstance()).status
+                        val message =
+                            "${status.statusCount}\n" + status.statusList.joinToString("\n") { it.outboundTag + ": " + it.alive + ", " + it.delay + ", " + it.lastErrorReason }
+                        onMainDispatcher {
+                            MaterialAlertDialogBuilder(requireContext()).setMessage(message)
+                                .setPositiveButton(android.R.string.ok, null).show()
+                        }
+                        managedChannel.shutdownNow()
+                    } catch (e: StatusException) {
+                        onMainDispatcher {
+                            MaterialAlertDialogBuilder(requireContext()).setMessage(e.readableMessage)
+                                .setPositiveButton(android.R.string.ok, null).show()
+                        }
+                    }
+                }
             }
             R.id.action_clear -> {
                 runOnDefaultDispatcher {

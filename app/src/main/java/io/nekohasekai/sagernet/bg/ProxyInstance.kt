@@ -29,17 +29,16 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.v2ray.core.app.observatory.command.ObservatoryServiceGrpcKt
 import com.v2ray.core.app.stats.command.GetStatsRequest
 import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
-import io.grpc.okhttp.OkHttpChannelBuilder
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
@@ -78,6 +77,11 @@ class ProxyInstance(val profile: ProxyEntity) {
 
     lateinit var managedChannel: ManagedChannel
     val statsService by lazy { StatsServiceGrpcKt.StatsServiceCoroutineStub(managedChannel) }
+    val observatoryService by lazy {
+        ObservatoryServiceGrpcKt.ObservatoryServiceCoroutineStub(
+            managedChannel
+        )
+    }
 
     val pluginPath = hashMapOf<String, InitResult>()
     fun initPlugin(name: String): InitResult {
@@ -413,32 +417,35 @@ class ProxyInstance(val profile: ProxyEntity) {
             }
         }
 
-        managedChannel =
-            OkHttpChannelBuilder.forAddress(LOCALHOST, DataStore.apiPort).usePlaintext()
-                .executor(Dispatchers.Default.asExecutor()).build()
+        managedChannel = createChannel()
 
         DataStore.startedProxy = profile.id
     }
 
     fun stop() {
-        v2rayPoint.stopLoop()
+        v2rayPoint.shutdown()
 
-        if (::managedChannel.isInitialized) {
-            managedChannel.shutdownNow()
+        runOnDefaultDispatcher {
+            DataStore.startedProxy = 0L
+
+            if (::managedChannel.isInitialized) {
+                managedChannel.shutdownNow()
+            }
+
+            if (::wsForwarder.isInitialized) {
+                wsForwarder.loadUrl("about:blank")
+                wsForwarder.destroy()
+            }
         }
-
-        if (::wsForwarder.isInitialized) {
-            wsForwarder.loadUrl("about:blank")
-            wsForwarder.destroy()
-        }
-
-        DataStore.startedProxy = 0L
     }
 
     private suspend fun queryStats(tag: String, direct: String): Long {
         try {
             return queryStatsGrpc(tag, direct)
         } catch (e: StatusException) {
+            if (e.status.description?.contains("shutdown") == true) {
+                return 0L
+            }
             Logs.w(e)
             if (isExpert) return 0L
         }
