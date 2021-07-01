@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.fmt.brook.parseBrook
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
 import io.nekohasekai.sagernet.fmt.naive.parseNaive
+import io.nekohasekai.sagernet.fmt.parseUniversal
 import io.nekohasekai.sagernet.fmt.pingtunnel.parsePingTunnel
 import io.nekohasekai.sagernet.fmt.relaybaton.parseRelayBaton
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
@@ -45,10 +46,7 @@ fun formatObject(obj: Any): String {
 
 fun String.decodeBase64UrlSafe(): String {
     return Base64.decodeStr(
-        replace(' ', '-')
-            .replace('/', '_')
-            .replace('+', '-')
-            .replace("=", "")
+        replace(' ', '-').replace('/', '_').replace('+', '-').replace("=", "")
     )
 }
 
@@ -60,7 +58,14 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
     val entitiesByLine = ArrayList<AbstractBean>()
 
     fun String.parseLink(entities: ArrayList<AbstractBean>) {
-        if (startsWith("socks://")) {
+        if (startsWith("sn://")) {
+            Logs.d("Try parse universal link: $this")
+            runCatching {
+                entities.add(parseUniversal(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("socks://")) {
             Logs.d("Try parse socks link: $this")
             runCatching {
                 entities.add(parseSOCKS(this))
@@ -147,9 +152,7 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
         link.parseLink(entitiesByLine)
     }
     var isBadLink = false
-    if (entities.onEach { it.initDefaultValues() }.size ==
-        entitiesByLine.onEach { it.initDefaultValues() }.size
-    ) run test@{
+    if (entities.onEach { it.initDefaultValues() }.size == entitiesByLine.onEach { it.initDefaultValues() }.size) run test@{
         entities.forEachIndexed { index, bean ->
             val lineBean = entitiesByLine[index]
             if (bean == lineBean && bean.displayName() != lineBean.displayName()) {

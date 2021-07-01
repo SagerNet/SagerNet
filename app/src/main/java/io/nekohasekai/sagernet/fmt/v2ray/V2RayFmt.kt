@@ -221,6 +221,20 @@ fun parseV2RayN(link: String): VMessBean {
     bean.headerType = json.getStr("type") ?: ""
     bean.host = json.getStr("host") ?: ""
     bean.path = json.getStr("path") ?: ""
+
+    when (bean.headerType) {
+        "quic" -> {
+            bean.quicSecurity = bean.host
+            bean.quicKey = bean.path
+        }
+        "kcp" -> {
+            bean.mKcpSeed = bean.path
+        }
+        "grpc" -> {
+            bean.grpcServiceName = bean.path
+        }
+    }
+
     bean.name = json.getStr("ps") ?: ""
     bean.sni = json.getStr("sni") ?: bean.host
     bean.security = json.getStr("tls")
@@ -310,7 +324,20 @@ fun VMessBean.toV2rayN(): String {
         it["net"] = type
         it["host"] = host
         it["type"] = headerType
-        it["path"] = path
+
+        when (headerType) {
+            "quic" -> {
+                it["host"] = quicSecurity
+                it["path"] = quicKey
+            }
+            "kcp" -> {
+                it["path"] = mKcpSeed
+            }
+            "grpc" -> {
+                it["path"] = grpcServiceName
+            }
+        }
+
         it["tls"] = if (security == "tls") "tls" else ""
         it["sni"] = sni
         it["scy"] = encryption
@@ -322,11 +349,8 @@ fun VMessBean.toV2rayN(): String {
 fun StandardV2RayBean.toUri(standard: Boolean = true): String {
     if (this is VMessBean && alterId > 0) return toV2rayN()
 
-    val builder = linkBuilder().username(uuid)
-        .host(serverAddress)
-        .port(serverPort)
-        .addQueryParameter("type", type)
-        .addQueryParameter("encryption", encryption)
+    val builder = linkBuilder().username(uuid).host(serverAddress).port(serverPort)
+        .addQueryParameter("type", type).addQueryParameter("encryption", encryption)
 
     when (type) {
         "tcp" -> {

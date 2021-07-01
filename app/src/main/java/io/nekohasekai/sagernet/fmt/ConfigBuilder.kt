@@ -199,7 +199,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         }
 
         log = LogObject().apply {
-            loglevel = if (DataStore.enableLog) "debug" else "warning"
+            loglevel = if (DataStore.enableLog) "debug" else "error"
         }
 
         policy = PolicyObject().apply {

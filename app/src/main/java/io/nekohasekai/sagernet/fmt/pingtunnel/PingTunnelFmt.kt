@@ -26,6 +26,7 @@ import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
+
 /**
  * Unofficial
  *
@@ -46,8 +47,7 @@ fun parsePingTunnel(server: String): PingTunnelBean {
 }
 
 fun PingTunnelBean.toUri(): String {
-    val builder = linkBuilder()
-        .host(serverAddress)
+    val builder = linkBuilder().host(serverAddress)
     if (key.isNotBlank() && key != "1") {
         builder.encodedUsername(key.urlSafe())
     }

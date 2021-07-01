@@ -27,5 +27,6 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
-fun createChannel() = OkHttpChannelBuilder.forAddress(LOCALHOST, DataStore.apiPort).usePlaintext()
-    .executor(Dispatchers.Default.asExecutor()).build()
+fun createChannel() =
+    OkHttpChannelBuilder.forAddress(LOCALHOST, DataStore.apiPort).usePlaintext()
+        .executor(Dispatchers.Default.asExecutor()).build()

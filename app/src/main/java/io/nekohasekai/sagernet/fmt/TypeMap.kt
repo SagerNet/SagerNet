@@ -19,55 +19,33 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.relaybaton
+package io.nekohasekai.sagernet.fmt
 
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import io.nekohasekai.sagernet.database.ProxyEntity
 
-fun parseRelayBaton(link: String): RelayBatonBean {
-    val url = (link.replace("relaybaton://", "https://")).toHttpUrlOrNull()
-        ?: error("Invalid relaybaton link: $link")
-    return RelayBatonBean().apply {
-        serverAddress = url.host
-        username = url.username
-        password = url.password
-        name = url.fragment
-        initDefaultValues()
-    }
-}
-
-fun RelayBatonBean.toUri(): String {
-    val builder = linkBuilder()
-        .host(serverAddress)
-        .username(username)
-        .password(password)
-
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+object TypeMap : HashMap<String, Int>() {
+    init {
+        this["socks"] = ProxyEntity.TYPE_SOCKS
+        this["http"] = ProxyEntity.TYPE_HTTP
+        this["ss"] = ProxyEntity.TYPE_SS
+        this["ssr"] = ProxyEntity.TYPE_SSR
+        this["vmess"] = ProxyEntity.TYPE_VMESS
+        this["vless"] = ProxyEntity.TYPE_VLESS
+        this["trojan"] = ProxyEntity.TYPE_TROJAN
+        this["trojan-go"] = ProxyEntity.TYPE_TROJAN_GO
+        this["naive"] = ProxyEntity.TYPE_NAIVE
+        this["pt"] = ProxyEntity.TYPE_PING_TUNNEL
+        this["rb"] = ProxyEntity.TYPE_RELAY_BATON
+        this["brook"] = ProxyEntity.TYPE_BROOK
+        this["config"] = ProxyEntity.TYPE_CONFIG
     }
 
-    return builder.toLink("relaybaton", false)
-}
+    val reversed = HashMap<Int, String>()
 
-fun RelayBatonBean.buildRelayBatonConfig(port: Int): String {
-    return """
-        [client]
-        port = $port
-        http_port = 0
-        redir_port = 0
-        server = "$serverAddress"
-        username = "$username"
-        password = "$password"
-        proxy_all = true
+    init {
+        TypeMap.forEach { (key, type) ->
+            reversed[type] = key
+        }
+    }
 
-        [dns]
-        type = "default"
-       
-        [log]
-        file = "stdout"
-        level = "${if (DataStore.enableLog) "trace" else "error"}"
-    """.trimIndent()
 }

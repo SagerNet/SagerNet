@@ -19,55 +19,23 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.relaybaton
+package io.nekohasekai.sagernet.fmt
 
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import cn.hutool.core.codec.Base64Decoder
+import cn.hutool.core.codec.Base64Encoder
+import io.nekohasekai.sagernet.database.ProxyEntity
 
-fun parseRelayBaton(link: String): RelayBatonBean {
-    val url = (link.replace("relaybaton://", "https://")).toHttpUrlOrNull()
-        ?: error("Invalid relaybaton link: $link")
-    return RelayBatonBean().apply {
-        serverAddress = url.host
-        username = url.username
-        password = url.password
-        name = url.fragment
-        initDefaultValues()
-    }
+fun parseUniversal(link: String): AbstractBean {
+    val type = link.substringAfter("sn://").substringBefore(":")
+    return ProxyEntity(type = TypeMap[type] ?: error("Type $type not found")).apply {
+        putByteArray(Base64Decoder.decode(link.substringAfter(":").substringAfter(":")))
+    }.requireBean()
 }
 
-fun RelayBatonBean.toUri(): String {
-    val builder = linkBuilder()
-        .host(serverAddress)
-        .username(username)
-        .password(password)
-
-    if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
-    }
-
-    return builder.toLink("relaybaton", false)
-}
-
-fun RelayBatonBean.buildRelayBatonConfig(port: Int): String {
-    return """
-        [client]
-        port = $port
-        http_port = 0
-        redir_port = 0
-        server = "$serverAddress"
-        username = "$username"
-        password = "$password"
-        proxy_all = true
-
-        [dns]
-        type = "default"
-       
-        [log]
-        file = "stdout"
-        level = "${if (DataStore.enableLog) "trace" else "error"}"
-    """.trimIndent()
+fun AbstractBean.toUniversalLink(): String {
+    var link = "sn://"
+    link += TypeMap.reversed[ProxyEntity().putBean(this).type]
+    link += ":"
+    link += Base64Encoder.encodeUrlSafe(KryoConverters.serialize(this))
+    return link
 }

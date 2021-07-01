@@ -22,7 +22,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -59,6 +58,8 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.toUniversalLink
+import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
@@ -295,7 +296,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             R.id.action_export_file -> {
-                startFilesForResult(exportProfiles)
+                startFilesForResult(exportProfiles, "profiles.txt")
             }
             R.id.test -> {
                 runOnDefaultDispatcher {
@@ -329,44 +330,30 @@ class ConfigurationFragment @JvmOverloads constructor(
         return true
     }
 
-    private fun startFilesForResult(launcher: ActivityResultLauncher<String>) {
-        try {
-            return launcher.launch("")
-        } catch (_: ActivityNotFoundException) {
-        } catch (_: SecurityException) {
-        }
-        (activity as MainActivity).snackbar(getString(R.string.file_manager_missing)).show()
-    }
-
-    class SaveProfiles : ActivityResultContracts.CreateDocument() {
-        override fun createIntent(context: Context, input: String) =
-            super.createIntent(context, "profiles.txt").apply { type = "text/plain" }
-    }
-
-
-    private val exportProfiles = registerForActivityResult(SaveProfiles()) { data ->
-        if (data != null) {
-            runOnDefaultDispatcher {
-                val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
-                val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
-                try {
-                    (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
-                        .bufferedWriter().use {
-                            it.write(links)
+    private val exportProfiles =
+        registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
+            if (data != null) {
+                runOnDefaultDispatcher {
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
+                    try {
+                        (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
+                            .bufferedWriter().use {
+                                it.write(links)
+                            }
+                        onMainDispatcher {
+                            snackbar(getString(R.string.action_export_msg)).show()
                         }
-                    onMainDispatcher {
-                        snackbar(getString(R.string.copy_toast_msg)).show()
+                    } catch (e: Exception) {
+                        Logs.w(e)
+                        onMainDispatcher {
+                            snackbar(e.readableMessage).show()
+                        }
                     }
-                } catch (e: Exception) {
-                    Logs.w(e)
-                    onMainDispatcher {
-                        snackbar(e.readableMessage).show()
-                    }
-                }
 
+                }
             }
         }
-    }
 
     inner class GroupPagerAdapter : FragmentStateAdapter(this), ProfileManager.GroupListener {
 
@@ -884,6 +871,36 @@ class ConfigurationFragment @JvmOverloads constructor(
                             selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
                         }
 
+                        fun showShare(anchor: View) {
+                            val popup = PopupMenu(requireContext(), anchor)
+                            popup.menuInflater.inflate(R.menu.profile_share_menu, popup.menu)
+
+                            if (proxyEntity.vmessBean == null) {
+                                popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_v2rayn_qr)
+                                popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
+                                    R.id.action_v2rayn_clipboard
+                                )
+                            }
+
+                            if (proxyEntity.configBean != null) {
+
+                                popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
+                                popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
+                                    R.id.action_standard_clipboard
+                                )
+                            } else if (!proxyEntity.haveLink()) {
+                                popup.menu.removeItem(R.id.action_group_qr)
+                                popup.menu.removeItem(R.id.action_group_clipboard)
+                            }
+
+                            if (proxyEntity.ptBean != null || proxyEntity.brookBean != null) {
+                                popup.menu.removeItem(R.id.action_group_configuration)
+                            }
+
+                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                            popup.show()
+                        }
+
                         if (!(select || proxyEntity.type == 8)) {
 
                             val validateResult = if (DataStore.securityAdvisory) {
@@ -903,12 +920,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                             .setMessage(resources.openRawResource(validateResult.textRes)
                                                 .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
-                                                val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(
-                                                    if (proxyEntity.haveLink()) R.menu.profile_share_menu else R.menu.export_only_menu, popup.menu
-                                                )
-                                                popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                                                popup.show()
+                                                showShare(it)
                                             }.show().apply {
                                                 findViewById<TextView>(android.R.id.message)?.apply {
                                                     Linkify.addLinks(this, Linkify.WEB_URLS)
@@ -930,12 +942,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                             .setMessage(resources.openRawResource(validateResult.textRes)
                                                 .bufferedReader().use { it.readText() })
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
-                                                val popup = PopupMenu(requireContext(), it)
-                                                popup.menuInflater.inflate(
-                                                    if (proxyEntity.haveLink()) R.menu.profile_share_menu else R.menu.export_only_menu, popup.menu
-                                                )
-                                                popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                                                popup.show()
+                                                showShare(it)
                                             }.show().apply {
                                                 findViewById<TextView>(android.R.id.message)?.apply {
                                                     Linkify.addLinks(this, Linkify.WEB_URLS)
@@ -951,12 +958,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     shareButton.setColorFilter(Color.GRAY)
 
                                     shareLayout.setOnClickListener {
-                                        val popup = PopupMenu(requireContext(), it)
-                                        popup.menuInflater.inflate(
-                                            if (proxyEntity.haveLink()) R.menu.profile_share_menu else R.menu.export_only_menu, popup.menu
-                                        )
-                                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                                        popup.show()
+                                        showShare(it)
                                     }
                                 }
                             }
@@ -1024,15 +1026,22 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             override fun onMenuItemClick(item: MenuItem): Boolean {
                 try {
-                    when (item.itemId) { // socks
-                        R.id.action_qr_code -> {
-                            showCode(entity.toLink()!!)
-                        }
-                        R.id.action_export_clipboard -> {
-                            export(entity.toLink()!!)
-                        }
-                        R.id.action_config_export_clipboard -> {
-                            export(entity.exportConfig())
+                    when (item.itemId) {
+                        R.id.action_standard_qr -> showCode(entity.toLink()!!)
+                        R.id.action_standard_clipboard -> export(entity.toLink()!!)
+                        R.id.action_universal_qr -> showCode(entity.requireBean().toUniversalLink())
+                        R.id.action_universal_clipboard -> export(
+                            entity.requireBean().toUniversalLink()
+                        )
+                        R.id.action_v2rayn_qr -> showCode(entity.vmessBean!!.toV2rayN())
+                        R.id.action_v2rayn_clipboard -> export(entity.vmessBean!!.toV2rayN())
+                        R.id.action_config_export_clipboard -> export(entity.exportConfig().first)
+                        R.id.action_config_export_file -> {
+                            val cfg = entity.exportConfig()
+                            DataStore.serverConfig = cfg.first
+                            startFilesForResult(
+                                (parentFragment as ConfigurationFragment).exportConfig, cfg.second
+                            )
                         }
                     }
                 } catch (e: Exception) {
@@ -1044,6 +1053,43 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
 
+    }
+
+    private val exportConfig =
+        registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
+            if (data != null) {
+                runOnDefaultDispatcher {
+                    try {
+                        (requireActivity() as MainActivity).contentResolver.openOutputStream(
+                            data
+                        )!!.bufferedWriter().use {
+                            it.write(DataStore.serverConfig)
+                        }
+                        onMainDispatcher {
+                            snackbar(getString(R.string.action_export_msg)).show()
+                        }
+                    } catch (e: Exception) {
+                        Logs.w(e)
+                        onMainDispatcher {
+                            snackbar(e.readableMessage).show()
+                        }
+                    }
+
+                }
+            }
+        }
+
+    companion object {
+        private fun Fragment.startFilesForResult(
+            launcher: ActivityResultLauncher<String>, input: String
+        ) {
+            try {
+                return launcher.launch(input)
+            } catch (_: ActivityNotFoundException) {
+            } catch (_: SecurityException) {
+            }
+            (activity as MainActivity).snackbar(getString(R.string.file_manager_missing)).show()
+        }
     }
 
 

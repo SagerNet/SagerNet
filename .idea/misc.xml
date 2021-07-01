@@ -49,8 +49,10 @@
         <entry key="app/src/main/res/menu/per_app_proxy_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/profile_apply_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/profile_config_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/profile_share_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/scanner_menu.xml" value="0.2636752136752137" />
-        <entry key="app/src/main/res/menu/socks_share_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/socks_share_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/vmess_share_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.186" />
         <entry key="app/src/main/res/xml/balancer_preferences.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/brook_preferences.xml" value="0.32135416666666666" />
@@ -59,6 +61,7 @@
         <entry key="app/src/main/res/xml/global_preferences.xml" value="1.0" />
         <entry key="app/src/main/res/xml/http_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/route_preferences.xml" value="0.33" />
+        <entry key="app/src/main/res/xml/socks_preferences.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/standard_v2ray_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/trojan_go_preferences.xml" value="0.14316239316239315" />
         <entry key="app/src/main/res/xml/trojan_preferences.xml" value="0.192481884057971" />
