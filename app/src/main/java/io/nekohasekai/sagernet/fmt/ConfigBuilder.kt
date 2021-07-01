@@ -104,6 +104,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             val beanList = ArrayList<ProxyEntity>()
             for (proxyId in beansMap.keys) {
                 val item = beansMap[proxyId] ?: continue
+                if (item.id == id) continue
                 when (item.type) {
                     ProxyEntity.TYPE_BALANCER -> error("Nested balancers are not supported")
                     ProxyEntity.TYPE_CHAIN -> error("Chain is incompatible with balancer")
