@@ -43,6 +43,7 @@
         <entry key="app/src/main/res/menu/add_group_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/add_route_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/export_only_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/import_asset_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/main_drawer_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/per_app_proxy_menu.xml" value="0.2636752136752137" />

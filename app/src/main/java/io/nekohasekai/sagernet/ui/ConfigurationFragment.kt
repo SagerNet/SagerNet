@@ -872,7 +872,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         )
                     }
 
-                    shareLayout.isGone = select || !proxyEntity.haveLink()
+                    shareLayout.isGone = select
                     editButton.isGone = select
 
                     runOnDefaultDispatcher {
@@ -905,7 +905,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
                                                 popup.menuInflater.inflate(
-                                                    R.menu.socks_share_menu, popup.menu
+                                                    if (proxyEntity.haveLink()) R.menu.profile_share_menu else R.menu.export_only_menu, popup.menu
                                                 )
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
@@ -932,7 +932,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                                 val popup = PopupMenu(requireContext(), it)
                                                 popup.menuInflater.inflate(
-                                                    R.menu.socks_share_menu, popup.menu
+                                                    if (proxyEntity.haveLink()) R.menu.profile_share_menu else R.menu.export_only_menu, popup.menu
                                                 )
                                                 popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                                 popup.show()
@@ -953,7 +953,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     shareLayout.setOnClickListener {
                                         val popup = PopupMenu(requireContext(), it)
                                         popup.menuInflater.inflate(
-                                            R.menu.socks_share_menu, popup.menu
+                                            if (proxyEntity.haveLink()) R.menu.profile_share_menu else R.menu.export_only_menu, popup.menu
                                         )
                                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                                         popup.show()
@@ -1031,6 +1031,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         R.id.action_export_clipboard -> {
                             export(entity.toLink()!!)
                         }
+                        R.id.action_config_export_clipboard -> {
+                            export(entity.exportConfig())
+                        }
                     }
                 } catch (e: Exception) {
                     Logs.w(e)
@@ -1042,5 +1045,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
     }
+
 
 }

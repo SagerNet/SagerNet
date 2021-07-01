@@ -26,34 +26,39 @@ import android.content.Intent
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
-import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.toUri
-import io.nekohasekai.sagernet.fmt.internal.ChainBean
+import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.config.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
+import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
+import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
 import io.nekohasekai.sagernet.fmt.relaybaton.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.toUri
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
+import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.toUri
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
@@ -64,13 +69,10 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(
-    tableName = "proxy_entities", indices = [
-        Index("groupId", name = "groupId")
-    ]
+    tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
 )
 data class ProxyEntity(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0L,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var groupId: Long = 0L,
     var type: Int = 0,
     var userOrder: Long = 0L,
@@ -266,6 +268,56 @@ data class ProxyEntity(
             is RelayBatonBean -> toUri()
             is BrookBean -> toUri()
             else -> null
+        }
+    }
+
+    fun exportConfig(): String {
+        return with(requireBean()) {
+            when (this) {
+                is ShadowsocksRBean -> buildShadowsocksRConfig()
+                is TrojanGoBean -> buildTrojanGoConfig(DataStore.socksPort, false, 0)
+                is NaiveBean -> buildNaiveConfig(DataStore.socksPort)
+                is RelayBatonBean -> buildRelayBatonConfig(DataStore.socksPort)
+                is BrookBean, is PingTunnelBean -> "<No Configuration>"
+                else -> StringBuilder().apply {
+                    val config = buildV2RayConfig(this@ProxyEntity)
+                    append(config.config)
+
+                    for ((isBalancer, chain) in config.index) {
+                        chain.entries.forEachIndexed { index, (port, profile) ->
+                            val needChain = !isBalancer && index != chain.size - 1
+                            val bean = profile.requireBean()
+                            when {
+                                profile.useExternalShadowsocks() -> {
+                                    bean as ShadowsocksBean
+                                    append("\n\n")
+                                    append(bean.buildShadowsocksConfig(port))
+                                }
+                                bean is ShadowsocksRBean -> {
+                                    append("\n\n")
+                                    append(bean.buildShadowsocksRConfig())
+                                }
+                                bean is TrojanGoBean -> {
+                                    append("\n\n")
+                                    append(
+                                        bean.buildTrojanGoConfig(
+                                            port, needChain, index
+                                        )
+                                    )
+                                }
+                                bean is NaiveBean -> {
+                                    append("\n\n")
+                                    append(bean.buildNaiveConfig(port))
+                                }
+                                bean is RelayBatonBean -> {
+                                    append("\n\n")
+                                    append(bean.buildRelayBatonConfig(port))
+                                }
+                            }
+                        }
+                    }
+                }.toString()
+            }
         }
     }
 
