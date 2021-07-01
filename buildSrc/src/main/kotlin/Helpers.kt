@@ -116,6 +116,7 @@ fun Project.setupCommon() {
             exclude("DebugProbesKt.bin")
             exclude("com/**")
             exclude("org/**")
+            exclude("**/*.proto")
         }
         packagingOptions {
             jniLibs.useLegacyPackaging = true
