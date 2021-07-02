@@ -1150,9 +1150,9 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
     val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
     val requireTransproxy = DataStore.requireTransproxy
 
-    val dnsInbound = inbounds.find { it.tag == TAG_DNS_IN }?.also {
-        it.listen = bind
-        it.port = DataStore.localDNSPort
+    val dnsInbound = inbounds.find { it.tag == TAG_DNS_IN }?.also { inbound ->
+        inbound.listen = bind
+        inbound.port = DataStore.localDNSPort
 
         if (dnsArr?.any { it.valueX == "fakedns" } == true) {
             DataStore.dnsModeFinal = DnsMode.FAKEDNS_LOCAL
@@ -1181,9 +1181,9 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         DataStore.dnsModeFinal = DnsMode.SYSTEM
 
         val dns = dnsArr?.filter {
-            it.valueX.isIpAddress() || (it.valueY != null && it.valueY.address.isIpAddress() && (it.valueY.port in arrayOf(
+            it.valueX != null && it.valueX.isIpAddress() || it.valueY != null && it.valueY.address.isIpAddress() && it.valueY.port in arrayOf(
                 null, 53
-            )) && it.valueY.domains.isNullOrEmpty() && it.valueY.expectIPs.isNullOrEmpty())
+            ) && it.valueY.domains.isNullOrEmpty() && it.valueY.expectIPs.isNullOrEmpty()
         }?.map { it.valueX ?: it.valueY.address }
 
         if (dns.isNullOrEmpty()) {
