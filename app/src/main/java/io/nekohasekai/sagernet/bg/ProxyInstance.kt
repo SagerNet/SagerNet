@@ -183,243 +183,249 @@ class ProxyInstance(val profile: ProxyEntity) {
         val context =
             if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
 
-        for ((isBalancer, chain) in config.index) {
-            chain.entries.forEachIndexed { index, (port, profile) ->
-                val bean = profile.requireBean()
-                val needChain = !isBalancer && index != chain.size - 1
-                val (_, config) = pluginConfigs[port] ?: return@forEachIndexed
+        runOnDefaultDispatcher {
 
-                when {
-                    profile.useExternalShadowsocks() -> {
-                        if (needChain) error("shadowsocks-rust is incompatible with chain")
+            for ((isBalancer, chain) in config.index) {
+                chain.entries.forEachIndexed { index, (port, profile) ->
+                    val bean = profile.requireBean()
+                    val needChain = !isBalancer && index != chain.size - 1
+                    val (_, config) = pluginConfigs[port] ?: return@forEachIndexed
 
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
+                    when {
+                        profile.useExternalShadowsocks() -> {
+                            if (needChain) error("shadowsocks-rust is incompatible with chain")
 
-                        val commands = mutableListOf(
-                            File(
-                                SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.SS_LOCAL
-                            ).absolutePath, "-c", configFile.absolutePath, "--log-without-time"
-                        )
-
-                        if (DataStore.enableLog) commands.add("-v")
-
-                        base.data.processes!!.start(commands)
-                    }
-                    bean is ShadowsocksRBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            File(
-                                SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.SSR_LOCAL
-                            ).absolutePath,
-                            "-b",
-                            "127.0.0.1",
-                            "-c",
-                            configFile.absolutePath,
-                            "-l",
-                            "$port",
-                            "-u"
-                        )
-
-                        val env = mutableMapOf<String, String>()
-
-                        if (needChain) {
-                            val proxychainsConfigFile = File(
+                            val configFile = File(
                                 context.noBackupFilesDir,
-                                "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
+                                "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
                             )
-                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                            cacheFiles.add(proxychainsConfigFile)
+                            configFile.writeText(config)
+                            cacheFiles.add(configFile)
 
-                            env["LD_PRELOAD"] = File(
-                                SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.PROXYCHAINS
-                            ).absolutePath
-                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                            val commands = mutableListOf(
+                                File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.SS_LOCAL
+                                ).absolutePath, "-c", configFile.absolutePath, "--log-without-time"
+                            )
+
+                            if (DataStore.enableLog) commands.add("-v")
+
+                            base.data.processes!!.start(commands)
                         }
-
-                        base.data.processes!!.start(commands, env)
-                    }
-                    bean is TrojanGoBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-                        configFile.parentFile.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
-                        )
-
-                        base.data.processes!!.start(commands)
-                    }
-                    bean is NaiveBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "naive_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("naive-plugin").path, configFile.absolutePath
-                        )
-
-                        val env = mutableMapOf<String, String>()
-
-                        if (needChain) {
-                            val proxychainsConfigFile = File(
+                        bean is ShadowsocksRBean -> {
+                            val configFile = File(
                                 context.noBackupFilesDir,
-                                "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
+                                "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json"
                             )
-                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                            cacheFiles.add(proxychainsConfigFile)
 
-                            env["LD_PRELOAD"] = File(
-                                SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.PROXYCHAINS
-                            ).absolutePath
-                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
-                        }
+                            configFile.writeText(config)
+                            cacheFiles.add(configFile)
 
-                        base.data.processes!!.start(commands, env)
-                    }
-                    bean is PingTunnelBean -> {
-                        if (needChain) error("PingTunnel is incompatible with chain")
+                            val commands = mutableListOf(
+                                File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.SSR_LOCAL
+                                ).absolutePath,
+                                "-b",
+                                "127.0.0.1",
+                                "-c",
+                                configFile.absolutePath,
+                                "-l",
+                                "$port",
+                                "-u"
+                            )
 
-                        val commands = mutableListOf(
-                            "su",
-                            "-c",
-                            initPlugin("pingtunnel-plugin").path,
-                            "-type",
-                            "client",
-                            "-sock5",
-                            "1",
-                            "-l",
-                            "127.0.0.1:$port",
-                            "-s",
-                            bean.serverAddress
-                        )
+                            val env = mutableMapOf<String, String>()
 
-                        if (bean.key.isNotBlank() && bean.key != "1") {
-                            commands.add("-key")
-                            commands.add(bean.key)
-                        }
+                            if (needChain) {
+                                val proxychainsConfigFile = File(
+                                    context.noBackupFilesDir,
+                                    "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
+                                )
+                                proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
+                                cacheFiles.add(proxychainsConfigFile)
 
-                        base.data.processes!!.start(commands)
-                    }
-                    bean is RelayBatonBean -> {
-                        if (needChain) error("RelayBaton is incompatible with chain")
-
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "rb_" + SystemClock.elapsedRealtime() + ".toml"
-                        )
-
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("relaybaton-plugin").path,
-                            "client",
-                            "--config",
-                            configFile.absolutePath
-                        )
-
-                        base.data.processes!!.start(commands)
-                    }
-                    bean is BrookBean -> {
-
-                        if (needChain) error("brook is incompatible with chain")
-
-                        val commands = mutableListOf(initPlugin("brook-plugin").path)
-
-                        when (bean.protocol) {
-                            "ws" -> {
-                                commands.add("wsclient")
-                                commands.add("--wsserver")
+                                env["LD_PRELOAD"] = File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.PROXYCHAINS
+                                ).absolutePath
+                                env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
                             }
-                            "wss" -> {
-                                commands.add("wssclient")
-                                commands.add("--wssserver")
-                            }
-                            else -> {
-                                commands.add("client")
-                                commands.add("--server")
-                            }
+
+                            base.data.processes!!.start(commands, env)
                         }
+                        bean is TrojanGoBean -> {
+                            val configFile = File(
+                                context.noBackupFilesDir,
+                                "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
+                            )
+                            configFile.parentFile.mkdirs()
+                            configFile.writeText(config)
+                            cacheFiles.add(configFile)
 
-                        commands.add(bean.internalUri())
+                            val commands = mutableListOf(
+                                initPlugin("trojan-go-plugin").path,
+                                "-config",
+                                configFile.absolutePath
+                            )
 
-                        if (bean.password.isNotBlank()) {
-                            commands.add("--password")
-                            commands.add(bean.password)
+                            base.data.processes!!.start(commands)
                         }
+                        bean is NaiveBean -> {
+                            val configFile = File(
+                                context.noBackupFilesDir,
+                                "naive_" + SystemClock.elapsedRealtime() + ".json"
+                            )
 
-                        commands.add("--socks5")
-                        commands.add("127.0.0.1:$port")
+                            configFile.writeText(config)
+                            cacheFiles.add(configFile)
 
-                        base.data.processes!!.start(commands)
+                            val commands = mutableListOf(
+                                initPlugin("naive-plugin").path, configFile.absolutePath
+                            )
+
+                            val env = mutableMapOf<String, String>()
+
+                            if (needChain) {
+                                val proxychainsConfigFile = File(
+                                    context.noBackupFilesDir,
+                                    "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
+                                )
+                                proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
+                                cacheFiles.add(proxychainsConfigFile)
+
+                                env["LD_PRELOAD"] = File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.PROXYCHAINS
+                                ).absolutePath
+                                env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
+                            }
+
+                            base.data.processes!!.start(commands, env)
+                        }
+                        bean is PingTunnelBean -> {
+                            if (needChain) error("PingTunnel is incompatible with chain")
+
+                            val commands = mutableListOf(
+                                "su",
+                                "-c",
+                                initPlugin("pingtunnel-plugin").path,
+                                "-type",
+                                "client",
+                                "-sock5",
+                                "1",
+                                "-l",
+                                "127.0.0.1:$port",
+                                "-s",
+                                bean.serverAddress
+                            )
+
+                            if (bean.key.isNotBlank() && bean.key != "1") {
+                                commands.add("-key")
+                                commands.add(bean.key)
+                            }
+
+                            base.data.processes!!.start(commands)
+                        }
+                        bean is RelayBatonBean -> {
+                            if (needChain) error("RelayBaton is incompatible with chain")
+
+                            val configFile = File(
+                                context.noBackupFilesDir,
+                                "rb_" + SystemClock.elapsedRealtime() + ".toml"
+                            )
+
+                            configFile.writeText(config)
+                            cacheFiles.add(configFile)
+
+                            val commands = mutableListOf(
+                                initPlugin("relaybaton-plugin").path,
+                                "client",
+                                "--config",
+                                configFile.absolutePath
+                            )
+
+                            base.data.processes!!.start(commands)
+                        }
+                        bean is BrookBean -> {
+
+                            if (needChain) error("brook is incompatible with chain")
+
+                            val commands = mutableListOf(initPlugin("brook-plugin").path)
+
+                            when (bean.protocol) {
+                                "ws" -> {
+                                    commands.add("wsclient")
+                                    commands.add("--wsserver")
+                                }
+                                "wss" -> {
+                                    commands.add("wssclient")
+                                    commands.add("--wssserver")
+                                }
+                                else -> {
+                                    commands.add("client")
+                                    commands.add("--server")
+                                }
+                            }
+
+                            commands.add(bean.internalUri())
+
+                            if (bean.password.isNotBlank()) {
+                                commands.add("--password")
+                                commands.add(bean.password)
+                            }
+
+                            commands.add("--socks5")
+                            commands.add("127.0.0.1:$port")
+
+                            base.data.processes!!.start(commands)
+                        }
                     }
                 }
             }
-        }
 
-        v2rayPoint.runLoop(DataStore.ipv6Mode >= IPv6Mode.PREFER)
+            v2rayPoint.runLoop(DataStore.ipv6Mode >= IPv6Mode.PREFER)
 
-        if (config.requireWs) {
-            runOnDefaultDispatcher {
-                val url = "http://127.0.0.1:" + (DataStore.socksPort + 1) + "/"
-                onMainDispatcher {
-                    wsForwarder = WebView(base as Context)
-                    wsForwarder.settings.javaScriptEnabled = true
-                    wsForwarder.webViewClient = object : WebViewClient() {
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?,
-                        ) {
-                            Logs.d("WebView load failed: $error")
+            if (config.requireWs) {
+                runOnDefaultDispatcher {
+                    val url = "http://127.0.0.1:" + (DataStore.socksPort + 1) + "/"
+                    onMainDispatcher {
+                        wsForwarder = WebView(base as Context)
+                        wsForwarder.settings.javaScriptEnabled = true
+                        wsForwarder.webViewClient = object : WebViewClient() {
+                            override fun onReceivedError(
+                                view: WebView?,
+                                request: WebResourceRequest?,
+                                error: WebResourceError?,
+                            ) {
+                                Logs.d("WebView load failed: $error")
 
-                            runOnMainDispatcher {
-                                wsForwarder.loadUrl("about:blank")
+                                runOnMainDispatcher {
+                                    wsForwarder.loadUrl("about:blank")
 
-                                delay(1000L)
-                                wsForwarder.loadUrl(url)
+                                    delay(1000L)
+                                    wsForwarder.loadUrl(url)
+                                }
+                            }
+
+                            override fun onPageFinished(view: WebView, url: String) {
+                                super.onPageFinished(view, url)
+
+                                Logs.d("WebView loaded: ${view.title}")
+
                             }
                         }
-
-                        override fun onPageFinished(view: WebView, url: String) {
-                            super.onPageFinished(view, url)
-
-                            Logs.d("WebView loaded: ${view.title}")
-
-                        }
+                        wsForwarder.loadUrl(url)
                     }
-                    wsForwarder.loadUrl(url)
                 }
             }
+
+            managedChannel = createChannel()
+
+            DataStore.startedProxy = profile.id
+
         }
-
-        managedChannel = createChannel()
-
-        DataStore.startedProxy = profile.id
     }
 
     fun stop() {
