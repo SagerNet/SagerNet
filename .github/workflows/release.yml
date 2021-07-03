@@ -335,4 +335,4 @@ jobs:
           ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
           EOF
           ./run init action library
-          ./gradlew app:publishPlayRelease
+          ./gradlew app:publishPlayReleaseBundle

@@ -186,4 +186,4 @@ jobs:
           cat > service_account_credentials.json << EOF
           ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
           EOF
-          ./gradlew :plugin:relaybaton:publishPlayRelease
+          ./gradlew :plugin:relaybaton:publishPlayReleaseBundle
