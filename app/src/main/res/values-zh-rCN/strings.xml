@@ -329,5 +329,6 @@
     <string name="experimental_api">使用实验性的 API</string>
     <string name="probe_interval">负载均衡观测间隔</string>
     <string name="standard">标准</string>
+    <string name="unavailable">不可用</string>
 
 </resources>

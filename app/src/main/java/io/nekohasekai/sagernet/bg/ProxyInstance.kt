@@ -29,6 +29,8 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import cn.hutool.core.util.NumberUtil
+import com.v2ray.core.app.observatory.command.GetOutboundStatusRequest
 import com.v2ray.core.app.observatory.command.ObservatoryServiceGrpcKt
 import com.v2ray.core.app.stats.command.GetStatsRequest
 import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
@@ -68,7 +70,7 @@ import java.io.IOException
 import java.util.*
 import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
 
-class ProxyInstance(val profile: ProxyEntity) {
+class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface?) {
 
     lateinit var v2rayPoint: V2RayPoint
     lateinit var config: V2rayBuildResult
@@ -82,6 +84,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             managedChannel
         )
     }
+    lateinit var observatoryJob: Job
 
     val pluginPath = hashMapOf<String, InitResult>()
     fun initPlugin(name: String): InitResult {
@@ -386,6 +389,7 @@ class ProxyInstance(val profile: ProxyEntity) {
             }
 
             v2rayPoint.runLoop(DataStore.ipv6Mode >= IPv6Mode.PREFER)
+            DataStore.startedProxy = profile.id
 
             if (config.requireWs) {
                 runOnDefaultDispatcher {
@@ -423,25 +427,76 @@ class ProxyInstance(val profile: ProxyEntity) {
 
             managedChannel = createChannel()
 
-            DataStore.startedProxy = profile.id
+            if (config.observatoryTags.isNotEmpty()) {
+                observatoryJob = launch(Dispatchers.IO) {
+                    val interval = 10000L
+                    while (isActive) {
+                        try {
+                            val statusList =
+                                observatoryService.getOutboundStatus(GetOutboundStatusRequest.getDefaultInstance()).status.statusList
+                            if (!isActive) break
+                            statusList.forEach { status ->
+                                val profileId = status.outboundTag.substringAfter("global-")
+                                if (NumberUtil.isLong(profileId)) {
+                                    val profile = SagerDatabase.proxyDao.getById(profileId.toLong())
+                                    if (profile != null) {
+                                        val newStatus = if (status.alive) 1 else 2
+                                        val newDelay = status.delay.toInt()
+                                        val newErrorReason = status.lastErrorReason
+
+                                        if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
+                                            profile.status = newStatus
+                                            profile.ping = newDelay
+                                            profile.error = newErrorReason
+                                            SagerDatabase.proxyDao.updateProxy(profile)
+                                            if (service != null) onMainDispatcher {
+                                                service.data.binder.broadcast {
+                                                    it.profilePersisted(profile.id)
+                                                }
+                                            }
+                                            Logs.d("Send result for #$profileId ${profile.displayName()}")
+                                        }
+                                    } else {
+                                        Logs.d("Profile with id #$profileId not found")
+                                    }
+                                } else {
+                                    Logs.d("Persist skipped on outbound ${status.outboundTag}")
+                                }
+                            }
+                        } catch (e: StatusException) {
+                            Logs.w(e)
+                        }
+                        delay(5000L)
+                    }
+                }
+            }
 
         }
     }
 
     fun stop() {
-        v2rayPoint.shutdown()
-
         runOnDefaultDispatcher {
             DataStore.startedProxy = 0L
 
-            if (::managedChannel.isInitialized) {
-                managedChannel.shutdownNow()
-            }
+            v2rayPoint.stopLoop()
+        }
+    }
 
-            if (::wsForwarder.isInitialized) {
-                wsForwarder.loadUrl("about:blank")
-                wsForwarder.destroy()
-            }
+    fun shutdown() {
+        persistStats()
+        cacheFiles.removeAll { it.delete(); true }
+
+        if (::observatoryJob.isInitialized) {
+            observatoryJob.cancel()
+        }
+
+        if (::managedChannel.isInitialized) {
+            managedChannel.shutdownNow()
+        }
+
+        if (::wsForwarder.isInitialized) {
+            wsForwarder.loadUrl("about:blank")
+            wsForwarder.destroy()
         }
     }
 
@@ -462,11 +517,17 @@ class ProxyInstance(val profile: ProxyEntity) {
         if (!::managedChannel.isInitialized) {
             return 0L
         }
-        val result = statsService.getStats(
-            GetStatsRequest.newBuilder().setName("outbound>>>$tag>>>traffic>>>$direct")
-                .setReset(true).build()
-        )
-        return result.stat.value
+        try {
+            return statsService.getStats(
+                GetStatsRequest.newBuilder().setName("outbound>>>$tag>>>traffic>>>$direct")
+                    .setReset(true).build()
+            ).stat.value
+        } catch (e: StatusException) {
+            if (e.status.description?.contains("not found") == true) {
+                return 0L
+            }
+            throw e
+        }
     }
 
     private suspend fun outboundStats(direct: String): Long {
@@ -522,11 +583,6 @@ class ProxyInstance(val profile: ProxyEntity) {
                 DirectBoot.listenForUnlock()
             }
         }
-    }
-
-    fun shutdown(coroutineScope: CoroutineScope) {
-        persistStats()
-        cacheFiles.removeAll { it.delete(); true }
     }
 
     private class SagerSupportClass(val service: VpnService?) : V2RayVPNServiceSupportsSet {

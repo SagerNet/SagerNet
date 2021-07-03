@@ -32,7 +32,7 @@ import java.io.ByteArrayOutputStream;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import io.nekohasekai.sagernet.fmt.brook.BrookBean;
-import io.nekohasekai.sagernet.fmt.config.ConfigBean;
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean;
 import io.nekohasekai.sagernet.fmt.internal.ChainBean;

@@ -22,20 +22,19 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
-import android.service.autofill.Dataset
-import androidx.preference.DialogPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.fmt.config.ConfigBean
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.EditConfigPreference
 
 class ConfigSettingsActivity : ProfileSettingsActivity<ConfigBean>() {
 
-    override fun createEntity() = ConfigBean()
+    override fun createEntity() =
+        ConfigBean()
 
     var config = ""
     var dirty = false

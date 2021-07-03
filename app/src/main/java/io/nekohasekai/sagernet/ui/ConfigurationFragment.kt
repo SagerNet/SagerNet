@@ -82,6 +82,8 @@ class ConfigurationFragment @JvmOverloads constructor(
     lateinit var tabLayout: TabLayout
     lateinit var groupPager: ViewPager2
     val selectedGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
+    val alwaysShowAddress by lazy { DataStore.alwaysShowAddress }
+    val securityAdvisory by lazy { DataStore.securityAdvisory }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -298,7 +300,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_export_file -> {
                 startFilesForResult(exportProfiles, "profiles.txt")
             }
-            R.id.test -> {
+           /* R.id.test -> {
                 runOnDefaultDispatcher {
                     try {
                         val managedChannel = createChannel()
@@ -320,7 +322,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
                     }
                 }
-            }
+            }*/
             R.id.action_clear -> {
                 runOnDefaultDispatcher {
                     ProfileManager.clearGroup(DataStore.selectedGroup)
@@ -799,6 +801,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val profileName: TextView = view.findViewById(R.id.profile_name)
                 val profileType: TextView = view.findViewById(R.id.profile_type)
                 val profileAddress: TextView = view.findViewById(R.id.profile_address)
+                val profileStatus: TextView = view.findViewById(R.id.profile_status)
+
                 val trafficText: TextView = view.findViewById(R.id.traffic_text)
                 val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
                 val editButton: ImageView = view.findViewById(R.id.edit)
@@ -849,7 +853,47 @@ class ConfigurationFragment @JvmOverloads constructor(
                             Formatter.formatFileSize(view.context, tx),
                             Formatter.formatFileSize(view.context, rx)
                         )
-                    } //  (trafficText.parent as View).isGone = !showTraffic && proxyGroup.isSubscription
+                    }
+
+                    var address = proxyEntity.displayAddress()
+                    if (showTraffic && address.length >= 30) {
+                        address = address.substring(0, 27) + "..."
+                    }
+
+                    if (proxyEntity.requireBean().name.isNotBlank()) {
+                        if (!(requireParentFragment() as ConfigurationFragment).alwaysShowAddress) {
+                            address = ""
+                        }
+                    }
+
+                    profileAddress.text = address
+                    (trafficText.parent as View).isGone =
+                        (!showTraffic || proxyEntity.status == 0) && address.isBlank()
+
+                    if (proxyEntity.status == 0) {
+                        if (showTraffic) {
+                            profileStatus.text = trafficText.text
+                            profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))
+                            trafficText.text = ""
+                        } else {
+                            profileStatus.text = ""
+                        }
+                    } else if (proxyEntity.status == 1) {
+                        profileStatus.text = getString(R.string.available, proxyEntity.ping)
+                        profileStatus.setTextColor(requireContext().getColour(R.color.material_green_500))
+                    }
+
+                    if (proxyEntity.status == 2) {
+                        profileStatus.setText(R.string.unavailable)
+                        profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
+                        profileStatus.setOnClickListener {
+                            MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
+                                .setMessage(proxyEntity.error ?: "<?>")
+                                .setPositiveButton(android.R.string.ok, null).show()
+                        }
+                    } else {
+                        profileStatus.setOnClickListener(null)
+                    }
 
                     editButton.setOnClickListener {
                         it.context.startActivity(
@@ -903,9 +947,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                         if (!(select || proxyEntity.type == 8)) {
 
-                            val validateResult = if (DataStore.securityAdvisory) {
-                                proxyEntity.requireBean().isInsecure()
-                            } else ResultLocal
+                            val validateResult =
+                                if ((requireParentFragment() as ConfigurationFragment).securityAdvisory) {
+                                    proxyEntity.requireBean().isInsecure()
+                                } else ResultLocal
 
                             when (validateResult) {
                                 is ResultInsecure -> onMainDispatcher {

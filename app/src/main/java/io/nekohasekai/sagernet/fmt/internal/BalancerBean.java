@@ -30,10 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class BalancerBean extends AbstractBean {
+public class BalancerBean extends InternalBean {
 
     public static final int TYPE_LIST = 0;
     public static final int TYPE_GROUP = 1;

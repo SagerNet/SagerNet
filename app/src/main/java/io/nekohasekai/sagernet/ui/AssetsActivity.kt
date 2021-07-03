@@ -74,7 +74,7 @@ class AssetsActivity : ThemedActivity() {
             adapter.reloadAssets()
             binding.refreshLayout.isRefreshing = false
         }
-        binding.refreshLayout.setColorSchemeColors(loadColor(R.attr.primaryOrTextPrimary))
+        binding.refreshLayout.setColorSchemeColors(getColorAttr(R.attr.primaryOrTextPrimary))
 
         undoManager = UndoSnackbarManager(this, adapter)
 
@@ -105,7 +105,7 @@ class AssetsActivity : ThemedActivity() {
         }).attachToRecyclerView(binding.recyclerView)
     }
 
-    override fun snackbar(text: CharSequence): Snackbar {
+    override fun snackbarInternal(text: CharSequence): Snackbar {
         return Snackbar.make(layout.coordinator, text, Snackbar.LENGTH_LONG)
     }
 

@@ -32,7 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.aidl.IShadowsocksService
+import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
@@ -143,7 +143,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         this.state = state
     }
 
-    override fun snackbar(text: CharSequence): Snackbar {
+    override fun snackbarInternal(text: CharSequence): Snackbar {
         return Snackbar.make(binding.coordinator, text, Snackbar.LENGTH_LONG).apply {
             if (binding.fab.isShown) {
                 anchorView = binding.fab
@@ -156,7 +156,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
     }
 
     val connection = SagerConnection(true)
-    override fun onServiceConnected(service: IShadowsocksService) = changeState(
+    override fun onServiceConnected(service: ISagerNetService) = changeState(
         try {
             BaseService.State.values()[service.state]
         } catch (_: RemoteException) {
@@ -183,7 +183,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         }
     }
 
-    override fun trafficPersisted(profileId: Long) {
+    override fun profilePersisted(profileId: Long) {
         runOnDefaultDispatcher {
             ProfileManager.postUpdate(profileId)
         }

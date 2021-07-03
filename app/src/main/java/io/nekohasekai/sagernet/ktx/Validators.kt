@@ -29,7 +29,7 @@ import com.github.shadowsocks.plugin.PluginConfiguration
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.config.ConfigBean
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean

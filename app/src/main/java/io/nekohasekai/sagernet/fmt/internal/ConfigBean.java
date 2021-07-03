@@ -19,7 +19,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.config;
+package io.nekohasekai.sagernet.fmt.internal;
 
 import androidx.annotation.NonNull;
 
@@ -27,9 +27,9 @@ import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class ConfigBean extends AbstractBean {
+public class ConfigBean extends InternalBean {
 
     public String type;
     public String content;
@@ -69,8 +69,8 @@ public class ConfigBean extends AbstractBean {
 
     @NonNull
     @Override
-    public AbstractBean clone() {
-        return null;
+    public ConfigBean clone() {
+        return KryoConverters.deserialize(new ConfigBean(), KryoConverters.serialize(this));
     }
 
 }

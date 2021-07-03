@@ -356,4 +356,7 @@
     <string name="standard">Standard</string>
     <string name="v2rayn" translatable="false">V2RayN</string>
 
+    <string name="available" translatable="false">%dms</string>
+    <string name="unavailable">Unavailable</string>
+
 </resources>

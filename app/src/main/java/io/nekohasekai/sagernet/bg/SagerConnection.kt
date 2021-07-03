@@ -29,8 +29,8 @@ import android.os.IBinder
 import android.os.RemoteException
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.aidl.IShadowsocksService
-import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
+import io.nekohasekai.sagernet.aidl.ISagerNetService
+import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
 import kotlinx.coroutines.Dispatchers
@@ -52,9 +52,9 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
     interface Callback {
         fun stateChanged(state: BaseService.State, profileName: String?, msg: String?)
         fun trafficUpdated(profileId: Long, stats: TrafficStats) {}
-        fun trafficPersisted(profileId: Long) {}
+        fun profilePersisted(profileId: Long) {}
 
-        fun onServiceConnected(service: IShadowsocksService)
+        fun onServiceConnected(service: ISagerNetService)
 
         /**
          * Different from Android framework, this method will be called even when you call `detachService`.
@@ -66,7 +66,7 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
     private var connectionActive = false
     private var callbackRegistered = false
     private var callback: Callback? = null
-    private val serviceCallback = object : IShadowsocksServiceCallback.Stub() {
+    private val serviceCallback = object : ISagerNetServiceCallback.Stub() {
         override fun stateChanged(state: Int, profileName: String?, msg: String?) {
             val callback = callback ?: return
             GlobalScope.launch(Dispatchers.Main.immediate) {
@@ -82,9 +82,9 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
             }
         }
 
-        override fun trafficPersisted(profileId: Long) {
+        override fun profilePersisted(profileId: Long) {
             val callback = callback ?: return
-            GlobalScope.launch(Dispatchers.Main.immediate) { callback.trafficPersisted(profileId) }
+            GlobalScope.launch(Dispatchers.Main.immediate) { callback.profilePersisted(profileId) }
         }
     }
     private var binder: IBinder? = null
@@ -98,11 +98,11 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
             }
             field = value
         }
-    var service: IShadowsocksService? = null
+    var service: ISagerNetService? = null
 
     override fun onServiceConnected(name: ComponentName?, binder: IBinder) {
         this.binder = binder
-        val service = IShadowsocksService.Stub.asInterface(binder)!!
+        val service = ISagerNetService.Stub.asInterface(binder)!!
         this.service = service
         try {
             if (listenForDeath) binder.linkToDeath(this, 0)

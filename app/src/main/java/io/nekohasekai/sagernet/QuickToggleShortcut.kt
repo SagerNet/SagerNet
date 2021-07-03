@@ -29,7 +29,7 @@ import androidx.core.content.getSystemService
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
-import io.nekohasekai.sagernet.aidl.IShadowsocksService
+import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
 
@@ -60,7 +60,7 @@ class QuickToggleShortcut : Activity(), SagerConnection.Callback {
         super.onServiceDisconnected()
     }
 
-    override fun onServiceConnected(service: IShadowsocksService) {
+    override fun onServiceConnected(service: ISagerNetService) {
         val state = BaseService.State.values()[service.state]
         when {
             state.canStop -> SagerNet.stopService()

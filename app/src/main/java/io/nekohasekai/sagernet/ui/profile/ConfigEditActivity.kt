@@ -40,7 +40,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutEditConfigBinding
-import io.nekohasekai.sagernet.ktx.loadColor
+import io.nekohasekai.sagernet.ktx.getColorAttr
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -95,7 +95,7 @@ class ConfigEditActivity : ThemedActivity() {
         extendedKeyboard.setKeyListener { char -> binding.editor.insert(char) }
         extendedKeyboard.setHasFixedSize(true)
         extendedKeyboard.submitList("{}();,.=|&![]<>+-/*?:_".map { it.toString() })
-        extendedKeyboard.setBackgroundColor(loadColor(R.attr.primaryOrTextPrimary))
+        extendedKeyboard.setBackgroundColor(getColorAttr(R.attr.primaryOrTextPrimary))
 
         runOnDefaultDispatcher {
             config = DataStore.serverConfig
@@ -147,8 +147,8 @@ class ConfigEditActivity : ThemedActivity() {
     }
 
     fun mkTheme(): ColorScheme {
-        val colorPrimary = loadColor(R.attr.colorPrimary)
-        val colorPrimaryDark = loadColor(R.attr.colorPrimaryDark)
+        val colorPrimary = getColorAttr(R.attr.colorPrimary)
+        val colorPrimaryDark = getColorAttr(R.attr.colorPrimaryDark)
 
         return ColorScheme(
             textColor = colorPrimary,

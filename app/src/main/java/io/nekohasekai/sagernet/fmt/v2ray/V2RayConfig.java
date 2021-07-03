@@ -822,7 +822,7 @@ public class V2RayConfig {
     public static class ObservatoryObject {
         public Set<String> subjectSelector;
         public String probeUrl;
-        public Integer probeInterval;
+        public String probeInterval;
     }
 
     public void init() {

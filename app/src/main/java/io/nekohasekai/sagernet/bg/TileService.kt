@@ -27,7 +27,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.aidl.IShadowsocksService
+import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.database.DataStore
 import android.service.quicksettings.TileService as BaseTileService
 
@@ -46,7 +46,7 @@ class TileService : BaseTileService(), SagerConnection.Callback {
     override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) =
         updateTile(state) { profileName }
 
-    override fun onServiceConnected(service: IShadowsocksService) {
+    override fun onServiceConnected(service: ISagerNetService) {
         updateTile(BaseService.State.values()[service.state]) { service.profileName }
         if (tapPending) {
             tapPending = false

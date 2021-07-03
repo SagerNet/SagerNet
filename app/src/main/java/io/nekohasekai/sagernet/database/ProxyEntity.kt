@@ -32,7 +32,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
-import io.nekohasekai.sagernet.fmt.config.ConfigBean
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
@@ -77,6 +77,9 @@ data class ProxyEntity(
     var userOrder: Long = 0L,
     var tx: Long = 0L,
     var rx: Long = 0L,
+    var status: Int = 0,
+    var ping: Int = 0,
+    var error: String? = null,
     var socksBean: SOCKSBean? = null,
     var httpBean: HttpBean? = null,
     var ssBean: ShadowsocksBean? = null,
@@ -183,30 +186,27 @@ data class ProxyEntity(
         parcel.writeByteArray(byteArray)
     }
 
-    fun displayType(): String {
-        return when (type) {
-            TYPE_SOCKS -> "SOCKS5"
-            TYPE_HTTP -> if (httpBean!!.tls) "HTTPS" else "HTTP"
-            TYPE_SS -> "Shadowsocks"
-            TYPE_SSR -> "ShadowsocksR"
-            TYPE_VMESS -> "VMess"
-            TYPE_VLESS -> "VLESS"
-            TYPE_TROJAN -> "Trojan"
-            TYPE_TROJAN_GO -> "Trojan-Go"
-            TYPE_NAIVE -> "Naïve"
-            TYPE_PING_TUNNEL -> "PingTunnel"
-            TYPE_RELAY_BATON -> "relaybaton"
-            TYPE_BROOK -> "Brook"
-            TYPE_CHAIN -> chainName
-            TYPE_CONFIG -> configName
-            TYPE_BALANCER -> balancerName
-            else -> "Undefined type $type"
-        }
+    fun displayType() = when (type) {
+        TYPE_SOCKS -> "SOCKS5"
+        TYPE_HTTP -> if (httpBean!!.tls) "HTTPS" else "HTTP"
+        TYPE_SS -> "Shadowsocks"
+        TYPE_SSR -> "ShadowsocksR"
+        TYPE_VMESS -> "VMess"
+        TYPE_VLESS -> "VLESS"
+        TYPE_TROJAN -> "Trojan"
+        TYPE_TROJAN_GO -> "Trojan-Go"
+        TYPE_NAIVE -> "Naïve"
+        TYPE_PING_TUNNEL -> "PingTunnel"
+        TYPE_RELAY_BATON -> "relaybaton"
+        TYPE_BROOK -> "Brook"
+        TYPE_CHAIN -> chainName
+        TYPE_CONFIG -> configName
+        TYPE_BALANCER -> balancerName
+        else -> "Undefined type $type"
     }
 
-    fun displayName(): String {
-        return requireBean().displayName()
-    }
+    fun displayName() = requireBean().displayName()
+    fun displayAddress() = requireBean().displayAddress()
 
     /*fun urlFixed(): String {
         val bean = requireBean()

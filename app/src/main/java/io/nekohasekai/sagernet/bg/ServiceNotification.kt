@@ -35,11 +35,11 @@ import androidx.core.content.getSystemService
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
+import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.loadColor
+import io.nekohasekai.sagernet.ktx.getColorAttr
 import io.nekohasekai.sagernet.utils.Theme
 
 /**
@@ -58,8 +58,8 @@ class ServiceNotification(
 ) : BroadcastReceiver() {
     val showDirectSpeed = DataStore.showDirectSpeed
 
-    private val callback: IShadowsocksServiceCallback by lazy {
-        object : IShadowsocksServiceCallback.Stub() {
+    private val callback: ISagerNetServiceCallback by lazy {
+        object : ISagerNetServiceCallback.Stub() {
             override fun stateChanged(state: Int, profileName: String?, msg: String?) {}   // ignore
             override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
                 if (profileId == 0L) return
@@ -111,7 +111,7 @@ class ServiceNotification(
                 show()
             }
 
-            override fun trafficPersisted(profileId: Long) {}
+            override fun profilePersisted(profileId: Long) {}
         }
     }
     private var callbackRegistered = false
@@ -144,7 +144,7 @@ class ServiceNotification(
         )
         Theme.apply(app)
         Theme.apply(service)
-        builder.color = app.loadColor(R.attr.colorPrimary)
+        builder.color = service.getColorAttr(R.attr.colorPrimary)
 
         updateCallback(service.getSystemService<PowerManager>()?.isInteractive != false)
         service.registerReceiver(this, IntentFilter().apply {

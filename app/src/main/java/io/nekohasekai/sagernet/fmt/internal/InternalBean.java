@@ -21,68 +21,13 @@
 
 package io.nekohasekai.sagernet.fmt.internal;
 
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
-import io.nekohasekai.sagernet.fmt.KryoConverters;
 
-public class ChainBean extends InternalBean {
-
-    public List<Long> proxies;
+public abstract class InternalBean extends AbstractBean {
 
     @Override
-    public String displayName() {
-        if (StrUtil.isNotBlank(name)) {
-            return name;
-        } else {
-            return "Chain " + Math.abs(hashCode());
-        }
+    public String displayAddress() {
+        return "";
     }
 
-    @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
-        if (name == null) name = "";
-
-        if (proxies == null) {
-            proxies = new ArrayList<>();
-        }
-    }
-
-    @Override
-    public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
-        output.writeInt(proxies.size());
-        for (Long proxy : proxies) {
-            output.writeLong(proxy);
-        }
-    }
-
-    @Override
-    public void deserialize(ByteBufferInput input) {
-        int version = input.readInt();
-        if (version < 1) {
-            input.readString();
-            input.readInt();
-        }
-        int length = input.readInt();
-        proxies = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            proxies.add(input.readLong());
-        }
-    }
-
-    @NotNull
-    @Override
-    public ChainBean clone() {
-        return KryoConverters.deserialize(new ChainBean(), KryoConverters.serialize(this));
-    }
 }

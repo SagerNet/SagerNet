@@ -104,7 +104,6 @@
                             app:srcCompat="@drawable/ic_social_share" />
                     </LinearLayout>
 
-
                 </LinearLayout>
             </LinearLayout>
 
@@ -112,8 +111,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingLeft="12dp"
-                android:paddingRight="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp">
+
+                <TextView
+                    android:id="@+id/profile_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/server_address"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/traffic_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/traffic"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
                 android:paddingBottom="12dp">
 
                 <TextView
@@ -124,22 +154,17 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="?attr/accentOrTextSecondary" />
 
-                <TextView
-                    android:id="@+id/profile_address"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_weight="1"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/traffic_text"
+                    android:id="@+id/profile_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/traffic"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:textColor="?attr/accentOrTextSecondary" />
 
             </LinearLayout>
 

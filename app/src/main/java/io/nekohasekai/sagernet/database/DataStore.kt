@@ -112,7 +112,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
             saveLocalPort(Key.API_PORT, value)
         }
 
-    var probeInterval by configurationStore.stringToInt(Key.PROBE_INTERVAL) { 0 }
+    var probeInterval by configurationStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
 
     fun initGlobal() {
         if (configurationStore.getString(Key.SOCKS_PORT) == null) {
@@ -162,6 +162,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
+    var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     // cache
 

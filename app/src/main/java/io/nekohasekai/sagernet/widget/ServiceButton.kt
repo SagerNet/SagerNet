@@ -39,7 +39,7 @@ import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.DeterminateDrawable
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.ktx.loadColor
+import io.nekohasekai.sagernet.ktx.getColorAttr
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import java.util.*
@@ -80,7 +80,7 @@ class ServiceButton @JvmOverloads constructor(
 
         fun start() {
             setImageDrawable(icon)
-            setColorFilter(context.loadColor(R.attr.whiteOrTextPrimary))
+            setColorFilter(context.getColorAttr(R.attr.whiteOrTextPrimary))
             icon.start()
             progress.onStart()
         }

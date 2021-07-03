@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModel
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
+import kotlinx.coroutines.delay
 import okhttp3.*
 import okhttp3.internal.closeQuietly
 import java.io.IOException
@@ -104,6 +105,13 @@ class HttpsTest : ViewModel() {
                 val response = try {
                     execute()
                 } catch (e: IOException) {
+                    if (e.readableMessage.contains("failed to connect to /127.0.0.1") && e.readableMessage.contains("ECONNREFUSED")) {
+                        delay(1000L)
+                        onMainDispatcher {
+                            testConnection()
+                        }
+                        return@runOnDefaultDispatcher
+                    }
                     if (!isCanceled()) {
                         onMainDispatcher {
                             status.value = Status.Error.IOFailure(e)

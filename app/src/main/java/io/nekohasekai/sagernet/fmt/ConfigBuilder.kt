@@ -71,7 +71,8 @@ class V2rayBuildResult(
     var index: ArrayList<Pair<Boolean, LinkedHashMap<Int, ProxyEntity>>>,
     var requireWs: Boolean,
     var outboundTags: ArrayList<String>,
-    var directTag: String
+    var directTag: String,
+    var observatoryTags: MutableSet<String>,
 )
 
 fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
@@ -789,19 +790,17 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 probeUrl = DataStore.connectionTestURL
                 val testInterval = DataStore.probeInterval
                 if (testInterval > 0) {
-                    probeInterval = testInterval
+                    probeInterval =  "${testInterval}s"
                 }
             }
-
-            if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
-            observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
 
             if (isBalancer) {
                 if (routing.balancers == null) routing.balancers = ArrayList()
                 routing.balancers.add(RoutingObject.BalancerObject().apply {
                     tag = "balancer-$tagOutbound"
                     selector = chainOutbounds.map { it.tag }
-
+                    if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
+                    observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
                     strategy = RoutingObject.BalancerObject.StrategyObject().apply {
                         type = balancerStrategy().takeIf { it.isNotBlank() } ?: "random"
                     }
@@ -1119,7 +1118,12 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
     }.let {
         V2rayBuildResult(
-            gson.toJson(it), indexMap, requireWs, outboundTags, TAG_DIRECT
+            gson.toJson(it),
+            indexMap,
+            requireWs,
+            outboundTags,
+            TAG_DIRECT,
+            it.observatory?.subjectSelector ?: HashSet()
         )
     }
 
@@ -1397,8 +1401,13 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         config.set("outbounds", JSONArray(outbounds.map { JSONObject(gson.toJson(it)) }))
     }
 
+    val observatoryTags =
+        config.getJSONObject("observatory")?.getJSONArray("subjectSelector")?.map {
+            it.toString()
+        }?.toHashSet() ?: mutableSetOf()
+
     return V2rayBuildResult(
-        config.toStringPretty(), ArrayList(), requireWs, outboundTags, directTag
+        config.toStringPretty(), ArrayList(), requireWs, outboundTags, directTag, observatoryTags
     )
 
 }

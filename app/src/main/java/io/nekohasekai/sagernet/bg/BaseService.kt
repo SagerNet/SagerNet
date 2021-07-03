@@ -33,13 +33,14 @@ import cn.hutool.json.JSONException
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.BootReceiver
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.aidl.IShadowsocksService
-import io.nekohasekai.sagernet.aidl.IShadowsocksServiceCallback
+import io.nekohasekai.sagernet.aidl.ISagerNetService
+import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.broadcastReceiver
+import io.nekohasekai.sagernet.ktx.onDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
 import kotlinx.coroutines.*
 import java.net.URL
@@ -87,10 +88,10 @@ class BaseService {
         }
     }
 
-    class Binder(private var data: Data? = null) : IShadowsocksService.Stub(), CoroutineScope,
+    class Binder(private var data: Data? = null) : ISagerNetService.Stub(), CoroutineScope,
         AutoCloseable {
-        private val callbacks = object : RemoteCallbackList<IShadowsocksServiceCallback>() {
-            override fun onCallbackDied(callback: IShadowsocksServiceCallback?, cookie: Any?) {
+        private val callbacks = object : RemoteCallbackList<ISagerNetServiceCallback>() {
+            override fun onCallbackDied(callback: ISagerNetServiceCallback?, cookie: Any?) {
                 super.onCallbackDied(callback, cookie)
                 stopListeningForBandwidth(callback ?: return)
             }
@@ -103,11 +104,11 @@ class BaseService {
         override fun getState(): Int = (data?.state ?: State.Idle).ordinal
         override fun getProfileName(): String = data?.proxy?.profile?.requireBean()?.name ?: "Idle"
 
-        override fun registerCallback(cb: IShadowsocksServiceCallback) {
+        override fun registerCallback(cb: ISagerNetServiceCallback) {
             callbacks.register(cb)
         }
 
-        private fun broadcast(work: (IShadowsocksServiceCallback) -> Unit) {
+        fun broadcast(work: (ISagerNetServiceCallback) -> Unit) {
             val count = callbacks.beginBroadcast()
             try {
                 repeat(count) {
@@ -154,7 +155,7 @@ class BaseService {
         }
 
         override fun startListeningForBandwidth(
-            cb: IShadowsocksServiceCallback,
+            cb: ISagerNetServiceCallback,
             timeout: Long,
         ) {
             launch {
@@ -172,7 +173,7 @@ class BaseService {
             }
         }
 
-        override fun stopListeningForBandwidth(cb: IShadowsocksServiceCallback) {
+        override fun stopListeningForBandwidth(cb: ISagerNetServiceCallback) {
             launch {
                 if (bandwidthListeners.remove(cb.asBinder()) != null && bandwidthListeners.isEmpty()) {
                     looper!!.cancel()
@@ -181,7 +182,7 @@ class BaseService {
             }
         }
 
-        override fun unregisterCallback(cb: IShadowsocksServiceCallback) {
+        override fun unregisterCallback(cb: ISagerNetServiceCallback) {
             stopListeningForBandwidth(cb)   // saves an RPC, and safer
             callbacks.unregister(cb)
         }
@@ -191,9 +192,9 @@ class BaseService {
             broadcast { it.stateChanged(s.ordinal, profileName, msg) }
         }
 
-        fun trafficPersisted(ids: List<Long>) = launch {
+        fun profilePersisted(ids: List<Long>) = launch {
             if (bandwidthListeners.isNotEmpty() && ids.isNotEmpty()) broadcast { item ->
-                if (bandwidthListeners.contains(item.asBinder())) ids.forEach(item::trafficPersisted)
+                if (bandwidthListeners.contains(item.asBinder())) ids.forEach(item::profilePersisted)
             }
         }
 
@@ -263,8 +264,10 @@ class BaseService {
                         unregisterReceiver(data.closeReceiver)
                         data.closeReceiverRegistered = false
                     }
-                    data.proxy?.shutdown(this)
-                    data.binder.trafficPersisted(listOfNotNull(data.proxy).map { it.profile.id })
+                    onDefaultDispatcher {
+                        data.proxy?.shutdown()
+                    }
+                    data.binder.profilePersisted(listOfNotNull(data.proxy).map { it.profile.id })
                     data.proxy = null
                 }
 
@@ -296,7 +299,7 @@ class BaseService {
                 stopRunner(false, getString(R.string.profile_empty))
                 return Service.START_NOT_STICKY
             }
-            val proxy = ProxyInstance(profile)
+            val proxy = ProxyInstance(profile, this)
             data.proxy = proxy
             BootReceiver.enabled = DataStore.persistAcrossReboot
             if (!data.closeReceiverRegistered) {
