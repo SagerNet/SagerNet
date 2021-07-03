@@ -26,9 +26,12 @@ The application is designed to be used whenever possible.
 * Trojan
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy ( naive-plugin )
-* Ping Tunnel ( pingtunnel-plugin )
 * relaybaton ( relaybaton-plugin )
 * Brook ( brook-plugin )
+
+##### ROOT required
+
+* Ping Tunnel ( pingtunnel-plugin )
 
 #### Subscription
 
@@ -44,6 +47,7 @@ The application is designed to be used whenever possible.
 * Option to change the notification update interval
 * A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
 * Proxy chain
+* Balancer
 * Advanced routing with outbound profile selection
 * Reverse proxy
 * Custom config (V2Ray / Trojan-Go)
