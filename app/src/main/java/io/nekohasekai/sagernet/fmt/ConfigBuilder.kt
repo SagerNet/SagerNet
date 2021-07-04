@@ -790,7 +790,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 probeUrl = DataStore.connectionTestURL
                 val testInterval = DataStore.probeInterval
                 if (testInterval > 0) {
-                    probeInterval =  "${testInterval}s"
+                    probeInterval = "${testInterval}s"
                 }
             }
 

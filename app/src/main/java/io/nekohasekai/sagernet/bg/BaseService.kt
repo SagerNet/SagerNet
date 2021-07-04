@@ -38,12 +38,8 @@ import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.broadcastReceiver
-import io.nekohasekai.sagernet.ktx.onDefaultDispatcher
-import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.*
 import kotlinx.coroutines.*
-import java.net.URL
 import java.net.UnknownHostException
 
 class BaseService {
@@ -248,18 +244,15 @@ class BaseService {
         fun stopRunner(restart: Boolean = false, msg: String? = null) {
             if (data.state == State.Stopping) return
             data.notification?.destroy()
+            data.notification = null
+            this as Service
 
-            // channge the stated
             data.changeState(State.Stopping)
-            GlobalScope.launch(Dispatchers.Main.immediate) {
-                data.notification = null
-
+            runOnMainDispatcher {
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
-                this@Interface as Service
                 // we use a coroutineScope here to allow clean-up in parallel
                 coroutineScope {
-                    killProcesses(this)
-                    // clean up receivers
+                    killProcesses(this) // clean up receivers
                     val data = data
                     if (data.closeReceiverRegistered) {
                         unregisterReceiver(data.closeReceiver)
@@ -276,26 +269,24 @@ class BaseService {
                 data.changeState(State.Stopped, msg)
 
                 // stop the service if nothing has bound to it
-                if (restart) startRunner() else {
-                    //   BootReceiver.enabled = false
+                if (restart) startRunner() else { //   BootReceiver.enabled = false
                     stopSelf()
                 }
             }
         }
 
-        fun persistStats() =
-            listOfNotNull(data.proxy).forEach { it.persistStats() }
+        fun persistStats() {
+            data.proxy?.persistStats()
+        }
 
         suspend fun preInit() {}
-        suspend fun openConnection(url: URL) = url.openConnection()
 
         fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
             val data = data
             if (data.state != State.Stopped) return Service.START_NOT_STICKY
             val profile = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
             this as Context
-            if (profile == null) {
-                // gracefully shutdown: https://stackoverflow.com/q/47337857/2245107
+            if (profile == null) { // gracefully shutdown: https://stackoverflow.com/q/47337857/2245107
                 data.notification = createNotification("")
                 stopRunner(false, getString(R.string.profile_empty))
                 return Service.START_NOT_STICKY
@@ -315,7 +306,7 @@ class BaseService {
             data.notification = createNotification(profile.displayName())
 
             data.changeState(State.Connecting)
-            data.connectingJob = GlobalScope.launch(Dispatchers.Main) {
+            runOnMainDispatcher {
                 try {
                     Executable.killAll()    // clean up old processes
                     preInit()

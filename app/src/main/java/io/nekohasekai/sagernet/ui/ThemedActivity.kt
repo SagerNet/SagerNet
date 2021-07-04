@@ -29,7 +29,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.utils.Theme
 
 abstract class ThemedActivity : AppCompatActivity {
@@ -71,7 +70,7 @@ abstract class ThemedActivity : AppCompatActivity {
     fun snackbar(@StringRes resId: Int): Snackbar = snackbar("").setText(resId)
     fun snackbar(text: CharSequence): Snackbar = snackbarInternal(text).apply {
         view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
-            maxLines = 5
+            maxLines = 10
         }
     }
     internal open fun snackbarInternal(text: CharSequence): Snackbar = TODO()

@@ -37,6 +37,7 @@ import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
 import io.nekohasekai.sagernet.IPv6Mode
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
@@ -70,7 +71,7 @@ import java.io.IOException
 import java.util.*
 import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
 
-class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface?) {
+class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface) {
 
     lateinit var v2rayPoint: V2RayPoint
     lateinit var config: V2rayBuildResult
@@ -174,7 +175,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         }
 
         Logs.d(config.config)
-        Libv2ray.testConfig(config.config)
         v2rayPoint.configureFileContent = config.config
     }
 
@@ -386,8 +386,62 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
 
         runOnDefaultDispatcher {
 
-            v2rayPoint.runLoop(DataStore.ipv6Mode >= IPv6Mode.PREFER)
-            DataStore.startedProxy = profile.id
+            try {
+                val start = SystemClock.elapsedRealtime()
+                v2rayPoint.runLoop(DataStore.ipv6Mode >= IPv6Mode.PREFER)
+                Logs.d("Start v2ray core took ${(SystemClock.elapsedRealtime() - start) / 1000.0}s")
+            } catch (e: Throwable) {
+                service.stopRunner(
+                    false, "${app.getString(R.string.service_failed)}: ${e.readableMessage}"
+                )
+                return@runOnDefaultDispatcher
+            }
+
+            managedChannel = createChannel()
+
+            if (config.observatoryTags.isNotEmpty()) {
+                observatoryJob = launch(Dispatchers.IO) {
+                    val interval = 10000L
+                    while (isActive) {
+                        try {
+                            val statusList =
+                                observatoryService.getOutboundStatus(GetOutboundStatusRequest.getDefaultInstance()).status.statusList
+                            if (!isActive) break
+                            statusList.forEach { status ->
+                                val profileId = status.outboundTag.substringAfter("global-")
+                                if (NumberUtil.isLong(profileId)) {
+                                    val profile = SagerDatabase.proxyDao.getById(profileId.toLong())
+                                    if (profile != null) {
+                                        val newStatus = if (status.alive) 1 else 2
+                                        val newDelay = status.delay.toInt()
+                                        val newErrorReason = status.lastErrorReason
+
+                                        if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
+                                            profile.status = newStatus
+                                            profile.ping = newDelay
+                                            profile.error = newErrorReason
+                                            SagerDatabase.proxyDao.updateProxy(profile)
+                                            onMainDispatcher {
+                                                service.data.binder.broadcast {
+                                                    it.profilePersisted(profile.id)
+                                                }
+                                            }
+                                            Logs.d("Send result for #$profileId ${profile.displayName()}")
+                                        }
+                                    } else {
+                                        Logs.d("Profile with id #$profileId not found")
+                                    }
+                                } else {
+                                    Logs.d("Persist skipped on outbound ${status.outboundTag}")
+                                }
+                            }
+                        } catch (e: StatusException) {
+                            Logs.w(e)
+                        }
+                        delay(5000L)
+                    }
+                }
+            }
 
             if (config.requireWs) {
                 runOnDefaultDispatcher {
@@ -419,52 +473,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             }
                         }
                         wsForwarder.loadUrl(url)
-                    }
-                }
-            }
-
-            managedChannel = createChannel()
-
-            if (config.observatoryTags.isNotEmpty()) {
-                observatoryJob = launch(Dispatchers.IO) {
-                    val interval = 10000L
-                    while (isActive) {
-                        try {
-                            val statusList =
-                                observatoryService.getOutboundStatus(GetOutboundStatusRequest.getDefaultInstance()).status.statusList
-                            if (!isActive) break
-                            statusList.forEach { status ->
-                                val profileId = status.outboundTag.substringAfter("global-")
-                                if (NumberUtil.isLong(profileId)) {
-                                    val profile = SagerDatabase.proxyDao.getById(profileId.toLong())
-                                    if (profile != null) {
-                                        val newStatus = if (status.alive) 1 else 2
-                                        val newDelay = status.delay.toInt()
-                                        val newErrorReason = status.lastErrorReason
-
-                                        if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
-                                            profile.status = newStatus
-                                            profile.ping = newDelay
-                                            profile.error = newErrorReason
-                                            SagerDatabase.proxyDao.updateProxy(profile)
-                                            if (service != null) onMainDispatcher {
-                                                service.data.binder.broadcast {
-                                                    it.profilePersisted(profile.id)
-                                                }
-                                            }
-                                            Logs.d("Send result for #$profileId ${profile.displayName()}")
-                                        }
-                                    } else {
-                                        Logs.d("Profile with id #$profileId not found")
-                                    }
-                                } else {
-                                    Logs.d("Persist skipped on outbound ${status.outboundTag}")
-                                }
-                            }
-                        } catch (e: StatusException) {
-                            Logs.w(e)
-                        }
-                        delay(5000L)
                     }
                 }
             }
