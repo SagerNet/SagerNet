@@ -476,7 +476,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         runOnDefaultDispatcher {
             DataStore.startedProxy = 0L
 
-            v2rayPoint.shutdown()
+            v2rayPoint.stopLoop()
         }
     }
 

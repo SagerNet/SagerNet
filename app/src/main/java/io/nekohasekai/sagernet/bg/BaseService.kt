@@ -247,10 +247,11 @@ class BaseService {
 
         fun stopRunner(restart: Boolean = false, msg: String? = null) {
             if (data.state == State.Stopping) return
+            data.notification?.destroy()
+
             // channge the stated
             data.changeState(State.Stopping)
             GlobalScope.launch(Dispatchers.Main.immediate) {
-                data.notification?.destroy()
                 data.notification = null
 
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first

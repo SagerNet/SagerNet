@@ -175,8 +175,8 @@ class ServiceNotification(
     private fun show() = (service as Service).startForeground(1, builder.build())
 
     fun destroy() {
-        (service as Service).unregisterReceiver(this)
+        (service as Service).stopForeground(true)
+        service.unregisterReceiver(this)
         updateCallback(false)
-        service.stopForeground(true)
     }
 }
