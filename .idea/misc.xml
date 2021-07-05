@@ -34,9 +34,11 @@
         <entry key="app/src/main/res/layout/layout_navigation.xml" value="0.19786324786324785" />
         <entry key="app/src/main/res/layout/layout_navigation_black.xml" value="0.19786324786324785" />
         <entry key="app/src/main/res/layout/layout_password_dialog.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/layout/layout_process.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile_clash.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_profile_list.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_progress.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_route.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />

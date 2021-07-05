@@ -57,19 +57,6 @@
                         tools:text="@string/profile_name" />
                 </LinearLayout>
 
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/subscription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/subscriptions"
-                    android:focusable="true"
-                    android:padding="12dp"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_file_cloud_queue" />
-
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/edit"
                     android:layout_width="wrap_content"
@@ -113,7 +100,9 @@
                 android:orientation="horizontal"
                 android:paddingStart="12dp"
                 android:paddingEnd="8dp"
-                android:paddingBottom="4dp">
+                android:paddingBottom="4dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/profile_address"
@@ -163,6 +152,7 @@
                     android:id="@+id/profile_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="?attr/accentOrTextSecondary" />
 

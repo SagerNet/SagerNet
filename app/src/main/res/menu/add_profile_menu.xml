@@ -81,7 +81,17 @@
         </menu>
     </item>
     <item
-        android:id="@+id/action_clear"
-        android:title="@string/clear_profiles" />
+        android:id="@+id/action_clear_traffic_statistics"
+        android:title="@string/clear_traffic_statistics" />
+    <item android:title="@string/connection_test">
+        <menu>
+            <item
+                android:id="@+id/action_connection_tcp_ping"
+                android:title="@string/connection_test_tcp_ping" />
+            <item
+                android:id="@+id/action_connection_test_clear_results"
+                android:title="@string/connection_test_clear_results" />
+        </menu>
+    </item>
 
 </menu>

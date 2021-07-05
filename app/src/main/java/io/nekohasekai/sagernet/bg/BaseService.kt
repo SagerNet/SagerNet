@@ -94,7 +94,7 @@ class BaseService {
         private var looper: Job? = null
 
         override fun getState(): Int = (data?.state ?: State.Idle).ordinal
-        override fun getProfileName(): String = data?.proxy?.profile?.requireBean()?.name ?: "Idle"
+        override fun getProfileName(): String = data?.proxy?.profile?.displayName() ?: "Idle"
 
         override fun registerCallback(cb: ISagerNetServiceCallback) {
             callbacks.register(cb)

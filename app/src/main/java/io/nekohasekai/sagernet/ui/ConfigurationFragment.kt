@@ -22,9 +22,11 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.ActivityNotFoundException
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
@@ -47,15 +49,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.v2ray.core.app.observatory.command.GetOutboundStatusRequest
-import com.v2ray.core.app.observatory.command.ObservatoryServiceGrpcKt
-import io.grpc.StatusException
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
+import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
@@ -64,13 +65,18 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
+import kotlinx.coroutines.*
 import okhttp3.*
+import java.io.IOException
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.UnknownHostException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 import kotlin.properties.Delegates
-
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false,
@@ -299,8 +305,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_export_file -> {
                 startFilesForResult(exportProfiles, "profiles.txt")
-            }
-           /* R.id.test -> {
+            }/* R.id.test -> {
                 runOnDefaultDispatcher {
                     try {
                         val managedChannel = createChannel()
@@ -323,13 +328,222 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }*/
-            R.id.action_clear -> {
+            R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
-                    ProfileManager.clearGroup(DataStore.selectedGroup)
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val toClear = mutableListOf<ProxyEntity>()
+                    if (profiles.isNotEmpty()) for (profile in profiles) {
+                        if (profile.tx != 0L || profile.rx != 0L) {
+                            profile.tx = 0
+                            profile.rx = 0
+                            toClear.add(profile)
+                        }
+                    }
+                    if (toClear.isNotEmpty()) {
+                        ProfileManager.updateProfile(toClear)
+                    }
                 }
+            }
+            R.id.action_connection_test_clear_results -> {
+                runOnDefaultDispatcher {
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val toClear = mutableListOf<ProxyEntity>()
+                    if (profiles.isNotEmpty()) for (profile in profiles) {
+                        if (profile.status != 0) {
+                            profile.status = 0
+                            profile.ping = 0
+                            profile.error = null
+                            toClear.add(profile)
+                        }
+                    }
+                    if (toClear.isNotEmpty()) {
+                        ProfileManager.updateProfile(toClear)
+                    }
+                }
+            }
+            R.id.action_connection_tcp_ping -> {
+                tcpPingTest()
             }
         }
         return true
+    }
+
+    inner class TestDialog {
+        val binding = LayoutProgressBinding.inflate(layoutInflater)
+        val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
+            .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { _, _ ->
+                cancel()
+            }).setCancelable(false)
+        lateinit var cancel: () -> Unit
+        val results = ArrayList<ProxyEntity>()
+        val adapter = TestAdapter()
+
+        suspend fun insert(profile: ProxyEntity) {
+            binding.listView.post {
+                results.add(profile)
+                adapter.notifyItemInserted(results.size - 1)
+                binding.listView.scrollToPosition(results.size - 1)
+            }
+        }
+
+        suspend fun update(profile: ProxyEntity) {
+            binding.listView.post {
+                val index = results.indexOf(profile)
+                adapter.notifyItemChanged(index)
+            }
+        }
+
+        init {
+            binding.listView.layoutManager = FixedLinearLayoutManager(binding.listView)
+            binding.listView.itemAnimator = DefaultItemAnimator()
+            binding.listView.adapter = adapter
+        }
+
+        inner class TestAdapter : RecyclerView.Adapter<TestResultHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TestResultHolder(
+                LayoutProfileBinding.inflate(layoutInflater, parent, false)
+            )
+
+            override fun onBindViewHolder(holder: TestResultHolder, position: Int) {
+                holder.bind(results[position])
+            }
+
+            override fun getItemCount() = results.size
+        }
+
+        inner class TestResultHolder(val binding: LayoutProfileBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            init {
+                binding.edit.isGone = true
+                binding.share.isGone = true
+            }
+
+            fun bind(profile: ProxyEntity) {
+                binding.profileName.text = profile.displayName()
+                binding.profileType.text = profile.displayType()
+
+                when (profile.status) {
+                    0 -> {
+                        binding.profileStatus.setText(R.string.connection_test_testing)
+                        binding.profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))
+                    }
+                    1 -> {
+                        binding.profileStatus.text = getString(R.string.available, profile.ping)
+                        binding.profileStatus.setTextColor(requireContext().getColour(R.color.material_green_500))
+                    }
+                    2 -> {
+                        binding.profileStatus.text = profile.error
+                        binding.profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
+                    }
+                    3 -> {
+                        binding.profileStatus.setText(R.string.unavailable)
+                        binding.profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
+                    }
+                }
+
+                if (profile.status == 3) {
+                    binding.content.setOnClickListener {
+                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
+                            .setMessage(profile.error ?: "<?>")
+                            .setPositiveButton(android.R.string.ok, null).show()
+                    }
+                } else {
+                    binding.content.setOnClickListener {
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Suppress("EXPERIMENTAL_API_USAGE")
+    fun tcpPingTest() {
+        val test = TestDialog()
+        val testJobs = mutableListOf<Job>()
+        val dialog = test.builder.show()
+        val mainJob = runOnDefaultDispatcher {
+            val profiles = LinkedList(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
+            val testPool = newFixedThreadPoolContext(3, "Connection test pool")
+            repeat(3) {
+                testJobs.add(launch(testPool) {
+                    while (isActive) {
+                        val profile = try {
+                            profiles.pop()
+                        } catch (e: NoSuchElementException) {
+                            break
+                        } ?: continue // why null ?
+                        Logs.d("TCPing ${profile.displayName()}")
+                        profile.status = 0
+                        test.insert(profile)
+                        var address = profile.requireBean().serverAddress
+                        if (!address.isIpAddress()) {
+                            try {
+                                InetAddress.getAllByName(address).apply {
+                                    if (isNotEmpty()) {
+                                        address = this[0].hostAddress
+                                    }
+                                }
+                            } catch (ignored: UnknownHostException) {
+                            }
+                        }
+                        if (!isActive) break
+                        if (!address.isIpAddress()) {
+                            profile.status = 2
+                            profile.error = app.getString(R.string.connection_test_domain_not_found)
+                            test.update(profile)
+                            continue
+                        }
+                        if (address in arrayOf("127.0.0.1", "0.0.0.0")) {
+                            profile.status = 2
+                            profile.error = app.getString(R.string.connection_test_contaminated)
+                            test.update(profile)
+                            continue
+                        }
+                        try {
+                            val socket = Socket()
+                            val start = SystemClock.elapsedRealtime()
+                            socket.connect(
+                                InetSocketAddress(
+                                    address, profile.requireBean().serverPort
+                                )
+                            )
+                            if (!isActive) break
+                            profile.status = 1
+                            profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
+                            test.update(profile)
+                            socket.close()
+                            if (!isActive) break
+                        } catch (e: IOException) {
+                            if (!isActive) break
+                            profile.status = 3
+                            profile.error = e.readableMessage
+                            test.update(profile)
+                            continue
+                        }
+                    }
+                })
+            }
+            testJobs.joinAll()
+            testPool.close()
+
+            onMainDispatcher {
+                test.binding.progressCircular.isGone = true
+
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).apply {
+                    text = app.getString(android.R.string.ok)
+                    setOnClickListener {
+                        dialog.dismiss()
+                        runOnDefaultDispatcher {
+                            ProfileManager.updateProfile(test.results)
+                        }
+                    }
+                }
+            }
+        }
+        test.cancel = {
+            mainJob.cancel()
+            testJobs.forEach { it.cancel() }
+        }
     }
 
     private val exportProfiles =
@@ -881,11 +1095,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                     } else if (proxyEntity.status == 1) {
                         profileStatus.text = getString(R.string.available, proxyEntity.ping)
                         profileStatus.setTextColor(requireContext().getColour(R.color.material_green_500))
+                    } else {
+                        profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
+                        if (proxyEntity.status == 2) {
+                            profileStatus.text = proxyEntity.error
+                        }
                     }
 
-                    if (proxyEntity.status == 2) {
+                    if (proxyEntity.status == 3) {
                         profileStatus.setText(R.string.unavailable)
-                        profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
                         profileStatus.setOnClickListener {
                             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
                                 .setMessage(proxyEntity.error ?: "<?>")

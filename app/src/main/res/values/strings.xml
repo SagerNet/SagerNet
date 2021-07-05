@@ -349,7 +349,7 @@
     <string name="random">Random</string>
     <string name="leastPing" translatable="false">Ping</string>
 
-    <string name="api_port">API PoRFCrt</string>
+    <string name="api_port">API Port</string>
     <string name="experimental_api">Use Experimental API</string>
     <string name="probe_interval">Balancer observation interval</string>
 
@@ -358,5 +358,14 @@
 
     <string name="available" translatable="false">%dms</string>
     <string name="unavailable">Unavailable</string>
+
+    <string name="always_show_address">Always Show Address</string>
+    <string name="always_show_address_sum">Always display the server address on the configuration card</string>
+    <string name="clear_traffic_statistics">Clear traffic statistics</string>
+    <string name="connection_test">Connection test</string>
+    <string name="connection_test_clear_results">Clear test results</string>
+    <string name="connection_test_tcp_ping">TCPing</string>
+    <string name="connection_test_domain_not_found">Domain not found</string>
+    <string name="connection_test_contaminated">Local or contaminated</string>
 
 </resources>
