@@ -521,10 +521,16 @@ data class ProxyEntity(
         fun deleteByGroup(vararg groupId: Long)
 
         @Delete
-        fun deleteProxy(vararg proxy: ProxyEntity): Int
+        fun deleteProxy(proxy: ProxyEntity): Int
+
+        @Delete
+        fun deleteProxy(proxies: List<ProxyEntity>): Int
 
         @Update
-        fun updateProxy(vararg proxy: ProxyEntity): Int
+        fun updateProxy(proxy: ProxyEntity): Int
+
+        @Update
+        fun updateProxy(proxies: List<ProxyEntity>): Int
 
         @Insert
         fun addProxy(proxy: ProxyEntity): Long

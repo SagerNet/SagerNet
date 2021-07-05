@@ -174,10 +174,13 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         if (it) snackbar(R.string.vpn_permission_denied).show()
     }
 
-    override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
-        if (profileId != 0L) this@MainActivity.binding.stats.updateTraffic(
+    override fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {
+        if (profileId == 0L) return
+
+        if (isCurrent) binding.stats.updateTraffic(
             stats.txRateProxy, stats.rxRateProxy
         )
+
         runOnDefaultDispatcher {
             ProfileManager.postTrafficUpdated(profileId, stats)
         }

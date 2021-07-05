@@ -438,7 +438,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         } catch (e: StatusException) {
                             Logs.w(e)
                         }
-                        delay(5000L)
+                        delay(interval)
                     }
                 }
             }
@@ -506,6 +506,8 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         }
     }
 
+    // ------------- stats -------------
+
     private suspend fun queryStats(tag: String, direct: String): Long {
         try {
             return queryStatsGrpc(tag, direct)
@@ -536,11 +538,110 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         }
     }
 
-    private suspend fun outboundStats(direct: String): Long {
-        if (!::config.isInitialized) {
-            return 0L
+    private val currentTags by lazy {
+        config.outboundTagsAll.filterKeys {
+            config.outboundTagsCurrent.contains(
+                it
+            )
         }
-        return config.outboundTags.map { queryStats(it, direct) }.fold(0L) { acc, l -> acc + l }
+    }
+
+    private val statsTagList by lazy {
+        config.outboundTags.toMutableList().apply {
+            removeAll(config.outboundTagsCurrent)
+        }
+    }
+
+    private val statsTags by lazy {
+        config.outboundTagsAll.filterKeys {
+            statsTagList.contains(
+                it
+            )
+        }
+    }
+
+    private val interTags by lazy {
+        config.outboundTagsAll.filterValues { it.id != profile.id }
+            .filterKeys { !config.outboundTags.contains(it) }
+    }
+
+    class OutboundStats(
+        val proxyEntity: ProxyEntity, var uplinkTotal: Long = 0L, var downlinkTotal: Long = 0L
+    )
+
+    private val statsOutbounds = hashMapOf<Long, OutboundStats>()
+    private fun registerStats(
+        proxyEntity: ProxyEntity, uplink: Long? = null, downlink: Long? = null
+    ) {
+        val stats = statsOutbounds.getOrPut(proxyEntity.id) {
+            OutboundStats(proxyEntity)
+        }
+        if (uplink != null) {
+            stats.uplinkTotal += uplink
+        }
+        if (downlink != null) {
+            stats.downlinkTotal += downlink
+        }
+    }
+
+    var uplinkProxy = 0L
+    var downlinkProxy = 0L
+    var uplinkTotalDirect = 0L
+    var downlinkTotalDirect = 0L
+
+    private val outboundStats = OutboundStats(profile)
+    suspend fun outboundStats(): Pair<OutboundStats, HashMap<Long, OutboundStats>> {
+        if (!::config.isInitialized) {
+            return outboundStats to statsOutbounds
+        }
+        uplinkProxy = 0L
+        downlinkProxy = 0L
+
+        val currentUpLink = currentTags.map { (tag, profile) ->
+            queryStats(
+                tag, "uplink"
+            ).also { registerStats(profile, uplink = it) }
+        }
+        val currentDownLink = currentTags.map { (tag, profile) ->
+            queryStats(tag, "downlink").also {
+                registerStats(profile, downlink = it)
+            }
+        }
+        uplinkProxy += currentUpLink.fold(0L) { acc, l -> acc + l }
+        downlinkProxy += currentDownLink.fold(0L) { acc, l -> acc + l }
+
+        outboundStats.uplinkTotal += uplinkProxy
+        outboundStats.downlinkTotal += downlinkProxy
+
+        if (statsTags.isNotEmpty()) {
+            uplinkProxy += statsTags.map { (tag, profile) ->
+                queryStats(
+                    tag, "uplink"
+                ).also { registerStats(profile, uplink = it) }
+            }.fold(0L) { acc, l -> acc + l }
+            downlinkProxy += statsTags.map { (tag, profile) ->
+                queryStats(tag, "downlink").also {
+                    registerStats(profile, downlink = it)
+                }
+            }.fold(0L) { acc, l -> acc + l }
+        }
+
+        if (interTags.isNotEmpty()) {
+            interTags.map { (tag, profile) ->
+                queryStats(
+                    tag, "uplink"
+                ).also { registerStats(profile, uplink = it) }
+            }
+            interTags.map { (tag, profile) ->
+                queryStats(tag, "downlink").also {
+                    registerStats(
+                        profile, downlink = it
+                    )
+                }
+            }
+        }
+
+        return outboundStats to statsOutbounds
     }
 
     suspend fun directStats(direct: String): Long {
@@ -548,14 +649,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
             return 0L
         }
         return queryStats(config.directTag, direct)
-    }
-
-    suspend fun uplinkProxy() = outboundStats("uplink").also {
-        uplinkTotalProxy += it
-    }
-
-    suspend fun downlinkProxy() = outboundStats("downlink").also {
-        downlinkTotalProxy += it
     }
 
     suspend fun uplinkDirect() = directStats("uplink").also {
@@ -566,24 +659,34 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         downlinkTotalDirect += it
     }
 
-    var uplinkTotalProxy = 0L
-    var downlinkTotalProxy = 0L
-    var uplinkTotalDirect = 0L
-    var downlinkTotalDirect = 0L
-
     fun persistStats() {
         runBlocking {
             try {
-                uplinkProxy()
-                downlinkProxy()
-                profile.tx += uplinkTotalProxy
-                profile.rx += downlinkTotalProxy
-                SagerDatabase.proxyDao.updateProxy(profile)
+                outboundStats()
+
+                val toUpdate = mutableListOf<ProxyEntity>()
+                if (outboundStats.uplinkTotal + outboundStats.downlinkTotal != 0L) {
+                    profile.tx += outboundStats.uplinkTotal
+                    profile.rx += outboundStats.downlinkTotal
+                    toUpdate.add(profile)
+                }
+
+                statsOutbounds.values.forEach {
+                    if (it.uplinkTotal + it.downlinkTotal != 0L) {
+                        it.proxyEntity.tx += it.uplinkTotal
+                        it.proxyEntity.rx += it.downlinkTotal
+                        toUpdate.add(it.proxyEntity)
+                    }
+                }
+
+                if (toUpdate.isNotEmpty()) {
+                    SagerDatabase.proxyDao.updateProxy(toUpdate)
+                }
             } catch (e: IOException) {
                 if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot
                 val profile = DirectBoot.getDeviceProfile()!!
-                profile.tx += uplinkTotalProxy
-                profile.rx += downlinkTotalProxy
+                profile.tx += outboundStats.uplinkTotal
+                profile.rx += outboundStats.downlinkTotal
                 profile.dirty = true
                 DirectBoot.update(profile)
                 DirectBoot.listenForUnlock()

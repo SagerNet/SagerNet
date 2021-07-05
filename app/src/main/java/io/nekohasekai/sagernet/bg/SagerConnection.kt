@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -43,15 +44,14 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
         val serviceClass
             get() = when (DataStore.serviceMode) {
                 Key.MODE_PROXY -> ProxyService::class
-                Key.MODE_VPN -> VpnService::class
-                //   Key.MODE_TRANS -> TransproxyService::class
+                Key.MODE_VPN -> VpnService::class //   Key.MODE_TRANS -> TransproxyService::class
                 else -> throw UnknownError()
             }.java
     }
 
     interface Callback {
         fun stateChanged(state: BaseService.State, profileName: String?, msg: String?)
-        fun trafficUpdated(profileId: Long, stats: TrafficStats) {}
+        fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {}
         fun profilePersisted(profileId: Long) {}
 
         fun onServiceConnected(service: ISagerNetService)
@@ -74,11 +74,10 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
             }
         }
 
-        override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
+        override fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {
             val callback = callback ?: return
-            GlobalScope.launch(Dispatchers.Main.immediate) {
-                callback.trafficUpdated(profileId,
-                    stats)
+            runOnMainDispatcher {
+                callback.trafficUpdated(profileId, stats, isCurrent)
             }
         }
 
@@ -109,8 +108,9 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
             check(!callbackRegistered)
             service.registerCallback(serviceCallback)
             callbackRegistered = true
-            if (bandwidthTimeout > 0) service.startListeningForBandwidth(serviceCallback,
-                bandwidthTimeout)
+            if (bandwidthTimeout > 0) service.startListeningForBandwidth(
+                serviceCallback, bandwidthTimeout
+            )
         } catch (e: RemoteException) {
             e.printStackTrace()
         }

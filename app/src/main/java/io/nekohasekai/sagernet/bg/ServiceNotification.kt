@@ -61,8 +61,8 @@ class ServiceNotification(
     private val callback: ISagerNetServiceCallback by lazy {
         object : ISagerNetServiceCallback.Stub() {
             override fun stateChanged(state: Int, profileName: String?, msg: String?) {}   // ignore
-            override fun trafficUpdated(profileId: Long, stats: TrafficStats) {
-                if (profileId == 0L) return
+            override fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {
+                if (profileId == 0L || !isCurrent) return
                 builder.apply {
                     if (showDirectSpeed) {
                         val speedDetail = (service as Context).getString(

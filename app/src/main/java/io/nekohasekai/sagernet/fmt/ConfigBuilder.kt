@@ -71,6 +71,8 @@ class V2rayBuildResult(
     var index: ArrayList<Pair<Boolean, LinkedHashMap<Int, ProxyEntity>>>,
     var requireWs: Boolean,
     var outboundTags: ArrayList<String>,
+    var outboundTagsCurrent: ArrayList<String>,
+    var outboundTagsAll: HashMap<String, ProxyEntity>,
     var directTag: String,
     var observatoryTags: MutableSet<String>,
 )
@@ -78,6 +80,8 @@ class V2rayBuildResult(
 fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
     val outboundTags = ArrayList<String>()
+    val outboundTagsCurrent = ArrayList<String>()
+    val outboundTagsAll = HashMap<String, ProxyEntity>()
     val globalOutbounds = ArrayList<String>()
 
     fun ProxyEntity.resolveChain(): MutableList<ProxyEntity> {
@@ -388,8 +392,14 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     globalOutbounds.add(tagIn)
                 }
 
+                outboundTagsAll[tagIn] = proxyEntity
+
                 if (isBalancer || index == 0) {
                     outboundTags.add(tagIn)
+                    if (tagOutbound == TAG_AGENT) {
+                        outboundTagsCurrent.add(tagIn)
+                    }
+
                 }
 
                 if (proxyEntity.needExternal()) {
@@ -1122,6 +1132,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             indexMap,
             requireWs,
             outboundTags,
+            outboundTagsCurrent,
+            outboundTagsAll,
             TAG_DIRECT,
             it.observatory?.subjectSelector ?: HashSet()
         )
@@ -1407,7 +1419,14 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         }?.toHashSet() ?: mutableSetOf()
 
     return V2rayBuildResult(
-        config.toStringPretty(), ArrayList(), requireWs, outboundTags, directTag, observatoryTags
+        config.toStringPretty(),
+        ArrayList(),
+        requireWs,
+        outboundTags,
+        outboundTags,
+        hashMapOf(),
+        directTag,
+        observatoryTags
     )
 
 }

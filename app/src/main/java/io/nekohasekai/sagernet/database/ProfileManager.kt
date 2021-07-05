@@ -162,9 +162,14 @@ object ProfileManager {
         return profile
     }
 
-    suspend fun updateProfile(vararg profile: ProxyEntity) {
-        SagerDatabase.proxyDao.updateProxy(* profile)
-        profile.forEach {
+    suspend fun updateProfile(profile: ProxyEntity) {
+        SagerDatabase.proxyDao.updateProxy(profile)
+        iterator { onUpdated(profile) }
+    }
+
+    suspend fun updateProfile(profiles: List<ProxyEntity>) {
+        SagerDatabase.proxyDao.updateProxy(profiles)
+        profiles.forEach {
             iterator { onUpdated(it) }
         }
     }
@@ -204,7 +209,7 @@ object ProfileManager {
         for (index in entities.indices) {
             entities[index].userOrder = (index + 1).toLong()
         }
-        SagerDatabase.proxyDao.updateProxy(* entities.toTypedArray())
+        SagerDatabase.proxyDao.updateProxy(entities)
     }
 
     fun getProfile(profileId: Long): ProxyEntity? {

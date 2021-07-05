@@ -48,11 +48,7 @@ class BaseService {
         /**
          * Idle state is only used by UI and will never be returned by BaseService.
          */
-        Idle,
-        Connecting(true),
-        Connected(true),
-        Stopping,
-        Stopped,
+        Idle, Connecting(true), Connected(true), Stopping, Stopped,
     }
 
     interface ExpectedException
@@ -130,18 +126,25 @@ class BaseService {
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime).toDouble() / 1000L
                 val proxy = data?.proxy ?: continue
                 lastQueryTime = queryTime
+                val (statsOut, outs) = proxy.outboundStats()
                 val stats = TrafficStats(
-                    (proxy.uplinkProxy() / sinceLastQueryInSeconds).toLong(),
-                    (proxy.downlinkProxy() / sinceLastQueryInSeconds).toLong(),
+                    (proxy.uplinkProxy / sinceLastQueryInSeconds).toLong(),
+                    (proxy.downlinkProxy / sinceLastQueryInSeconds).toLong(),
                     if (showDirectSpeed) (proxy.uplinkDirect() / sinceLastQueryInSeconds).toLong() else 0L,
                     if (showDirectSpeed) (proxy.downlinkDirect() / sinceLastQueryInSeconds).toLong() else 0L,
-                    proxy.uplinkTotalProxy,
-                    proxy.downlinkTotalProxy
+                    statsOut.uplinkTotal,
+                    statsOut.downlinkTotal
                 )
                 if (data?.state == State.Connected && bandwidthListeners.isNotEmpty()) {
                     broadcast { item ->
                         if (bandwidthListeners.contains(item.asBinder())) {
-                            item.trafficUpdated(proxy.profile.id, stats)
+                            item.trafficUpdated(proxy.profile.id, stats, true)
+                            outs.forEach { (profileId, stats) ->
+                                item.trafficUpdated(profileId, TrafficStats(
+                                    txRateDirect = stats.uplinkTotal,
+                                    rxTotal = stats.downlinkTotal
+                                ), false)
+                            }
                         }
                     }
                 }
@@ -155,8 +158,9 @@ class BaseService {
             timeout: Long,
         ) {
             launch {
-                if (bandwidthListeners.isEmpty() and (bandwidthListeners.put(cb.asBinder(),
-                        timeout) == null)
+                if (bandwidthListeners.isEmpty() and (bandwidthListeners.put(
+                        cb.asBinder(), timeout
+                    ) == null)
                 ) {
                     check(looper == null)
                     looper = launch { loop() }
@@ -165,7 +169,7 @@ class BaseService {
                 val data = data
                 data?.proxy ?: return@launch
                 val sum = TrafficStats()
-                cb.trafficUpdated(0, sum)
+                cb.trafficUpdated(0, sum, true)
             }
         }
 
@@ -321,14 +325,14 @@ class BaseService {
                     }
                     startProcesses()
                     data.changeState(State.Connected)
-                } catch (_: CancellationException) {
-                    // if the job was cancelled, it is canceller's responsibility to call stopRunner
+                } catch (_: CancellationException) { // if the job was cancelled, it is canceller's responsibility to call stopRunner
                 } catch (_: UnknownHostException) {
                     stopRunner(false, getString(R.string.invalid_server))
                 } catch (exc: Throwable) {
                     if (exc is ExpectedException) Logs.d(exc.readableMessage) else Logs.w(exc)
-                    stopRunner(false,
-                        "${getString(R.string.service_failed)}: ${exc.readableMessage}")
+                    stopRunner(
+                        false, "${getString(R.string.service_failed)}: ${exc.readableMessage}"
+                    )
                 } finally {
                     data.connectingJob = null
                 }

@@ -309,11 +309,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                         userOrder++
                     }
 
-                    SagerDatabase.proxyDao.updateProxy(* toUpdate.toTypedArray()).also {
+                    SagerDatabase.proxyDao.updateProxy(toUpdate).also {
                         Logs.d("Updated profiles: $it")
                     }
 
-                    SagerDatabase.proxyDao.deleteProxy(* toDelete.toTypedArray()).also {
+                    SagerDatabase.proxyDao.deleteProxy(toDelete).also {
                         Logs.d("Deleted profiles: $it")
                     }
 
