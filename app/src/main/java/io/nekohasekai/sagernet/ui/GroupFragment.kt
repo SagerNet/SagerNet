@@ -346,42 +346,43 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group), Toolbar.OnMenuItem
                                     activity.getString(
                                         R.string.group_updated, proxyGroup.name, changed
                                     )
-                                ).setAction(R.string.group_show_diff) {
+                                ).show()
 
-                                    var status = ""
-                                    if (added.isNotEmpty()) {
-                                        status += activity.getString(
-                                            R.string.group_added,
-                                            added.joinToString("\n", postfix = "\n\n")
-                                        )
-                                    }
-                                    if (updated.isNotEmpty()) {
-                                        status += activity.getString(R.string.group_changed,
-                                            updated.map { it }
-                                                .joinToString("\n", postfix = "\n\n") {
-                                                    if (it.key == it.value) it.key else "${it.key} => ${it.value}"
-                                                })
-                                    }
-                                    if (deleted.isNotEmpty()) {
-                                        status += activity.getString(
-                                            R.string.group_deleted,
-                                            deleted.joinToString("\n", postfix = "\n\n")
-                                        )
-                                    }
-                                    if (duplicate.isNotEmpty()) {
-                                        status += activity.getString(
-                                            R.string.group_duplicate,
-                                            duplicate.joinToString("\n", postfix = "\n\n")
-                                        )
-                                    }
+                                delay(1000L)
 
-                                    MaterialAlertDialogBuilder(activity).setTitle(
-                                        app.getString(
-                                            R.string.group_diff, proxyGroup.displayName()
-                                        )
-                                    ).setMessage(status.trim())
-                                        .setPositiveButton(android.R.string.ok, null).show()
-                                }.show()
+                                var status = ""
+                                if (added.isNotEmpty()) {
+                                    status += activity.getString(
+                                        R.string.group_added,
+                                        added.joinToString("\n", postfix = "\n\n")
+                                    )
+                                }
+                                if (updated.isNotEmpty()) {
+                                    status += activity.getString(R.string.group_changed,
+                                        updated.map { it }
+                                            .joinToString("\n", postfix = "\n\n") {
+                                                if (it.key == it.value) it.key else "${it.key} => ${it.value}"
+                                            })
+                                }
+                                if (deleted.isNotEmpty()) {
+                                    status += activity.getString(
+                                        R.string.group_deleted,
+                                        deleted.joinToString("\n", postfix = "\n\n")
+                                    )
+                                }
+                                if (duplicate.isNotEmpty()) {
+                                    status += activity.getString(
+                                        R.string.group_duplicate,
+                                        duplicate.joinToString("\n", postfix = "\n\n")
+                                    )
+                                }
+
+                                MaterialAlertDialogBuilder(activity).setTitle(
+                                    app.getString(
+                                        R.string.group_diff, proxyGroup.displayName()
+                                    )
+                                ).setMessage(status.trim())
+                                    .setPositiveButton(android.R.string.ok, null).show()
                             }
                         }
                     }
