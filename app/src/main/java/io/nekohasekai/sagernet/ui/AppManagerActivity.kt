@@ -262,6 +262,7 @@ class AppManagerActivity : ThemedActivity() {
             appsAdapter.filter.filter(it?.toString() ?: "")
         }
 
+        binding.showSystemApps.isChecked = sysApps
         binding.showSystemApps.setOnCheckedChangeListener { _, isChecked ->
             sysApps = isChecked
             appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
@@ -271,7 +272,7 @@ class AppManagerActivity : ThemedActivity() {
         loadApps()
     }
 
-    private var sysApps = false
+    private var sysApps = true
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.per_app_proxy_menu, menu)
@@ -404,9 +405,9 @@ class AppManagerActivity : ThemedActivity() {
             }.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
 
             scan@ for ((pkg, app) in getCachedApps(packageManager).entries) {
-                if (!sysApps && app.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+                /*if (!sysApps && app.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
                     continue
-                }
+                }*/
 
                 val index =
                     appsAdapter.filteredApps.indexOfFirst { it.uid == app.applicationInfo.uid }
