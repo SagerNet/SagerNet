@@ -73,6 +73,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.UnknownHostException
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -130,13 +131,11 @@ class ConfigurationFragment @JvmOverloads constructor(
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             if (adapter.groupList.size > position) {
                 tab.text = adapter.groupList[position].displayName()
-            }/* tab.view.setOnLongClickListener { tabView ->
-                 val popup = PopupMenu(requireContext(), tabView)
-                 popup.menuInflater.inflate(R.menu.tab_edit_menu, popup.menu)
-                 popup.setOnMenuItemClickListener(this)
-                 popup.show()
-                 true
-             }*/
+            }
+            tab.view.setOnLongClickListener {
+                // clear toast
+                true
+            }
         }.attach()
 
         toolbar.setOnClickListener {
@@ -423,6 +422,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                 binding.profileType.text = profile.displayType()
 
                 when (profile.status) {
+                    -1 -> {
+                        binding.profileStatus.text = profile.error
+                        binding.profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))
+                    }
                     0 -> {
                         binding.profileStatus.setText(R.string.connection_test_testing)
                         binding.profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))
@@ -448,8 +451,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                             .setPositiveButton(android.R.string.ok, null).show()
                     }
                 } else {
-                    binding.content.setOnClickListener {
-                    }
+                    binding.content.setOnClickListener {}
                 }
             }
         }
@@ -462,17 +464,22 @@ class ConfigurationFragment @JvmOverloads constructor(
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
-            val profiles = LinkedList(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
+            val profiles =
+                ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
             val testPool = newFixedThreadPoolContext(3, "Connection test pool")
             repeat(3) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
-                        val profile = try {
-                            profiles.pop()
-                        } catch (e: NoSuchElementException) {
-                            break
-                        } ?: continue // why null ?
-                        Logs.d("TCPing ${profile.displayName()}")
+                        val profile = profiles.poll() ?: break
+
+                        if (!profile.requireBean().canTCPing()) {
+                            profile.status = -1
+                            profile.error =
+                                app.getString(R.string.connection_test_tcp_ping_unavailable)
+                            test.insert(profile)
+                            continue
+                        }
+
                         profile.status = 0
                         test.insert(profile)
                         var address = profile.requireBean().serverAddress
@@ -523,26 +530,23 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 })
             }
+
             testJobs.joinAll()
             testPool.close()
 
+            ProfileManager.updateProfile(test.results)
+
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
-
-                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).apply {
-                    text = app.getString(android.R.string.ok)
-                    setOnClickListener {
-                        dialog.dismiss()
-                        runOnDefaultDispatcher {
-                            ProfileManager.updateProfile(test.results)
-                        }
-                    }
-                }
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
             }
         }
         test.cancel = {
             mainJob.cancel()
             testJobs.forEach { it.cancel() }
+            runOnDefaultDispatcher {
+                ProfileManager.updateProfile(test.results)
+            }
         }
     }
 
@@ -1082,9 +1086,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                     profileAddress.text = address
                     (trafficText.parent as View).isGone =
-                        (!showTraffic || proxyEntity.status == 0) && address.isBlank()
+                        (!showTraffic || proxyEntity.status <= 0) && address.isBlank()
 
-                    if (proxyEntity.status == 0) {
+                    if (proxyEntity.status <= 0) {
                         if (showTraffic) {
                             profileStatus.text = trafficText.text
                             profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))

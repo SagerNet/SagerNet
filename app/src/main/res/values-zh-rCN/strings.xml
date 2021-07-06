@@ -330,5 +330,13 @@
     <string name="probe_interval">负载均衡观测间隔</string>
     <string name="standard">标准</string>
     <string name="unavailable">不可用</string>
+    <string name="always_show_address">始终显示地址</string>
+    <string name="always_show_address_sum">始终在配置卡片上显示服务器地址</string>
+    <string name="clear_traffic_statistics">清空流量统计数据</string>
+    <string name="connection_test">连接测试</string>
+    <string name="connection_test_clear_results">清理测试结果</string>
+    <string name="connection_test_domain_not_found">域名不存在</string>
+    <string name="connection_test_contaminated">本地或被污染</string>
+    <string name="connection_test_tcp_ping_unavailable">TCPing 不可用</string>
 
 </resources>

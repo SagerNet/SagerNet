@@ -37,7 +37,7 @@ fun Project.requireFlavor(): String {
                 return flavor
             }
             taskName.contains("publish") -> {
-                flavor = taskName.substringAfter("publish")
+                flavor = taskName.substringAfter("publish").substringBefore("Bundle")
                 return flavor
             }
         }

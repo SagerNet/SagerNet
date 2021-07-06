@@ -35,18 +35,23 @@ public class PingTunnelBean extends AbstractBean {
     public String key;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
-        if (key == null) key = "";
-    }
-
-    @Override
     public String displayName() {
         if (StrUtil.isNotBlank(name)) {
             return name;
         } else {
             return serverAddress;
         }
+    }
+
+    @Override
+    public boolean canTCPing() {
+        return false;
+    }
+
+    @Override
+    public void initDefaultValues() {
+        super.initDefaultValues();
+        if (key == null) key = "";
     }
 
     @Override

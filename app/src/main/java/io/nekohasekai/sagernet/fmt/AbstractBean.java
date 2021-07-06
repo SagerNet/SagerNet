@@ -52,6 +52,10 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
         return serverAddress + ":" + serverPort;
     }
 
+    public boolean canTCPing() {
+        return true;
+    }
+
     public void initDefaultValues() {
         if (StrUtil.isBlank(serverAddress)) {
             serverAddress = "127.0.0.1";

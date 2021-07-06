@@ -30,4 +30,9 @@ public abstract class InternalBean extends AbstractBean {
         return "";
     }
 
+    @Override
+    public boolean canTCPing() {
+        return false;
+    }
+
 }
