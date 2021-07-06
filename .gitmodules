@@ -55,3 +55,15 @@
 [submodule "external/v2ray-core"]
 	path = external/v2ray-core
 	url = https://github.com/v2fly/v2ray-core
+[submodule "plugin/ovpn/src/main/cpp/asio"]
+	path = plugin/ovpn/src/main/cpp/asio
+	url = https://github.com/chriskohlhoff/asio
+[submodule "plugin/ovpn/src/main/cpp/lz4"]
+	path = plugin/ovpn/src/main/cpp/lz4
+	url = https://github.com/lz4/lz4
+[submodule "plugin/ovpn/src/main/cpp/openssl"]
+	path = plugin/ovpn/src/main/cpp/openssl
+	url = https://github.com/schwabe/platform_external_openssl
+[submodule "plugin/ovpn/src/main/cpp/openvpn"]
+	path = plugin/ovpn/src/main/cpp/openvpn
+	url = https://github.com/schwabe/openvpn

@@ -10,6 +10,7 @@ include(":plugin:naive")
 include(":plugin:pingtunnel")
 include(":plugin:relaybaton")
 include(":plugin:brook")
+include(":plugin:ovpn")
 
 include(":external:preferencex:preferencex")
 include(":external:preferencex:preferencex-simplemenu")
