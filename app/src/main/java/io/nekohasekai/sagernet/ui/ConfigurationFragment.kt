@@ -132,8 +132,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             if (adapter.groupList.size > position) {
                 tab.text = adapter.groupList[position].displayName()
             }
-            tab.view.setOnLongClickListener {
-                // clear toast
+            tab.view.setOnLongClickListener { // clear toast
                 true
             }
         }.attach()
@@ -466,8 +465,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         val mainJob = runOnDefaultDispatcher {
             val profiles =
                 ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
-            val testPool = newFixedThreadPoolContext(3, "Connection test pool")
-            repeat(3) {
+            val testPool = newFixedThreadPoolContext(5, "Connection test pool")
+            repeat(5) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
@@ -512,7 +511,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                             socket.connect(
                                 InetSocketAddress(
                                     address, profile.requireBean().serverPort
-                                )
+                                ), 5000
                             )
                             if (!isActive) break
                             profile.status = 1

@@ -561,8 +561,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
     }
 
     private val interTags by lazy {
-        config.outboundTagsAll.filterValues { it.id != profile.id }
-            .filterKeys { !config.outboundTags.contains(it) }
+        config.outboundTagsAll.filterKeys { !config.outboundTags.contains(it) }
     }
 
     class OutboundStats(
@@ -573,6 +572,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
     private fun registerStats(
         proxyEntity: ProxyEntity, uplink: Long? = null, downlink: Long? = null
     ) {
+        if (proxyEntity.id == outboundStats.proxyEntity.id) return
         val stats = statsOutbounds.getOrPut(proxyEntity.id) {
             OutboundStats(proxyEntity)
         }
