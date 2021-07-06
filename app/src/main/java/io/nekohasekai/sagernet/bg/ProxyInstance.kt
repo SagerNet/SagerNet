@@ -412,7 +412,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                                 if (NumberUtil.isLong(profileId)) {
                                     val profile = SagerDatabase.proxyDao.getById(profileId.toLong())
                                     if (profile != null) {
-                                        val newStatus = if (status.alive) 1 else 2
+                                        val newStatus = if (status.alive) 1 else 3
                                         val newDelay = status.delay.toInt()
                                         val newErrorReason = status.lastErrorReason
 
