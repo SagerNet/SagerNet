@@ -499,12 +499,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                             test.update(profile)
                             continue
                         }
-                        if (address in arrayOf("127.0.0.1", "0.0.0.0")) {
-                            profile.status = 2
-                            profile.error = app.getString(R.string.connection_test_contaminated)
-                            test.update(profile)
-                            continue
-                        }
                         try {
                             val socket = Socket()
                             val start = SystemClock.elapsedRealtime()
@@ -521,8 +515,27 @@ class ConfigurationFragment @JvmOverloads constructor(
                             if (!isActive) break
                         } catch (e: IOException) {
                             if (!isActive) break
-                            profile.status = 3
-                            profile.error = e.readableMessage
+                            val message = e.readableMessage
+
+                            Logs.d(profile.displayName() + ": $message")
+
+                            profile.status = 2
+
+                            when {
+                                !message.contains("failed:") -> profile.error = getString(R.string.connection_test_timeout)
+                                else -> when {
+                                    message.contains("ECONNREFUSED") -> {
+                                        profile.error = getString(R.string.connection_test_refused)
+                                    }
+                                    message.contains("ENETUNREACH") -> {
+                                        profile.error = getString(R.string.connection_test_unreachable)
+                                    }
+                                    else -> {
+                                        profile.status = 3
+                                        profile.error = message
+                                    }
+                                }
+                            }
                             test.update(profile)
                             continue
                         }

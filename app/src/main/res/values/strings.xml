@@ -365,8 +365,11 @@
     <string name="connection_test">Connection test</string>
     <string name="connection_test_clear_results">Clear test results</string>
     <string name="connection_test_tcp_ping" translatable="false">TCPing</string>
-    <string name="connection_test_domain_not_found">Domain not found</string>
-    <string name="connection_test_contaminated">Local or contaminated</string>
     <string name="connection_test_tcp_ping_unavailable">TCPing unavailable</string>
+
+    <string name="connection_test_domain_not_found">Domain not found</string>
+    <string name="connection_test_refused">Connection refused</string>
+    <string name="connection_test_unreachable">Unreachable</string>
+    <string name="connection_test_timeout">Timeout</string>
 
 </resources>
