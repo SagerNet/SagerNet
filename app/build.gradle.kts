@@ -32,7 +32,7 @@ dependencies {
     implementation(fileTree("libs"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
-    implementation("androidx.core:core-ktx:1.5.0")
+    implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.activity:activity-ktx:1.2.3")
     implementation("androidx.fragment:fragment-ktx:1.3.5")
     implementation("androidx.browser:browser:1.3.0")
@@ -47,7 +47,7 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-simplemenu"))
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
-    implementation("com.google.android.material:material:1.3.0")
+    implementation("com.google.android.material:material:1.4.0")
     implementation("cn.hutool:hutool-core:5.7.3")
     implementation("cn.hutool:hutool-json:5.7.3")
     implementation("cn.hutool:hutool-crypto:5.7.3")

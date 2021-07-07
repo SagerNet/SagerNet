@@ -484,7 +484,7 @@ fun Project.setupApp() {
         add("implementation", project(":plugin:api"))
         add("testImplementation", "junit:junit:4.13.2")
         add("androidTestImplementation", "androidx.test.ext:junit:1.1.2")
-        add("androidTestImplementation", "androidx.test:runner:1.3.0")
+        add("androidTestImplementation", "androidx.test:runner:1.4.0")
         add("androidTestImplementation", "androidx.test.espresso:espresso-core:3.3.0")
 
         if (targetAbi.isNotBlank()) {
