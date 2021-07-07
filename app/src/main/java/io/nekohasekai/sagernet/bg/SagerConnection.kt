@@ -69,7 +69,7 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
     private val serviceCallback = object : ISagerNetServiceCallback.Stub() {
         override fun stateChanged(state: Int, profileName: String?, msg: String?) {
             val callback = callback ?: return
-            GlobalScope.launch(Dispatchers.Main.immediate) {
+            runOnMainDispatcher {
                 callback.stateChanged(BaseService.State.values()[state], profileName, msg)
             }
         }
@@ -83,9 +83,10 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
 
         override fun profilePersisted(profileId: Long) {
             val callback = callback ?: return
-            GlobalScope.launch(Dispatchers.Main.immediate) { callback.profilePersisted(profileId) }
+            runOnMainDispatcher { callback.profilePersisted(profileId) }
         }
     }
+
     private var binder: IBinder? = null
 
     var bandwidthTimeout = 0L
@@ -127,7 +128,7 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
     override fun binderDied() {
         service = null
         callbackRegistered = false
-        callback?.also { GlobalScope.launch(Dispatchers.Main.immediate) { it.onBinderDied() } }
+        callback?.also { runOnMainDispatcher { it.onBinderDied() } }
     }
 
     private fun unregisterCallback() {

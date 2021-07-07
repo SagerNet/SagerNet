@@ -437,16 +437,6 @@
         <item>tls</item>
     </string-array>
 
-    <string-array name="transport_layer_encryption_xray_entry">
-        <item>NONE</item>
-        <item>TLS</item>
-    </string-array>
-
-    <string-array name="transport_layer_encryption_xray_value">
-        <item>none</item>
-        <item>tls</item>
-    </string-array>
-
     <string-array name="trojan_transport_layer_encryption_entry">
         <item>TLS</item>
     </string-array>

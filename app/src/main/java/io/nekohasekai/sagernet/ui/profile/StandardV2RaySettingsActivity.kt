@@ -182,15 +182,15 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     val quicSecurityValue = app.resources.getStringArray(R.array.quic_security_value)
 
     fun updateView(network: String) {
-        if (bean is VLESSBean) {
+        if (bean is StandardV2RayBean) {
             when (network) {
                 "tcp", "kcp" -> {
-                    security.setEntries(R.array.transport_layer_encryption_xray_entry)
-                    security.setEntryValues(R.array.transport_layer_encryption_xray_value)
+                    security.setEntries(R.array.transport_layer_encryption_entry)
+                    security.setEntryValues(R.array.transport_layer_encryption_value)
                     security.value = DataStore.serverSecurity
 
                     val tlev =
-                        resources.getStringArray(R.array.transport_layer_encryption_xray_value)
+                        resources.getStringArray(R.array.transport_layer_encryption_value)
                     if (security.value !in tlev) {
                         security.value = tlev[0]
                     }
