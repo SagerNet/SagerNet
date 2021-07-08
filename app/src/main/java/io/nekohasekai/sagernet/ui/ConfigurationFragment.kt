@@ -845,9 +845,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             ): ConfigurationHolder {
                 return ConfigurationHolder(
                     LayoutInflater.from(parent.context).inflate(
-                        if (proxyGroup.type != 1) R.layout.layout_profile else R.layout.layout_profile_clash,
-                        parent,
-                        false
+                        R.layout.layout_profile, parent, false
                     )
                 )
             }
@@ -1020,277 +1018,219 @@ class ConfigurationFragment @JvmOverloads constructor(
             PopupMenu.OnMenuItemClickListener {
 
             lateinit var entity: ProxyEntity
-            val impl =
-                if (proxyGroup.type != 1) DefaultConfigurationHolderImpl() else ClashConfigurationHolderImpl()
+
+            val profileName: TextView = view.findViewById(R.id.profile_name)
+            val profileType: TextView = view.findViewById(R.id.profile_type)
+            val profileAddress: TextView = view.findViewById(R.id.profile_address)
+            val profileStatus: TextView = view.findViewById(R.id.profile_status)
+
+            val trafficText: TextView = view.findViewById(R.id.traffic_text)
+            val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
+            val editButton: ImageView = view.findViewById(R.id.edit)
+            val shareLayout: LinearLayout = view.findViewById(R.id.share)
+            val shareLayer: LinearLayout = view.findViewById(R.id.share_layer)
+            val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
             fun bind(proxyEntity: ProxyEntity) {
                 entity = proxyEntity
-                impl.bind(proxyEntity)
-            }
 
-            inner class DefaultConfigurationHolderImpl : ConfigurationHolderImpl {
-
-                val profileName: TextView = view.findViewById(R.id.profile_name)
-                val profileType: TextView = view.findViewById(R.id.profile_type)
-                val profileAddress: TextView = view.findViewById(R.id.profile_address)
-                val profileStatus: TextView = view.findViewById(R.id.profile_status)
-
-                val trafficText: TextView = view.findViewById(R.id.traffic_text)
-                val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
-                val editButton: ImageView = view.findViewById(R.id.edit)
-                val shareLayout: LinearLayout = view.findViewById(R.id.share)
-                val shareLayer: LinearLayout = view.findViewById(R.id.share_layer)
-                val shareButton: ImageView = view.findViewById(R.id.shareIcon)
-
-                override fun bind(proxyEntity: ProxyEntity) {
-
-                    if (select) {
-                        view.setOnClickListener {
-                            (requireActivity() as ProfileSelectActivity).returnProfile(proxyEntity.id)
-                        }
-                    } else {
-                        view.setOnClickListener {
-                            runOnDefaultDispatcher {
-                                if (DataStore.selectedProxy != proxyEntity.id) {
-                                    val lastSelected = DataStore.selectedProxy
-                                    DataStore.selectedProxy = proxyEntity.id
-                                    ProfileManager.postUpdate(lastSelected)
-                                    onMainDispatcher {
-                                        selectedView.visibility = View.VISIBLE
-                                        if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
-                                    }
-                                }
-                            }
-
-                        }
+                if (select) {
+                    view.setOnClickListener {
+                        (requireActivity() as ProfileSelectActivity).returnProfile(proxyEntity.id)
                     }
-
-                    profileName.text = proxyEntity.displayName()
-                    profileType.text = proxyEntity.displayType()
-
-                    var rx = proxyEntity.rx
-                    var tx = proxyEntity.tx
-
-                    val stats = proxyEntity.stats
-                    if (stats != null) {
-                        rx += stats.rxTotal
-                        tx += stats.txTotal
-                    }
-
-                    val showTraffic = rx + tx != 0L
-                    trafficText.isVisible = showTraffic
-                    if (showTraffic) {
-                        trafficText.text = view.context.getString(
-                            R.string.traffic,
-                            Formatter.formatFileSize(view.context, tx),
-                            Formatter.formatFileSize(view.context, rx)
-                        )
-                    }
-
-                    var address = proxyEntity.displayAddress()
-                    if (showTraffic && address.length >= 30) {
-                        address = address.substring(0, 27) + "..."
-                    }
-
-                    if (proxyEntity.requireBean().name.isNotBlank()) {
-                        if (!(requireParentFragment() as ConfigurationFragment).alwaysShowAddress) {
-                            address = ""
-                        }
-                    }
-
-                    profileAddress.text = address
-                    (trafficText.parent as View).isGone =
-                        (!showTraffic || proxyEntity.status <= 0) && address.isBlank()
-
-                    if (proxyEntity.status <= 0) {
-                        if (showTraffic) {
-                            profileStatus.text = trafficText.text
-                            profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))
-                            trafficText.text = ""
-                        } else {
-                            profileStatus.text = ""
-                        }
-                    } else if (proxyEntity.status == 1) {
-                        profileStatus.text = getString(R.string.available, proxyEntity.ping)
-                        profileStatus.setTextColor(requireContext().getColour(R.color.material_green_500))
-                    } else {
-                        profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
-                        if (proxyEntity.status == 2) {
-                            profileStatus.text = proxyEntity.error
-                        }
-                    }
-
-                    if (proxyEntity.status == 3) {
-                        profileStatus.setText(R.string.unavailable)
-                        profileStatus.setOnClickListener {
-                            MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                                .setMessage(proxyEntity.error ?: "<?>")
-                                .setPositiveButton(android.R.string.ok, null).show()
-                        }
-                    } else {
-                        profileStatus.setOnClickListener(null)
-                    }
-
-                    editButton.setOnClickListener {
-                        it.context.startActivity(
-                            proxyEntity.settingIntent(
-                                it.context, proxyGroup.isSubscription
-                            )
-                        )
-                    }
-
-                    shareLayout.isGone = select
-                    editButton.isGone = select
-
-                    runOnDefaultDispatcher {
-                        val selected =
-                            (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
-                        val started = serviceStarted() && DataStore.startedProxy == proxyEntity.id
-                        onMainDispatcher {
-                            editButton.isEnabled = !started
-                            selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
-                        }
-
-                        fun showShare(anchor: View) {
-                            val popup = PopupMenu(requireContext(), anchor)
-                            popup.menuInflater.inflate(R.menu.profile_share_menu, popup.menu)
-
-                            if (proxyEntity.vmessBean == null) {
-                                popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_v2rayn_qr)
-                                popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
-                                    R.id.action_v2rayn_clipboard
-                                )
-                            }
-
-                            if (proxyEntity.configBean != null) {
-
-                                popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
-                                popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
-                                    R.id.action_standard_clipboard
-                                )
-                            } else if (!proxyEntity.haveLink()) {
-                                popup.menu.removeItem(R.id.action_group_qr)
-                                popup.menu.removeItem(R.id.action_group_clipboard)
-                            }
-
-                            if (proxyEntity.ptBean != null || proxyEntity.brookBean != null) {
-                                popup.menu.removeItem(R.id.action_group_configuration)
-                            }
-
-                            popup.setOnMenuItemClickListener(this@ConfigurationHolder)
-                            popup.show()
-                        }
-
-                        if (!(select || proxyEntity.type == 8)) {
-
-                            val validateResult =
-                                if ((requireParentFragment() as ConfigurationFragment).securityAdvisory) {
-                                    proxyEntity.requireBean().isInsecure()
-                                } else ResultLocal
-
-                            when (validateResult) {
-                                is ResultInsecure -> onMainDispatcher {
-                                    shareLayout.isVisible = true
-
-                                    shareLayer.setBackgroundColor(Color.RED)
-                                    shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
-                                    shareButton.setColorFilter(Color.WHITE)
-
-                                    shareLayout.setOnClickListener {
-                                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.insecure)
-                                            .setMessage(resources.openRawResource(validateResult.textRes)
-                                                .bufferedReader().use { it.readText() })
-                                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                                showShare(it)
-                                            }.show().apply {
-                                                findViewById<TextView>(android.R.id.message)?.apply {
-                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                    movementMethod =
-                                                        LinkMovementMethod.getInstance()
-                                                }
-                                            }
-                                    }
-                                }
-                                is ResultDeprecated -> onMainDispatcher {
-                                    shareLayout.isVisible = true
-
-                                    shareLayer.setBackgroundColor(Color.YELLOW)
-                                    shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
-                                    shareButton.setColorFilter(Color.GRAY)
-
-                                    shareLayout.setOnClickListener {
-                                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.deprecated)
-                                            .setMessage(resources.openRawResource(validateResult.textRes)
-                                                .bufferedReader().use { it.readText() })
-                                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                                showShare(it)
-                                            }.show().apply {
-                                                findViewById<TextView>(android.R.id.message)?.apply {
-                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                    movementMethod =
-                                                        LinkMovementMethod.getInstance()
-                                                }
-                                            }
-                                    }
-                                }
-                                else -> onMainDispatcher {
-                                    shareLayer.setBackgroundColor(Color.TRANSPARENT)
-                                    shareButton.setImageResource(R.drawable.ic_social_share)
-                                    shareButton.setColorFilter(Color.GRAY)
-
-                                    shareLayout.setOnClickListener {
-                                        showShare(it)
-                                    }
+                } else {
+                    view.setOnClickListener {
+                        runOnDefaultDispatcher {
+                            if (DataStore.selectedProxy != proxyEntity.id) {
+                                val lastSelected = DataStore.selectedProxy
+                                DataStore.selectedProxy = proxyEntity.id
+                                ProfileManager.postUpdate(lastSelected)
+                                onMainDispatcher {
+                                    selectedView.visibility = View.VISIBLE
+                                    if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
                                 }
                             }
                         }
-                    }
 
+                    }
                 }
 
-            }
+                profileName.text = proxyEntity.displayName()
+                profileType.text = proxyEntity.displayType()
 
-            inner class ClashConfigurationHolderImpl : ConfigurationHolderImpl {
+                var rx = proxyEntity.rx
+                var tx = proxyEntity.tx
 
-                val profileName: TextView = view.findViewById(R.id.profile_name)
-                val profileType: TextView = view.findViewById(R.id.profile_type)
-                val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
+                val stats = proxyEntity.stats
+                if (stats != null) {
+                    rx += stats.rxTotal
+                    tx += stats.txTotal
+                }
 
-                override fun bind(proxyEntity: ProxyEntity) {
+                val showTraffic = rx + tx != 0L
+                trafficText.isVisible = showTraffic
+                if (showTraffic) {
+                    trafficText.text = view.context.getString(
+                        R.string.traffic,
+                        Formatter.formatFileSize(view.context, tx),
+                        Formatter.formatFileSize(view.context, rx)
+                    )
+                }
 
-                    view.setOnClickListener {
-                        if (select) {
-                            (requireActivity() as ProfileSelectActivity).returnProfile(proxyEntity.id)
-                        } else {
-                            runOnDefaultDispatcher {
-                                if (DataStore.selectedProxy != proxyEntity.id) {
-                                    val lastSelected = DataStore.selectedProxy
-                                    DataStore.selectedProxy = proxyEntity.id
-                                    ProfileManager.postUpdate(lastSelected)
-                                    onMainDispatcher {
-                                        selectedView.visibility = View.VISIBLE
-                                        if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
-                                    }
+                var address = proxyEntity.displayAddress()
+                if (showTraffic && address.length >= 30) {
+                    address = address.substring(0, 27) + "..."
+                }
+
+                if (proxyEntity.requireBean().name.isNotBlank()) {
+                    if (!(requireParentFragment() as ConfigurationFragment).alwaysShowAddress) {
+                        address = ""
+                    }
+                }
+
+                profileAddress.text = address
+                (trafficText.parent as View).isGone =
+                    (!showTraffic || proxyEntity.status <= 0) && address.isBlank()
+
+                if (proxyEntity.status <= 0) {
+                    if (showTraffic) {
+                        profileStatus.text = trafficText.text
+                        profileStatus.setTextColor(requireContext().getColorAttr(android.R.attr.textColorSecondary))
+                        trafficText.text = ""
+                    } else {
+                        profileStatus.text = ""
+                    }
+                } else if (proxyEntity.status == 1) {
+                    profileStatus.text = getString(R.string.available, proxyEntity.ping)
+                    profileStatus.setTextColor(requireContext().getColour(R.color.material_green_500))
+                } else {
+                    profileStatus.setTextColor(requireContext().getColour(R.color.material_red_500))
+                    if (proxyEntity.status == 2) {
+                        profileStatus.text = proxyEntity.error
+                    }
+                }
+
+                if (proxyEntity.status == 3) {
+                    profileStatus.setText(R.string.unavailable)
+                    profileStatus.setOnClickListener {
+                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
+                            .setMessage(proxyEntity.error ?: "<?>")
+                            .setPositiveButton(android.R.string.ok, null).show()
+                    }
+                } else {
+                    profileStatus.setOnClickListener(null)
+                }
+
+                editButton.setOnClickListener {
+                    it.context.startActivity(
+                        proxyEntity.settingIntent(
+                            it.context, proxyGroup.isSubscription
+                        )
+                    )
+                }
+
+                shareLayout.isGone = select
+                editButton.isGone = select
+
+                runOnDefaultDispatcher {
+                    val selected = (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
+                    val started = serviceStarted() && DataStore.startedProxy == proxyEntity.id
+                    onMainDispatcher {
+                        editButton.isEnabled = !started
+                        selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                    }
+
+                    fun showShare(anchor: View) {
+                        val popup = PopupMenu(requireContext(), anchor)
+                        popup.menuInflater.inflate(R.menu.profile_share_menu, popup.menu)
+
+                        if (proxyEntity.vmessBean == null) {
+                            popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_v2rayn_qr)
+                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
+                                R.id.action_v2rayn_clipboard
+                            )
+                        }
+
+                        if (proxyEntity.configBean != null) {
+
+                            popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
+                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
+                                R.id.action_standard_clipboard
+                            )
+                        } else if (!proxyEntity.haveLink()) {
+                            popup.menu.removeItem(R.id.action_group_qr)
+                            popup.menu.removeItem(R.id.action_group_clipboard)
+                        }
+
+                        if (proxyEntity.ptBean != null || proxyEntity.brookBean != null) {
+                            popup.menu.removeItem(R.id.action_group_configuration)
+                        }
+
+                        popup.setOnMenuItemClickListener(this@ConfigurationHolder)
+                        popup.show()
+                    }
+
+                    if (!(select || proxyEntity.type == 8)) {
+
+                        val validateResult =
+                            if ((requireParentFragment() as ConfigurationFragment).securityAdvisory) {
+                                proxyEntity.requireBean().isInsecure()
+                            } else ResultLocal
+
+                        when (validateResult) {
+                            is ResultInsecure -> onMainDispatcher {
+                                shareLayout.isVisible = true
+
+                                shareLayer.setBackgroundColor(Color.RED)
+                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                shareButton.setColorFilter(Color.WHITE)
+
+                                shareLayout.setOnClickListener {
+                                    MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.insecure)
+                                        .setMessage(resources.openRawResource(validateResult.textRes)
+                                            .bufferedReader().use { it.readText() })
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            showShare(it)
+                                        }.show().apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
+                                            }
+                                        }
+                                }
+                            }
+                            is ResultDeprecated -> onMainDispatcher {
+                                shareLayout.isVisible = true
+
+                                shareLayer.setBackgroundColor(Color.YELLOW)
+                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                shareButton.setColorFilter(Color.GRAY)
+
+                                shareLayout.setOnClickListener {
+                                    MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.deprecated)
+                                        .setMessage(resources.openRawResource(validateResult.textRes)
+                                            .bufferedReader().use { it.readText() })
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            showShare(it)
+                                        }.show().apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
+                                            }
+                                        }
+                                }
+                            }
+                            else -> onMainDispatcher {
+                                shareLayer.setBackgroundColor(Color.TRANSPARENT)
+                                shareButton.setImageResource(R.drawable.ic_social_share)
+                                shareButton.setColorFilter(Color.GRAY)
+
+                                shareLayout.setOnClickListener {
+                                    showShare(it)
                                 }
                             }
                         }
                     }
-
-                    profileName.text = proxyEntity.displayName()
-                    profileType.text = proxyEntity.displayType()
-
-                    if (!select) {
-
-                        runOnDefaultDispatcher {
-                            val selected = DataStore.selectedProxy == proxyEntity.id
-                            onMainDispatcher {
-                                selectedView.visibility =
-                                    if (selected) View.VISIBLE else View.INVISIBLE
-                            }
-                        }
-
-                    }
-
                 }
 
             }
