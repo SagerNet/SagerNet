@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.bg
 
+import android.Manifest
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -158,11 +159,41 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         val useSystemDns = dnsMode == DnsMode.SYSTEM
 
-        val me = packageName
-        if (DataStore.proxyApps) {
-            val bypass = DataStore.bypass
+        val packageName = packageName
+        val proxyApps = DataStore.proxyApps
+        val needBypassRootUid = data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
+        if (proxyApps || needBypassRootUid) {
+            var bypass = DataStore.bypass
+            val individual = mutableSetOf<String>()
+            val allApps by lazy {
+                packageManager.getInstalledPackages(
+                    PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES
+                ).filter {
+                    when (it.packageName) {
+                        packageName -> false
+                        "android" -> true
+                        else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
+                    }
+                }.map {
+                    it.packageName
+                }
+            }
+            if (proxyApps) {
+                individual.addAll(DataStore.individual.split('\n').filter { it.isNotBlank() })
+                if (bypass && needBypassRootUid) {
+                    val individualNew = allApps.toMutableList()
+                    individualNew.removeAll(individual)
+                    individual.clear()
+                    individual.addAll(individualNew)
+                    bypass = false
+                }
+            } else {
+                individual.addAll(allApps)
+            }
 
-            DataStore.individual.split('\n').filter { it.isNotBlank() && it != me }.forEach {
+            individual.apply {
+                if (bypass) add(packageName) else remove(packageName)
+            }.forEach {
                 try {
                     if (bypass) {
                         builder.addDisallowedApplication(it)
@@ -175,10 +206,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                     Logs.w(ex)
                 }
             }
-
-            if (bypass) builder.addDisallowedApplication(me)
         } else {
-            builder.addDisallowedApplication(me)
+            builder.addDisallowedApplication(packageName)
         }
 
         if (useSystemDns) {

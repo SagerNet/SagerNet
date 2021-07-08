@@ -63,13 +63,9 @@ class SagerNet : Application() {
         val configureIntent: (Context) -> PendingIntent by lazy {
             {
                 PendingIntent.getActivity(
-                    it,
-                    0,
-                    Intent(
-                        application,
-                        MainActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                    0
+                    it, 0, Intent(
+                        application, MainActivity::class.java
+                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
                 )
             }
         }
@@ -139,6 +135,7 @@ class SagerNet : Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
+
         application = this
     }
 

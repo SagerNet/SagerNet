@@ -522,13 +522,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                             profile.status = 2
 
                             when {
-                                !message.contains("failed:") -> profile.error = getString(R.string.connection_test_timeout)
+                                !message.contains("failed:") -> profile.error =
+                                    getString(R.string.connection_test_timeout)
                                 else -> when {
                                     message.contains("ECONNREFUSED") -> {
                                         profile.error = getString(R.string.connection_test_refused)
                                     }
                                     message.contains("ENETUNREACH") -> {
-                                        profile.error = getString(R.string.connection_test_unreachable)
+                                        profile.error =
+                                            getString(R.string.connection_test_unreachable)
                                     }
                                     else -> {
                                         profile.status = 3
