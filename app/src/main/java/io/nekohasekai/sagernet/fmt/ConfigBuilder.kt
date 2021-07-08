@@ -358,12 +358,13 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             profileList: List<ProxyEntity>,
             isBalancer: Boolean,
             balancerStrategy: (() -> String)
-        ) {
+        ): String {
             var pastExternal = false
             lateinit var pastOutbound: OutboundObject
             val chainMap = LinkedHashMap<Int, ProxyEntity>()
             indexMap.add(isBalancer to chainMap)
             val chainOutbounds = ArrayList<OutboundObject>()
+            var outboundTag = ""
 
             profileList.forEachIndexed { index, proxyEntity ->
                 Logs.d("Index $index, proxyEntity: ")
@@ -383,6 +384,10 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         "$tagOutbound-${proxyEntity.id}"
                     }
                     needGlobal = false
+                }
+
+                if (index == profileList.size - 1) {
+                    outboundTag = tagIn
                 }
 
                 if (needGlobal) {
@@ -794,6 +799,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     chainOutbounds.add(outbound)
                 }
 
+
             }
 
             if (observatory == null) observatory = ObservatoryObject().apply {
@@ -832,14 +838,18 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                     })
                 }
             }
+
+            return outboundTag
+
         }
 
-        buildChain(TAG_AGENT, proxies, proxy.balancerBean != null) { proxy.balancerBean!!.strategy }
+        val tagProxy = buildChain(TAG_AGENT, proxies, proxy.balancerBean != null) { proxy.balancerBean!!.strategy }
         val balancerMap = mutableMapOf<Long, String>()
+        val tagMap = mutableMapOf<Long, String>()
         extraProxies.forEach { (key, entities) ->
             val (id, balancer) = key
             val (isBalancer, strategy) = balancer
-            buildChain("$TAG_AGENT-$id", entities, isBalancer, strategy::value)
+            tagMap[id] = buildChain("$TAG_AGENT-$id", entities, isBalancer, strategy::value)
             if (isBalancer) {
                 balancerMap[id] = "balancer-$TAG_AGENT-$id"
             }
@@ -880,7 +890,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                         0L -> TAG_AGENT
                         -1L -> TAG_DIRECT
                         -2L -> TAG_BLOCK
-                        else -> if (outId == proxy.id) TAG_AGENT else "$TAG_AGENT-$outId"
+                        else -> if (outId == proxy.id) tagProxy else tagMap[outId]
                     }
                 }
             })
