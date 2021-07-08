@@ -69,6 +69,7 @@ import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.File
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
 
 class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface) {
@@ -438,6 +439,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                                 }
                             }
                         } catch (e: StatusException) {
+                            if (closed.get()) break
                             Logs.w(e)
                         }
                         delay(interval)
@@ -482,7 +484,10 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         }
     }
 
+    var closed = AtomicBoolean()
+
     fun stop() {
+        closed.set(true)
         runOnDefaultDispatcher {
             DataStore.startedProxy = 0L
 
@@ -515,9 +520,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
             try {
                 return queryStatsGrpc(tag, direct)
             } catch (e: StatusException) {
-                if (e.status.description?.contains("shutdown") == true) {
-                    return 0L
-                }
+                if (closed.get()) return 0L
                 Logs.w(e)
                 if (isExpert) return 0L
             }
