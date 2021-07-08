@@ -254,3 +254,5 @@ fun Context.getColorAttr(@AttrRes resId: Int): Int {
 
 const val isDefaultFlavor = BuildConfig.FLAVOR == "oss"
 const val isExpert = BuildConfig.FLAVOR == "expert"
+
+const val USE_STATS_SERVICE = false
