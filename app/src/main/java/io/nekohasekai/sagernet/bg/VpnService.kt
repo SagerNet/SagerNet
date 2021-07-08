@@ -189,6 +189,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 }
             } else {
                 individual.addAll(allApps)
+                bypass = false
             }
 
             individual.apply {
