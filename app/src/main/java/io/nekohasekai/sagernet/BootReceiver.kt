@@ -34,11 +34,11 @@ class BootReceiver : BroadcastReceiver() {
     companion object {
         private val componentName by lazy { ComponentName(app, BootReceiver::class.java) }
         var enabled: Boolean
-            get() = app.packageManager.getComponentEnabledSetting(componentName) ==
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-            set(value) = app.packageManager.setComponentEnabledSetting(componentName,
-                if (value) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                else PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+            get() = app.packageManager.getComponentEnabledSetting(componentName) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            set(value) = app.packageManager.setComponentEnabledSetting(
+                componentName, if (value) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                else PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
+            )
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -49,7 +49,7 @@ class BootReceiver : BroadcastReceiver() {
 
         val doStart = when (intent.action) {
             Intent.ACTION_LOCKED_BOOT_COMPLETED -> DataStore.directBootAware
-            else -> Build.VERSION.SDK_INT >= 24 && SagerNet.user.isUserUnlocked
+            else -> Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked
         } && DataStore.startedProxy > 0
 
         if (doStart) SagerNet.startService()

@@ -11,11 +11,12 @@
         <entry key="app/src/main/res/drawable/ic_baseline_system_update_alt_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_image_edit.xml" value="0.2265" />
         <entry key="app/src/main/res/drawable/ic_navigation_close.xml" value="0.285" />
+        <entry key="app/src/main/res/drawable/ic_service_active.xml" value="0.135" />
         <entry key="app/src/main/res/drawable/ic_service_idle.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_service_stopped.xml" value="0.2035" />
         <entry key="app/src/main/res/drawable/ic_social_share.xml" value="0.283" />
         <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
-        <entry key="app/src/main/res/layout/layout_about.xml" value="0.13333333333333333" />
+        <entry key="app/src/main/res/layout/layout_about.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />

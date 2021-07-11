@@ -10,4 +10,5 @@ interface ISagerNetService {
   void startListeningForBandwidth(in ISagerNetServiceCallback cb, long timeout);
   oneway void stopListeningForBandwidth(in ISagerNetServiceCallback cb);
   oneway void unregisterCallback(in ISagerNetServiceCallback cb);
+  oneway void protect(int fd);
 }

@@ -85,6 +85,7 @@ object Key {
 
     const val API_PORT = "apiPort"
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
+    const val ENABLE_EXPERIMENTAL_TUN = "enableExperimentalTun"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"

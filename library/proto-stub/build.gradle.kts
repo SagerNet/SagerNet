@@ -19,7 +19,7 @@ val protobufVersion = "3.17.3"
 dependencies {
     protobuf(project(":library:proto"))
 
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
     api("io.grpc:grpc-protobuf-lite:$grpcVersion")
     api("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
     api("com.google.protobuf:protobuf-javalite:$protobufVersion")

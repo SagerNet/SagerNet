@@ -19,12 +19,41 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:JvmName("Utils")
+package io.nekohasekai.sagernet.tun.ip;
 
-package com.github.shadowsocks.plugin
+import java.net.InetAddress;
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+public abstract class IPHeader extends Header {
 
-@Parcelize
-class Empty : Parcelable
+    public int packetLength;
+
+    public IPHeader(byte[] packet, int offset, int length) {
+        super(packet, offset);
+        packetLength = length;
+    }
+
+    public abstract int getVersion();
+
+    public abstract int getProtocol();
+
+    public abstract InetAddress getSourceAddress();
+
+    public abstract void setSourceAddress(InetAddress address);
+
+    public abstract InetAddress getDestinationAddress();
+
+    public abstract void setDestinationAddress(InetAddress address);
+
+    public abstract void revertAddress();
+
+    public abstract int getHeaderLength();
+
+    public abstract long getIPChecksum();
+
+    public abstract void updateChecksum();
+
+    public abstract int getDataLength();
+
+    public abstract IPHeader copyOf();
+
+}

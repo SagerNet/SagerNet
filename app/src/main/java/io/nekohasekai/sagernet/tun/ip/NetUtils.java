@@ -19,12 +19,36 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:JvmName("Utils")
+package io.nekohasekai.sagernet.tun.ip;
 
-package com.github.shadowsocks.plugin
+import static io.netty.buffer.ByteBufUtil.appendPrettyHexDump;
+import static io.netty.util.internal.StringUtil.NEWLINE;
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
-@Parcelize
-class Empty : Parcelable
+import io.nekohasekai.sagernet.bg.VpnService;
+import io.netty.buffer.Unpooled;
+
+public class NetUtils {
+
+    public static final int IPPROTO_ICMP = 1;
+    public static final int IPPROTO_ICMPv6 = 58;
+
+    public static final int IPPROTO_TCP = 6;
+    public static final int IPPROTO_UDP = 17;
+
+    public static String formatByteArray(String prefix, byte[] byteArray) {
+        int length = byteArray.length;
+        if (length == 0) {
+            return prefix + ": 0B";
+        } else {
+            StringBuilder buf = new StringBuilder();
+            buf.append(prefix).append(": ").append(length).append('B');
+            buf.append(NEWLINE);
+            appendPrettyHexDump(buf, Unpooled.wrappedBuffer(byteArray));
+            return buf.toString();
+        }
+    }
+
+}

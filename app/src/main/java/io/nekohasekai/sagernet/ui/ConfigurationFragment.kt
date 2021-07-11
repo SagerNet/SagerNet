@@ -25,6 +25,7 @@ import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.net.NetworkUtils
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.format.Formatter
@@ -53,6 +54,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
@@ -67,6 +69,7 @@ import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
 import okhttp3.*
+import java.io.FileDescriptor
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -501,6 +504,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
                         try {
                             val socket = Socket()
+                            socket.bind(InetSocketAddress(0))
+
+                            if (!NetworkUtils.protectFromVpn(socket.fileDescriptor)) {
+                                Logs.d("NetworkUtils.protectFromVpn failed, fallback to aidl")
+                                (requireActivity() as? MainActivity)?.connection?.service?.protect(socket.fileDescriptor.int)
+                            }
+
                             val start = SystemClock.elapsedRealtime()
                             socket.connect(
                                 InetSocketAddress(

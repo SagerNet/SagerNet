@@ -19,12 +19,37 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:JvmName("Utils")
+package io.nekohasekai.sagernet.tun
 
-package com.github.shadowsocks.plugin
+import java.io.File
+import java.util.regex.Pattern
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+object UidDumperLegacy {
 
-@Parcelize
-class Empty : Parcelable
+    val TCP_IPV4_PROC = File("/proc/net/tcp")
+    val TCP_IPV6_PROC = File("/proc/net/tcp6")
+    val UDP_IPV4_PROC = File("/proc/net/udp")
+    val UDP6_IPV6_PROC = File("/proc/net/udp6")
+
+    val IPV4_PATTERN = Pattern.compile(
+        "\\s+\\d+:\\s([0-9A-F]{8}):" + "([0-9A-F]{4})\\s([0-9A-F]{8}):([0-9A-F]{4})\\s([0-9A-F]{2})\\s[0-9A-F]{8}:[0-9A-F]{8}" + "\\s[0-9A-F]{2}:[0-9A-F]{8}\\s[0-9A-F]{8}\\s+([0-9A-F]+)",
+        (Pattern.CASE_INSENSITIVE or Pattern.UNIX_LINES)
+    )
+    val IPV6_PATTERN = Pattern.compile(
+        ("\\s+\\d+:\\s([0-9A-F]{32}):" + "([0-9A-F]{4})\\s([0-9A-F]{32}):([0-9A-F]{4})\\s([0-9A-F]{2})\\s[0-9A-F]{8}:[0-9A-F]{8}" + "\\s[0-9A-F]{2}:[0-9A-F]{8}\\s[0-9A-F]{8}\\s+([0-9A-F]+)"),
+        (Pattern.CASE_INSENSITIVE or Pattern.UNIX_LINES)
+    )
+
+    fun dumpUid(proc: File, pattern: Pattern, port: Int): Int {
+        for (line in proc.readLines()) {
+            val matcher = pattern.matcher(line)
+            while (matcher.find()) {
+                val localPort = matcher.group(2)?.toIntOrNull(16) ?: continue
+                if (localPort != port) continue
+                return matcher.group(6)?.toIntOrNull() ?: continue
+            }
+        }
+        return -1
+    }
+
+}

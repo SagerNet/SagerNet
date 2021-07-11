@@ -78,6 +78,10 @@
             app:key="enableLog"
             app:summary="@string/enable_log_sum"
             app:title="@string/enable_log" />
+        <SwitchPreference
+            app:key="enableExperimentalTun"
+            app:summary=":)"
+            app:title="Enable Experimental TUN" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_route">

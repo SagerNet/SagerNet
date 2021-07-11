@@ -31,7 +31,7 @@ dependencies {
 
     implementation(fileTree("libs"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
     implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.activity:activity-ktx:1.2.3")
     implementation("androidx.fragment:fragment-ktx:1.3.5")
@@ -48,9 +48,10 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.4.0")
-    implementation("cn.hutool:hutool-core:5.7.3")
-    implementation("cn.hutool:hutool-json:5.7.3")
-    implementation("cn.hutool:hutool-crypto:5.7.3")
+    implementation("cn.hutool:hutool-core:5.7.4")
+    implementation("cn.hutool:hutool-cache:5.7.4")
+    implementation("cn.hutool:hutool-json:5.7.4")
+    implementation("cn.hutool:hutool-crypto:5.7.4")
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
@@ -82,6 +83,9 @@ dependencies {
 
     implementation(project(":library:proto-stub"))
     implementation("io.grpc:grpc-okhttp:1.39.0")
-
+    implementation("io.netty:netty-all:4.1.65.Final")
+    implementation("org.slf4j:slf4j-simple:1.7.31")
+    implementation("com.github.seancfoley:ipaddress:5.3.3")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
+

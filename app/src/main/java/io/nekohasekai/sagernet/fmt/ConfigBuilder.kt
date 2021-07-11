@@ -66,6 +66,7 @@ const val TAG_API_IN = "api-in"
 const val TAG_API = "api"
 
 const val LOCALHOST = "127.0.0.1"
+const val IP6_LOCALHOST = "::1"
 
 class V2rayBuildResult(
     var config: String,

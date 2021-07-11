@@ -18,13 +18,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  *                                                                            *
  ******************************************************************************/
+package io.nekohasekai.sagernet.tun.netty;
 
-@file:JvmName("Utils")
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.socksx.v5.Socks5AddressType;
+import io.netty.handler.codec.socksx.v5.Socks5Message;
 
-package com.github.shadowsocks.plugin
+public interface Socks5UdpMessage extends Socks5Message {
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+    byte frag();
 
-@Parcelize
-class Empty : Parcelable
+    Socks5AddressType dstAddrType();
+
+    String dstAddr();
+
+    int dstPort();
+
+    ByteBuf data();
+
+}

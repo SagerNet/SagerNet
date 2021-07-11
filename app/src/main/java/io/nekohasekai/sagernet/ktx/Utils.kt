@@ -33,6 +33,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.os.Build
+import android.os.SystemClock
 import android.system.Os
 import android.system.OsConstants
 import android.util.TypedValue
@@ -40,7 +41,6 @@ import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -50,11 +50,9 @@ import androidx.recyclerview.widget.RecyclerView
 import cn.hutool.core.net.URLDecoder
 import cn.hutool.core.net.URLEncoder
 import cn.hutool.core.util.CharsetUtil
-import com.google.android.material.color.MaterialColors
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -63,6 +61,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.FileDescriptor
 import java.net.HttpURLConnection
 import java.net.InetAddress
+import java.net.Socket
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -85,6 +84,10 @@ val Throwable.readableMessage
 /**
  * https://android.googlesource.com/platform/prebuilts/runtime/+/94fec32/appcompat/hiddenapi-light-greylist.txt#9466
  */
+
+private val socketGetFileDescriptor = Socket::class.java.getDeclaredMethod("getFileDescriptor\$")
+val Socket.fileDescriptor get() = socketGetFileDescriptor.invoke(this) as FileDescriptor
+
 private val getInt = FileDescriptor::class.java.getDeclaredMethod("getInt$")
 val FileDescriptor.int get() = getInt.invoke(this) as Int
 
@@ -256,3 +259,5 @@ const val isDefaultFlavor = BuildConfig.FLAVOR == "oss"
 const val isExpert = BuildConfig.FLAVOR == "expert"
 
 const val USE_STATS_SERVICE = false
+
+val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()

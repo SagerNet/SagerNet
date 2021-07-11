@@ -19,12 +19,18 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:JvmName("Utils")
+package android.net;
 
-package com.github.shadowsocks.plugin
+import java.io.FileDescriptor;
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+public class NetworkUtils {
 
-@Parcelize
-class Empty : Parcelable
+    public static boolean protectFromVpn(FileDescriptor fd) {
+        return false;
+    }
+
+    public static boolean protectFromVpn(int socketfd) {
+        return false;
+    }
+
+}

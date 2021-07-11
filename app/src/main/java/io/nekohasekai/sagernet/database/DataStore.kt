@@ -163,6 +163,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
+    var enableExperimentalTun by configurationStore.boolean(Key.ENABLE_EXPERIMENTAL_TUN)
 
     // cache
 

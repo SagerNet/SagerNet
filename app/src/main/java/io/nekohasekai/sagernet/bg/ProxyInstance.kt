@@ -68,7 +68,6 @@ import libv2ray.V2RayPoint
 import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import io.nekohasekai.sagernet.plugin.PluginManager as PluginManagerS
 
@@ -98,9 +97,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
     fun init(service: BaseService.Interface) {
         base = service
         v2rayPoint = Libv2ray.newV2RayPoint(
-            SagerSupportClass(
-                if (service is VpnService) service else null
-            ), false
+            if (service is VpnService) SagerSupportSet(service) else NoSupportSet(), false
         )
         val socksPort = DataStore.socksPort + 10
         v2rayPoint.domainName = "127.0.0.1:$socksPort"
@@ -489,8 +486,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
     fun stop() {
         closed.set(true)
         runOnDefaultDispatcher {
-            DataStore.startedProxy = 0L
-
             v2rayPoint.stopLoop()
         }
     }
@@ -701,14 +696,21 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         }
     }
 
-    private class SagerSupportClass(val service: VpnService?) : V2RayVPNServiceSupportsSet {
-
+    private class NoSupportSet : V2RayVPNServiceSupportsSet {
         override fun onEmitStatus(status: String) {
             Logs.i("onEmitStatus $status")
         }
 
-        override fun protect(l: Long): Boolean {
-            return (service ?: return true).protect(l.toInt())
+        override fun protect(fd: Long) = true
+    }
+
+    private class SagerSupportSet(val service: VpnService) : V2RayVPNServiceSupportsSet {
+        override fun onEmitStatus(status: String) {
+            Logs.i("onEmitStatus $status")
+        }
+
+        override fun protect(fd: Long): Boolean {
+            return service.protect(fd.toInt())
         }
     }
 

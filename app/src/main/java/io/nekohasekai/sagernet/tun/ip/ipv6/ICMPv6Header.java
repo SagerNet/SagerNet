@@ -19,12 +19,56 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:JvmName("Utils")
+package io.nekohasekai.sagernet.tun.ip.ipv6;
 
-package com.github.shadowsocks.plugin
+import io.nekohasekai.sagernet.tun.ip.Header;
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+public class ICMPv6Header extends Header {
 
-@Parcelize
-class Empty : Parcelable
+    private static final short OFFSET_TYPE = 0;
+    private static final short OFFSET_CODE = 1;
+    private static final short OFFSET_CRC = 2;
+    private static final short OFFSET_AID = 4;
+    private static final short OFFSET_SEQ = 6;
+    private static final short OFFSET_DATA = 8;
+
+    private final IPv6Header ipHeader;
+
+    public ICMPv6Header(IPv6Header header) {
+        super(header.packet, header.getHeaderLength());
+        ipHeader = header;
+    }
+
+
+    public int getType() {
+        return readInt8(offset + OFFSET_TYPE);
+    }
+
+    public void setType(int type) {
+        writeInt8(type, offset + OFFSET_TYPE);
+    }
+
+    public byte getCode() {
+        return readByte(offset + OFFSET_CODE);
+    }
+
+    public short getCrc() {
+        return readShort(offset + OFFSET_CRC);
+    }
+
+    public void setCrc(short crc) {
+        writeShort(crc, offset + OFFSET_CRC);
+    }
+
+    public void revertEcho() {
+        packet[offset + OFFSET_TYPE] = (byte) 129;
+        int crc = packet[offset + OFFSET_CRC] & 0xFF;
+        if (crc == 0) {
+            packet[offset + OFFSET_CRC] = (byte) 255;
+            packet[offset + OFFSET_CRC + 1] = (byte) ((packet[offset + OFFSET_CRC] & 0xFF) - 1);
+        } else {
+            packet[offset + OFFSET_CRC] = (byte) (crc - 1);
+        }
+    }
+
+}

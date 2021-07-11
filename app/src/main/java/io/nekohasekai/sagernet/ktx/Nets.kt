@@ -23,10 +23,15 @@ package io.nekohasekai.sagernet.ktx
 
 import android.os.Build
 import cn.hutool.core.lang.Validator
+import inet.ipaddr.IPAddress
+import inet.ipaddr.IPAddressString
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Proxy
 
@@ -76,3 +81,8 @@ fun String.unwrapHost(): String {
     }
     return this
 }
+
+fun parseAddress(addressArray: ByteArray) = InetAddress.getByAddress(addressArray)
+val INET_TUN = IPAddressString(VpnService.PRIVATE_VLAN4_CLIENT).address.toInetAddress()
+val INET6_TUN = IPAddressString(VpnService.PRIVATE_VLAN6_CLIENT).address.toInetAddress()
+val INET_LO = IPAddressString(LOCALHOST).getAddress(IPAddress.IPVersion.IPV4).toInetAddress()

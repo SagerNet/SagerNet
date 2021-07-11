@@ -111,11 +111,13 @@ fun Project.setupCommon() {
         packagingOptions {
             exclude("**/*.kotlin_*")
             exclude("/META-INF/*.version")
+            exclude("/META-INF/native/**")
             exclude("/META-INF/native-image/**")
             exclude("/META-INF/INDEX.LIST")
             exclude("DebugProbesKt.bin")
             exclude("com/**")
             exclude("org/**")
+            exclude("/inet/**")
             exclude("**/*.proto")
         }
         packagingOptions {
@@ -483,9 +485,9 @@ fun Project.setupApp() {
     dependencies {
         add("implementation", project(":plugin:api"))
         add("testImplementation", "junit:junit:4.13.2")
-        add("androidTestImplementation", "androidx.test.ext:junit:1.1.2")
+        add("androidTestImplementation", "androidx.test.ext:junit:1.1.3")
         add("androidTestImplementation", "androidx.test:runner:1.4.0")
-        add("androidTestImplementation", "androidx.test.espresso:espresso-core:3.3.0")
+        add("androidTestImplementation", "androidx.test.espresso:espresso-core:3.4.0")
 
         if (targetAbi.isNotBlank()) {
             add("implementation", project(":library:core"))

@@ -187,6 +187,11 @@ class BaseService {
             callbacks.unregister(cb)
         }
 
+        override fun protect(fd: Int) {
+            (data?.proxy?.service as VpnService?)?.protect(fd)
+            Logs.d("Protected $fd")
+        }
+
         fun stateChanged(s: State, msg: String?) = launch {
             val profileName = profileName
             broadcast { it.stateChanged(s.ordinal, profileName, msg) }
@@ -245,13 +250,14 @@ class BaseService {
             }
         }
 
-        fun stopRunner(restart: Boolean = false, msg: String? = null) {
+        fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = false) {
             if (data.state == State.Stopping) return
             data.notification?.destroy()
             data.notification = null
             this as Service
 
             data.changeState(State.Stopping)
+
             runOnMainDispatcher {
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
                 // we use a coroutineScope here to allow clean-up in parallel
@@ -263,6 +269,9 @@ class BaseService {
                         data.closeReceiverRegistered = false
                     }
                     onDefaultDispatcher {
+                        if (!keepState) {
+                            DataStore.startedProxy = 0L
+                        }
                         data.proxy?.shutdown()
                     }
                     data.binder.profilePersisted(listOfNotNull(data.proxy).map { it.profile.id })
@@ -286,6 +295,7 @@ class BaseService {
         suspend fun preInit() {}
 
         fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
             val data = data
             if (data.state != State.Stopped) return Service.START_NOT_STICKY
             val profile = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
