@@ -22,6 +22,7 @@
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">Toggle</string>
+    <string name="tile_title">Switcher</string>
 
     <!-- group -->
     <string name="group_name">Group name</string>

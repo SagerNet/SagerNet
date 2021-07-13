@@ -340,5 +340,6 @@
     <string name="connection_test_refused">连接重置</string>
     <string name="connection_test_timeout">超时</string>
     <string name="connection_test_unreachable">不可达</string>
+    <string name="tile_title">开关</string>
 
 </resources>
