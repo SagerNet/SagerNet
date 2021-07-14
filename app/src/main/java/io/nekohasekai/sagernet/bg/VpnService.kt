@@ -147,10 +147,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
         builder.addRoute("0.0.0.0", 0)
-        if (ipv6Mode != IPv6Mode.ONLY) {
-            if (useFakeDns) {
-                builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
-            }
+        if (useFakeDns) {
+            builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
         }
 
         if (ipv6Mode != IPv6Mode.DISABLE) {
