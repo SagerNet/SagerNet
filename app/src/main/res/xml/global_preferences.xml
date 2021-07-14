@@ -182,6 +182,11 @@
             app:title="@string/port_http"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
+            app:key="appendHttpProxy"
+            app:summary="@string/append_http_proxy_sum"
+            app:title="@string/append_http_proxy" />
+        <SwitchPreference
             app:icon="@drawable/ic_baseline_transgender_24"
             app:key="requireTransproxy"
             app:title="@string/require_transproxy" />

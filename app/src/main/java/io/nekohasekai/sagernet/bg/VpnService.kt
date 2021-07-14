@@ -230,7 +230,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && DataStore.requireHttp) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && DataStore.appendHttpProxy && DataStore.requireHttp) {
             builder.setHttpProxy(ProxyInfo.buildDirectProxy(LOCALHOST, DataStore.httpPort))
         }
 
@@ -238,8 +238,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        if (enableExperimentalTun) builder.setBlocking(true)
-
+        builder.setBlocking(true)
         conn = builder.establish() ?: throw NullConnectionException()
 
         if (!enableExperimentalTun) {

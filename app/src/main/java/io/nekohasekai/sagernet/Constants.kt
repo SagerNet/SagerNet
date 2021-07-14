@@ -65,6 +65,7 @@ object Key {
     const val LOCAL_DNS_PORT = "portLocalDns"
 
     const val REQUIRE_HTTP = "requireHttp"
+    const val APPEND_HTTP_PROXY = "appendHttpProxy"
     const val HTTP_PORT = "httpPort"
 
     const val REQUIRE_TRANSPROXY = "requireTransproxy"

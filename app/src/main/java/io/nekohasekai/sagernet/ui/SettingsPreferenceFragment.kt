@@ -88,21 +88,37 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val serviceMode = findPreference<Preference>(Key.SERVICE_MODE)!!
         val allowAccess = findPreference<Preference>(Key.ALLOW_ACCESS)!!
         val requireHttp = findPreference<SwitchPreference>(Key.REQUIRE_HTTP)!!
+        val appendHttpProxy = findPreference<SwitchPreference>(Key.APPEND_HTTP_PROXY)!!
         val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-            requireHttp.remove()
-            portHttp.setIcon(R.drawable.ic_baseline_http_24)
-            portHttp.onPreferenceChangeListener = reloadListener
-        } else {
-            portHttp.isEnabled = requireHttp.isChecked
-            requireHttp.setOnPreferenceChangeListener { _, newValue ->
-                portHttp.isEnabled = newValue as Boolean
-                needReload()
-                true
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.N -> {
+                requireHttp.remove()
+                appendHttpProxy.remove()
+                portHttp.setIcon(R.drawable.ic_baseline_http_24)
+                portHttp.onPreferenceChangeListener = reloadListener
+            }
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
+                portHttp.isEnabled = requireHttp.isChecked
+                appendHttpProxy.remove()
+                requireHttp.setOnPreferenceChangeListener { _, newValue ->
+                    portHttp.isEnabled = newValue as Boolean
+                    needReload()
+                    true
+                }
+            }
+            else -> {
+                portHttp.isEnabled = requireHttp.isChecked
+                appendHttpProxy.isEnabled = requireHttp.isChecked
+                requireHttp.setOnPreferenceChangeListener { _, newValue ->
+                    portHttp.isEnabled = newValue as Boolean
+                    appendHttpProxy.isEnabled = newValue as Boolean
+                    needReload()
+                    true
+                }
             }
         }
-        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
 
+        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
 
         val showStopButton = findPreference<SwitchPreference>(Key.SHOW_STOP_BUTTON)!!
         if (Build.VERSION.SDK_INT < 24) {
@@ -194,6 +210,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
+        appendHttpProxy.onPreferenceChangeListener = reloadListener
         showStopButton.onPreferenceChangeListener = reloadListener
         showDirectSpeed.onPreferenceChangeListener = reloadListener
         domainStrategy.onPreferenceChangeListener = reloadListener
