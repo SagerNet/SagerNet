@@ -67,7 +67,9 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
 import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.profile.*
+import io.nekohasekai.sagernet.utils.TestInstance
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
@@ -77,6 +79,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.UnknownHostException
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.properties.Delegates
 
 class ConfigurationFragment @JvmOverloads constructor(
@@ -359,8 +362,14 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
+            R.id.action_connection_icmp_ping -> {
+                pingTest(true)
+            }
             R.id.action_connection_tcp_ping -> {
-                tcpPingTest()
+                pingTest(false)
+            }
+            R.id.action_connection_url_test -> {
+                urlTest()
             }
         }
         return true
@@ -458,7 +467,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    fun tcpPingTest() {
+    fun pingTest(icmpPing: Boolean) {
         val test = TestDialog()
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
@@ -466,17 +475,30 @@ class ConfigurationFragment @JvmOverloads constructor(
             val profiles =
                 ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
+            val icmpTestMethod by lazy {
+                InetAddress::class.java.getDeclaredMethod("isReachableByICMP", Int::class.java)
+            }
             repeat(5) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
 
-                        if (!profile.requireBean().canTCPing()) {
-                            profile.status = -1
-                            profile.error =
-                                app.getString(R.string.connection_test_tcp_ping_unavailable)
-                            test.insert(profile)
-                            continue
+                        if (icmpPing) {
+                            if (!profile.requireBean().canICMPing()) {
+                                profile.status = -1
+                                profile.error =
+                                    app.getString(R.string.connection_test_icmp_ping_unavailable)
+                                test.insert(profile)
+                                continue
+                            }
+                        } else {
+                            if (!profile.requireBean().canTCPing()) {
+                                profile.status = -1
+                                profile.error =
+                                    app.getString(R.string.connection_test_tcp_ping_unavailable)
+                                test.insert(profile)
+                                continue
+                            }
                         }
 
                         profile.status = 0
@@ -500,57 +522,140 @@ class ConfigurationFragment @JvmOverloads constructor(
                             continue
                         }
                         try {
-                            val socket = Socket()
-                            socket.bind(InetSocketAddress(0))
+                            if (icmpPing) {
+                                val start = SystemClock.elapsedRealtime()
+                                val result = icmpTestMethod.invoke(
+                                    InetAddress.getByName(address), 5000
+                                ) as Boolean
+                                if (!isActive) break
+                                if (result) {
+                                    profile.status = 1
+                                    profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
+                                } else {
+                                    profile.status = 2
+                                    profile.error = getString(R.string.connection_test_unreachable)
+                                }
+                                test.update(profile)
+                            } else {
+                                val socket = Socket()
+                                socket.bind(InetSocketAddress(0))
 
-                            if (!protectFromVpn(socket.fileDescriptor)) {
-                                Logs.d("NetworkUtils.protectFromVpn failed, fallback to aidl")
-                                (requireActivity() as? MainActivity)?.connection?.service?.protect(
-                                    socket.fileDescriptor.int
+                                protectFromVpn(socket.fileDescriptor)
+
+                                val start = SystemClock.elapsedRealtime()
+                                socket.connect(
+                                    InetSocketAddress(
+                                        address, profile.requireBean().serverPort
+                                    ), 5000
                                 )
+                                if (!isActive) break
+                                profile.status = 1
+                                profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
+                                test.update(profile)
+                                socket.close()
                             }
-
-                            val start = SystemClock.elapsedRealtime()
-                            socket.connect(
-                                InetSocketAddress(
-                                    address, profile.requireBean().serverPort
-                                ), 5000
-                            )
-                            if (!isActive) break
-                            profile.status = 1
-                            profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
-                            test.update(profile)
-                            socket.close()
-                            if (!isActive) break
                         } catch (e: IOException) {
                             if (!isActive) break
                             val message = e.readableMessage
 
-                            Logs.d(profile.displayName() + ": $message")
-
-                            profile.status = 2
-
-                            when {
-                                !message.contains("failed:") -> profile.error =
-                                    getString(R.string.connection_test_timeout)
-                                else -> when {
-                                    message.contains("ECONNREFUSED") -> {
-                                        profile.error = getString(R.string.connection_test_refused)
-                                    }
-                                    message.contains("ENETUNREACH") -> {
-                                        profile.error =
-                                            getString(R.string.connection_test_unreachable)
-                                    }
-                                    else -> {
-                                        profile.status = 3
-                                        profile.error = message
+                            if (icmpPing) {
+                                profile.status = 2
+                                profile.error = getString(R.string.connection_test_unreachable)
+                            } else {
+                                profile.status = 2
+                                when {
+                                    !message.contains("failed:") -> profile.error =
+                                        getString(R.string.connection_test_timeout)
+                                    else -> when {
+                                        message.contains("ECONNREFUSED") -> {
+                                            profile.error =
+                                                getString(R.string.connection_test_refused)
+                                        }
+                                        message.contains("ENETUNREACH") -> {
+                                            profile.error =
+                                                getString(R.string.connection_test_unreachable)
+                                        }
+                                        else -> {
+                                            profile.status = 3
+                                            profile.error = message
+                                        }
                                     }
                                 }
                             }
                             test.update(profile)
-                            continue
                         }
                     }
+                })
+            }
+
+            testJobs.joinAll()
+            testPool.close()
+
+            ProfileManager.updateProfile(test.results)
+
+            onMainDispatcher {
+                test.binding.progressCircular.isGone = true
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
+            }
+        }
+        test.cancel = {
+            mainJob.cancel()
+            testJobs.forEach { it.cancel() }
+            runOnDefaultDispatcher {
+                ProfileManager.updateProfile(test.results)
+            }
+        }
+    }
+
+    @Suppress("EXPERIMENTAL_API_USAGE")
+    fun urlTest() {
+        val test = TestDialog()
+        val testJobs = mutableListOf<Job>()
+        val dialog = test.builder.show()
+        val mainJob = runOnDefaultDispatcher {
+            val profiles =
+                ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
+            val testPool = newFixedThreadPoolContext(3, "Connection test pool")
+            val port = AtomicInteger(DataStore.socksPort + 100)
+            repeat(3) {
+                testJobs.add(launch(testPool) {
+                    while (isActive) {
+                        val profile = profiles.poll() ?: break
+
+                        profile.status = 0
+                        test.insert(profile)
+
+                        val currentPort = port.getAndIncrement()
+                        if (currentPort % 10 == 0) port.getAndAdd(-10)
+
+                        val instance = try {
+                            TestInstance(requireContext(), profile, currentPort)
+                        } catch (e: PluginManager.PluginNotFoundException) {
+                            profile.status = 2
+                            profile.error = e.readableMessage
+                            test.update(profile)
+                            continue
+                        } catch (e: Exception) {
+                            profile.status = 3
+                            profile.error = e.readableMessage
+                            test.update(profile)
+                            continue
+                        }
+
+                        try {
+                            val result = instance.doTest()
+                            if (!isActive) break
+                            profile.status = 1
+                            profile.ping = result
+                            test.update(profile)
+                        } catch (e: Exception) {
+                            if (!isActive) break
+                            profile.status = 3
+                            profile.error = e.readableMessage
+                            test.update(profile)
+                        }
+                    }
+
                 })
             }
 
@@ -580,10 +685,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
                     val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
                     try {
-                        (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
-                            .bufferedWriter().use {
-                                it.write(links)
-                            }
+                        (requireActivity() as MainActivity).contentResolver.openOutputStream(
+                            data
+                        )!!.bufferedWriter().use {
+                            it.write(links)
+                        }
                         onMainDispatcher {
                             snackbar(getString(R.string.action_export_msg)).show()
                         }
@@ -1260,7 +1366,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                     when (item.itemId) {
                         R.id.action_standard_qr -> showCode(entity.toLink()!!)
                         R.id.action_standard_clipboard -> export(entity.toLink()!!)
-                        R.id.action_universal_qr -> showCode(entity.requireBean().toUniversalLink())
+                        R.id.action_universal_qr -> showCode(
+                            entity.requireBean().toUniversalLink()
+                        )
                         R.id.action_universal_clipboard -> export(
                             entity.requireBean().toUniversalLink()
                         )

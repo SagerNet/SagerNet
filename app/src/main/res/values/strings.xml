@@ -367,6 +367,9 @@
     <string name="connection_test_clear_results">Clear test results</string>
     <string name="connection_test_tcp_ping" translatable="false">TCPing</string>
     <string name="connection_test_tcp_ping_unavailable">TCPing unavailable</string>
+    <string name="connection_test_icmp_ping" translatable="false">ICMPing</string>
+    <string name="connection_test_icmp_ping_unavailable">ICMPing unavailable</string>
+    <string name="connection_test_url_test" translatable="false">URL Test</string>
 
     <string name="connection_test_domain_not_found">Domain not found</string>
     <string name="connection_test_refused">Connection refused</string>
@@ -379,7 +382,7 @@
     <string name="vpn_settings">VPN Settings</string>
     <string name="vpn_mode">VPN Mode</string>
     <string name="vpn_mode_forwarding">Native Forwarding (Experimental)</string>
-    <string name="multi_thread_forwarding">Multi-Threaded Forwarding</string>
+    <string name="multi_thread_forwarding">Concurrent Forwarding</string>
     <string name="multi_thread_forwarding_sum">Forward TCP/IP packets using Kotlin coroutine, which uses more CPU and is only suitable for high traffic cases</string>
     <string name="icmp_echo_strategy">ICMP Echo Strategy</string>
     <string name="icmp_echo_reply_delay">ICMP Echo Reply Delay</string>

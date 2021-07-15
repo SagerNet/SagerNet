@@ -43,7 +43,7 @@ class LicenseActivity : ThemedActivity() {
 
         val libs =
             LibsBuilder().withExcludedLibraries( // Can't parse ${project.artifactId} in pom.xml
-                "cn_hutool__hutool_core", "cn_hutool__hutool_json", "cn_hutool__hutool_crypto"
+                "cn_hutool__hutool_core", "cn_hutool__hutool_json", "cn_hutool__hutool_crypto", "cn_hutool__hutool_cache"
             ).withAboutIconShown(false).withFields(R.string::class.java.fields).supportFragment()
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, libs)

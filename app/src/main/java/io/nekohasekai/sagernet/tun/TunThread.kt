@@ -157,10 +157,10 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
     val icmpEchoReplyDelay = DataStore.icmpEchoReplyDelay
 
     private fun mkDelay(): Long {
-        return if (Random.nextInt(30) == 0) {
-            icmpEchoReplyDelay + Random.nextInt(30, 10)
-        } else {
-            icmpEchoReplyDelay + Random.nextInt(-10, 10)
+        return when {
+            icmpEchoReplyDelay <= 0 -> icmpEchoReplyDelay
+            Random.nextInt(30) == 0 -> icmpEchoReplyDelay + Random.nextInt(30, 100)
+            else -> icmpEchoReplyDelay + Random.nextInt(-10, 10)
         }
     }
 

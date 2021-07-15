@@ -52,6 +52,10 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
         return serverAddress + ":" + serverPort;
     }
 
+    public boolean canICMPing() {
+        return true;
+    }
+
     public boolean canTCPing() {
         return true;
     }

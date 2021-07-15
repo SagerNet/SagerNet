@@ -70,6 +70,7 @@ class V2rayBuildResult(
     var config: String,
     var index: ArrayList<Pair<Boolean, LinkedHashMap<Int, ProxyEntity>>>,
     var requireWs: Boolean,
+    var wsPort: Int,
     var outboundTags: ArrayList<String>,
     var outboundTagsCurrent: ArrayList<String>,
     var outboundTagsAll: HashMap<String, ProxyEntity>,
@@ -78,7 +79,9 @@ class V2rayBuildResult(
     var observatoryTags: MutableSet<String>,
 )
 
-fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
+fun buildV2RayConfig(
+    proxy: ProxyEntity, forTest: Boolean = false, testPort: Int = 0
+): V2rayBuildResult {
 
     val outboundTags = ArrayList<String>()
     val outboundTagsCurrent = ArrayList<String>()
@@ -124,16 +127,17 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     }
 
     val proxies = proxy.resolveChain()
-    val extraRules = SagerDatabase.rulesDao.enabledRules()
-    val extraProxies = SagerDatabase.proxyDao.getEntities(extraRules.mapNotNull { rule ->
-        rule.outbound.takeIf { it > 0 && it != proxy.id }
-    }.toHashSet().toList()).map {
-        (it.id to ((it.type == ProxyEntity.TYPE_BALANCER) to lazy {
-            it.balancerBean!!.strategy
-        })) to it.resolveChain()
-    }.toMap()
+    val extraRules = if (forTest) listOf() else SagerDatabase.rulesDao.enabledRules()
+    val extraProxies =
+        if (forTest) mapOf() else SagerDatabase.proxyDao.getEntities(extraRules.mapNotNull { rule ->
+            rule.outbound.takeIf { it > 0 && it != proxy.id }
+        }.toHashSet().toList()).associate {
+            (it.id to ((it.type == ProxyEntity.TYPE_BALANCER) to lazy {
+                it.balancerBean!!.strategy
+            })) to it.resolveChain()
+        }
 
-    val bind = if (DataStore.allowAccess) "0.0.0.0" else LOCALHOST
+    val bind = if (!forTest && DataStore.allowAccess) "0.0.0.0" else LOCALHOST
 
     val dnsMode = DataStore.dnsMode
     DataStore.dnsModeFinal = dnsMode
@@ -141,15 +145,17 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
     val localDns = DataStore.localDns.split("\n")
     val domesticDns = DataStore.domesticDns.split("\n")
     val enableDomesticDns = DataStore.enableDomesticDns
-    val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+    val useFakeDns =
+        if (forTest) false else dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
     val useLocalDns = dnsMode in arrayOf(DnsMode.LOCAL, DnsMode.FAKEDNS_LOCAL)
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = ArrayList<Pair<Boolean, LinkedHashMap<Int, ProxyEntity>>>()
     var requireWs = false
-    val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
-    val requireTransproxy = DataStore.requireTransproxy
+    val requireHttp =
+        forTest || Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
+    val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
 
-    val ipv6Mode = DataStore.ipv6Mode
+    val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
 
     return V2RayConfig().apply {
 
@@ -160,7 +166,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             servers = mutableListOf()
 
             if (dnsMode == DnsMode.SYSTEM) {
-                DataStore.systemDnsFinal = systemDns.joinToString("\n")
+                if (!forTest) DataStore.systemDnsFinal = systemDns.joinToString("\n")
                 servers.addAll(systemDns.map {
                     DnsObject.StringOrServerObject().apply {
                         valueX = it
@@ -220,7 +226,8 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         }
 
         inbounds = mutableListOf()
-        inbounds.add(InboundObject().apply {
+
+        if (!forTest) inbounds.add(InboundObject().apply {
             tag = TAG_SOCKS
             listen = bind
             port = DataStore.socksPort
@@ -248,7 +255,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             inbounds.add(InboundObject().apply {
                 tag = TAG_HTTP
                 listen = bind
-                port = DataStore.httpPort
+                port = if (forTest) testPort else DataStore.httpPort
                 protocol = "http"
                 settings =
                     LazyInboundConfigurationObject(this, HTTPInboundConfigurationObject().apply {
@@ -305,8 +312,6 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
         outbounds = mutableListOf()
 
-        val socksPort = DataStore.socksPort
-
         routing = RoutingObject().apply {
             domainStrategy = DataStore.domainStrategy
             domainMatcher = DataStore.domainMatcher
@@ -350,7 +355,9 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
         }
 
-        var currentPort = socksPort + 10
+        var currentPort =
+            if (forTest) testPort + ((testPort % 10) + 1) * 10 else DataStore.socksPort + 10
+
         fun requirePort() = currentPort++
 
         fun buildChain(
@@ -830,7 +837,9 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
                 if (tagOutbound == TAG_AGENT) {
                     routing.rules.add(RoutingObject.RuleObject().apply {
                         type = "field"
-                        inboundTag = mutableListOf(TAG_SOCKS)
+                        inboundTag = mutableListOf()
+
+                        if (!forTest) inboundTag.add(TAG_SOCKS)
                         if (requireHttp) inboundTag.add(TAG_HTTP)
                         if (requireTransproxy) inboundTag.add(TAG_TRANS)
                         balancerTag = "balancer-$tagOutbound"
@@ -934,7 +943,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
         if (requireWs) {
             browserForwarder = BrowserForwarderObject().apply {
                 listenAddr = LOCALHOST
-                listenPort = DataStore.socksPort + 1
+                listenPort = requirePort()
             }
         }
 
@@ -1131,7 +1140,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             }
         }
 
-        if (api.services.isEmpty()) {
+        if (forTest || api.services.isEmpty()) {
             api = null
         } else {
             inbounds.add(InboundObject().apply {
@@ -1158,6 +1167,7 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
             gson.toJson(it),
             indexMap,
             requireWs,
+            if (requireWs) it.browserForwarder.listenPort else 0,
             outboundTags,
             outboundTagsCurrent,
             outboundTagsAll,
@@ -1169,9 +1179,11 @@ fun buildV2RayConfig(proxy: ProxyEntity): V2rayBuildResult {
 
 }
 
-fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
+fun buildCustomConfig(
+    proxy: ProxyEntity, forTest: Boolean = false, testPort: Int = 0
+): V2rayBuildResult {
 
-    val bind = if (DataStore.allowAccess) "0.0.0.0" else LOCALHOST
+    val bind = if (!forTest && DataStore.allowAccess) "0.0.0.0" else LOCALHOST
     val trafficSniffing = DataStore.trafficSniffing
 
     val bean = proxy.configBean!!
@@ -1187,17 +1199,18 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
             valueY = gson.fromJson(it.toString(), DnsObject.ServerObject::class.java)
         }
     }
-    val ipv6Mode = DataStore.ipv6Mode
+    val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
     var useFakeDns = false
 
-    val requireHttp = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
-    val requireTransproxy = DataStore.requireTransproxy
+    val requireHttp =
+        forTest || Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
+    val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
 
     val dnsInbound = inbounds.find { it.tag == TAG_DNS_IN }?.also { inbound ->
         inbound.listen = bind
-        inbound.port = DataStore.localDNSPort
+        inbound.port = if (forTest) testPort + 11 else DataStore.localDNSPort
 
-        if (dnsArr?.any { it.valueX == "fakedns" } == true) {
+        if (!forTest) if (dnsArr?.any { it.valueX == "fakedns" } == true) {
             DataStore.dnsModeFinal = DnsMode.FAKEDNS_LOCAL
             useFakeDns = true
 
@@ -1218,7 +1231,7 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         }
     }
 
-    if (dnsInbound == null) {
+    if (!forTest) if (dnsInbound == null) {
         DataStore.dnsModeFinal = DnsMode.SYSTEM
 
         val dns = dnsArr?.filter {
@@ -1248,9 +1261,9 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
     if (socksInbound != null) {
         socksInbound.apply {
             listen = bind
-            port = DataStore.socksPort
+            port = if (forTest) testPort + 12 else DataStore.socksPort
         }
-    } else {
+    } else if (!forTest) {
         inbounds.add(InboundObject().apply {
             tag = TAG_SOCKS
             listen = bind
@@ -1293,14 +1306,14 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         if (httpInbound != null) {
             httpInbound.apply {
                 listen = bind
-                port = DataStore.socksPort
+                port = if (forTest) testPort else DataStore.httpPort
             }
         } else {
             inbounds.add(InboundObject().apply {
 
                 tag = TAG_HTTP
                 listen = bind
-                port = DataStore.httpPort
+                port = if (forTest) testPort else DataStore.httpPort
                 protocol = "http"
                 settings =
                     LazyInboundConfigurationObject(this, HTTPInboundConfigurationObject().apply {
@@ -1369,21 +1382,24 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
 
     }
 
-    config["stats"] = JSONObject()
-    (config.getJSONObject("policy") ?: JSONObject().also {
-        config["policy"] = it
-    })["system"] = JSONObject(gson.toJson(PolicyObject.SystemPolicyObject().apply {
-        statsOutboundDownlink = true
-        statsOutboundUplink = true
-    }))
-
+    if (!forTest) {
+        config["stats"] = JSONObject()
+        (config.getJSONObject("policy") ?: JSONObject().also {
+            config["policy"] = it
+        })["system"] = JSONObject(gson.toJson(PolicyObject.SystemPolicyObject().apply {
+            statsOutboundDownlink = true
+            statsOutboundUplink = true
+        }))
+    }
 
     var requireWs = false
+    var wsPort = 0
     if (config.contains("browserForwarder")) {
         config["browserForwarder"] = JSONObject(gson.toJson(BrowserForwarderObject().apply {
             requireWs = true
             listenAddr = LOCALHOST
-            listenPort = DataStore.socksPort + 1
+            listenPort = if (forTest) testPort + 13 else DataStore.socksPort + 1
+            wsPort = listenPort
         }))
     }
 
@@ -1514,6 +1530,7 @@ fun buildCustomConfig(proxy: ProxyEntity): V2rayBuildResult {
         config.toStringPretty(),
         ArrayList(),
         requireWs,
+        wsPort,
         outboundTags,
         outboundTags,
         hashMapOf(),
