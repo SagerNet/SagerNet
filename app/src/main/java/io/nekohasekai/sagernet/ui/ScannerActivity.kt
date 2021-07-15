@@ -36,16 +36,21 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.getSystemService
 import androidx.core.view.isGone
+import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
 import com.google.zxing.NotFoundException
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.GlobalHistogramBinarizer
 import com.google.zxing.qrcode.QRCodeReader
-import com.journeyapps.barcodescanner.*
+import com.journeyapps.barcodescanner.BarcodeCallback
+import com.journeyapps.barcodescanner.BarcodeResult
+import com.journeyapps.barcodescanner.CaptureManager
+import com.journeyapps.barcodescanner.MixedDecoder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
+import io.nekohasekai.sagernet.databinding.LayoutScannerBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
@@ -53,7 +58,7 @@ import io.nekohasekai.sagernet.widget.ListHolderListener
 class ScannerActivity : ThemedActivity(), BarcodeCallback {
 
     lateinit var capture: CaptureManager
-    lateinit var barcodeScanner: DecoratedBarcodeView
+    lateinit var binding: LayoutScannerBinding
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,24 +67,27 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         if (Build.VERSION.SDK_INT >= 25) getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
-        setContentView(R.layout.layout_scanner)
+        binding = LayoutScannerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ListHolderListener.setup(this)
-
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
 
-        barcodeScanner = findViewById(R.id.barcode_scanner)
-        barcodeScanner.statusView.isGone = true
-        barcodeScanner.viewFinder.isGone = true
-        barcodeScanner.barcodeView.setDecoderFactory {
+        binding.barcodeScanner.statusView.isGone = true
+        binding.barcodeScanner.viewFinder.isGone = true
+        binding.barcodeScanner.barcodeView.setDecoderFactory {
             MixedDecoder(QRCodeReader())
         }
 
-        capture = CaptureManager(this, barcodeScanner)
-        barcodeScanner.decodeSingle(this)
+        capture = CaptureManager(this, binding.barcodeScanner)
+        binding.barcodeScanner.decodeSingle(this)
+    }
+
+    override fun snackbarInternal(text: CharSequence): Snackbar {
+        return Snackbar.make(binding.barcodeScanner, text, Snackbar.LENGTH_LONG)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -92,12 +100,18 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
             try {
                 it.forEachTry { uri ->
                     val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri)) { decoder, _, _ ->
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                contentResolver, uri
+                            )
+                        ) { decoder, _, _ ->
                             decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
                             decoder.isMutableRequired = true
                         }
                     } else {
-                        @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                        @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(
+                            contentResolver, uri
+                        )
                     }
                     val intArray = IntArray(bitmap.width * bitmap.height)
                     bitmap.getPixels(intArray, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
@@ -106,9 +120,15 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
                     val qrReader = QRCodeReader()
                     try {
                         val result = try {
-                            qrReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source)), mapOf(DecodeHintType.TRY_HARDER to true))
+                            qrReader.decode(
+                                BinaryBitmap(GlobalHistogramBinarizer(source)),
+                                mapOf(DecodeHintType.TRY_HARDER to true)
+                            )
                         } catch (e: NotFoundException) {
-                            qrReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source.invert())), mapOf(DecodeHintType.TRY_HARDER to true))
+                            qrReader.decode(
+                                BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
+                                mapOf(DecodeHintType.TRY_HARDER to true)
+                            )
                         }
 
                         val results = parseProxies(result.text ?: "").second
@@ -144,11 +164,11 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_import_file) {
-            importCodeFile.launch("image/*")
-            return true
+        return if (item.itemId == R.id.action_import_file) {
+            startFilesForResult(importCodeFile, "image/*")
+            true
         } else {
-            return super.onOptionsItemSelected(item)
+            super.onOptionsItemSelected(item)
         }
     }
 
@@ -188,7 +208,7 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return barcodeScanner.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
+        return binding.barcodeScanner.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
     }
 
     override fun barcodeResult(result: BarcodeResult) {

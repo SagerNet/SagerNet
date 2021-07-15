@@ -1418,18 +1418,4 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
 
-    companion object {
-        private fun Fragment.startFilesForResult(
-            launcher: ActivityResultLauncher<String>, input: String
-        ) {
-            try {
-                return launcher.launch(input)
-            } catch (_: ActivityNotFoundException) {
-            } catch (_: SecurityException) {
-            }
-            (activity as MainActivity).snackbar(getString(R.string.file_manager_missing)).show()
-        }
-    }
-
-
 }

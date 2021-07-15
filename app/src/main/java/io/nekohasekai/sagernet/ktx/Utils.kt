@@ -26,10 +26,7 @@ package io.nekohasekai.sagernet.ktx
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.net.NetworkUtils
@@ -39,6 +36,7 @@ import android.system.Os
 import android.system.OsConstants
 import android.util.TypedValue
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
@@ -55,6 +53,7 @@ import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ui.MainActivity
+import io.nekohasekai.sagernet.ui.ThemedActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -234,6 +233,29 @@ fun View.crossFadeFrom(other: View) {
 
 
 fun Fragment.snackbar(text: CharSequence) = (requireActivity() as MainActivity).snackbar(text)
+
+fun ThemedActivity.startFilesForResult(
+    launcher: ActivityResultLauncher<String>, input: String
+) {
+    try {
+        return launcher.launch(input)
+    } catch (_: ActivityNotFoundException) {
+    } catch (_: SecurityException) {
+    }
+    snackbar(getString(R.string.file_manager_missing)).show()
+}
+
+fun Fragment.startFilesForResult(
+    launcher: ActivityResultLauncher<String>, input: String
+) {
+    try {
+        return launcher.launch(input)
+    } catch (_: ActivityNotFoundException) {
+    } catch (_: SecurityException) {
+    }
+    (requireActivity() as ThemedActivity).snackbar(getString(R.string.file_manager_missing)).show()
+}
+
 fun Fragment.serviceStarted(): Boolean {
     return ((activity as? MainActivity) ?: return false).state.canStop
 }
