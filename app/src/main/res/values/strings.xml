@@ -376,4 +376,17 @@
     <string name="append_http_proxy">Append HTTP Proxy to VPN</string>
     <string name="append_http_proxy_sum">HTTP proxy will be used directly from (browser/ some supported apps), without going through the virtual NIC device (Android 10+)</string>
 
+    <string name="vpn_settings">VPN Settings</string>
+    <string name="vpn_mode">VPN Mode</string>
+    <string name="vpn_mode_forwarding">Native Forwarding (Experimental)</string>
+    <string name="multi_thread_forwarding">Multi-Threaded Forwarding</string>
+    <string name="multi_thread_forwarding_sum">Forward TCP/IP packets using Kotlin coroutine, which uses more CPU and is only suitable for high traffic cases</string>
+    <string name="icmp_echo_strategy">ICMP Echo Strategy</string>
+    <string name="icmp_echo_reply_delay">ICMP Echo Reply Delay</string>
+    <string name="ip_other_strategy">Other Internet Protocol Strategy</string>
+
+    <string name="drop">Drop</string>
+    <string name="direct">Direct</string>
+    <string name="reply">Reply</string>
+
 </resources>

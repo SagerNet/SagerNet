@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.tun
 
 import android.system.ErrnoException
 import cn.hutool.core.io.IoUtil
+import io.nekohasekai.sagernet.PacketStrategy
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.Logs
@@ -34,14 +35,12 @@ import io.nekohasekai.sagernet.tun.ip.ipv6.IPv6Header
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.handler.logging.LogLevel
 import io.netty.handler.logging.LoggingHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.FileDescriptor
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import kotlin.random.Random
 
 class TunThread(val service: VpnService) : Thread("TUN Thread") {
 
@@ -68,9 +67,8 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
     }
 
     var start = 0L
-    val dumpUid = true
-    val multiThread = true
-    var enableLog = true
+    val enableLog = DataStore.enableLog
+    val dumpUid = enableLog
 
     val buffer = ByteArray(VpnService.VPN_MTU)
     lateinit var input: FileInputStream
@@ -89,7 +87,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
         tcpForwarder.start()
 
         runBlocking {
-            if (!multiThread) {
+            if (!DataStore.multiThreadForward) {
                 loopSingleThread()
             } else {
                 loopMultiThread()
@@ -129,7 +127,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
             4 -> IPv4Header(packet, length)
             6 -> IPv6Header(packet, length)
             else -> {
-                write(packet, length)
+                processOther(packet, length)
                 return
             }
         }
@@ -140,7 +138,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
                 NetUtils.IPPROTO_ICMPv6 -> processICMPv6(packet, ipHeader as IPv6Header)
                 NetUtils.IPPROTO_TCP -> tcpForwarder.processTcp(packet, ipHeader)
                 NetUtils.IPPROTO_UDP -> udpForwarder.processUdp(packet, ipHeader)
-                else -> write(packet, length)
+                else -> processOther(packet, length)
             }
         } catch (e: ErrnoException) {
             Logs.w(e)
@@ -155,14 +153,34 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
 
     }
 
+    val icmpEchoStrategy = DataStore.icmpEchoStrategy
+    val icmpEchoReplyDelay = DataStore.icmpEchoReplyDelay
+
+    private fun mkDelay(): Long {
+        return if (Random.nextInt(30) == 0) {
+            icmpEchoReplyDelay + Random.nextInt(30, 10)
+        } else {
+            icmpEchoReplyDelay + Random.nextInt(-10, 10)
+        }
+    }
+
     suspend fun processICMP(packet: ByteArray, ipHeader: IPv4Header) {
 
         val icmpHeader = ICMPHeader(ipHeader)
         if (icmpHeader.type.toInt() == 8) {
-            ipHeader.revertAddress()
-            icmpHeader.revertEcho()
+            when (icmpEchoStrategy) {
+                PacketStrategy.DIRECT -> write(packet, ipHeader.packetLength)
+                PacketStrategy.DROP -> return
+                PacketStrategy.REPLY -> {
+                    ipHeader.revertAddress()
+                    icmpHeader.revertEcho()
+                    delay(mkDelay())
+                    write(packet, ipHeader.packetLength)
+                }
+            }
+        } else {
+            processOther(packet, ipHeader.packetLength)
         }
-        write(packet, ipHeader.packetLength)
 
     }
 
@@ -171,12 +189,27 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
         val icmpHeader = ICMPv6Header(ipHeader)
 
         if (icmpHeader.type == 128) {
-            ipHeader.revertAddress()
-            icmpHeader.revertEcho()
+            when (icmpEchoStrategy) {
+                PacketStrategy.DIRECT -> write(packet, ipHeader.packetLength)
+                PacketStrategy.DROP -> return
+                PacketStrategy.REPLY -> {
+                    ipHeader.revertAddress()
+                    icmpHeader.revertEcho()
+                    delay(mkDelay())
+                    write(packet, ipHeader.packetLength)
+                }
+            }
+        } else {
+            processOther(packet, ipHeader.packetLength)
         }
+    }
 
-        write(packet, ipHeader.packetLength)
-
+    val ipOtherStrategy = DataStore.ipOtherStrategy
+    fun processOther(packet: ByteArray, length: Int) {
+        when (ipOtherStrategy) {
+            PacketStrategy.DIRECT -> write(packet, length)
+            PacketStrategy.DROP -> return
+        }
     }
 
 

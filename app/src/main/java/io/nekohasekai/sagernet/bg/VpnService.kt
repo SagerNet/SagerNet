@@ -43,6 +43,7 @@ import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileDescriptor
 import java.io.IOException
@@ -99,6 +100,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
     override fun killProcesses(scope: CoroutineScope) {
         super.killProcesses(scope)
         active = false
+        scope.launch { DefaultNetworkListener.stop(this) }
         if (::conn.isInitialized) conn.close()
         if (::tun.isInitialized) tun.interrupt()
     }
@@ -143,7 +145,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         val dnsMode = DataStore.dnsModeFinal
         val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
         val ipv6Mode = DataStore.ipv6Mode
-        val enableExperimentalTun = DataStore.enableExperimentalTun
+        val enableExperimentalTun = DataStore.vpnMode == VpnMode.EXPERIMENTAL_FORWARDING
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
         builder.addRoute("0.0.0.0", 0)

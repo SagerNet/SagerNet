@@ -38,7 +38,10 @@ import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.broadcastReceiver
+import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import kotlinx.coroutines.*
 import java.net.UnknownHostException
 
@@ -140,10 +143,12 @@ class BaseService {
                         if (bandwidthListeners.contains(item.asBinder())) {
                             item.trafficUpdated(proxy.profile.id, stats, true)
                             outs.forEach { (profileId, stats) ->
-                                item.trafficUpdated(profileId, TrafficStats(
-                                    txRateDirect = stats.uplinkTotal,
-                                    rxTotal = stats.downlinkTotal
-                                ), false)
+                                item.trafficUpdated(
+                                    profileId, TrafficStats(
+                                        txRateDirect = stats.uplinkTotal,
+                                        rxTotal = stats.downlinkTotal
+                                    ), false
+                                )
                             }
                         }
                     }
@@ -268,12 +273,10 @@ class BaseService {
                         unregisterReceiver(data.closeReceiver)
                         data.closeReceiverRegistered = false
                     }
-                    onDefaultDispatcher {
-                        if (!keepState) {
-                            DataStore.startedProxy = 0L
-                        }
-                        data.proxy?.shutdown()
+                    if (!keepState) {
+                        DataStore.startedProxy = 0L
                     }
+                    data.proxy?.shutdown()
                     data.binder.profilePersisted(listOfNotNull(data.proxy).map { it.profile.id })
                     data.proxy = null
                 }

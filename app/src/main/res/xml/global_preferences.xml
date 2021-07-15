@@ -19,8 +19,8 @@
             app:key="appTheme" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
-            app:entries="@array/night_mode_entry"
-            app:entryValues="@array/night_mode_value"
+            app:entries="@array/night_mode"
+            app:entryValues="@array/int_array_4"
             app:icon="@drawable/ic_baseline_wb_sunny_24"
             app:key="nightTheme"
             app:title="@string/night_mode"
@@ -78,10 +78,44 @@
             app:key="enableLog"
             app:summary="@string/enable_log_sum"
             app:title="@string/enable_log" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/vpn_settings">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/vpn_mode"
+            app:entryValues="@array/int_array_2"
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="vpnMode"
+            app:title="@string/vpn_mode"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
-            app:key="enableExperimentalTun"
-            app:summary=":)"
-            app:title="Enable Experimental TUN" />
+            app:icon="@drawable/ic_baseline_fast_forward_24"
+            app:key="multiThreadForward"
+            app:summary="@string/multi_thread_forwarding_sum"
+            app:title="@string/multi_thread_forwarding" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/icmp_echo_strategy"
+            app:entryValues="@array/int_array_3"
+            app:icon="@drawable/ic_baseline_emoji_emotions_24"
+            app:key="icmpEchoStrategy"
+            app:title="@string/icmp_echo_strategy"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="50"
+            app:icon="@drawable/ic_baseline_timelapse_24"
+            app:key="icmpEchoReplyDelay"
+            app:title="@string/icmp_echo_reply_delay"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/ip_other_strategy"
+            app:entryValues="@array/int_array_2"
+            app:icon="@drawable/ic_baseline_import_contacts_24"
+            app:key="ipOtherStrategy"
+            app:title="@string/ip_other_strategy"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_route">
@@ -118,16 +152,16 @@
             app:title="@string/traffic_sniffing" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="1"
-            app:entries="@array/ipv6_mode_entry"
-            app:entryValues="@array/ipv6_mode_value"
+            app:entries="@array/ipv6_mode"
+            app:entryValues="@array/int_array_4"
             app:icon="@drawable/ic_image_looks_6"
             app:key="ipv6Mode"
             app:title="@string/ipv6"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
-            app:entries="@array/rules_dat_provider_entry"
-            app:entryValues="@array/rules_dat_provider_value"
+            app:entries="@array/rules_dat_provider"
+            app:entryValues="@array/int_array_2"
             app:icon="@drawable/ic_baseline_rule_folder_24"
             app:key="rulesProvider"
             app:title="@string/route_rules_provider"
@@ -196,8 +230,8 @@
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
-            app:entries="@array/transproxy_mode_entry"
-            app:entryValues="@array/transproxy_mode_value"
+            app:entries="@array/transproxy_mode"
+            app:entryValues="@array/int_array_2"
             app:key="transproxyMode"
             app:title="@string/transproxy_mode"
             app:useSimpleSummaryProvider="true" />

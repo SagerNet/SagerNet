@@ -8,8 +8,8 @@
 
     <com.takisoft.preferencex.SimpleMenuPreference
         app:defaultValue="0"
-        app:entries="@array/balancer_type_entry"
-        app:entryValues="@array/balancer_type_value"
+        app:entries="@array/balancer_type"
+        app:entryValues="@array/int_array_2"
         app:icon="@drawable/ic_baseline_nfc_24"
         app:key="balancerType"
         app:title="@string/balancer_type"

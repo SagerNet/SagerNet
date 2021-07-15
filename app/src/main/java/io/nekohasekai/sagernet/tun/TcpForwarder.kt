@@ -161,14 +161,6 @@ class TcpForwarder(val tun: TunThread) {
         }
 
         tun.write(packet, ipHeader.packetLength)
-
-        Logs.d(
-            "Forward tcp ${ipHeader.sourceAddress.hostAddress}:${
-                tcpHeader.sourcePort.toUShort().toInt()
-            } ==> ${ipHeader.destinationAddress}:${
-                tcpHeader.destinationPort.toUShort().toInt()
-            }"
-        )
     }
 
     inner class Forwarder : ChannelInboundHandlerAdapter() {
@@ -196,32 +188,47 @@ class TcpForwarder(val tun: TunThread) {
                 remoteIp = "127.0.0.1"
                 remotePort = tun.dnsPort
 
-                // dns redirect
-            }
+                channelFeature =
+                    Bootstrap().group(tun.outboundLoop).channel(NioSocketChannel::class.java)
+                        .handler(object : ChannelInitializer<Channel>() {
+                            override fun initChannel(channel: Channel) {
+                                channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
+                            }
+                        }).connect(remoteIp, remotePort).addListener(ChannelFutureListener {
+                            if (it.isSuccess) {
+                                session.channel?.close()
+                                session.channel = it.channel()
+                            } else {
+                                ctx.fireExceptionCaught(it.cause())
+                            }
+                        })
 
-            channelFeature =
-                Bootstrap().group(tun.outboundLoop).channel(NioSocketChannel::class.java)
-                    .handler(object : ChannelInitializer<Channel>() {
-                        override fun initChannel(channel: Channel) {
-                            channel.pipeline().addFirst(
-                                Socks5ProxyHandler(
-                                    InetSocketAddress(
-                                        "127.0.0.1", DataStore.socksPort
+            } else {
+                channelFeature =
+                    Bootstrap().group(tun.outboundLoop).channel(NioSocketChannel::class.java)
+                        .handler(object : ChannelInitializer<Channel>() {
+                            override fun initChannel(channel: Channel) {
+                                channel.pipeline().addFirst(
+                                    Socks5ProxyHandler(
+                                        InetSocketAddress(
+                                            "127.0.0.1", DataStore.socksPort
+                                        )
                                     )
                                 )
-                            )
-                            channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
-                        }
-                    }).option(ChannelOption.SO_KEEPALIVE, true)
-                    .option(ChannelOption.AUTO_CLOSE, false).option(ChannelOption.TCP_NODELAY, true)
-                    .connect(remoteIp, remotePort).addListener(ChannelFutureListener {
-                        if (it.isSuccess) {
-                            session.channel?.close()
-                            session.channel = it.channel()
-                        } else {
-                            ctx.fireExceptionCaught(it.cause())
-                        }
-                    }).await()
+                                channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
+                            }
+                        }).option(ChannelOption.SO_KEEPALIVE, true)
+                        .option(ChannelOption.AUTO_CLOSE, false)
+                        .option(ChannelOption.TCP_NODELAY, true).connect(remoteIp, remotePort)
+                        .addListener(ChannelFutureListener {
+                            if (it.isSuccess) {
+                                session.channel?.close()
+                                session.channel = it.channel()
+                            } else {
+                                ctx.fireExceptionCaught(it.cause())
+                            }
+                        })
+            }
 
         }
 

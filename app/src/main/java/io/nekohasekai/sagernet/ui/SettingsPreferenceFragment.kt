@@ -31,10 +31,7 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
-import io.nekohasekai.sagernet.DnsMode
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
@@ -189,6 +186,36 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val vpnMode = findPreference<SimpleMenuPreference>(Key.VPN_MODE)!!
+        val multiThreadForward = findPreference<SwitchPreference>(Key.MULTI_THREAD_FORWARD)!!
+        val icmpEchoStrategy = findPreference<SimpleMenuPreference>(Key.ICMP_ECHO_STRATEGY)!!
+        val icmpEchoReplyDelay = findPreference<EditTextPreference>(Key.ICMP_ECHO_REPLY_DELAY)!!
+        val ipOtherStrategy = findPreference<SimpleMenuPreference>(Key.IP_OTHER_STRATEGY)!!
+
+        fun updateVpnMode(newMode: Int) {
+            val isForwarding = newMode == VpnMode.EXPERIMENTAL_FORWARDING
+
+            multiThreadForward.isVisible = isForwarding
+            icmpEchoStrategy.isVisible = isForwarding
+            icmpEchoReplyDelay.isVisible = isForwarding
+            if (isForwarding) {
+                icmpEchoReplyDelay.isEnabled = icmpEchoStrategy.value == "${PacketStrategy.REPLY}"
+            }
+            ipOtherStrategy.isVisible = isForwarding
+        }
+
+        updateVpnMode(DataStore.vpnMode)
+        vpnMode.setOnPreferenceChangeListener { _, newValue ->
+            updateVpnMode((newValue as String).toInt())
+            needReload()
+            true
+        }
+        icmpEchoStrategy.setOnPreferenceChangeListener { _, newValue ->
+            icmpEchoReplyDelay.isEnabled = newValue == "${PacketStrategy.REPLY}"
+            needReload()
+            true
+        }
+
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -238,6 +265,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         probeIndival.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         probeIndival.onPreferenceChangeListener = reloadListener
+
+        multiThreadForward.onPreferenceChangeListener = reloadListener
+        icmpEchoReplyDelay.onPreferenceChangeListener = reloadListener
+        icmpEchoReplyDelay.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        ipOtherStrategy.onPreferenceChangeListener = reloadListener
+
     }
 
     override fun onResume() {

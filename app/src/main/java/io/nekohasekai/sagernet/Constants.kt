@@ -151,6 +151,12 @@ object Key {
     const val ROUTE_REVERSE = "routeReverse"
     const val ROUTE_REDIRECT = "routeRedirect"
 
+    const val VPN_MODE = "vpnMode"
+    const val MULTI_THREAD_FORWARD = "multiThreadForward"
+    const val ICMP_ECHO_STRATEGY = "icmpEchoStrategy"
+    const val ICMP_ECHO_REPLY_DELAY = "icmpEchoReplyDelay"
+    const val IP_OTHER_STRATEGY = "ipOtherStrategy"
+
 }
 
 object DnsMode {
@@ -165,6 +171,17 @@ object IPv6Mode {
     const val ENABLE = 1
     const val PREFER = 2
     const val ONLY = 3
+}
+
+object VpnMode {
+    const val TUN2SOCKS = 0
+    const val EXPERIMENTAL_FORWARDING = 1
+}
+
+object PacketStrategy {
+    const val DIRECT = 0
+    const val DROP = 1
+    const val REPLY = 2
 }
 
 object Action {

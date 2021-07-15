@@ -490,7 +490,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         }
     }
 
-    fun shutdown() {
+    suspend fun shutdown() {
         persistStats()
         cacheFiles.removeAll { it.delete(); true }
 

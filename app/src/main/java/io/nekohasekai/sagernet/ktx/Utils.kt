@@ -32,6 +32,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.res.Resources
+import android.net.NetworkUtils
 import android.os.Build
 import android.os.SystemClock
 import android.system.Os
@@ -261,3 +262,11 @@ const val isExpert = BuildConfig.FLAVOR == "expert"
 const val USE_STATS_SERVICE = false
 
 val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+
+fun protectFromVpn(fileDescriptor: FileDescriptor): Boolean {
+    return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+        NetworkUtils.protectFromVpn(fileDescriptor)
+    } else {
+        NetworkUtils.protectFromVpn(fileDescriptor.int)
+    }
+}

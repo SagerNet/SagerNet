@@ -127,7 +127,7 @@ object DefaultNetworkListener {
             fallback = false
             // we want REQUEST here instead of LISTEN
             SagerNet.connectivity.requestNetwork(request, Callback)
-        } catch (e: SecurityException) {
+        } catch (e: RuntimeException) {
             // known bug: https://stackoverflow.com/a/33509180/2245107
             if (Build.VERSION.SDK_INT != 23) Logs.w(e)
             fallback = true

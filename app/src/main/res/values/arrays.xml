@@ -493,12 +493,12 @@
         <item>4</item>
     </string-array>
 
-    <string-array name="transproxy_mode_entry">
+    <string-array name="transproxy_mode">
         <item>REDIRECT</item>
         <item>TPROXY</item>
     </string-array>
 
-    <string-array name="transproxy_mode_value">
+    <string-array name="int_array_2">
         <item>0</item>
         <item>1</item>
     </string-array>
@@ -533,49 +533,34 @@
         <item>trojan-go</item>
     </string-array>
 
-    <string-array name="night_mode_entry">
+    <string-array name="night_mode">
         <item>@string/follow_system</item>
         <item>@string/enable</item>
         <item>@string/disable</item>
         <item>@string/auto</item>
     </string-array>
-    <string-array name="night_mode_value">
+    <string-array name="int_array_4">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
 
-    <string-array name="ipv6_mode_entry">
+    <string-array name="ipv6_mode">
         <item>@string/disable</item>
         <item>@string/enable</item>
         <item>@string/prefer</item>
         <item>@string/only</item>
     </string-array>
-    <string-array name="ipv6_mode_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="rules_dat_provider_entry">
+    <string-array name="rules_dat_provider">
         <item>@string/route_rules_official</item>
         <item>Loyalsoldier/v2ray-rules-dat</item>
     </string-array>
 
-    <string-array name="rules_dat_provider_value">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
-    <string-array name="balancer_type_entry">
+    <string-array name="balancer_type">
         <item>@string/list</item>
         <item>@string/menu_group</item>
-    </string-array>
-    <string-array name="balancer_type_value">
-        <item>0</item>
-        <item>1</item>
     </string-array>
 
     <string-array name="balancer_strategy_entry">
@@ -585,6 +570,28 @@
     <string-array name="balancer_strategy_value">
         <item />
         <item>leastPing</item>
+    </string-array>
+
+    <string-array name="vpn_mode">
+        <item>Tun2socks</item>
+        <item>@string/vpn_mode_forwarding</item>
+    </string-array>
+
+    <string-array name="icmp_echo_strategy">
+        <item>@string/drop</item>
+        <item>@string/direct</item>
+        <item>@string/reply</item>
+    </string-array>
+
+    <string-array name="int_array_3">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="ip_other_strategy">
+        <item>@string/drop</item>
+        <item>@string/direct</item>
     </string-array>
 
 </resources>
