@@ -286,9 +286,5 @@ const val USE_STATS_SERVICE = false
 val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()
 
 fun protectFromVpn(fileDescriptor: FileDescriptor): Boolean {
-    return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
-        NetworkUtils.protectFromVpn(fileDescriptor)
-    } else {
-        NetworkUtils.protectFromVpn(fileDescriptor.int)
-    }
+    return NetworkUtils.protectFromVpn(fileDescriptor.int)
 }
