@@ -75,6 +75,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
     lateinit var output: FileOutputStream
     fun write(data: ByteArray, length: Int) {
         output.write(data, 0, length)
+        output.flush()
     }
 
     @Volatile

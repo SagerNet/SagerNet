@@ -55,6 +55,10 @@ public class IPv6Header extends IPHeader {
         return readShort(offset + OFFSET_PAYLOAD_LEN);
     }
 
+    public void setPayloadLength(int length) {
+        writeShort((short) length, offset + OFFSET_PAYLOAD_LEN);
+    }
+
     public int getNextHeader() {
         return readInt8(offset + OFFSET_NEXT_HEADER);
     }
@@ -89,7 +93,8 @@ public class IPv6Header extends IPHeader {
 
     @Override
     public int getHeaderLength() {
-        return packetLength - offset - getPayloadLength();
+        getProtocol();
+        return headerOffset;
     }
 
     private transient int headerOffset;
@@ -102,7 +107,7 @@ public class IPv6Header extends IPHeader {
         }
         int nextHeader = getNextHeader();
         int nextOffset = offset + OFFSET_HEADER;
-        int headerOffset = getHeaderLength();
+        int headerOffset = packetLength - offset - getPayloadLength();
         while (nextOffset < headerOffset && nextHeader != NetUtils.IPPROTO_ICMP && nextHeader != NetUtils.IPPROTO_ICMPv6 && nextHeader != NetUtils.IPPROTO_TCP && nextHeader != NetUtils.IPPROTO_UDP) {
             nextHeader = readInt8(nextOffset);
             int optDataLen = readInt8(nextOffset + 1);

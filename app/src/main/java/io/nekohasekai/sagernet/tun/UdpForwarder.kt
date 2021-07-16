@@ -29,7 +29,6 @@ import cn.hutool.core.util.ArrayUtil
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
-import io.nekohasekai.sagernet.fmt.IP6_LOCALHOST
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
 import io.nekohasekai.sagernet.ktx.Logs
@@ -107,16 +106,15 @@ class UdpForwarder(val tun: TunThread) {
                 } else if (session.uid == 0) {
                     session.packages = arrayOf("root")
                 }
-                if (!session.packages.isNullOrEmpty()) {
-                    if (!session.packages!!.contains(BuildConfig.APPLICATION_ID)) {
-                        Logs.d(
-                            "Accepted udp connection from ${session.packages?.joinToString() ?: "unknown app"}: ${ipHeader.sourceAddress.hostAddress}:${
-                                udpHeader.sourcePort.toUShort().toInt()
-                            } ==> ${ipHeader.destinationAddress}:${
-                                udpHeader.destinationPort.toUShort().toInt()
-                            }"
-                        )
-                    }
+
+                if (session.packages?.contains(BuildConfig.APPLICATION_ID) == false) {
+                    Logs.d(
+                        "Accepted udp connection from ${session.packages?.joinToString() ?: "unknown app"}: ${ipHeader.sourceAddress.hostAddress}:${
+                            udpHeader.sourcePort.toUShort().toInt()
+                        } ==> ${ipHeader.destinationAddress}:${
+                            udpHeader.destinationPort.toUShort().toInt()
+                        }"
+                    )
                 }
             } else if (tun.enableLog) {
                 Logs.d(
@@ -134,9 +132,7 @@ class UdpForwarder(val tun: TunThread) {
         val data = Unpooled.wrappedBuffer(udpHeader.data())
 
         val message: Any = if (session.isDns) DatagramPacket(
-            data, InetSocketAddress(
-                if (ipHeader is IPv4Header) LOCALHOST else IP6_LOCALHOST, tun.dnsPort
-            )
+            data, InetSocketAddress(LOCALHOST, tun.dnsPort)
         ) else DefaultSocks5UdpMessage(
             (0).toByte(),
             if (ipHeader is IPv4Header) Socks5AddressType.IPv4 else Socks5AddressType.IPv6,
@@ -145,21 +141,7 @@ class UdpForwarder(val tun: TunThread) {
             data
         )
 
-        if (session.future.isDone) {
-            if (session.future.isSuccess) {
-                session.future.now.writeAndFlush(message)
-            } else {
-                Logs.w("Session connect error", session.future.cause())
-            }
-        } else {
-            session.future.addListener {
-                if (it.isSuccess) {
-                    session.future.now.writeAndFlush(message)
-                } else {
-                    Logs.w("Session connect error", it.cause())
-                }
-            }
-        }
+        session.future.sync().get().writeAndFlush(message)
     }
 
     inner class UdpSession(var udpHeader: UDPHeader) : ChannelInboundHandlerAdapter() {
@@ -177,6 +159,7 @@ class UdpForwarder(val tun: TunThread) {
         var packages: Array<String>? = null
         var isDns = false
         var isSelf = false
+        var template = createTemplate(udpHeader).header()
 
         private val promise = DefaultPromise<Channel>(GlobalEventExecutor.INSTANCE)
         val future: Future<Channel> get() = promise
@@ -188,11 +171,7 @@ class UdpForwarder(val tun: TunThread) {
             ) {
                 isDns = true
                 Bootstrap().group(tun.outboundLoop).channel(NioDatagramChannel::class.java)
-                    .handler(object : ChannelInitializer<Channel>() {
-                        override fun initChannel(channel: Channel) {
-                            channel.pipeline().addLast(this@UdpSession)
-                        }
-                    }).connect(LOCALHOST, tun.dnsPort)
+                    .handler(this).connect(LOCALHOST, tun.dnsPort)
             } else {
                 Bootstrap().group(tun.outboundLoop).channel(NioDatagramChannel::class.java)
                     .handler(object : ChannelInitializer<Channel>() {
@@ -219,18 +198,10 @@ class UdpForwarder(val tun: TunThread) {
         }
 
         private fun createTemplate(udpHeader: UDPHeader): UDPHeader {
-            val templateUdp = udpHeader.copy()
-            val templateIp = templateUdp.ipHeader
-
-            val sourceIp = templateIp.sourceAddress
-            val destinationIp = templateIp.destinationAddress
-            templateIp.sourceAddress = destinationIp
-            templateIp.destinationAddress = sourceIp
-            val sourcePort = templateUdp.sourcePort
-            val destinationPort = templateUdp.destinationPort
-            templateUdp.destinationPort = sourcePort
-            templateUdp.sourcePort = destinationPort
-            return templateUdp
+            return udpHeader.copy().apply {
+                ipHeader.revertAddress()
+                revertPort()
+            }
         }
 
 
@@ -243,7 +214,7 @@ class UdpForwarder(val tun: TunThread) {
 
         fun sendResponse(data: ByteArray) {
 
-            val packet = ArrayUtil.addAll(createTemplate(udpHeader).header(), data)
+            val packet = ArrayUtil.addAll(template, data)
 
             if (packet.size > VpnService.VPN_MTU) {
                 Logs.w("Ingoing too big udp package, size: ${packet.size}")
@@ -258,6 +229,7 @@ class UdpForwarder(val tun: TunThread) {
                 ipHeader.updateChecksum()
             } else {
                 ipHeader = IPv6Header(packet)
+                ipHeader.payloadLength = ipHeader.packetLength - ipHeader.headerLength
             }
 
             val udpHeader = UDPHeader(ipHeader)
@@ -267,13 +239,14 @@ class UdpForwarder(val tun: TunThread) {
 
             tun.write(packet, ipHeader.packetLength)
 
-
+            if (isDns) udpSessions.remove(localPort)
         }
 
         override fun exceptionCaught(
             ctx: ChannelHandlerContext, cause: Throwable
         ) {
             ctx.close()
+            if (tun.enableLog) Logs.w(cause)
         }
 
     }

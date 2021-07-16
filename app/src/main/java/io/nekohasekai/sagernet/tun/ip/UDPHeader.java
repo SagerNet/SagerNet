@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 
 import java.util.Locale;
 
+import cn.hutool.core.util.ArrayUtil;
+
 /**
  * The UDP module  must be able to determine the source and destination internet addresses and
  * the protocol field from the internet header.
@@ -79,6 +81,12 @@ public class UDPHeader extends Header {
 
     public void setDestinationPort(short port) {
         writeShort(port, offset + OFFSET_DEST_PORT);
+    }
+
+    public void revertPort() {
+        byte[] srcIp = ArrayUtil.sub(packet, offset + OFFSET_SRC_PORT, offset + OFFSET_SRC_PORT + 2);
+        System.arraycopy(packet, offset + OFFSET_DEST_PORT, packet, offset + OFFSET_SRC_PORT, 2);
+        System.arraycopy(srcIp, 0, packet, offset + OFFSET_DEST_PORT, 2);
     }
 
     public short getCrc() {

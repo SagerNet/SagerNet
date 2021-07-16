@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -37,7 +36,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
@@ -591,7 +589,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             testJobs.joinAll()
             testPool.close()
 
-            ProfileManager.updateProfile(test.results)
+            ProfileManager.updateProfile(test.results.filter { it.status != 0 })
 
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
@@ -602,7 +600,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             mainJob.cancel()
             testJobs.forEach { it.cancel() }
             runOnDefaultDispatcher {
-                ProfileManager.updateProfile(test.results)
+                ProfileManager.updateProfile(test.results.filter { it.status != 0 })
             }
         }
     }
@@ -662,7 +660,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             testJobs.joinAll()
             testPool.close()
 
-            ProfileManager.updateProfile(test.results)
+            ProfileManager.updateProfile(test.results.filter { it.status != 0 })
 
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
@@ -673,7 +671,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             mainJob.cancel()
             testJobs.forEach { it.cancel() }
             runOnDefaultDispatcher {
-                ProfileManager.updateProfile(test.results)
+                ProfileManager.updateProfile(test.results.filter { it.status != 0 })
             }
         }
     }
