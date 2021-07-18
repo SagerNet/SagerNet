@@ -323,6 +323,7 @@ fun VMessBean.toV2rayN(): String {
         it["aid"] = alterId
         it["net"] = type
         it["host"] = host
+        it["path"] = path
         it["type"] = headerType
 
         when (headerType) {
