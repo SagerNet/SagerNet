@@ -48,7 +48,6 @@ import org.yaml.snakeyaml.error.YAMLException
 import java.io.IOException
 import java.sql.SQLException
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 object ProfileManager {
@@ -622,7 +621,7 @@ object ProfileManager {
                         } else for (user in it.users) proxies.add(httpBeanNext.clone().apply {
                             username = user.user
                             password = user.pass
-                            name = displayName() + " - $username"
+                            name = tag ?: displayName() + " - $username"
                         })
                     }
                 }
@@ -648,7 +647,7 @@ object ProfileManager {
                         } else for (user in it.users) proxies.add(socksBeanNext.clone().apply {
                             username = user.user
                             password = user.pass
-                            name = displayName() + " - $username"
+                            name = tag ?: displayName() + " - $username"
                         })
                     }
                 }
@@ -776,7 +775,7 @@ object ProfileManager {
                                     uuid = user.id
                                     encryption = user.security
                                     alterId = user.alterId
-                                    name = displayName() + " - ${user.security} - ${user.id}"
+                                    name = tag ?: displayName() + " - ${user.security} - ${user.id}"
                                 })
                             }
                         }
@@ -791,7 +790,7 @@ object ProfileManager {
                                 proxies.add(vlessBean.clone().apply {
                                     uuid = user.id
                                     encryption = user.encryption
-                                    name = displayName() + " - ${user.id}"
+                                    name = tag ?: displayName() + " - ${user.id}"
                                 })
                             }
                         }
@@ -799,6 +798,7 @@ object ProfileManager {
                 }
                 "shadowsocks" -> (settings.value as? ShadowsocksOutboundConfigurationObject)?.servers?.forEach {
                     proxies.add(ShadowsocksBean().applyDefaultValues().apply {
+                        name = tag
                         serverAddress = it.address
                         serverPort = it.port
                         method = it.method
@@ -829,6 +829,7 @@ object ProfileManager {
 
                         (settings.value as? TrojanOutboundConfigurationObject)?.servers?.forEach {
                             proxies.add(trojanBean.clone().apply {
+                                name = tag
                                 serverAddress = it.address
                                 serverPort = it.port
                                 password = it.password
