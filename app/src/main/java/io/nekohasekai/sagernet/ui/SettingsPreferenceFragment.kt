@@ -141,6 +141,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         bypassLanInCoreOnly.isEnabled = bypassLan.isChecked
         bypassLan.setOnPreferenceChangeListener { _, newValue ->
             bypassLanInCoreOnly.isEnabled = newValue as Boolean
+            needReload()
             true
         }
 
