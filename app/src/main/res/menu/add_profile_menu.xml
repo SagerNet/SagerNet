@@ -83,7 +83,9 @@
     <item
         android:id="@+id/action_clear_traffic_statistics"
         android:title="@string/clear_traffic_statistics" />
-    <item android:title="@string/connection_test">
+    <item
+        android:id="@+id/action_connection_test"
+        android:title="@string/connection_test">
         <menu>
             <item
                 android:id="@+id/action_connection_icmp_ping"
@@ -94,6 +96,9 @@
             <item
                 android:id="@+id/action_connection_url_test"
                 android:title="@string/connection_test_url_test" />
+            <item
+                android:id="@+id/action_connection_url_reuse"
+                android:title="@string/connection_test_url_test_reuse_mode" />
             <item
                 android:id="@+id/action_connection_reorder"
                 android:title="@string/connection_test_reorder" />

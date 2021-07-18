@@ -58,8 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import libv2ray.Libv2ray
 import libv2ray.V2RayVPNServiceSupportsSet
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import okhttp3.internal.closeQuietly
 import java.io.File
 import java.io.IOException
@@ -157,7 +156,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
     lateinit var wsForwarder: WebView
 
-    suspend fun doTest(): Int {
+    suspend fun doTest(testTimes: Int): Int {
         return suspendCancellableCoroutine { thiz ->
             continuation = thiz
             runOnDefaultDispatcher {
@@ -365,51 +364,80 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                     }
 
                     val timeout = Duration.ofMillis(5 * 1000L)
-
-                    if (config.requireWs) delay(3000L) else delay(500L)
                     val okHttpClient = OkHttpClient.Builder()
                         .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", currentPort)))
                         .connectTimeout(timeout).callTimeout(timeout).readTimeout(timeout)
                         .writeTimeout(timeout).build()
-                    val start = SystemClock.elapsedRealtime()
-                    okHttpClient.newCall(
+
+                    fun newCall() = okHttpClient.newCall(
                         Request.Builder().url(DataStore.connectionTestURL)
                             .addHeader("Connection", "close").addHeader("User-Agent", "curl/7.74.0")
                             .build()
-                    ).apply {
-                        val response = try {
-                            execute()
-                        } catch (e: IOException) {
-                            destroy()
-                            continuation.tryResumeWithException(e)
-                            return@runOnDefaultDispatcher
+                    )
+
+                    newCall().enqueue(object : Callback {
+
+                        var times = testTimes
+                        var start = if (times == 1) SystemClock.elapsedRealtime() else 0L
+
+                        fun recall() {
+                            if (times < 2) start = SystemClock.elapsedRealtime()
+                            newCall().enqueue(this)
                         }
 
-                        val code = response.code
-                        val elapsed = SystemClock.elapsedRealtime() - start
-                        response.closeQuietly()
-                        destroy()
-
-                        if (code == 204 || code == 200) {
-                            continuation.tryResume(elapsed.toInt())
-                        } else {
-                            continuation.tryResumeWithException(
-                                IOException(
-                                    app.getString(
-                                        R.string.connection_test_error_status_code, code
+                        override fun onFailure(call: Call, e: IOException) {
+                            runOnDefaultDispatcher {
+                                if (e.readableMessage.contains("failed to connect to /127.0.0.1") && e.readableMessage.contains(
+                                        "ECONNREFUSED"
                                     )
-                                )
-                            )
+                                ) {
+                                    delay(500L)
+                                    recall()
+                                } else {
+                                    destroy()
+                                    continuation.tryResumeWithException(e)
+                                }
+                            }
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+
+                            if (response.isSuccessful && times > 1) {
+                                times--
+                                recall()
+                                return
+                            }
+
+                            val elapsed = SystemClock.elapsedRealtime() - start
+
+                            runOnDefaultDispatcher {
+                                val code = response.code
+                                response.closeQuietly()
+                                destroy()
+
+                                if (code == 204 || code == 200) {
+                                    continuation.tryResume(elapsed.toInt())
+                                } else {
+                                    continuation.tryResumeWithException(
+                                        IOException(
+                                            app.getString(
+                                                R.string.connection_test_error_status_code, code
+                                            )
+                                        )
+                                    )
+                                }
+                            }
 
                         }
-                    }
+                    })
+
                 }.onFailure {
                     Logs.w(it)
                     destroy()
                     continuation.tryResumeWithException(it)
                 }
-
             }
+
         }
 
     }

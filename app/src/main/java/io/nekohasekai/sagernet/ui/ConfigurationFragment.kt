@@ -99,6 +99,11 @@ class ConfigurationFragment @JvmOverloads constructor(
         super.onViewCreated(view, savedInstanceState)
         if (!select) {
             toolbar.inflateMenu(R.menu.add_profile_menu)
+
+            if (!isExpert) {
+                toolbar.menu.findItem(R.id.action_connection_test).subMenu.removeItem(R.id.action_connection_url_reuse)
+            }
+
             toolbar.setOnMenuItemClickListener(this)
         } else {
             toolbar.setTitle(R.string.select_profile)
@@ -369,7 +374,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                 pingTest(false)
             }
             R.id.action_connection_url_test -> {
-                urlTest()
+                urlTest(false)
+            }
+            R.id.action_connection_url_reuse -> {
+                urlTest(true)
             }
             R.id.action_connection_reorder -> {
                 runOnDefaultDispatcher {
@@ -620,7 +628,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    fun urlTest() {
+    fun urlTest(reuse: Boolean) {
         val test = TestDialog()
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
@@ -654,8 +662,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
 
                         try {
-                            val result =
-                                TestInstance(requireContext(), profile, currentPort).doTest()
+                            val result = TestInstance(
+                                requireContext(), profile, currentPort
+                            ).doTest(if (reuse) 2 else 1)
                             profile.status = 1
                             profile.ping = result
                         } catch (e: PluginManager.PluginNotFoundException) {

@@ -369,7 +369,8 @@
     <string name="connection_test_tcp_ping_unavailable">TCPing unavailable</string>
     <string name="connection_test_icmp_ping" translatable="false">ICMPing</string>
     <string name="connection_test_icmp_ping_unavailable">ICMPing unavailable</string>
-    <string name="connection_test_url_test" translatable="false">URLTest</string>
+    <string name="connection_test_url_test" translatable="false">URL Test</string>
+    <string name="connection_test_url_test_reuse_mode" translatable="false">URL Reuse</string>
     <string name="connection_test_reorder">Reorder by delay</string>
 
     <string name="connection_test_domain_not_found">Domain not found</string>
