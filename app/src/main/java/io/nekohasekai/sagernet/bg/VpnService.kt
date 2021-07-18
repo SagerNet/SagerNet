@@ -166,6 +166,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 val subnet = Subnet.fromString(it)!!
                 builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
             }
+            builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
             // https://issuetracker.google.com/issues/149636790
             if (ipv6Mode != IPv6Mode.DISABLE) {
                 builder.addRoute("2000::", 3)
@@ -253,7 +254,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        builder.setBlocking(true)
+        builder.setBlocking(enableExperimentalTun)
         conn = builder.establish() ?: throw NullConnectionException()
 
         if (!enableExperimentalTun) {

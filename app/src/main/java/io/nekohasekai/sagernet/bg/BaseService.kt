@@ -343,6 +343,7 @@ class BaseService {
                     stopRunner(false, getString(R.string.invalid_server))
                 } catch (exc: Throwable) {
                     if (exc is ExpectedException) Logs.d(exc.readableMessage) else Logs.w(exc)
+                    Logs.w(exc)
                     stopRunner(
                         false, "${getString(R.string.service_failed)}: ${exc.readableMessage}"
                     )
