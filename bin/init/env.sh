@@ -36,14 +36,14 @@ fi
 
 if [ ! $(command -v go) ]; then
   if [ -d /usr/lib/go-1.16 ]; then
-    export PATH=$PATH:/usr/lib/go-1.16/bin
+    export PATH="$PATH:/usr/lib/go-1.16/bin"
   elif [ -d $HOME/.go ]; then
-    export PATH=$PATH:$HOME/.go/bin
+    export PATH="$PATH:$HOME/.go/bin"
   fi
 fi
 
 if [ $(command -v go) ]; then
-  export PATH=$PATH:$(go env GOPATH)/bin
+  export PATH="$PATH:$(go env GOPATH)/bin"
 fi
 
 DEPS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
