@@ -125,10 +125,13 @@
             app:summary="@string/proxied_apps_summary"
             app:title="@string/proxied_apps" />
         <SwitchPreference
-            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_legend_toggle_24"
             app:key="bypassLan"
             app:title="@string/route_opt_bypass_lan" />
+        <SwitchPreference
+            android:summary="@string/bypass_lan_in_core_only_sum"
+            app:key="bypassLanInCoreOnly"
+            app:title="@string/bypass_lan_in_core_only" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="IPIfNonMatch"
             app:entries="@array/domain_strategy"

@@ -74,8 +74,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
     var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }
 
-    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { false }
-
+    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
+    var bypassLanInCoreOnly by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE_ONLY)
+    
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
@@ -83,7 +84,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var systemDns by configurationStore.string(Key.SYSTEM_DNS) { "1.1.1.1" }
     var localDns by configurationStore.string(Key.LOCAL_DNS) { "https://1.1.1.1/dns-query" }
-    var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS) { false }
+    var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS)
     var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "https+local://223.5.5.5/dns-query" }
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }

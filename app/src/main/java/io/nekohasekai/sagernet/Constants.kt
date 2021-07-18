@@ -56,6 +56,7 @@ object Key {
     const val DOMAIN_MATCHER = "domainMatcher"
     const val TRAFFIC_SNIFFING = "trafficSniffing"
     const val BYPASS_LAN = "bypassLan"
+    const val BYPASS_LAN_IN_CORE_ONLY = "bypassLanInCoreOnly"
 
     const val SOCKS_PORT = "socksPort"
     const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"

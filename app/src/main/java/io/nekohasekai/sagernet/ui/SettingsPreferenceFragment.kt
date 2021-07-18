@@ -135,7 +135,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
         val tcpKeepAliveInterval = findPreference<EditTextPreference>(Key.TCP_KEEP_ALIVE_INTERVAL)!!
 
-        val bypassLan = findPreference<Preference>(Key.BYPASS_LAN)!!
+        val bypassLan = findPreference<SwitchPreference>(Key.BYPASS_LAN)!!
+        val bypassLanInCoreOnly = findPreference<SwitchPreference>(Key.BYPASS_LAN_IN_CORE_ONLY)!!
+
+        bypassLanInCoreOnly.isEnabled = bypassLan.isChecked
+        bypassLan.setOnPreferenceChangeListener { _, newValue ->
+            bypassLanInCoreOnly.isEnabled = newValue as Boolean
+            true
+        }
 
         val forceShadowsocksRust = findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
         if (!isExpert) {
@@ -247,7 +254,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         enableMuxForAll.onPreferenceChangeListener = reloadListener
         muxConcurrency.onPreferenceChangeListener = reloadListener
         tcpKeepAliveInterval.onPreferenceChangeListener = reloadListener
-        bypassLan.onPreferenceChangeListener = reloadListener
+        bypassLanInCoreOnly.onPreferenceChangeListener = reloadListener
         forceShadowsocksRust.onPreferenceChangeListener = reloadListener
 
         systemDns.onPreferenceChangeListener = reloadListener

@@ -41,6 +41,7 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.tun.TunThread
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
+import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -148,7 +149,6 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         val enableExperimentalTun = DataStore.vpnMode == VpnMode.EXPERIMENTAL_FORWARDING
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
-        builder.addRoute("0.0.0.0", 0)
         if (useFakeDns) {
             builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
         }
@@ -159,7 +159,22 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             if (useFakeDns) {
                 builder.addAddress(FAKEDNS_VLAN6_CLIENT, 18)
             }
-            builder.addRoute("::", 0)
+        }
+
+        if (DataStore.bypassLan && !DataStore.bypassLanInCoreOnly) {
+            resources.getStringArray(R.array.bypass_private_route).forEach {
+                val subnet = Subnet.fromString(it)!!
+                builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
+            }
+            // https://issuetracker.google.com/issues/149636790
+            if (ipv6Mode != IPv6Mode.DISABLE) {
+                builder.addRoute("2000::", 3)
+            }
+        } else {
+            builder.addRoute("0.0.0.0", 0)
+            if (ipv6Mode != IPv6Mode.DISABLE) {
+                builder.addRoute("::", 0)
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
