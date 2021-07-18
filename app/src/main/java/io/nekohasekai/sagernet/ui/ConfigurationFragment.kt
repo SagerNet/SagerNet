@@ -148,7 +148,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val selectedProfileIndex =
                     fragment.adapter.configurationIdList.indexOf(selectedProxy)
                 if (selectedProfileIndex != -1) {
-                    val layoutManager = fragment.layoutManager as LinearLayoutManager
+                    val layoutManager = fragment.layoutManager
                     val first = layoutManager.findFirstVisibleItemPosition()
                     val last = layoutManager.findLastVisibleItemPosition()
 
@@ -368,6 +368,18 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_connection_url_test -> {
                 urlTest()
+            }
+            R.id.action_connection_reorder -> {
+                runOnDefaultDispatcher {
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val sorted = profiles.sortedBy { if (it.status == 1) it.ping else 114514 }
+                    for (index in sorted.indices) {
+                        sorted[index].userOrder = (index + 1).toLong()
+                    }
+                    SagerDatabase.proxyDao.updateProxy(sorted)
+                    ProfileManager.postReload(DataStore.selectedGroup)
+
+                }
             }
         }
         return true
@@ -613,9 +625,9 @@ class ConfigurationFragment @JvmOverloads constructor(
         val mainJob = runOnDefaultDispatcher {
             val profiles =
                 ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
-            val testPool = newFixedThreadPoolContext(3, "Connection test pool")
+            val testPool = newFixedThreadPoolContext(5, "Connection test pool")
             val port = AtomicInteger(DataStore.socksPort + 100)
-            repeat(3) {
+            repeat(5) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
@@ -1093,8 +1105,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 var selectedProfileIndex = -1
 
-                if (selected && !scrolled) {
-                    scrolled = true
+                if (selected) {
                     val selectedProxy = selectedItem?.id ?: DataStore.selectedProxy
                     selectedProfileIndex = newProfiles.indexOf(selectedProxy)
                 }
@@ -1106,6 +1117,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                     if (selectedProfileIndex != -1) {
                         configurationListView.scrollTo(selectedProfileIndex, true)
+                    } else if (newProfiles.isNotEmpty()) {
+                        configurationListView.scrollTo(0, true)
                     }
 
                 }

@@ -95,6 +95,9 @@
                 android:id="@+id/action_connection_url_test"
                 android:title="@string/connection_test_url_test" />
             <item
+                android:id="@+id/action_connection_reorder"
+                android:title="@string/connection_test_reorder" />
+            <item
                 android:id="@+id/action_connection_test_clear_results"
                 android:title="@string/connection_test_clear_results" />
         </menu>
