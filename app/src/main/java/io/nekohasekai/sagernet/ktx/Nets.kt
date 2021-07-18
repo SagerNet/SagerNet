@@ -28,6 +28,7 @@ import inet.ipaddr.IPAddressString
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -80,6 +81,14 @@ fun String.unwrapHost(): String {
         return substring(1, length - 1).unwrapHost()
     }
     return this
+}
+
+fun AbstractBean.wrapUri(): String {
+    return if (Validator.isIpv6(serverAddress)) {
+        "[$finalAddress]:$finalPort"
+    } else {
+        "$finalAddress:$finalPort"
+    }
 }
 
 fun parseAddress(addressArray: ByteArray) = InetAddress.getByAddress(addressArray)

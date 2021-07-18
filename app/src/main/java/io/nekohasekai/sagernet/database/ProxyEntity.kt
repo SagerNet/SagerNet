@@ -32,11 +32,11 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
-import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
@@ -281,7 +281,7 @@ data class ProxyEntity(
         return with(requireBean()) {
             when (this) {
                 is ShadowsocksRBean -> buildShadowsocksRConfig()
-                is TrojanGoBean -> buildTrojanGoConfig(DataStore.socksPort, false, 0)
+                is TrojanGoBean -> buildTrojanGoConfig(DataStore.socksPort, false)
                 is NaiveBean -> buildNaiveConfig(DataStore.socksPort)
                 is RelayBatonBean -> {
                     name = "profile.toml"
@@ -314,7 +314,7 @@ data class ProxyEntity(
                                     append("\n\n")
                                     append(
                                         bean.buildTrojanGoConfig(
-                                            port, needChain, index
+                                            port, index == 0 && DataStore.enableMux
                                         )
                                     )
                                 }

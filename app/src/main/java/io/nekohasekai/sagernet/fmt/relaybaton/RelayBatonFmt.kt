@@ -40,10 +40,7 @@ fun parseRelayBaton(link: String): RelayBatonBean {
 }
 
 fun RelayBatonBean.toUri(): String {
-    val builder = linkBuilder()
-        .host(serverAddress)
-        .username(username)
-        .password(password)
+    val builder = linkBuilder().host(serverAddress).username(username).password(password)
 
     if (name.isNotBlank()) {
         builder.encodedFragment(name.urlSafe())
@@ -58,7 +55,7 @@ fun RelayBatonBean.buildRelayBatonConfig(port: Int): String {
         port = $port
         http_port = 0
         redir_port = 0
-        server = "$serverAddress"
+        server = "$finalAddress"
         username = "$username"
         password = "$password"
         proxy_all = true

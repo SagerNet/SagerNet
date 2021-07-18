@@ -107,22 +107,20 @@ fun TrojanGoBean.toUri(): String {
     return builder.toLink("trojan-go")
 }
 
-fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): String {
+fun TrojanGoBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
     return JSONObject().also { conf ->
         conf["run_type"] = "client"
         conf["local_addr"] = "127.0.0.1"
         conf["local_port"] = port
-        conf["remote_addr"] = serverAddress
-        conf["remote_port"] = serverPort
+        conf["remote_addr"] = finalAddress
+        conf["remote_port"] = finalPort
         conf["password"] = JSONArray().apply {
             add(password)
         }
         conf["log_level"] = if (DataStore.enableLog) 0 else 2
-        if (index == 0 && DataStore.enableMux) {
-            conf["mux"] = JSONObject().also {
-                it["enabled"] = true
-                it["concurrency"] = DataStore.muxConcurrency
-            }
+        if (mux) conf["mux"] = JSONObject().also {
+            it["enabled"] = true
+            it["concurrency"] = DataStore.muxConcurrency
         }
         conf["tcp"] = JSONObject().also {
             it["prefer_ipv4"] = DataStore.ipv6Mode <= IPv6Mode.ENABLE
@@ -162,12 +160,6 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, chain: Boolean, index: Int): Str
                     it["option"] = opts.toString()
                 }
             }
-        }
-
-        if (chain) conf["forward_proxy"] = JSONObject().also {
-            it["enabled"] = true
-            it["proxy_addr"] = "127.0.0.1"
-            it["proxy_port"] = port + 1
         }
     }.toStringPretty()
 }

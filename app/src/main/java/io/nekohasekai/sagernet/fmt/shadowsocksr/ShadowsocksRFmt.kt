@@ -76,8 +76,8 @@ fun ShadowsocksRBean.toUri(): String {
 
 fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
     return JSONObject().also {
-        it["server"] = serverAddress
-        it["server_port"] = serverPort
+        it["server"] = finalAddress
+        it["server_port"] = finalPort
         it["method"] = method
         it["password"] = password
         it["protocol"] = protocol

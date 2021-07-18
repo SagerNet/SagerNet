@@ -62,6 +62,7 @@ import java.io.FileDescriptor
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.Socket
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -287,4 +288,18 @@ val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()
 
 fun protectFromVpn(fileDescriptor: FileDescriptor): Boolean {
     return NetworkUtils.protectFromVpn(fileDescriptor.int)
+}
+
+fun <T> Continuation<T>.tryResume(value: T) {
+    try {
+        resumeWith(Result.success(value))
+    } catch (ignored: IllegalStateException) {
+    }
+}
+
+fun <T> Continuation<T>.tryResumeWithException(exception: Throwable) {
+    try {
+        resumeWith(Result.failure(exception))
+    } catch (ignored: IllegalStateException) {
+    }
 }

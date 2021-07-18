@@ -234,7 +234,7 @@ fun BrookBean.toUri(): String {
 }
 
 fun BrookBean.internalUri(): String {
-    var server = "${serverAddress}:${serverPort}"
+    var server = wrapUri()
     server = when (protocol) {
         "ws" -> "ws://"
         "wss" -> "wss://"

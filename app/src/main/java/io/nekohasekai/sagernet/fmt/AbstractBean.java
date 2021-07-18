@@ -40,6 +40,9 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
     public int serverPort;
     public String name;
 
+    public transient String finalAddress;
+    public transient int finalPort;
+
     public String displayName() {
         if (StrUtil.isNotBlank(name)) {
             return name;
@@ -70,6 +73,9 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
             serverPort = 1080;
         }
         if (name == null) name = "";
+
+        finalAddress = serverAddress;
+        finalPort = serverPort;
     }
 
     public void serializeFull(ByteBufferOutput output) {

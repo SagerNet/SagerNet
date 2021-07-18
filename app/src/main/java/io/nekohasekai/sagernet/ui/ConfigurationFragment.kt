@@ -56,6 +56,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.bg.Executable
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
@@ -71,6 +72,7 @@ import io.nekohasekai.sagernet.utils.TestInstance
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -627,6 +629,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
             val port = AtomicInteger(DataStore.socksPort + 100)
+            val nextMutex = Mutex()
             repeat(5) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
@@ -636,34 +639,35 @@ class ConfigurationFragment @JvmOverloads constructor(
                         test.insert(profile)
 
                         val currentPort = port.getAndIncrement()
-                        if (currentPort % 10 == 0) port.getAndAdd(-10)
-
-                        val instance = try {
-                            TestInstance(requireContext(), profile, currentPort)
-                        } catch (e: PluginManager.PluginNotFoundException) {
-                            profile.status = 2
-                            profile.error = e.readableMessage
-                            test.update(profile)
-                            continue
-                        } catch (e: Exception) {
-                            profile.status = 3
-                            profile.error = e.readableMessage
-                            test.update(profile)
-                            continue
+                        var locked = false
+                        if (currentPort % 10 == 0) {
+                            port.getAndAdd(-10)
+                            nextMutex.lock(this@ConfigurationFragment)
+                            locked = true
+                        } else synchronized(this@ConfigurationFragment) {
+                            runBlocking {
+                                val finish = nextMutex.holdsLock(this@ConfigurationFragment)
+                                nextMutex.lock(this)
+                                if (finish) Executable.killAll()
+                                nextMutex.unlock(this)
+                            }
                         }
 
                         try {
-                            val result = instance.doTest()
-                            if (!isActive) break
+                            val result =
+                                TestInstance(requireContext(), profile, currentPort).doTest()
                             profile.status = 1
                             profile.ping = result
-                            test.update(profile)
+                        } catch (e: PluginManager.PluginNotFoundException) {
+                            profile.status = 2
+                            profile.error = e.readableMessage
                         } catch (e: Exception) {
-                            if (!isActive) break
                             profile.status = 3
                             profile.error = e.readableMessage
-                            test.update(profile)
                         }
+
+                        test.update(profile)
+                        if (locked) nextMutex.unlock(this@ConfigurationFragment)
                     }
 
                 })

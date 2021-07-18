@@ -208,8 +208,8 @@ fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
     }
 
     val proxyConfig = HSONObject().also {
-        it["server"] = serverAddress
-        it["server_port"] = serverPort
+        it["server"] = finalAddress
+        it["server_port"] = finalPort
         it["method"] = method
         it["password"] = password
         it["local_address"] = "127.0.0.1"

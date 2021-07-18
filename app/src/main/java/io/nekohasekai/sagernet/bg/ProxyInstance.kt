@@ -109,6 +109,11 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                 chain.entries.forEachIndexed { index, (port, profile) ->
                     val needChain = !isBalancer && index != chain.size - 1
                     val bean = profile.requireBean()
+                    if (needChain && profile.needExternal()) {
+                        bean.finalAddress = "127.0.0.1"
+                        bean.finalPort = config.chainIndex[profile.id] ?: -1
+                    }
+
                     when {
                         profile.useExternalShadowsocks() -> {
                             bean as ShadowsocksBean
@@ -122,11 +127,11 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         }
                         bean is TrojanGoBean -> {
                             initPlugin("trojan-go-plugin")
-                            pluginConfigs[port] =
-                                profile.type to bean.buildTrojanGoConfig(port, needChain, index)
-                                    .also {
-                                        Logs.d(it)
-                                    }
+                            pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
+                                port, index == 0 && DataStore.enableMux
+                            ).also {
+                                Logs.d(it)
+                            }
                         }
                         bean is NaiveBean -> {
                             initPlugin("naive-plugin")
@@ -192,8 +197,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
 
                 when {
                     profile.useExternalShadowsocks() -> {
-                        if (needChain) error("shadowsocks-rust is incompatible with chain")
-
                         val configFile = File(
                             context.noBackupFilesDir,
                             "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
@@ -235,24 +238,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             "-u"
                         )
 
-                        val env = mutableMapOf<String, String>()
-
-                        if (needChain) {
-                            val proxychainsConfigFile = File(
-                                context.noBackupFilesDir,
-                                "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
-                            )
-                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                            cacheFiles.add(proxychainsConfigFile)
-
-                            env["LD_PRELOAD"] = File(
-                                SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.PROXYCHAINS
-                            ).absolutePath
-                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
-                        }
-
-                        base.data.processes!!.start(commands, env)
+                        base.data.processes!!.start(commands)
                     }
                     bean is TrojanGoBean -> {
                         val configFile = File(
@@ -282,24 +268,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             initPlugin("naive-plugin").path, configFile.absolutePath
                         )
 
-                        val env = mutableMapOf<String, String>()
-
-                        if (needChain) {
-                            val proxychainsConfigFile = File(
-                                context.noBackupFilesDir,
-                                "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
-                            )
-                            proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                            cacheFiles.add(proxychainsConfigFile)
-
-                            env["LD_PRELOAD"] = File(
-                                SagerNet.application.applicationInfo.nativeLibraryDir,
-                                Executable.PROXYCHAINS
-                            ).absolutePath
-                            env["PROXYCHAINS_CONF_FILE"] = proxychainsConfigFile.absolutePath
-                        }
-
-                        base.data.processes!!.start(commands, env)
+                        base.data.processes!!.start(commands)
                     }
                     bean is PingTunnelBean -> {
                         if (needChain) error("PingTunnel is incompatible with chain")
@@ -326,8 +295,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         base.data.processes!!.start(commands)
                     }
                     bean is RelayBatonBean -> {
-                        if (needChain) error("RelayBaton is incompatible with chain")
-
                         val configFile = File(
                             context.noBackupFilesDir,
                             "rb_" + SystemClock.elapsedRealtime() + ".toml"
@@ -346,9 +313,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         base.data.processes!!.start(commands)
                     }
                     bean is BrookBean -> {
-
-                        if (needChain) error("brook is incompatible with chain")
-
                         val commands = mutableListOf(initPlugin("brook-plugin").path)
 
                         when (bean.protocol) {

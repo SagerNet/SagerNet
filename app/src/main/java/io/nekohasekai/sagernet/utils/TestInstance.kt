@@ -55,6 +55,7 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.suspendCancellableCoroutine
 import libv2ray.Libv2ray
 import libv2ray.V2RayVPNServiceSupportsSet
 import okhttp3.OkHttpClient
@@ -66,9 +67,6 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 import java.time.Duration
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: Int) {
 
@@ -95,6 +93,11 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                 chain.entries.forEachIndexed { index, (port, profile) ->
                     val needChain = !isBalancer && index != chain.size - 1
                     val bean = profile.requireBean()
+                    if (needChain && profile.needExternal()) {
+                        bean.finalAddress = "127.0.0.1"
+                        bean.finalPort = chainIndex[profile.id]!!
+                    }
+
                     when {
                         profile.useExternalShadowsocks() -> {
                             bean as ShadowsocksBean
@@ -106,7 +109,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                         bean is TrojanGoBean -> {
                             initPlugin("trojan-go-plugin")
                             pluginConfigs[port] =
-                                profile.type to bean.buildTrojanGoConfig(port, needChain, index)
+                                profile.type to bean.buildTrojanGoConfig(port, false)
                         }
                         bean is NaiveBean -> {
                             initPlugin("naive-plugin")
@@ -149,13 +152,13 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
     var cacheFiles = ArrayList<File>()
     val processes = GuardedProcessPool {
         Logs.w(it)
-        continuation.resumeWithException(it)
+        continuation.tryResumeWithException(it)
     }
 
     lateinit var wsForwarder: WebView
 
     suspend fun doTest(): Int {
-        return suspendCoroutine { thiz ->
+        return suspendCancellableCoroutine { thiz ->
             continuation = thiz
             runOnDefaultDispatcher {
                 runCatching {
@@ -170,8 +173,6 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
                             when {
                                 profile.useExternalShadowsocks() -> {
-                                    if (needChain) error("shadowsocks-rust is incompatible with chain")
-
                                     val configFile = File(
                                         context.noBackupFilesDir,
                                         "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
@@ -216,25 +217,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                         "-u"
                                     )
 
-                                    val env = mutableMapOf<String, String>()
-
-                                    if (needChain) {
-                                        val proxychainsConfigFile = File(
-                                            context.noBackupFilesDir,
-                                            "proxychains_ssr_" + SystemClock.elapsedRealtime() + ".json"
-                                        )
-                                        proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                                        cacheFiles.add(proxychainsConfigFile)
-
-                                        env["LD_PRELOAD"] = File(
-                                            SagerNet.application.applicationInfo.nativeLibraryDir,
-                                            Executable.PROXYCHAINS
-                                        ).absolutePath
-                                        env["PROXYCHAINS_CONF_FILE"] =
-                                            proxychainsConfigFile.absolutePath
-                                    }
-
-                                    processes.start(commands, env)
+                                    processes.start(commands)
                                 }
                                 bean is TrojanGoBean -> {
                                     val configFile = File(
@@ -266,25 +249,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                         initPlugin("naive-plugin").path, configFile.absolutePath
                                     )
 
-                                    val env = mutableMapOf<String, String>()
-
-                                    if (needChain) {
-                                        val proxychainsConfigFile = File(
-                                            context.noBackupFilesDir,
-                                            "proxychains_naive_" + SystemClock.elapsedRealtime() + ".json"
-                                        )
-                                        proxychainsConfigFile.writeText("strict_chain\n[ProxyList]\nsocks5 127.0.0.1 ${port + 1}")
-                                        cacheFiles.add(proxychainsConfigFile)
-
-                                        env["LD_PRELOAD"] = File(
-                                            SagerNet.application.applicationInfo.nativeLibraryDir,
-                                            Executable.PROXYCHAINS
-                                        ).absolutePath
-                                        env["PROXYCHAINS_CONF_FILE"] =
-                                            proxychainsConfigFile.absolutePath
-                                    }
-
-                                    processes.start(commands, env)
+                                    processes.start(commands)
                                 }
                                 bean is PingTunnelBean -> {
                                     if (needChain) error("PingTunnel is incompatible with chain")
@@ -311,8 +276,6 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                     processes.start(commands)
                                 }
                                 bean is RelayBatonBean -> {
-                                    if (needChain) error("RelayBaton is incompatible with chain")
-
                                     val configFile = File(
                                         context.noBackupFilesDir,
                                         "rb_" + SystemClock.elapsedRealtime() + ".toml"
@@ -331,9 +294,6 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                     processes.start(commands)
                                 }
                                 bean is BrookBean -> {
-
-                                    if (needChain) error("brook is incompatible with chain")
-
                                     val commands = mutableListOf(initPlugin("brook-plugin").path)
 
                                     when (bean.protocol) {
@@ -404,13 +364,13 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                         }
                     }
 
-                    val timeout = Duration.ofMillis(5000L)
+                    val timeout = Duration.ofMillis(5 * 1000L)
 
                     if (config.requireWs) delay(3000L) else delay(500L)
                     val okHttpClient = OkHttpClient.Builder()
                         .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", currentPort)))
-                        .connectTimeout(Duration.ofMillis(5000L)).callTimeout(timeout)
-                        .readTimeout(timeout).writeTimeout(timeout).build()
+                        .connectTimeout(timeout).callTimeout(timeout).readTimeout(timeout)
+                        .writeTimeout(timeout).build()
                     val start = SystemClock.elapsedRealtime()
                     okHttpClient.newCall(
                         Request.Builder().url(DataStore.connectionTestURL)
@@ -421,7 +381,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                             execute()
                         } catch (e: IOException) {
                             destroy()
-                            continuation.resumeWithException(e)
+                            continuation.tryResumeWithException(e)
                             return@runOnDefaultDispatcher
                         }
 
@@ -431,9 +391,9 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                         destroy()
 
                         if (code == 204 || code == 200) {
-                            continuation.resume(elapsed.toInt())
+                            continuation.tryResume(elapsed.toInt())
                         } else {
-                            continuation.resumeWithException(
+                            continuation.tryResumeWithException(
                                 IOException(
                                     app.getString(
                                         R.string.connection_test_error_status_code, code
@@ -446,7 +406,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                 }.onFailure {
                     Logs.w(it)
                     destroy()
-                    continuation.resumeWithException(it)
+                    continuation.tryResumeWithException(it)
                 }
 
             }
