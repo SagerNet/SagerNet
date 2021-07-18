@@ -181,12 +181,12 @@
             app:title="@string/dns_mode"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="1.1.1.1"
+            app:defaultValue="1.0.0.1"
             app:key="systemDns"
             app:title="@string/dns_system"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="https://1.1.1.1/dns-query"
+            app:defaultValue="https://1.0.0.1/dns-query"
             app:key="localDns"
             app:title="@string/dns_local"
             app:useSimpleSummaryProvider="true" />

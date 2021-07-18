@@ -82,8 +82,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var dnsMode by configurationStore.stringToInt(Key.DNS_MODE) { 2 }
 
-    var systemDns by configurationStore.string(Key.SYSTEM_DNS) { "1.1.1.1" }
-    var localDns by configurationStore.string(Key.LOCAL_DNS) { "https://1.1.1.1/dns-query" }
+    // https://github.com/SagerNet/SagerNet/issues/180
+    var systemDns by configurationStore.string(Key.SYSTEM_DNS) { "1.0.0.1" }
+    var localDns by configurationStore.string(Key.LOCAL_DNS) { "https://1.0.0.1/dns-query" }
+
     var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS)
     var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "https+local://223.5.5.5/dns-query" }
 
