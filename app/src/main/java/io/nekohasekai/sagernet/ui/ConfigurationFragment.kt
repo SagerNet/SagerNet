@@ -873,11 +873,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             if (!::proxyGroup.isInitialized) return
 
             configurationListView = view.findViewById(R.id.configuration_list)
-            layoutManager = if (proxyGroup.type != 1) {
-                FixedLinearLayoutManager(configurationListView)
-            } else {
-                FixedGridLayoutManager(configurationListView, 2)
-            }
+            layoutManager = FixedLinearLayoutManager(configurationListView)
             configurationListView.layoutManager = layoutManager
             adapter = ConfigurationAdapter()
             ProfileManager.addListener(adapter)

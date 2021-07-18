@@ -46,6 +46,15 @@ data class ProxyGroup(
         return name.takeIf { !it.isNullOrBlank() } ?: app.getString(R.string.group_default)
     }
 
+    companion object {
+
+        const val TYPE_AUTO = 0
+        const val TYPE_OOCv1 = 1
+        const val TYPE_SIP008 = 2
+        const val TYPE_CLASH = 3
+
+    }
+
     @androidx.room.Dao
     interface Dao {
 
