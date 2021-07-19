@@ -12,7 +12,7 @@
     <string name="logcat_summary">这种非常有用哇</string>
 
     <string name="menu_configuration">配置</string>
-    <string name="menu_group">组</string>
+    <string name="menu_group">分组</string>
     <string name="menu_about">关于</string>
 
     <string name="group_default">默认</string>
