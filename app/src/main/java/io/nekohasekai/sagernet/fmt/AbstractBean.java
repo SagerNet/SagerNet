@@ -40,6 +40,7 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
     public int serverPort;
     public String name;
 
+    public transient boolean isChain;
     public transient String finalAddress;
     public transient int finalPort;
 

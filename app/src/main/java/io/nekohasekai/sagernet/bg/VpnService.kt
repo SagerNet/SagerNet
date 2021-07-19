@@ -263,7 +263,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
                 "--netif-ipaddr",
                 PRIVATE_VLAN4_ROUTER,
                 "--socks-server-addr",
-                "127.0.0.1:${DataStore.socksPort}",
+                "$LOCALHOST:${DataStore.socksPort}",
                 "--tunmtu",
                 VPN_MTU.toString(),
                 "--sock-path",
@@ -273,7 +273,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             )
             if (!useSystemDns) {
                 cmd += "--dnsgw"
-                cmd += "127.0.0.1:${DataStore.localDNSPort}"
+                cmd += "$LOCALHOST:${DataStore.localDNSPort}"
             }
             if (ipv6Mode != IPv6Mode.DISABLE) {
                 cmd += "--netif-ip6addr"
@@ -315,7 +315,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         }
     }
 
-    override fun onRevoke() = stopRunner(keepState = true)
+    override fun onRevoke() = stopRunner()
 
     override fun onDestroy() {
         super.onDestroy()

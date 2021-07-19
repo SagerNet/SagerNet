@@ -293,7 +293,7 @@ data class ProxyEntity(
                     val config = buildV2RayConfig(this@ProxyEntity)
                     append(config.config)
 
-                    if (!config.index.all { it.second.isEmpty() }) {
+                    if (!config.index.all { it.chain.isEmpty() }) {
                         name = "profiles.txt"
                     }
 

@@ -28,6 +28,7 @@ import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.linkBuilder
@@ -110,7 +111,7 @@ fun TrojanGoBean.toUri(): String {
 fun TrojanGoBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
     return JSONObject().also { conf ->
         conf["run_type"] = "client"
-        conf["local_addr"] = "127.0.0.1"
+        conf["local_addr"] = LOCALHOST
         conf["local_port"] = port
         conf["remote_addr"] = finalAddress
         conf["remote_port"] = finalPort

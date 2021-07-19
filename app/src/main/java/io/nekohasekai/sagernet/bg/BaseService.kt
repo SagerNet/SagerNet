@@ -68,7 +68,7 @@ class BaseService {
             when (intent.action) {
                 Intent.ACTION_SHUTDOWN -> service.persistStats()
                 Action.RELOAD -> service.forceLoad()
-                else -> service.stopRunner()
+                else -> service.stopRunner(keepState = false)
             }
         }
         var closeReceiverRegistered = false
@@ -255,7 +255,7 @@ class BaseService {
             }
         }
 
-        fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = false) {
+        fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = true) {
             if (data.state == State.Stopping) return
             data.notification?.destroy()
             data.notification = null
@@ -273,9 +273,6 @@ class BaseService {
                         unregisterReceiver(data.closeReceiver)
                         data.closeReceiverRegistered = false
                     }
-                    if (!keepState) {
-                        DataStore.startedProxy = 0L
-                    }
                     data.proxy?.shutdown()
                     data.binder.profilePersisted(listOfNotNull(data.proxy).map { it.profile.id })
                     data.proxy = null
@@ -286,6 +283,7 @@ class BaseService {
 
                 // stop the service if nothing has bound to it
                 if (restart) startRunner() else { //   BootReceiver.enabled = false
+                    if (!keepState) DataStore.startedProxy = 0L
                     stopSelf()
                 }
             }
@@ -336,6 +334,7 @@ class BaseService {
                         Logs.w(it)
                         stopRunner(false, it.readableMessage)
                     }
+                    DataStore.startedProxy = profile.id
                     startProcesses()
                     data.changeState(State.Connected)
                 } catch (_: CancellationException) { // if the job was cancelled, it is canceller's responsibility to call stopRunner

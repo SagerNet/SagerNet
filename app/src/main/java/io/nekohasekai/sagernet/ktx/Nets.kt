@@ -51,9 +51,9 @@ fun createProxyClient(): OkHttpClient {
 
 fun requireProxy(): Proxy {
     return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-        Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", DataStore.socksPort))
+        Proxy(Proxy.Type.SOCKS, InetSocketAddress(LOCALHOST, DataStore.socksPort))
     } else {
-        Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", DataStore.httpPort))
+        Proxy(Proxy.Type.HTTP, InetSocketAddress(LOCALHOST, DataStore.httpPort))
     }
 }
 

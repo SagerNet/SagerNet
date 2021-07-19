@@ -43,6 +43,7 @@ import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
@@ -103,7 +104,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
             if (service is VpnService) SagerSupportSet(service) else NoSupportSet(), false
         )
         val socksPort = DataStore.socksPort + 10
-        v2rayPoint.domainName = "127.0.0.1:$socksPort"
+        v2rayPoint.domainName = "$LOCALHOST:$socksPort"
 
         if (profile.type != ProxyEntity.TYPE_CONFIG) {
             config = buildV2RayConfig(profile)
@@ -112,10 +113,6 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                 chain.entries.forEachIndexed { index, (port, profile) ->
                     val needChain = !isBalancer && index != chain.size - 1
                     val bean = profile.requireBean()
-                    if (needChain && profile.needExternal()) {
-                        bean.finalAddress = "127.0.0.1"
-                        bean.finalPort = config.chainIndex[profile.id] ?: -1
-                    }
 
                     when {
                         profile.useExternalShadowsocks() -> {
@@ -180,7 +177,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             trojanGoBean = TrojanGoBean().applyDefaultValues()
                         )
                     )
-                    val (port, _) = config.index[0].second.entries.first()
+                    val (port, _) = config.index[0].chain.entries.first()
                     pluginConfigs[port] =
                         profile.type to buildCustomTrojanConfig(bean.content, port)
                 } //"v2ray" -> {
@@ -243,7 +240,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                                 Executable.SSR_LOCAL
                             ).absolutePath,
                             "-b",
-                            "127.0.0.1",
+                            LOCALHOST,
                             "-c",
                             configFile.absolutePath,
                             "-l",
@@ -321,7 +318,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             "-sock5",
                             "1",
                             "-l",
-                            "127.0.0.1:$port",
+                            "$LOCALHOST:$port",
                             "-s",
                             bean.serverAddress
                         )
@@ -377,7 +374,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         }
 
                         commands.add("--socks5")
-                        commands.add("127.0.0.1:$port")
+                        commands.add("$LOCALHOST:$port")
 
                         base.data.processes!!.start(commands)
                     }
@@ -449,7 +446,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
 
             if (config.requireWs) {
                 runOnDefaultDispatcher {
-                    val url = "http://127.0.0.1:" + (DataStore.socksPort + 1) + "/"
+                    val url = "http://$LOCALHOST:" + (DataStore.socksPort + 1) + "/"
                     onMainDispatcher {
                         wsForwarder = WebView(base as Context)
                         wsForwarder.settings.javaScriptEnabled = true

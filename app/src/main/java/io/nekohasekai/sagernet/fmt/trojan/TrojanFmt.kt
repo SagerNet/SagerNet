@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.fmt.trojan
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
@@ -81,7 +82,7 @@ fun TrojanBean.toUri(): String {
 fun TrojanBean.buildTrojanConfig(port: Int): String {
     return JSONObject().also { conf ->
         conf["run_type"] = "client"
-        conf["local_addr"] = "127.0.0.1"
+        conf["local_addr"] = LOCALHOST
         conf["local_port"] = port
         conf["remote_addr"] = finalAddress
         conf["remote_port"] = finalPort

@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt.naive
 
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.unUrlSafe
@@ -71,7 +72,7 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
 
 fun NaiveBean.buildNaiveConfig(port: Int): String {
     return JSONObject().also {
-        it["listen"] = "socks://127.0.0.1:$port"
+        it["listen"] = "socks://$LOCALHOST:$port"
         it["proxy"] = toUri(true)
         if (extraHeaders.isNotBlank()) {
             it["extra-headers"] = extraHeaders.split("\n").joinToString("\r\n")

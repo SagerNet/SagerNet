@@ -79,10 +79,6 @@ import java.net.Socket
 import java.net.UnknownHostException
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 import kotlin.properties.Delegates
 
 class ConfigurationFragment @JvmOverloads constructor(
@@ -647,7 +643,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             val profiles = LinkedList(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            val basePort = DataStore.socksPort
+            var currentPort = DataStore.httpPort
             var count = 0
             val testJobs = mutableListOf<Job>()
 
@@ -657,16 +653,16 @@ class ConfigurationFragment @JvmOverloads constructor(
                 } else {
                     testJobs.joinAll()
                     testJobs.clear()
-                    Executable.killAll()
+                    // Executable.killAll()
                     count = 1
                 }
-
-                val port = basePort + 100 + count * 20
 
                 val profile = profiles.poll() ?: break
                 profile.status = 0
                 test.insert(profile)
 
+                currentPort += 5
+                val port = currentPort
                 testJobs.add(launch(testPool) {
                     try {
                         val result = TestInstance(

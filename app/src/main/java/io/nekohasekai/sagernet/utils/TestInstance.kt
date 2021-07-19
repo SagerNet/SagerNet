@@ -35,6 +35,7 @@ import io.nekohasekai.sagernet.bg.Executable
 import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
 import io.nekohasekai.sagernet.fmt.buildCustomConfig
@@ -91,10 +92,6 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                 chain.entries.forEachIndexed { index, (port, profile) ->
                     val needChain = !isBalancer && index != chain.size - 1
                     val bean = profile.requireBean()
-                    if (needChain && profile.needExternal()) {
-                        bean.finalAddress = "127.0.0.1"
-                        bean.finalPort = chainIndex[profile.id]!!
-                    }
 
                     when {
                         profile.useExternalShadowsocks() -> {
@@ -136,7 +133,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                     trojanGoBean = TrojanGoBean().applyDefaultValues()
                 ), true, currentPort
             ).apply {
-                val (pluginPort, _) = index[0].second.entries.first()
+                val (pluginPort, _) = index[0].chain.entries.first()
                 pluginConfigs[pluginPort] = profile.type to buildCustomTrojanConfig(
                     profile.configBean!!.content, pluginPort
                 )
@@ -207,7 +204,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                             Executable.SSR_LOCAL
                                         ).absolutePath,
                                         "-b",
-                                        "127.0.0.1",
+                                        LOCALHOST,
                                         "-c",
                                         configFile.absolutePath,
                                         "-l",
@@ -261,7 +258,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                         "-sock5",
                                         "1",
                                         "-l",
-                                        "127.0.0.1:$port",
+                                        "$LOCALHOST:$port",
                                         "-s",
                                         bean.serverAddress
                                     )
@@ -317,7 +314,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                                     }
 
                                     commands.add("--socks5")
-                                    commands.add("127.0.0.1:$port")
+                                    commands.add("$LOCALHOST:$port")
 
                                     processes.start(commands)
                                 }
@@ -326,11 +323,11 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                     }
 
                     point.configureFileContent = config.config
-                    point.domainName = "127.0.0.1:1080"
+                    point.domainName = "$LOCALHOST:1080"
                     point.runLoop(false)
 
                     if (config.requireWs) {
-                        val url = "http://127.0.0.1:" + (DataStore.socksPort + 1) + "/"
+                        val url = "http://$LOCALHOST:" + (DataStore.socksPort + 1) + "/"
 
                         onMainDispatcher {
                             wsForwarder = WebView(ctx)
@@ -364,7 +361,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
                     val timeout = Duration.ofSeconds(5L)
                     val okHttpClient = OkHttpClient.Builder()
-                        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", currentPort)))
+                        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(LOCALHOST, currentPort)))
                         .connectTimeout(timeout).callTimeout(timeout).readTimeout(timeout)
                         .writeTimeout(timeout).build()
 
