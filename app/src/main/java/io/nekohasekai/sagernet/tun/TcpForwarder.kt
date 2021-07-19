@@ -28,6 +28,7 @@ import cn.hutool.cache.impl.LFUCache
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.tun.ip.IPHeader
 import io.nekohasekai.sagernet.tun.ip.TCPHeader
@@ -181,11 +182,11 @@ class TcpForwarder(val tun: TunThread) {
             }
 
             var remotePort = session.remotePort.toUShort().toInt()
-            if (remoteIp in arrayOf(
+            if (remotePort == 53 && tun.dnsHijacking || remoteIp in arrayOf(
                     VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
                 )
             ) {
-                remoteIp = "127.0.0.1"
+                remoteIp = LOCALHOST
                 remotePort = tun.dnsPort
 
                 channelFeature =
@@ -211,7 +212,7 @@ class TcpForwarder(val tun: TunThread) {
                                 channel.pipeline().addFirst(
                                     Socks5ProxyHandler(
                                         InetSocketAddress(
-                                            "127.0.0.1", DataStore.socksPort
+                                            LOCALHOST, DataStore.socksPort
                                         )
                                     )
                                 )

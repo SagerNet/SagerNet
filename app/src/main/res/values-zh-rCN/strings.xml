@@ -361,5 +361,7 @@
     <string name="protocol_settings">协议设置</string>
     <string name="trojan_provider">Trojan 提供程序</string>
     <string name="ss_aead_provider">Shadowsocks AEAD 提供程序</string>
+    <string name="dns_hijacking">DNS 劫持</string>
+    <string name="dns_hijacking_sum">劫持所有 53 端口的传入连接到本地 DNS</string>
 
 </resources>

@@ -69,6 +69,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
     var start = 0L
     val enableLog = DataStore.enableLog
     val dumpUid = enableLog
+    val dnsHijacking = DataStore.dnsHijacking
 
     val buffer = ByteArray(VpnService.VPN_MTU)
     lateinit var input: FileInputStream

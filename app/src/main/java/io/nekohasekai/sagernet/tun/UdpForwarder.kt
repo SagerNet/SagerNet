@@ -165,7 +165,7 @@ class UdpForwarder(val tun: TunThread) {
         val future: Future<Channel> get() = promise
 
         init {
-            if (destAddress.socketHost in arrayOf(
+            if (destAddress.port == 53 && tun.dnsHijacking || destAddress.socketHost in arrayOf(
                     VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
                 )
             ) {

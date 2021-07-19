@@ -199,6 +199,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val icmpEchoStrategy = findPreference<SimpleMenuPreference>(Key.ICMP_ECHO_STRATEGY)!!
         val icmpEchoReplyDelay = findPreference<EditTextPreference>(Key.ICMP_ECHO_REPLY_DELAY)!!
         val ipOtherStrategy = findPreference<SimpleMenuPreference>(Key.IP_OTHER_STRATEGY)!!
+        val dnsHijacking = findPreference<SwitchPreference>(Key.DNS_HIJACKING)!!
 
         fun updateVpnMode(newMode: Int) {
             val isForwarding = newMode == VpnMode.EXPERIMENTAL_FORWARDING
@@ -206,10 +207,18 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             multiThreadForward.isVisible = isForwarding
             icmpEchoStrategy.isVisible = isForwarding
             icmpEchoReplyDelay.isVisible = isForwarding
+            dnsHijacking.isVisible = isForwarding
             if (isForwarding) {
                 icmpEchoReplyDelay.isEnabled = icmpEchoStrategy.value == "${PacketStrategy.REPLY}"
             }
             ipOtherStrategy.isVisible = isForwarding
+
+            if (isForwarding) {
+                if (dnsMode.value == "${DnsMode.SYSTEM}") dnsMode.value = "${DnsMode.LOCAL}"
+                if (!enableDomesticDns.isChecked) {
+                    enableDomesticDns.isChecked = true
+                }
+            }
         }
 
         updateVpnMode(DataStore.vpnMode)
@@ -286,6 +295,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         icmpEchoReplyDelay.onPreferenceChangeListener = reloadListener
         icmpEchoReplyDelay.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         ipOtherStrategy.onPreferenceChangeListener = reloadListener
+        dnsHijacking.onPreferenceChangeListener = reloadListener
 
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
