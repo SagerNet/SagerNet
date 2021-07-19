@@ -27,6 +27,8 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.ShadowsocksAEADProvider
+import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
@@ -340,7 +342,7 @@ data class ProxyEntity(
             TYPE_SSR -> true
             TYPE_VMESS -> false
             TYPE_VLESS -> false
-            TYPE_TROJAN -> false
+            TYPE_TROJAN -> DataStore.providerTrojan != TrojanProvider.V2RAY
             TYPE_TROJAN_GO -> true
             TYPE_NAIVE -> true
             TYPE_PING_TUNNEL -> true
@@ -373,7 +375,7 @@ data class ProxyEntity(
 
     fun useExternalShadowsocks(): Boolean {
         val bean = ssBean ?: return false
-        if (DataStore.forceShadowsocksRust) return true
+        if (DataStore.providerShadowsocksAEAD == ShadowsocksAEADProvider.SHADOWSOCKS_RUST) return true
         if (bean.plugin.isNotBlank()) {
             Logs.d("Requiring plugin ${bean.plugin}")
             return true

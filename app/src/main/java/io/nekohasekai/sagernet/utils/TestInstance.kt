@@ -53,7 +53,6 @@ import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import libv2ray.Libv2ray
@@ -363,41 +362,31 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                         }
                     }
 
-                    val timeout = Duration.ofMillis(5 * 1000L)
+                    val timeout = Duration.ofSeconds(5L)
                     val okHttpClient = OkHttpClient.Builder()
                         .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", currentPort)))
                         .connectTimeout(timeout).callTimeout(timeout).readTimeout(timeout)
                         .writeTimeout(timeout).build()
 
-                    fun newCall() = okHttpClient.newCall(
+                    fun newCall(times: Int) = okHttpClient.newCall(
                         Request.Builder().url(DataStore.connectionTestURL)
-                            .addHeader("Connection", "close").addHeader("User-Agent", "curl/7.74.0")
-                            .build()
+                            .addHeader("Connection", if (times > 1) "keep-alive" else "close")
+                            .addHeader("User-Agent", "curl/7.74.0").build()
                     )
 
-                    newCall().enqueue(object : Callback {
+                    newCall(testTimes).enqueue(object : Callback {
 
                         var times = testTimes
                         var start = if (times == 1) SystemClock.elapsedRealtime() else 0L
 
                         fun recall() {
                             if (times < 2) start = SystemClock.elapsedRealtime()
-                            newCall().enqueue(this)
+                            newCall(times).enqueue(this)
                         }
 
                         override fun onFailure(call: Call, e: IOException) {
-                            runOnDefaultDispatcher {
-                                if (e.readableMessage.contains("failed to connect to /127.0.0.1") && e.readableMessage.contains(
-                                        "ECONNREFUSED"
-                                    )
-                                ) {
-                                    delay(500L)
-                                    recall()
-                                } else {
-                                    destroy()
-                                    continuation.tryResumeWithException(e)
-                                }
-                            }
+                            destroy()
+                            continuation.tryResumeWithException(e)
                         }
 
                         override fun onResponse(call: Call, response: Response) {
@@ -410,22 +399,20 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
                             val elapsed = SystemClock.elapsedRealtime() - start
 
-                            runOnDefaultDispatcher {
-                                val code = response.code
-                                response.closeQuietly()
-                                destroy()
+                            val code = response.code
+                            response.closeQuietly()
+                            destroy()
 
-                                if (code == 204 || code == 200) {
-                                    continuation.tryResume(elapsed.toInt())
-                                } else {
-                                    continuation.tryResumeWithException(
-                                        IOException(
-                                            app.getString(
-                                                R.string.connection_test_error_status_code, code
-                                            )
+                            if (code == 204 || code == 200) {
+                                continuation.tryResume(elapsed.toInt())
+                            } else {
+                                continuation.tryResumeWithException(
+                                    IOException(
+                                        app.getString(
+                                            R.string.connection_test_error_status_code, code
                                         )
                                     )
-                                }
+                                )
                             }
 
                         }
@@ -442,7 +429,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
     }
 
-    suspend fun destroy() {
+    fun destroy() {
         point.shutdown()
 
         cacheFiles.removeAll { it.delete(); true }
@@ -452,7 +439,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
             wsForwarder.destroy()
         }
 
-        coroutineScope {
+        runOnMainDispatcher {
             processes.close(this)
         }
     }

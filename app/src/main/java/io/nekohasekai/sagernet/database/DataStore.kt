@@ -76,7 +76,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
     var bypassLanInCoreOnly by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE_ONLY)
-    
+
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
@@ -174,6 +174,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var icmpEchoStrategy by configurationStore.stringToInt(Key.ICMP_ECHO_STRATEGY)
     var icmpEchoReplyDelay by configurationStore.stringToLong(Key.ICMP_ECHO_REPLY_DELAY) { 50 }
     var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY)
+
+    // protocol
+
+    var providerTrojan by configurationStore.stringToInt(Key.PROVIDER_TROJAN)
+    var providerShadowsocksAEAD by configurationStore.stringToInt(Key.PROVIDER_SS_AEAD)
 
     // cache
 

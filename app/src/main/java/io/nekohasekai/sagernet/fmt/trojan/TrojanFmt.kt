@@ -21,9 +21,11 @@
 
 package io.nekohasekai.sagernet.fmt.trojan
 
+import cn.hutool.json.JSONArray
+import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
@@ -53,10 +55,7 @@ fun parseTrojan(server: String): TrojanBean {
 
 fun TrojanBean.toUri(): String {
 
-    val builder = linkBuilder()
-        .username(password)
-        .host(serverAddress)
-        .port(serverPort)
+    val builder = linkBuilder().username(password).host(serverAddress).port(serverPort)
 
     if (sni.isNotBlank()) {
         builder.addQueryParameter("sni", sni)
@@ -77,4 +76,24 @@ fun TrojanBean.toUri(): String {
 
     return builder.toLink("trojan")
 
+}
+
+fun TrojanBean.buildTrojanConfig(port: Int): String {
+    return JSONObject().also { conf ->
+        conf["run_type"] = "client"
+        conf["local_addr"] = "127.0.0.1"
+        conf["local_port"] = port
+        conf["remote_addr"] = finalAddress
+        conf["remote_port"] = finalPort
+        conf["password"] = JSONArray().apply {
+            add(password)
+        }
+        conf["log_level"] = if (DataStore.enableLog) 0 else 2
+
+        conf["ssl"] = JSONObject().also {
+            if (allowInsecure) it["verify"] = false
+            if (sni.isNotBlank()) it["sni"] = sni
+            if (alpn.isNotBlank()) it["alpn"] = JSONArray(alpn.split("\n"))
+        }
+    }.toStringPretty()
 }

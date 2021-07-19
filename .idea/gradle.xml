@@ -74,6 +74,7 @@
             <option value="$PROJECT_DIR$/plugin/naive" />
             <option value="$PROJECT_DIR$/plugin/pingtunnel" />
             <option value="$PROJECT_DIR$/plugin/relaybaton" />
+            <option value="$PROJECT_DIR$/plugin/trojan" />
             <option value="$PROJECT_DIR$/plugin/trojan-go" />
           </set>
         </option>

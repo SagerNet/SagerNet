@@ -171,6 +171,24 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/protocol_settings">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/ss_aead_provider"
+            app:entryValues="@array/int_array_2"
+            app:icon="@drawable/ic_baseline_nfc_24"
+            app:key="providerShadowsocksAEAD"
+            app:title="@string/ss_aead_provider"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/trojan_provider_experimental"
+            app:entryValues="@array/int_array_3"
+            app:key="providerTrojan"
+            app:title="@string/trojan_provider"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/cag_dns">
         <com.takisoft.preferencex.SimpleMenuPreference
             android:defaultValue="2"

@@ -224,6 +224,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val providerTrojan = findPreference<SimpleMenuPreference>(Key.PROVIDER_TROJAN)!!
+        val providerShadowsocksAEAD = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_AEAD)!!
+
+        if (!isExpert) {
+            providerTrojan.setEntries(R.array.trojan_provider)
+            providerTrojan.setEntryValues(R.array.trojan_provider_value)
+        }
+
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
@@ -278,6 +286,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         icmpEchoReplyDelay.onPreferenceChangeListener = reloadListener
         icmpEchoReplyDelay.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         ipOtherStrategy.onPreferenceChangeListener = reloadListener
+
+        providerTrojan.onPreferenceChangeListener = reloadListener
+        providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
 
     }
 

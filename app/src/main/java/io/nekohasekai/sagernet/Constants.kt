@@ -158,6 +158,20 @@ object Key {
     const val ICMP_ECHO_REPLY_DELAY = "icmpEchoReplyDelay"
     const val IP_OTHER_STRATEGY = "ipOtherStrategy"
 
+    const val PROVIDER_TROJAN = "providerTrojan"
+    const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
+
+}
+
+object TrojanProvider {
+    const val V2RAY = 0
+    const val TROJAN = 1
+    const val TROJAN_GO = 2
+}
+
+object ShadowsocksAEADProvider {
+    const val V2RAY = 0
+    const val SHADOWSOCKS_RUST = 1
 }
 
 object DnsMode {

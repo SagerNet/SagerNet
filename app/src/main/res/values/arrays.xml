@@ -594,4 +594,25 @@
         <item>@string/direct</item>
     </string-array>
 
+    <string-array name="trojan_provider">
+        <item>V2Ray</item>
+        <item>Trojan-Go</item>
+    </string-array>
+
+    <string-array name="trojan_provider_value">
+        <item>0</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="trojan_provider_experimental">
+        <item>V2Ray</item>
+        <item>Trojan</item>
+        <item>Trojan-Go</item>
+    </string-array>
+
+    <string-array name="ss_aead_provider">
+        <item>V2Ray</item>
+        <item>shadowsocks-rust</item>
+    </string-array>
+
 </resources>

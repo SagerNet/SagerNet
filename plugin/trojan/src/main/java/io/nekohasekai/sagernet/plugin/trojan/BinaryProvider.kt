@@ -19,41 +19,25 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg
+package io.nekohasekai.sagernet.plugin.trojan
 
-import android.system.ErrnoException
-import android.system.Os
-import android.system.OsConstants
-import android.text.TextUtils
-import io.nekohasekai.sagernet.ktx.Logs
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import io.nekohasekai.sagernet.plugin.NativePluginProvider
+import io.nekohasekai.sagernet.plugin.PathProvider
 import java.io.File
-import java.io.IOException
+import java.io.FileNotFoundException
 
-object Executable {
-    const val SS_LOCAL = "libsslocal.so"
-    const val SSR_LOCAL = "libssr-local.so"
-    const val TUN2SOCKS = "libtun2socks.so"
-    const val PROXYCHAINS = "libproxychains4.so"
+class BinaryProvider : NativePluginProvider() {
+    override fun populateFiles(provider: PathProvider) {
+        provider.addPath("trojan-plugin", 0b111101101)
+    }
 
-    private val EXECUTABLES = setOf(SS_LOCAL, SSR_LOCAL, TUN2SOCKS)
-
-    fun killAll() {
-        for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }
-            ?: return) {
-            val exe = File(try {
-                File(process, "cmdline").inputStream().bufferedReader().readText()
-            } catch (_: IOException) {
-                continue
-            }.split(Character.MIN_VALUE, limit = 2).first())
-            if (EXECUTABLES.contains(exe.name)) try {
-                Os.kill(process.name.toInt(), OsConstants.SIGKILL)
-                Logs.w("SIGKILL ${exe.nameWithoutExtension} (${process.name}) succeed")
-            } catch (e: ErrnoException) {
-                if (e.errno != OsConstants.ESRCH) {
-                    Logs.w("SIGKILL ${exe.absolutePath} (${process.name}) failed")
-                    Logs.w(e)
-                }
-            }
-        }
+    override fun getExecutable() = context!!.applicationInfo.nativeLibraryDir + "/libtrojan.so"
+    override fun openFile(uri: Uri): ParcelFileDescriptor = when (uri.path) {
+        "/trojan-plugin" -> ParcelFileDescriptor.open(
+            File(getExecutable()), ParcelFileDescriptor.MODE_READ_ONLY
+        )
+        else -> throw FileNotFoundException()
     }
 }

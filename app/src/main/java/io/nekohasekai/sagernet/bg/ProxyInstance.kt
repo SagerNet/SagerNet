@@ -39,6 +39,7 @@ import io.grpc.StatusException
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -56,6 +57,8 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
@@ -122,6 +125,16 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         bean is ShadowsocksRBean -> {
                             pluginConfigs[port] =
                                 profile.type to bean.buildShadowsocksRConfig().also {
+                                    Logs.d(it)
+                                }
+                        }
+                        bean is TrojanBean -> {
+                            when (DataStore.providerTrojan) {
+                                TrojanProvider.TROJAN -> initPlugin("trojan-plugin")
+                                TrojanProvider.TROJAN_GO -> initPlugin("trojan-go-plugin")
+                            }
+                            pluginConfigs[port] =
+                                profile.type to bean.buildTrojanConfig(port).also {
                                     Logs.d(it)
                                 }
                         }
@@ -237,6 +250,32 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             "$port",
                             "-u"
                         )
+
+                        base.data.processes!!.start(commands)
+                    }
+                    bean is TrojanBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "trojan_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf<String>()
+
+                        when (DataStore.providerTrojan) {
+                            TrojanProvider.TROJAN -> {
+                                commands.add(initPlugin("trojan-plugin").path)
+                            }
+                            TrojanProvider.TROJAN_GO -> {
+                                commands.add(initPlugin("trojan-go-plugin").path)
+                                //commands.add("-config") // but why?
+                            }
+                        }
+
+                        commands.add("--config")
+                        commands.add(configFile.absolutePath)
 
                         base.data.processes!!.start(commands)
                     }

@@ -338,7 +338,7 @@ fun Project.setupPlugin(projectName: String) {
             }
         }
 
-        if (System.getenv("SKIP_BUILD") != "on") {
+        if (System.getenv("SKIP_BUILD") != "on" && System.getProperty("SKIP_BUILD_$propPrefix") != "on") {
             if (targetAbi.isBlank()) {
                 tasks.register<Exec>("externalBuild") {
                     executable(rootProject.file("run"))

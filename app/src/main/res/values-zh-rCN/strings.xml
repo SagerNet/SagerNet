@@ -358,5 +358,8 @@
     <string name="connection_test_reorder">以速度重新排序</string>
     <string name="bypass_lan_in_core_only">仅在 Core 中绕过局域网</string>
     <string name="bypass_lan_in_core_only_sum">如果 Lineage 之 \"允许热点客户端使用 VPN\" 无法使用, 尝试启用此项</string>
+    <string name="protocol_settings">协议设置</string>
+    <string name="trojan_provider">Trojan 提供程序</string>
+    <string name="ss_aead_provider">Shadowsocks AEAD 提供程序</string>
 
 </resources>

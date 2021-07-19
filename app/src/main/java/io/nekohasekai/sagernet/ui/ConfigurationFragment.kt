@@ -72,14 +72,17 @@ import io.nekohasekai.sagernet.utils.TestInstance
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.UnknownHostException
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.properties.Delegates
 
 class ConfigurationFragment @JvmOverloads constructor(
@@ -630,59 +633,51 @@ class ConfigurationFragment @JvmOverloads constructor(
     @Suppress("EXPERIMENTAL_API_USAGE")
     fun urlTest(reuse: Boolean) {
         val test = TestDialog()
-        val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
-            val profiles =
-                ConcurrentLinkedQueue(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
+            Executable.killAll()
+
+            val profiles = LinkedList(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            val port = AtomicInteger(DataStore.socksPort + 100)
-            val nextMutex = Mutex()
-            repeat(5) {
+            val basePort = DataStore.socksPort
+            var count = 0
+            val testJobs = mutableListOf<Job>()
+
+            while (isActive) {
+                if (count < 5) {
+                    count++;
+                } else {
+                    testJobs.joinAll()
+                    testJobs.clear()
+                    Executable.killAll()
+                    count = 1
+                }
+
+                val port = basePort + 100 + count * 20
+
+                val profile = profiles.poll() ?: break
+                profile.status = 0
+                test.insert(profile)
+
                 testJobs.add(launch(testPool) {
-                    while (isActive) {
-                        val profile = profiles.poll() ?: break
-
-                        profile.status = 0
-                        test.insert(profile)
-
-                        val currentPort = port.getAndIncrement()
-                        var locked = false
-                        if (currentPort % 10 == 0) {
-                            port.getAndAdd(-10)
-                            nextMutex.lock(this@ConfigurationFragment)
-                            locked = true
-                        } else synchronized(this@ConfigurationFragment) {
-                            runBlocking {
-                                val finish = nextMutex.holdsLock(this@ConfigurationFragment)
-                                nextMutex.lock(this)
-                                if (finish) Executable.killAll()
-                                nextMutex.unlock(this)
-                            }
-                        }
-
-                        try {
-                            val result = TestInstance(
-                                requireContext(), profile, currentPort
-                            ).doTest(if (reuse) 2 else 1)
-                            profile.status = 1
-                            profile.ping = result
-                        } catch (e: PluginManager.PluginNotFoundException) {
-                            profile.status = 2
-                            profile.error = e.readableMessage
-                        } catch (e: Exception) {
-                            profile.status = 3
-                            profile.error = e.readableMessage
-                        }
-
-                        test.update(profile)
-                        if (locked) nextMutex.unlock(this@ConfigurationFragment)
+                    try {
+                        val result = TestInstance(
+                            requireContext(), profile, port
+                        ).doTest(if (reuse) 2 else 1)
+                        profile.status = 1
+                        profile.ping = result
+                    } catch (e: PluginManager.PluginNotFoundException) {
+                        profile.status = 2
+                        profile.error = e.readableMessage
+                    } catch (e: Exception) {
+                        profile.status = 3
+                        profile.error = e.readableMessage
                     }
 
+                    test.update(profile)
                 })
             }
 
-            testJobs.joinAll()
             testPool.close()
 
             ProfileManager.updateProfile(test.results.filter { it.status != 0 })
@@ -694,7 +689,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
         test.cancel = {
             mainJob.cancel()
-            testJobs.forEach { it.cancel() }
             runOnDefaultDispatcher {
                 ProfileManager.updateProfile(test.results.filter { it.status != 0 })
             }
