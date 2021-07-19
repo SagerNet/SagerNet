@@ -489,8 +489,14 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     }
 
+    fun stopService() {
+        if (serviceStarted()) SagerNet.stopService()
+    }
+
     @Suppress("EXPERIMENTAL_API_USAGE")
     fun pingTest(icmpPing: Boolean) {
+        stopService()
+
         val test = TestDialog()
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
@@ -632,6 +638,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     fun urlTest(reuse: Boolean) {
+        stopService()
+
         val test = TestDialog()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
