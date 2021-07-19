@@ -60,6 +60,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
+import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
@@ -112,6 +113,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
             for ((isBalancer, chain) in config.index) {
                 chain.entries.forEachIndexed { index, (port, profile) ->
                     val needChain = !isBalancer && index != chain.size - 1
+                    val mux = DataStore.enableMux && (isBalancer || chain.size == 0)
                     val bean = profile.requireBean()
 
                     when {
@@ -127,21 +129,28 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                         }
                         bean is TrojanBean -> {
                             when (DataStore.providerTrojan) {
-                                TrojanProvider.TROJAN -> initPlugin("trojan-plugin")
-                                TrojanProvider.TROJAN_GO -> initPlugin("trojan-go-plugin")
-                            }
-                            pluginConfigs[port] =
-                                profile.type to bean.buildTrojanConfig(port).also {
-                                    Logs.d(it)
+                                TrojanProvider.TROJAN -> {
+                                    initPlugin("trojan-plugin")
+                                    pluginConfigs[port] =
+                                        profile.type to bean.buildTrojanConfig(port).also {
+                                            Logs.d(it)
+                                        }
                                 }
+                                TrojanProvider.TROJAN_GO -> {
+                                    initPlugin("trojan-go-plugin")
+                                    pluginConfigs[port] =
+                                        profile.type to bean.buildTrojanGoConfig(port, mux).also {
+                                            Logs.d(it)
+                                        }
+                                }
+                            }
                         }
                         bean is TrojanGoBean -> {
                             initPlugin("trojan-go-plugin")
-                            pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
-                                port, index == 0 && DataStore.enableMux
-                            ).also {
-                                Logs.d(it)
-                            }
+                            pluginConfigs[port] =
+                                profile.type to bean.buildTrojanGoConfig(port, mux).also {
+                                    Logs.d(it)
+                                }
                         }
                         bean is NaiveBean -> {
                             initPlugin("naive-plugin")

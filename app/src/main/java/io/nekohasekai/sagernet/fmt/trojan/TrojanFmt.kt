@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt.trojan
 
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.linkBuilder
@@ -93,6 +94,34 @@ fun TrojanBean.buildTrojanConfig(port: Int): String {
 
         conf["ssl"] = JSONObject().also {
             if (allowInsecure) it["verify"] = false
+            if (sni.isNotBlank()) it["sni"] = sni
+            if (alpn.isNotBlank()) it["alpn"] = JSONArray(alpn.split("\n"))
+        }
+    }.toStringPretty()
+}
+
+fun TrojanBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
+    return JSONObject().also { conf ->
+        conf["run_type"] = "client"
+        conf["local_addr"] = LOCALHOST
+        conf["local_port"] = port
+        conf["remote_addr"] = finalAddress
+        conf["remote_port"] = finalPort
+        conf["password"] = JSONArray().apply {
+            add(password)
+        }
+        conf["log_level"] = if (DataStore.enableLog) 0 else 2
+        if (mux && DataStore.enableMuxForAll) conf["mux"] = JSONObject().also {
+            it["enabled"] = true
+            it["concurrency"] = DataStore.muxConcurrency
+        }
+        conf["tcp"] = JSONObject().also {
+            it["prefer_ipv4"] = DataStore.ipv6Mode <= IPv6Mode.ENABLE
+        }
+
+        conf["ssl"] = JSONObject().also {
+            if (allowInsecure) it["verify"] = false
+
             if (sni.isNotBlank()) it["sni"] = sni
             if (alpn.isNotBlank()) it["alpn"] = JSONArray(alpn.split("\n"))
         }
