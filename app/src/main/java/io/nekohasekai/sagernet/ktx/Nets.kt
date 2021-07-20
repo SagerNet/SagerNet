@@ -32,9 +32,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.net.Proxy
+import java.net.*
 
 val okHttpClient = OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build()
 
@@ -95,3 +93,12 @@ fun parseAddress(addressArray: ByteArray) = InetAddress.getByAddress(addressArra
 val INET_TUN = IPAddressString(VpnService.PRIVATE_VLAN4_CLIENT).address.toInetAddress()
 val INET6_TUN = IPAddressString(VpnService.PRIVATE_VLAN6_CLIENT).address.toInetAddress()
 val INET_LO = IPAddressString(LOCALHOST).getAddress(IPAddress.IPVersion.IPV4).toInetAddress()
+
+fun mkPort(): Int {
+    val socket = Socket()
+    socket.reuseAddress = true
+    socket.bind(InetSocketAddress(0))
+    val port = socket.localPort
+    socket.close()
+    return port
+}

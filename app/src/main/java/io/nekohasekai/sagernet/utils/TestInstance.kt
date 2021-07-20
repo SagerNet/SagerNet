@@ -67,7 +67,9 @@ import java.net.Proxy
 import java.time.Duration
 import kotlin.coroutines.Continuation
 
-class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: Int) {
+class TestInstance(val ctx: Context, val profile: ProxyEntity) {
+
+    val httpPort = mkPort()
 
     val pluginPath = hashMapOf<String, PluginManager.InitResult>()
     fun initPlugin(name: String): PluginManager.InitResult {
@@ -87,7 +89,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
     val point = Libv2ray.newV2RayPoint(TestSupportsSet, false)
     val config = if (profile.type != ProxyEntity.TYPE_CONFIG) {
-        buildV2RayConfig(profile, true, currentPort).apply {
+        buildV2RayConfig(profile, true, httpPort).apply {
             for ((isBalancer, chain) in index) {
                 chain.entries.forEachIndexed { index, (port, profile) ->
                     val needChain = !isBalancer && index != chain.size - 1
@@ -131,7 +133,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                 ProxyEntity(
                     type = ProxyEntity.TYPE_TROJAN_GO,
                     trojanGoBean = TrojanGoBean().applyDefaultValues()
-                ), true, currentPort
+                ), true, httpPort
             ).apply {
                 val (pluginPort, _) = index[0].chain.entries.first()
                 pluginConfigs[pluginPort] = profile.type to buildCustomTrojanConfig(
@@ -139,7 +141,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                 )
             }
         }
-        else -> buildCustomConfig(profile, true, currentPort)
+        else -> buildCustomConfig(profile, true, httpPort)
     }
 
     private lateinit var continuation: Continuation<Int>
@@ -327,7 +329,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
                     point.runLoop(false)
 
                     if (config.requireWs) {
-                        val url = "http://$LOCALHOST:" + (DataStore.socksPort + 1) + "/"
+                        val url = "http://$LOCALHOST:" + (config.wsPort) + "/"
 
                         onMainDispatcher {
                             wsForwarder = WebView(ctx)
@@ -361,7 +363,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity, val currentPort: 
 
                     val timeout = Duration.ofSeconds(5L)
                     val okHttpClient = OkHttpClient.Builder()
-                        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(LOCALHOST, currentPort)))
+                        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(LOCALHOST, httpPort)))
                         .connectTimeout(timeout).callTimeout(timeout).readTimeout(timeout)
                         .writeTimeout(timeout).build()
 

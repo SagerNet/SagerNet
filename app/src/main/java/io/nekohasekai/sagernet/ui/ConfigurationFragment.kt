@@ -56,7 +56,6 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.bg.Executable
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
@@ -639,52 +638,36 @@ class ConfigurationFragment @JvmOverloads constructor(
         val test = TestDialog()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
-            Executable.killAll()
-
             val profiles = LinkedList(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
-            val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            var currentPort = DataStore.httpPort
-            var count = 0
             val testJobs = mutableListOf<Job>()
 
-            while (isActive) {
-                if (count < 5) {
-                    count++;
-                } else {
-                    testJobs.joinAll()
-                    testJobs.clear()
-                    // Executable.killAll()
-                    count = 1
-                }
+            repeat(5) {
+                testJobs.add(launch {
+                    while (isActive) {
+                        val profile = profiles.poll() ?: break
+                        profile.status = 0
+                        test.insert(profile)
 
-                val profile = profiles.poll() ?: break
-                profile.status = 0
-                test.insert(profile)
+                        try {
+                            val result =
+                                TestInstance(requireContext(), profile).doTest(if (reuse) 2 else 1)
+                            profile.status = 1
+                            profile.ping = result
+                        } catch (e: PluginManager.PluginNotFoundException) {
+                            profile.status = 2
+                            profile.error = e.readableMessage
+                        } catch (e: Exception) {
+                            profile.status = 3
+                            profile.error = e.readableMessage
+                        }
 
-                currentPort += 5
-                val port = currentPort
-                testJobs.add(launch(testPool) {
-                    try {
-                        val result = TestInstance(
-                            requireContext(), profile, port
-                        ).doTest(if (reuse) 2 else 1)
-                        profile.status = 1
-                        profile.ping = result
-                    } catch (e: PluginManager.PluginNotFoundException) {
-                        profile.status = 2
-                        profile.error = e.readableMessage
-                    } catch (e: Exception) {
-                        profile.status = 3
-                        profile.error = e.readableMessage
+                        test.update(profile)
+                        ProfileManager.updateProfile(profile)
                     }
-
-                    test.update(profile)
                 })
             }
 
-            testPool.close()
-
-            ProfileManager.updateProfile(test.results.filter { it.status != 0 })
+            testJobs.joinAll()
 
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
@@ -693,9 +676,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
         test.cancel = {
             mainJob.cancel()
-            runOnDefaultDispatcher {
-                ProfileManager.updateProfile(test.results.filter { it.status != 0 })
-            }
         }
     }
 

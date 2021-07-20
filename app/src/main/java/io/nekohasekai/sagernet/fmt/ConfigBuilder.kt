@@ -45,10 +45,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.USE_STATS_SERVICE
-import io.nekohasekai.sagernet.ktx.formatObject
-import io.nekohasekai.sagernet.ktx.isIpAddress
+import io.nekohasekai.sagernet.ktx.*
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -360,10 +357,6 @@ fun buildV2RayConfig(
             }
         }
 
-        var currentPort = if (forTest) testPort + 1 else DataStore.socksPort + 10
-
-        fun requirePort() = currentPort++
-
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
@@ -420,7 +413,7 @@ fun buildV2RayConfig(
                 }
 
                 if (proxyEntity.needExternal()) {
-                    val localPort = requirePort()
+                    val localPort = mkPort()
                     chainMap[localPort] = proxyEntity
                     currentOutbound.apply {
                         protocol = "socks"
@@ -774,7 +767,7 @@ fun buildV2RayConfig(
                 }
 
                 if (proxyEntity.needExternal() && !isBalancer && index != profileList.lastIndex) {
-                    val mappingPort = requirePort()
+                    val mappingPort = mkPort()
                     bean.finalAddress = LOCALHOST
                     bean.finalPort = mappingPort
                     bean.isChain = true
@@ -794,7 +787,7 @@ fun buildV2RayConfig(
                         pastInboundTag = tag
                     })
                 } else if (proxyEntity.needExternal() && !bean.serverAddress.isIpAddress()) {
-                    val mappingPort = requirePort()
+                    val mappingPort = mkPort()
                     bean.finalAddress = LOCALHOST
                     bean.finalPort = mappingPort
 
@@ -953,7 +946,7 @@ fun buildV2RayConfig(
         if (requireWs) {
             browserForwarder = BrowserForwarderObject().apply {
                 listenAddr = LOCALHOST
-                listenPort = requirePort()
+                listenPort = mkPort()
             }
         }
 
@@ -1218,7 +1211,7 @@ fun buildCustomConfig(
 
     val dnsInbound = inbounds.find { it.tag == TAG_DNS_IN }?.also { inbound ->
         inbound.listen = bind
-        inbound.port = if (forTest) testPort + 1 else DataStore.localDNSPort
+        inbound.port = if (forTest) mkPort() else DataStore.localDNSPort
 
         if (!forTest) if (dnsArr?.any { it.valueX == "fakedns" } == true) {
             DataStore.dnsModeFinal = DnsMode.FAKEDNS_LOCAL
@@ -1271,7 +1264,7 @@ fun buildCustomConfig(
     if (socksInbound != null) {
         socksInbound.apply {
             listen = bind
-            port = if (forTest) testPort + 2 else DataStore.socksPort
+            port = if (forTest) mkPort() else DataStore.socksPort
         }
     } else if (!forTest) {
         inbounds.add(InboundObject().apply {
@@ -1408,7 +1401,7 @@ fun buildCustomConfig(
         config["browserForwarder"] = JSONObject(gson.toJson(BrowserForwarderObject().apply {
             requireWs = true
             listenAddr = LOCALHOST
-            listenPort = if (forTest) testPort + 3 else DataStore.socksPort + 1
+            listenPort = mkPort()
             wsPort = listenPort
         }))
     }

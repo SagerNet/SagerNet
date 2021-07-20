@@ -104,8 +104,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
         v2rayPoint = Libv2ray.newV2RayPoint(
             if (service is VpnService) SagerSupportSet(service) else NoSupportSet(), false
         )
-        val socksPort = DataStore.socksPort + 10
-        v2rayPoint.domainName = "$LOCALHOST:$socksPort"
+        v2rayPoint.domainName = "$LOCALHOST:11451"
 
         if (profile.type != ProxyEntity.TYPE_CONFIG) {
             config = buildV2RayConfig(profile)
@@ -455,7 +454,7 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
 
             if (config.requireWs) {
                 runOnDefaultDispatcher {
-                    val url = "http://$LOCALHOST:" + (DataStore.socksPort + 1) + "/"
+                    val url = "http://$LOCALHOST:" + (config.wsPort) + "/"
                     onMainDispatcher {
                         wsForwarder = WebView(base as Context)
                         wsForwarder.settings.javaScriptEnabled = true
