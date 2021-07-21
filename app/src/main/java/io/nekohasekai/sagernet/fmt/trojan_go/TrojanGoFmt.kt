@@ -30,10 +30,7 @@ import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.urlSafe
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseTrojanGo(server: String): TrojanGoBean {
@@ -135,6 +132,10 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
                 it["host"] = host
                 it["path"] = path
             }
+        }
+
+        if (sni.isBlank() && finalAddress == LOCALHOST && !serverAddress.isIpAddress()) {
+            sni = serverAddress
         }
 
         if (sni.isNotBlank()) conf["ssl"] = JSONObject().also {

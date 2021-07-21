@@ -24,10 +24,7 @@ package io.nekohasekai.sagernet.fmt.naive
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.unUrlSafe
-import io.nekohasekai.sagernet.ktx.urlSafe
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseNaive(link: String): NaiveBean {
@@ -51,7 +48,7 @@ fun parseNaive(link: String): NaiveBean {
 
 fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
     val builder = linkBuilder()
-        .host(finalAddress)
+        .host(serverAddress)
         .port(finalPort)
     if (username.isNotBlank()) {
         builder.username(username)
@@ -76,6 +73,9 @@ fun NaiveBean.buildNaiveConfig(port: Int): String {
         it["proxy"] = toUri(true)
         if (extraHeaders.isNotBlank()) {
             it["extra-headers"] = extraHeaders.split("\n").joinToString("\r\n")
+        }
+        if (!serverAddress.isIpAddress() && finalAddress == LOCALHOST) {
+            it["host-resolver-rules"] = "MAP $serverAddress $LOCALHOST"
         }
         if (DataStore.enableLog) {
             it["log"] = ""

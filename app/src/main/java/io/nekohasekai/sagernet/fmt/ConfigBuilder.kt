@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult.IndexEntity
+import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
@@ -786,9 +787,16 @@ fun buildV2RayConfig(
 
                         pastInboundTag = tag
                     })
-                } else if (proxyEntity.needExternal() && !bean.serverAddress.isIpAddress()) {
+                } else if (bean.canMapping() && proxyEntity.needExternal() && !bean.serverAddress.isIpAddress()) {
                     val mappingPort = mkPort()
-                    bean.finalAddress = LOCALHOST
+                    when (bean) {
+                        is BrookBean -> {
+                            dns.hosts[bean.serverAddress] = LOCALHOST
+                        }
+                        else -> {
+                            bean.finalAddress = LOCALHOST
+                        }
+                    }
                     bean.finalPort = mappingPort
 
                     inbounds.add(InboundObject().apply {

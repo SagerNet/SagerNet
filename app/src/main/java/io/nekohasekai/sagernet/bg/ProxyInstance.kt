@@ -158,6 +158,8 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                             }
                         }
                         bean is PingTunnelBean -> {
+                            if (needChain) error("PingTunnel is incompatible with chain")
+
                             initPlugin("pingtunnel-plugin")
                         }
                         bean is RelayBatonBean -> {
@@ -168,6 +170,8 @@ class ProxyInstance(val profile: ProxyEntity, val service: BaseService.Interface
                                 }
                         }
                         bean is BrookBean -> {
+                            if (needChain) error("Brook is incompatible with chain")
+
                             initPlugin("brook-plugin")
                         }
                     }

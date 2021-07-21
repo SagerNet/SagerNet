@@ -26,6 +26,7 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
@@ -94,6 +95,9 @@ fun TrojanBean.buildTrojanConfig(port: Int): String {
 
         conf["ssl"] = JSONObject().also {
             if (allowInsecure) it["verify"] = false
+            if (sni.isBlank() && finalAddress == LOCALHOST && !serverAddress.isIpAddress()) {
+                sni = serverAddress
+            }
             if (sni.isNotBlank()) it["sni"] = sni
             if (alpn.isNotBlank()) it["alpn"] = JSONArray(alpn.split("\n"))
         }
@@ -121,7 +125,9 @@ fun TrojanBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
 
         conf["ssl"] = JSONObject().also {
             if (allowInsecure) it["verify"] = false
-
+            if (sni.isBlank() && finalAddress == LOCALHOST && !serverAddress.isIpAddress()) {
+                sni = serverAddress
+            }
             if (sni.isNotBlank()) it["sni"] = sni
             if (alpn.isNotBlank()) it["alpn"] = JSONArray(alpn.split("\n"))
         }

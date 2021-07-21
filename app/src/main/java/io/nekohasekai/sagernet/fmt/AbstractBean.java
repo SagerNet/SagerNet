@@ -64,6 +64,8 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
         return true;
     }
 
+    public boolean canMapping() { return true; }
+
     public void initDefaultValues() {
         if (StrUtil.isBlank(serverAddress)) {
             serverAddress = "127.0.0.1";

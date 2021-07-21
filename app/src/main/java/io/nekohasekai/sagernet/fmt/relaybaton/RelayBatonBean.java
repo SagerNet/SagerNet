@@ -43,6 +43,11 @@ public class RelayBatonBean extends AbstractBean {
     }
 
     @Override
+    public boolean canMapping() {
+        return false;
+    }
+
+    @Override
     public void serialize(ByteBufferOutput output) {
         output.writeInt(0);
         output.writeString(serverAddress);

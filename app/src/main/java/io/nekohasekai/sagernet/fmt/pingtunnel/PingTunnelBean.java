@@ -49,6 +49,11 @@ public class PingTunnelBean extends AbstractBean {
     }
 
     @Override
+    public boolean canMapping() {
+        return false;
+    }
+
+    @Override
     public void initDefaultValues() {
         super.initDefaultValues();
         if (key == null) key = "";

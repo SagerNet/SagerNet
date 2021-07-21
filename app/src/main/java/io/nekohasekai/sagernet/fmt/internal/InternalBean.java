@@ -40,4 +40,8 @@ public abstract class InternalBean extends AbstractBean {
         return false;
     }
 
+    @Override
+    public boolean canMapping() {
+        return false;
+    }
 }
