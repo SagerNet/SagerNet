@@ -189,6 +189,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         val proxyApps = DataStore.proxyApps
         val needBypassRootUid =
             enableExperimentalTun || data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
+        val needIncludeSelf =
+            enableExperimentalTun || data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
@@ -220,7 +222,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
             }
 
             individual.apply {
-                if (bypass xor enableExperimentalTun) add(packageName) else remove(packageName)
+                if (bypass xor needIncludeSelf) add(packageName) else remove(packageName)
             }.forEach {
                 try {
                     if (bypass) {

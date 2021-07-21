@@ -64,6 +64,7 @@
             <option value="$PROJECT_DIR$/external/preferencex/preferencex-simplemenu" />
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/library/core" />
+            <option value="$PROJECT_DIR$/library/include" />
             <option value="$PROJECT_DIR$/library/proto" />
             <option value="$PROJECT_DIR$/library/proto-stub" />
             <option value="$PROJECT_DIR$/library/shadowsocks" />

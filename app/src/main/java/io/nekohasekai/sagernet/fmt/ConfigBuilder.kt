@@ -38,6 +38,7 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
+import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
@@ -358,6 +359,14 @@ fun buildV2RayConfig(
             }
         }
 
+        val enableExperimentalTun = DataStore.enableExperimentalTun
+        val needIncludeSelf =
+            enableExperimentalTun || proxy.balancerBean == null && proxies.size > 1 || extraProxies.any { (key, value) ->
+                val (_, balancer) = key
+                val (isBalancer, _) = balancer
+                isBalancer && value.size > 1
+            }
+
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
@@ -418,8 +427,7 @@ fun buildV2RayConfig(
                     chainMap[localPort] = proxyEntity
                     currentOutbound.apply {
                         protocol = "socks"
-                        settings = LazyOutboundConfigurationObject(
-                            this,
+                        settings = LazyOutboundConfigurationObject(this,
                             SocksOutboundConfigurationObject().apply {
                                 servers =
                                     listOf(SocksOutboundConfigurationObject.ServerObject().apply {
@@ -435,21 +443,22 @@ fun buildV2RayConfig(
 
                         if (bean is SOCKSBean) {
                             protocol = "socks"
-                            settings = LazyOutboundConfigurationObject(this,
+                            settings = LazyOutboundConfigurationObject(
+                                this,
                                 SocksOutboundConfigurationObject().apply {
-                                    servers = listOf(
-                                        SocksOutboundConfigurationObject.ServerObject().apply {
-                                                address = bean.serverAddress
-                                                port = bean.serverPort
-                                                if (!bean.username.isNullOrBlank()) {
-                                                    users =
-                                                        listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
-                                                            .apply {
-                                                                user = bean.username
-                                                                pass = bean.password
-                                                            })
-                                                }
-                                            })
+                                    servers = listOf(SocksOutboundConfigurationObject.ServerObject()
+                                        .apply {
+                                            address = bean.serverAddress
+                                            port = bean.serverPort
+                                            if (!bean.username.isNullOrBlank()) {
+                                                users =
+                                                    listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
+                                                        .apply {
+                                                            user = bean.username
+                                                            pass = bean.password
+                                                        })
+                                            }
+                                        })
                                 })
                             if (bean.tls || needKeepAliveInterval) {
                                 streamSettings = StreamSettingsObject().apply {
@@ -471,21 +480,22 @@ fun buildV2RayConfig(
                             }
                         } else if (bean is HttpBean) {
                             protocol = "http"
-                            settings = LazyOutboundConfigurationObject(this,
+                            settings = LazyOutboundConfigurationObject(
+                                this,
                                 HTTPOutboundConfigurationObject().apply {
-                                    servers = listOf(
-                                        HTTPOutboundConfigurationObject.ServerObject().apply {
-                                                address = bean.serverAddress
-                                                port = bean.serverPort
-                                                if (!bean.username.isNullOrBlank()) {
-                                                    users =
-                                                        listOf(HTTPInboundConfigurationObject.AccountObject()
-                                                            .apply {
-                                                                user = bean.username
-                                                                pass = bean.password
-                                                            })
-                                                }
-                                            })
+                                    servers = listOf(HTTPOutboundConfigurationObject.ServerObject()
+                                        .apply {
+                                            address = bean.serverAddress
+                                            port = bean.serverPort
+                                            if (!bean.username.isNullOrBlank()) {
+                                                users =
+                                                    listOf(HTTPInboundConfigurationObject.AccountObject()
+                                                        .apply {
+                                                            user = bean.username
+                                                            pass = bean.password
+                                                        })
+                                            }
+                                        })
                                 })
                             if (bean.tls || needKeepAliveInterval) {
                                 streamSettings = StreamSettingsObject().apply {
@@ -508,11 +518,11 @@ fun buildV2RayConfig(
                         } else if (bean is StandardV2RayBean) {
                             if (bean is VMessBean) {
                                 protocol = "vmess"
-                                settings = LazyOutboundConfigurationObject(this,
+                                settings = LazyOutboundConfigurationObject(
+                                    this,
                                     VMessOutboundConfigurationObject().apply {
-                                        vnext =
-                                            listOf(VMessOutboundConfigurationObject.ServerObject()
-                                                .apply {
+                                        vnext = listOf(
+                                            VMessOutboundConfigurationObject.ServerObject().apply {
                                                     address = bean.serverAddress
                                                     port = bean.serverPort
                                                     users =
@@ -529,11 +539,11 @@ fun buildV2RayConfig(
                                     })
                             } else if (bean is VLESSBean) {
                                 protocol = "vless"
-                                settings = LazyOutboundConfigurationObject(this,
+                                settings = LazyOutboundConfigurationObject(
+                                    this,
                                     VLESSOutboundConfigurationObject().apply {
-                                        vnext =
-                                            listOf(VLESSOutboundConfigurationObject.ServerObject()
-                                                .apply {
+                                        vnext = listOf(
+                                            VLESSOutboundConfigurationObject.ServerObject().apply {
                                                     address = bean.serverAddress
                                                     port = bean.serverPort
                                                     users =
@@ -692,7 +702,8 @@ fun buildV2RayConfig(
                             }
                         } else if (bean is ShadowsocksBean) {
                             protocol = "shadowsocks"
-                            settings = LazyOutboundConfigurationObject(this,
+                            settings = LazyOutboundConfigurationObject(
+                                this,
                                 ShadowsocksOutboundConfigurationObject().apply {
                                     servers =
                                         listOf(ShadowsocksOutboundConfigurationObject.ServerObject()
@@ -712,10 +723,12 @@ fun buildV2RayConfig(
                                 })
                         } else if (bean is TrojanBean) {
                             protocol = "trojan"
-                            settings = LazyOutboundConfigurationObject(this,
+                            settings = LazyOutboundConfigurationObject(
+                                this,
                                 TrojanOutboundConfigurationObject().apply {
-                                    servers = listOf(
-                                        TrojanOutboundConfigurationObject.ServerObject().apply {
+                                    servers =
+                                        listOf(TrojanOutboundConfigurationObject.ServerObject()
+                                            .apply {
                                                 address = bean.serverAddress
                                                 port = bean.serverPort
                                                 password = bean.password
@@ -769,7 +782,14 @@ fun buildV2RayConfig(
 
                 if (proxyEntity.needExternal() && !isBalancer && index != profileList.lastIndex) {
                     val mappingPort = mkPort()
-                    bean.finalAddress = LOCALHOST
+                    when (bean) {
+                        is BrookBean -> {
+                            dns.hosts[bean.serverAddress] = LOCALHOST
+                        }
+                        else -> {
+                            bean.finalAddress = LOCALHOST
+                        }
+                    }
                     bean.finalPort = mappingPort
                     bean.isChain = true
 
@@ -778,7 +798,8 @@ fun buildV2RayConfig(
                         port = mappingPort
                         tag = "$tagOutbound-mapping-${proxyEntity.id}"
                         protocol = "dokodemo-door"
-                        settings = LazyInboundConfigurationObject(this,
+                        settings = LazyInboundConfigurationObject(
+                            this,
                             DokodemoDoorInboundConfigurationObject().apply {
                                 address = bean.serverAddress
                                 network = "tcp,udp"
@@ -787,7 +808,7 @@ fun buildV2RayConfig(
 
                         pastInboundTag = tag
                     })
-                } else if (bean.canMapping() && proxyEntity.needExternal() && !bean.serverAddress.isIpAddress()) {
+                } else if (bean.canMapping() && proxyEntity.needExternal() && needIncludeSelf) {
                     val mappingPort = mkPort()
                     when (bean) {
                         is BrookBean -> {
@@ -821,7 +842,6 @@ fun buildV2RayConfig(
 
                 outbounds.add(currentOutbound)
                 chainOutbounds.add(currentOutbound)
-
                 pastExternal = proxyEntity.needExternal()
                 pastOutbound = currentOutbound
 

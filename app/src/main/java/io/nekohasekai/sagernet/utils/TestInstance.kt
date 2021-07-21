@@ -22,7 +22,6 @@
 package io.nekohasekai.sagernet.utils
 
 import android.content.Context
-import android.net.NetworkUtils
 import android.os.Build
 import android.os.SystemClock
 import android.webkit.WebResourceError
@@ -67,7 +66,11 @@ import java.net.Proxy
 import java.time.Duration
 import kotlin.coroutines.Continuation
 
-class TestInstance(val ctx: Context, val profile: ProxyEntity) {
+class TestInstance(
+    val ctx: Context,
+    val profile: ProxyEntity,
+    val protector: V2RayVPNServiceSupportsSet
+) {
 
     val httpPort = mkPort()
 
@@ -78,16 +81,7 @@ class TestInstance(val ctx: Context, val profile: ProxyEntity) {
 
     val pluginConfigs = hashMapOf<Int, Pair<Int, String>>()
 
-    object TestSupportsSet : V2RayVPNServiceSupportsSet {
-        override fun onEmitStatus(status: String) {
-        }
-
-        override fun protect(fd: Long): Boolean {
-            return NetworkUtils.protectFromVpn(fd.toInt())
-        }
-    }
-
-    val point = Libv2ray.newV2RayPoint(TestSupportsSet, false)
+    val point = Libv2ray.newV2RayPoint(protector, false)
     val config = if (profile.type != ProxyEntity.TYPE_CONFIG) {
         buildV2RayConfig(profile, true, httpPort).apply {
             for ((isBalancer, chain) in index) {

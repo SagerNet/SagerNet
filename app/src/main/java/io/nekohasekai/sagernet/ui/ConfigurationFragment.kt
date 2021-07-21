@@ -71,6 +71,7 @@ import io.nekohasekai.sagernet.utils.TestInstance
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
+import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -563,9 +564,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                             } else {
                                 val socket = Socket()
                                 socket.bind(InetSocketAddress(0))
-
-                                protectFromVpn(socket.fileDescriptor)
-
+                                protectFromVpn(socket.fileDescriptor.int)
                                 val start = SystemClock.elapsedRealtime()
                                 socket.connect(
                                     InetSocketAddress(
@@ -637,6 +636,14 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         val test = TestDialog()
         val dialog = test.builder.show()
+        val protector = object : V2RayVPNServiceSupportsSet {
+            override fun onEmitStatus(status: String) = Unit
+            override fun protect(fd: Long): Boolean {
+                protectFromVpn(fd.toInt())
+                return true
+            }
+        }
+
         val mainJob = runOnDefaultDispatcher {
             val profiles = LinkedList(SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup))
             val testJobs = mutableListOf<Job>()
@@ -649,8 +656,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         test.insert(profile)
 
                         try {
-                            val result =
-                                TestInstance(requireContext(), profile).doTest(if (reuse) 2 else 1)
+                            val result = TestInstance(
+                                requireContext(), profile, protector
+                            ).doTest(if (reuse) 2 else 1)
                             profile.status = 1
                             profile.ping = result
                         } catch (e: PluginManager.PluginNotFoundException) {

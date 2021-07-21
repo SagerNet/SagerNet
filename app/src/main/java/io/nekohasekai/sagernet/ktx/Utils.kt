@@ -286,8 +286,21 @@ const val USE_STATS_SERVICE = false
 
 val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()
 
-fun protectFromVpn(fileDescriptor: FileDescriptor): Boolean {
-    return NetworkUtils.protectFromVpn(fileDescriptor.int)
+private val protectDirectAvailable by lazy {
+    try {
+        NetworkUtils::class.java.getDeclaredMethod("protectFromVpn", Int::class.java)
+        true
+    } catch (e: Exception) {
+        false
+    }
+}
+
+fun Fragment.protectFromVpn(fd: Int) {
+    if (protectDirectAvailable) {
+        NetworkUtils.protectFromVpn(fd)
+    } else {
+        (requireActivity() as? MainActivity)?.connection?.service?.protect(fd)
+    }
 }
 
 fun <T> Continuation<T>.tryResume(value: T) {

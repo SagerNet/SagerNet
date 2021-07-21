@@ -64,7 +64,7 @@ The application is designed to be used whenever possible.
     <li><a href="https://github.com/txthinking/brook/blob/master/LICENSE">txthinking/brook</a>:  <code>GPL 3.0</code></li>
 </ul>
 
-### LICENSE
+## LICENSE
 
 ```
 Copyright (C) 2021 by nekohasekai <sekai@neko.services>

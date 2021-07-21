@@ -1,4 +1,5 @@
 include(":library:core")
+include(":library:include")
 include(":library:shadowsocks")
 include(":library:shadowsocksr")
 include(":library:proto")
