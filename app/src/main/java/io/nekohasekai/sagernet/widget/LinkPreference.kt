@@ -26,7 +26,6 @@ import android.util.AttributeSet
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import com.takisoft.preferencex.EditTextPreference
-import io.nekohasekai.sagernet.CONNECTION_TEST_URL
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.readableMessage
@@ -56,13 +55,16 @@ class LinkPreference : EditTextPreference {
         defStyleRes: Int,
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
         val a = context.obtainStyledAttributes(
-            attrs, R.styleable.Preference, defStyleAttr, defStyleRes)
+            attrs, R.styleable.Preference, defStyleAttr, defStyleRes
+        )
         if (a.hasValue(androidx.preference.R.styleable.Preference_defaultValue)) {
-            defaultValue =
-                onGetDefaultValue(a, androidx.preference.R.styleable.Preference_defaultValue)?.toString()
+            defaultValue = onGetDefaultValue(
+                a, androidx.preference.R.styleable.Preference_defaultValue
+            )?.toString()
         } else if (a.hasValue(androidx.preference.R.styleable.Preference_android_defaultValue)) {
-            defaultValue =
-                onGetDefaultValue(a, androidx.preference.R.styleable.Preference_android_defaultValue)?.toString()
+            defaultValue = onGetDefaultValue(
+                a, androidx.preference.R.styleable.Preference_android_defaultValue
+            )?.toString()
         }
     }
 

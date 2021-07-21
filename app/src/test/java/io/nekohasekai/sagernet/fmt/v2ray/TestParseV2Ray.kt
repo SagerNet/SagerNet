@@ -76,7 +76,7 @@ class TestParseV2Ray : TestCase() {
         assertEquals(port, vmess.serverPort)
         assertEquals(comment, vmess.name)
 
-        vmess.initDefaultValues()
+        vmess.initializeDefaultValues()
         assertEquals(parseV2RayN(vmess.toV2rayN()).applyDefaultValues(), vmess)
 
     }
@@ -92,7 +92,7 @@ class TestParseV2Ray : TestCase() {
         assertEquals(vless.type, "grpc")
         assertEquals(vless.grpcServiceName, "FuckGFW")
 
-        vless.initDefaultValues()
+        vless.initializeDefaultValues()
         assertEquals(parseV2Ray(vless.toUri()).applyDefaultValues(), vless)
     }
 

@@ -32,6 +32,19 @@ import java.io.OutputStream
 fun InputStream.byteBuffer() = ByteBufferInput(this)
 fun OutputStream.byteBuffer() = ByteBufferOutput(this)
 
+fun ByteBufferInput.readStringList(): List<String> {
+    return mutableListOf<String>().apply {
+        repeat(readInt()) {
+            add(readString())
+        }
+    }
+}
+
+fun ByteBufferOutput.writeStringList(list: List<String>) {
+    writeInt(list.size)
+    for (str in list) writeString(str)
+}
+
 fun Parcelable.marshall(): ByteArray {
     val parcel = Parcel.obtain()
     writeToParcel(parcel, 0)

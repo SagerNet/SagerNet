@@ -28,7 +28,6 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class RelayBatonSettingsActivity : ProfileSettingsActivity<RelayBatonBean>() {
 

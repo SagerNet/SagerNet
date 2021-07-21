@@ -57,10 +57,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         val groups = SagerDatabase.groupDao.allGroups()
         val selectedGroup = SagerDatabase.groupDao.getById(selectedGroup) ?: groups[0]
         var targetIndex by Delegates.notNull<Int>()
-        return if (!selectedGroup.isSubscription) {
+        return if (!selectedGroup.ungrouped) {
             selectedGroup.id
         } else {
-            targetIndex = groups.indexOfFirst { !it.isSubscription }
+            targetIndex = groups.indexOfFirst { it.ungrouped }
             groups[targetIndex].id
         }
     }
@@ -150,7 +150,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
     var bypass by configurationStore.boolean(Key.BYPASS_MODE) { true }
     var individual by configurationStore.string(Key.INDIVIDUAL)
-    var forceShadowsocksRust by configurationStore.boolean(Key.FORCE_SHADOWSOCKS_RUST)
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
     var enableMuxForAll by configurationStore.boolean(Key.ENABLE_MUX_FOR_ALL)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
@@ -167,7 +166,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
-    var enableExperimentalTun by configurationStore.boolean(Key.ENABLE_EXPERIMENTAL_TUN)
 
     var vpnMode by configurationStore.stringToInt(Key.VPN_MODE)
     var multiThreadForward by configurationStore.boolean(Key.MULTI_THREAD_FORWARD)
@@ -238,6 +236,20 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeReverse by profileCacheStore.boolean(Key.ROUTE_REVERSE)
     var routeRedirect by profileCacheStore.string(Key.ROUTE_REDIRECT)
     var serverConfig by profileCacheStore.string(Key.SERVER_CONFIG)
+
+    var groupName by profileCacheStore.string(Key.GROUP_NAME)
+    var groupType by profileCacheStore.stringToInt(Key.GROUP_TYPE)
+
+    var subscriptionType by profileCacheStore.stringToInt(Key.SUBSCRIPTION_TYPE)
+    var subscriptionLink by profileCacheStore.string(Key.SUBSCRIPTION_LINK)
+    var subscriptionToken by profileCacheStore.string(Key.SUBSCRIPTION_TOKEN)
+    var subscriptionForceResolve by profileCacheStore.boolean(Key.SUBSCRIPTION_FORCE_RESOLVE)
+    var subscriptionDeduplication by profileCacheStore.boolean(Key.SUBSCRIPTION_DEDUPLICATION)
+    var subscriptionForceVMessAEAD by profileCacheStore.boolean(Key.SUBSCRIPTION_FORCE_VMESS_AEAD) { true }
+    var subscriptionUpdateWhenConnectedOnly by profileCacheStore.boolean(Key.SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY)
+    var subscriptionUserAgent by profileCacheStore.string(Key.SUBSCRIPTION_USER_AGENT)
+    var subscriptionAutoUpdate by profileCacheStore.boolean(Key.SUBSCRIPTION_AUTO_UPDATE)
+    var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 1440 }
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
     var dnsModeFinal by profileCacheStore.int("dnsModeFinal")

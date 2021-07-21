@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.database
 
 import android.os.Parcelable
 import androidx.room.*
+import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import kotlinx.parcelize.Parcelize
@@ -30,29 +31,16 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "proxy_groups")
 @Parcelize
 data class ProxyGroup(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0L,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var userOrder: Long = 0L,
-    var isDefault: Boolean = false,
+    var ungrouped: Boolean = false,
     var name: String? = null,
-    var isSubscription: Boolean = false,
-    var subscriptionLink: String = "",
-    var lastUpdate: Long = 0L,
-    var type: Int = 0,
-    var deduplication: Boolean = false
+    var type: Int = GroupType.BASIC,
+    var subscription: SubscriptionBean? = null
 ) : Parcelable {
 
     fun displayName(): String {
         return name.takeIf { !it.isNullOrBlank() } ?: app.getString(R.string.group_default)
-    }
-
-    companion object {
-
-        const val TYPE_AUTO = 0
-        const val TYPE_OOCv1 = 1
-        const val TYPE_SIP008 = 2
-        const val TYPE_CLASH = 3
-
     }
 
     @androidx.room.Dao
@@ -71,7 +59,10 @@ data class ProxyGroup(
         fun deleteById(groupId: Long): Int
 
         @Delete
-        fun deleteGroup(vararg group: ProxyGroup)
+        fun deleteGroup(group: ProxyGroup)
+
+        @Delete
+        fun deleteGroup(groupList: List<ProxyGroup>)
 
         @Insert
         fun createGroup(group: ProxyGroup): Long

@@ -34,7 +34,7 @@ import cn.hutool.json.JSONUtil;
 import io.nekohasekai.sagernet.fmt.gson.GsonsKt;
 import io.nekohasekai.sagernet.ktx.NetsKt;
 
-public abstract class AbstractBean implements Cloneable<AbstractBean> {
+public abstract class AbstractBean extends Serializable implements Cloneable<AbstractBean> {
 
     public String serverAddress;
     public int serverPort;
@@ -64,9 +64,12 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
         return true;
     }
 
-    public boolean canMapping() { return true; }
+    public boolean canMapping() {
+        return true;
+    }
 
-    public void initDefaultValues() {
+    @Override
+    public void initializeDefaultValues() {
         if (StrUtil.isBlank(serverAddress)) {
             serverAddress = "127.0.0.1";
         } else if (serverAddress.startsWith("[") && serverAddress.endsWith("]")) {
@@ -81,12 +84,14 @@ public abstract class AbstractBean implements Cloneable<AbstractBean> {
         finalPort = serverPort;
     }
 
-    public void serializeFull(ByteBufferOutput output) {
+    @Override
+    public void serializeToBuffer(ByteBufferOutput output) {
         serialize(output);
         output.writeString(name);
     }
 
-    public void deserializeFull(ByteBufferInput input) {
+    @Override
+    public void deserializeFromBuffer(ByteBufferInput input) {
         deserialize(input);
         name = input.readString();
     }

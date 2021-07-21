@@ -28,6 +28,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class ConfigBean extends InternalBean {
 
@@ -44,8 +45,8 @@ public class ConfigBean extends InternalBean {
     }
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
         if (name == null) name = "";
         if (type == null) type = "v2ray";
         if (content == null) content = "{}";
@@ -72,5 +73,18 @@ public class ConfigBean extends InternalBean {
     public ConfigBean clone() {
         return KryoConverters.deserialize(new ConfigBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<ConfigBean> ConfigBean = new CREATOR<ConfigBean>() {
+        @NonNull
+        @Override
+        public ConfigBean newInstance() {
+            return new ConfigBean();
+        }
+
+        @Override
+        public ConfigBean[] newArray(int size) {
+            return new ConfigBean[size];
+        }
+    };
 
 }

@@ -21,18 +21,19 @@
 
 package io.nekohasekai.sagernet.fmt.internal;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import cn.hutool.core.util.StrUtil;
-import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class ChainBean extends InternalBean {
 
@@ -48,8 +49,8 @@ public class ChainBean extends InternalBean {
     }
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
         if (name == null) name = "";
 
         if (proxies == null) {
@@ -85,4 +86,17 @@ public class ChainBean extends InternalBean {
     public ChainBean clone() {
         return KryoConverters.deserialize(new ChainBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<ChainBean> CREATOR = new CREATOR<ChainBean>() {
+        @NonNull
+        @Override
+        public ChainBean newInstance() {
+            return new ChainBean();
+        }
+
+        @Override
+        public ChainBean[] newArray(int size) {
+            return new ChainBean[size];
+        }
+    };
 }

@@ -145,11 +145,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
-        val forceShadowsocksRust = findPreference<SwitchPreference>(Key.FORCE_SHADOWSOCKS_RUST)!!
-        if (!isExpert) {
-            forceShadowsocksRust.remove()
-        }
-
         val dnsMode = findPreference<SimpleMenuPreference>(Key.DNS_MODE)!!
         val systemDns = findPreference<EditTextPreference>(Key.SYSTEM_DNS)!!
         val localDns = findPreference<EditTextPreference>(Key.LOCAL_DNS)!!
@@ -273,7 +268,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         muxConcurrency.onPreferenceChangeListener = reloadListener
         tcpKeepAliveInterval.onPreferenceChangeListener = reloadListener
         bypassLanInCoreOnly.onPreferenceChangeListener = reloadListener
-        forceShadowsocksRust.onPreferenceChangeListener = reloadListener
 
         systemDns.onPreferenceChangeListener = reloadListener
         localDns.onPreferenceChangeListener = reloadListener

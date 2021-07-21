@@ -47,6 +47,7 @@
         <entry key="app/src/main/res/layout/layout_route.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />
+        <entry key="app/src/main/res/layout/layout_settings_activity.xml" value="0.17844202898550723" />
         <entry key="app/src/main/res/menu/add_group_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/add_route_menu.xml" value="0.2636752136752137" />
@@ -66,8 +67,11 @@
         <entry key="app/src/main/res/xml/chain_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/config_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/global_preferences.xml" value="1.0" />
+        <entry key="app/src/main/res/xml/group_preferences.xml" value="0.16" />
         <entry key="app/src/main/res/xml/http_preferences.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/xml/name_preferences.xml" value="0.1423076923076923" />
+        <entry key="app/src/main/res/xml/pingtunnel_preferences.xml" value="0.19907407407407407" />
+        <entry key="app/src/main/res/xml/relaybaton_preferences.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/route_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/socks_preferences.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/standard_v2ray_preferences.xml" value="0.33" />

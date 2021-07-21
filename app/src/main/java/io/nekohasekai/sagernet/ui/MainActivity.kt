@@ -37,9 +37,11 @@ import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
+import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.ktx.launchCustomTab
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
@@ -92,6 +94,8 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
+
+        GroupManager.userInterface = GroupInterfaceAdapter(this)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -217,6 +221,7 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
 
     override fun onDestroy() {
         super.onDestroy()
+        GroupManager.userInterface = null
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
     }

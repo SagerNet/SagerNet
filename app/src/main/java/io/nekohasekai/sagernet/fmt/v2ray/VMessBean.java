@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -34,8 +36,8 @@ public class VMessBean extends StandardV2RayBean {
     public int alterId;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
 
         if (StrUtil.isBlank(encryption)) {
             encryption = "auto";
@@ -59,4 +61,17 @@ public class VMessBean extends StandardV2RayBean {
     public VMessBean clone() {
         return KryoConverters.deserialize(new VMessBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<VMessBean> CREATOR = new CREATOR<VMessBean>() {
+        @NonNull
+        @Override
+        public VMessBean newInstance() {
+            return new VMessBean();
+        }
+
+        @Override
+        public VMessBean[] newArray(int size) {
+            return new VMessBean[size];
+        }
+    };
 }

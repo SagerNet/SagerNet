@@ -2,16 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_new_group"
         android:icon="@drawable/ic_av_playlist_add"
         android:title="@string/group_create"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_create_group"
-                android:title="@string/action_create_group" />
-            <item
-                android:id="@+id/action_from_link"
-                android:title="@string/action_from_link" />
-        </menu>
-    </item>
+        app:showAsAction="always" />
 </menu>

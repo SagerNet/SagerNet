@@ -67,7 +67,7 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
     override fun ChainBean.serialize() {
         name = DataStore.profileName
         proxies = proxyList.map { it.id }
-        initDefaultValues()
+        initializeDefaultValues()
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

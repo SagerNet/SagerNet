@@ -42,7 +42,7 @@ fun parsePingTunnel(server: String): PingTunnelBean {
         link.fragment.takeIf { !it.isNullOrBlank() }?.let {
             name = it
         }
-        initDefaultValues()
+        initializeDefaultValues()
     }
 }
 

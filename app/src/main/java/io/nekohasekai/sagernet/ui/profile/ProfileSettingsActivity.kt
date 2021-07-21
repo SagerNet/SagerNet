@@ -51,11 +51,11 @@ import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.parcelize.Parcelize
+import kotlin.properties.Delegates
 
 @Suppress("UNCHECKED_CAST")
 abstract class ProfileSettingsActivity<T : AbstractBean>(
-    @LayoutRes
-    resId: Int = R.layout.layout_settings_activity,
+    @LayoutRes resId: Int = R.layout.layout_config_settings,
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
@@ -98,6 +98,8 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     abstract fun T.init()
     abstract fun T.serialize()
 
+    protected var isSubscription by Delegates.notNull<Boolean>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
@@ -109,6 +111,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
         if (savedInstanceState == null) {
             val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
+            isSubscription = intent.getBooleanExtra(EXTRA_IS_SUBSCRIPTION, false)
             DataStore.editingId = editingId
             runOnDefaultDispatcher {
                 if (editingId == 0L) {
@@ -127,11 +130,11 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                 }
 
                 onMainDispatcher {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.settings,
-                            MyPreferenceFragmentCompat().apply {
-                                activity = this@ProfileSettingsActivity
-                            })
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
+                            activity = this@ProfileSettingsActivity
+                        })
                         .commit()
                 }
             }
@@ -173,7 +176,8 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     override fun onOptionsItemSelected(item: MenuItem) = child.onOptionsItemSelected(item)
 
     override fun onBackPressed() {
-        if (DataStore.dirty) UnsavedChangesDialogFragment().apply { key() }
+        if (DataStore.dirty) UnsavedChangesDialogFragment()
+            .apply { key() }
             .show(supportFragmentManager, null) else super.onBackPressed()
     }
 
@@ -213,6 +217,10 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             activity.apply {
                 createPreferences(savedInstanceState, rootKey)
+
+                if (isSubscription) {
+                    findPreference<Preference>(Key.PROFILE_NAME)?.isEnabled = false
+                }
             }
         }
 
@@ -237,8 +245,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                     DeleteConfirmationDialogFragment().apply {
                         arg(
                             ProfileIdArg(
-                                DataStore.editingId,
-                                DataStore.editingGroup
+                                DataStore.editingId, DataStore.editingGroup
                             )
                         )
                         key()

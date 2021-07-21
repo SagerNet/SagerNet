@@ -31,11 +31,12 @@ import java.io.ByteArrayOutputStream;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
+import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.brook.BrookBean;
-import io.nekohasekai.sagernet.fmt.internal.ConfigBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean;
 import io.nekohasekai.sagernet.fmt.internal.ChainBean;
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean;
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean;
@@ -52,6 +53,26 @@ public class KryoConverters {
 
     private static final byte[] NULL = new byte[0];
 
+    @TypeConverter
+    public static byte[] serialize(Serializable bean) {
+        if (bean == null) return NULL;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteBufferOutput buffer = KryosKt.byteBuffer(out);
+        bean.serializeToBuffer(buffer);
+        IoUtil.flush(buffer);
+        IoUtil.close(buffer);
+        return out.toByteArray();
+    }
+
+    public static <T extends Serializable> T deserialize(T bean, byte[] bytes) {
+        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+        ByteBufferInput buffer = KryosKt.byteBuffer(input);
+        bean.deserializeFromBuffer(buffer);
+        IoUtil.close(buffer);
+        bean.initializeDefaultValues();
+        return bean;
+    }
+
     public static byte[] serializeWithoutName(AbstractBean bean) {
         if (bean == null) return NULL;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -67,27 +88,6 @@ public class KryoConverters {
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
         bean.deserialize(buffer);
         IoUtil.close(buffer);
-        return bean;
-    }
-
-    @TypeConverter
-    public static byte[] serialize(AbstractBean bean) {
-        if (bean == null) return NULL;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteBufferOutput buffer = KryosKt.byteBuffer(out);
-        bean.serializeFull(buffer);
-        IoUtil.flush(buffer);
-        IoUtil.close(buffer);
-        return out.toByteArray();
-    }
-
-    public static <T extends AbstractBean> T deserialize(T bean, byte[] bytes) {
-        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        ByteBufferInput buffer = KryosKt.byteBuffer(input);
-        bean.deserializeFull(buffer);
-        IoUtil.close(buffer);
-
-        bean.initDefaultValues();
         return bean;
     }
 
@@ -179,6 +179,12 @@ public class KryoConverters {
     public static BalancerBean balancerBeanDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new BalancerBean(), bytes);
+    }
+
+    @TypeConverter
+    public static SubscriptionBean subscriptionDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new SubscriptionBean(), bytes);
     }
 
 }

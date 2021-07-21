@@ -35,7 +35,7 @@ fun parseRelayBaton(link: String): RelayBatonBean {
         username = url.username
         password = url.password
         name = url.fragment
-        initDefaultValues()
+        initializeDefaultValues()
     }
 }
 

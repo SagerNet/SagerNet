@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.socks;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class SOCKSBean extends AbstractBean {
 
@@ -37,8 +40,8 @@ public class SOCKSBean extends AbstractBean {
     public String sni;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
 
         if (username == null) username = "";
         if (password == null) password = "";
@@ -61,8 +64,8 @@ public class SOCKSBean extends AbstractBean {
         super.deserialize(input);
         username = input.readString();
         password = input.readString();
-            tls = input.readBoolean();
-            sni = input.readString();
+        tls = input.readBoolean();
+        sni = input.readString();
     }
 
     @NotNull
@@ -70,5 +73,18 @@ public class SOCKSBean extends AbstractBean {
     public SOCKSBean clone() {
         return KryoConverters.deserialize(new SOCKSBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<SOCKSBean> CREATOR = new CREATOR<SOCKSBean>() {
+        @NonNull
+        @Override
+        public SOCKSBean newInstance() {
+            return new SOCKSBean();
+        }
+
+        @Override
+        public SOCKSBean[] newArray(int size) {
+            return new SOCKSBean[size];
+        }
+    };
 
 }

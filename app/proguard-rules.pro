@@ -8,3 +8,4 @@
 -keep class org.yaml.snakeyaml.** { *; }
 
 -dontobfuscate
+-keepattributes SourceFile,LineNumberTable

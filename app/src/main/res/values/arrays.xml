@@ -615,4 +615,16 @@
         <item>shadowsocks-rust</item>
     </string-array>
 
+    <string-array name="group_types">
+        <item>@string/group_basic</item>
+        <item>@string/subscription</item>
+    </string-array>
+
+    <string-array name="subscription_types">
+        <item>@string/raw</item>
+        <item>OOCv1</item>
+        <item>SIP008</item>
+    </string-array>
+
+
 </resources>

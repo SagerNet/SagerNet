@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.naive;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class NaiveBean extends AbstractBean {
 
@@ -40,11 +43,11 @@ public class NaiveBean extends AbstractBean {
     public String extraHeaders;
 
     @Override
-    public void initDefaultValues() {
+    public void initializeDefaultValues() {
         if (serverPort == 0) {
             serverPort = 443;
         }
-        super.initDefaultValues();
+        super.initializeDefaultValues();
         if (proto == null) proto = "https";
         if (username == null) username = "";
         if (password == null) password = "";
@@ -76,4 +79,17 @@ public class NaiveBean extends AbstractBean {
     public NaiveBean clone() {
         return KryoConverters.deserialize(new NaiveBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<NaiveBean> CREATOR = new CREATOR<NaiveBean>() {
+        @NonNull
+        @Override
+        public NaiveBean newInstance() {
+            return new NaiveBean();
+        }
+
+        @Override
+        public NaiveBean[] newArray(int size) {
+            return new NaiveBean[size];
+        }
+    };
 }

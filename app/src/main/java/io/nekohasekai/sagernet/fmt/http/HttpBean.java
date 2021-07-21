@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.http;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class HttpBean extends AbstractBean {
 
@@ -37,8 +40,8 @@ public class HttpBean extends AbstractBean {
     public String sni;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
         if (username == null) username = "";
         if (password == null) password = "";
         if (sni == null) sni = "";
@@ -69,4 +72,17 @@ public class HttpBean extends AbstractBean {
     public HttpBean clone() {
         return KryoConverters.deserialize(new HttpBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<HttpBean> CREATOR = new CREATOR<HttpBean>() {
+        @NonNull
+        @Override
+        public HttpBean newInstance() {
+            return new HttpBean();
+        }
+
+        @Override
+        public HttpBean[] newArray(int size) {
+            return new HttpBean[size];
+        }
+    };
 }

@@ -22,7 +22,6 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class VMessSettingsActivity : StandardV2RaySettingsActivity() {
 

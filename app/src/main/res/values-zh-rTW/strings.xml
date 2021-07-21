@@ -53,9 +53,7 @@
     <string name="allow_access_sum">繫結傳入伺服器至 0.0.0.0</string>
     <string name="cag_dns">DNS 設定</string>
     <string name="cag_route">路由設定</string>
-    <string name="force_ss_rust">不使用 V2Ray 路由 Shadowsocks</string>
-    <string name="force_ss_sum">強制所有 Shadowsocks 設定檔使用和 Shadowsocks Android 相同的 shadowsocks-rust 後端。</string>
-    <string name="inbound_settings">傳入設定</string>
+     <string name="inbound_settings">傳入設定</string>
     <string name="general_settings">應用程式設定</string>
     <string name="require_http">啟用 HTTP 傳入伺服器</string>
     <string name="cag_ws">WebSocket 設定</string>

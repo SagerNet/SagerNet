@@ -151,7 +151,7 @@ class AssetsActivity : ThemedActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_import_file -> {
-                importFile.launch("*/*")
+                startFilesForResult(importFile, "*/*")
                 return true
             }
         }

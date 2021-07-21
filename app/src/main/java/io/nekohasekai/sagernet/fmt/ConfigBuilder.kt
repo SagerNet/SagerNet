@@ -28,6 +28,7 @@ import cn.hutool.json.JSONObject
 import com.google.gson.JsonSyntaxException
 import io.nekohasekai.sagernet.DnsMode
 import io.nekohasekai.sagernet.IPv6Mode
+import io.nekohasekai.sagernet.VpnMode
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
@@ -359,7 +360,7 @@ fun buildV2RayConfig(
             }
         }
 
-        val enableExperimentalTun = DataStore.enableExperimentalTun
+        val enableExperimentalTun = DataStore.vpnMode ==  VpnMode.EXPERIMENTAL_FORWARDING
         val needIncludeSelf =
             enableExperimentalTun || proxy.balancerBean == null && proxies.size > 1 || extraProxies.any { (key, value) ->
                 val (_, balancer) = key

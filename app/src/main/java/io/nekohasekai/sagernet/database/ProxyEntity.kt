@@ -81,6 +81,7 @@ data class ProxyEntity(
     var rx: Long = 0L,
     var status: Int = 0,
     var ping: Int = 0,
+    var uuid: String = "",
     var error: String? = null,
     var socksBean: SOCKSBean? = null,
     var httpBean: HttpBean? = null,
@@ -142,12 +143,7 @@ data class ProxyEntity(
     var stats: TrafficStats? = null
 
     constructor(parcel: Parcel) : this(
-        parcel.readLong(),
-        parcel.readLong(),
-        parcel.readInt(),
-        parcel.readLong(),
-        parcel.readLong(),
-        parcel.readLong()
+        parcel.readLong(), parcel.readLong(), parcel.readInt(), parcel.readLong(), parcel.readLong(), parcel.readLong()
     ) {
         dirty = parcel.readByte() > 0
         val byteArray = ByteArray(parcel.readInt())
@@ -519,8 +515,11 @@ data class ProxyEntity(
         @Query("DELETE FROM proxy_entities WHERE id IN (:proxyId)")
         fun deleteById(proxyId: Long): Int
 
+        @Query("DELETE FROM proxy_entities WHERE groupId = :groupId")
+        fun deleteByGroup(groupId: Long)
+
         @Query("DELETE FROM proxy_entities WHERE groupId in (:groupId)")
-        fun deleteByGroup(vararg groupId: Long)
+        fun deleteByGroup(groupId: LongArray)
 
         @Delete
         fun deleteProxy(proxy: ProxyEntity): Int

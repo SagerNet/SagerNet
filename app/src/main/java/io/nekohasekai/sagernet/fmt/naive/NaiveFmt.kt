@@ -42,7 +42,7 @@ fun parseNaive(link: String): NaiveBean {
             it.unUrlSafe().replace("\r\n", "\n")
         }
         name = url.fragment
-        initDefaultValues()
+        initializeDefaultValues()
     }
 }
 

@@ -77,7 +77,7 @@ class BalancerSettingsActivity :
         strategy = DataStore.balancerStrategy
         groupId = DataStore.balancerGroup
         proxies = proxyList.map { it.id }
-        initDefaultValues()
+        initializeDefaultValues()
     }
 
     lateinit var balancerType: SimpleMenuPreference

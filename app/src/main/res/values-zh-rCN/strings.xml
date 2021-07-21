@@ -53,8 +53,6 @@
     <string name="allow_access_sum">将入站绑定至 0.0.0.0</string>
     <string name="cag_dns">DNS 设置</string>
     <string name="cag_route">路由设置</string>
-    <string name="force_ss_rust">不要使用 V2Ray 路由 Shadowsocks</string>
-    <string name="force_ss_sum">强制所有 Shadowsocks 节点使用和 Shadowsocks Android 相同的 shadowsocks-rust 后端</string>
     <string name="inbound_settings">入站设置</string>
     <string name="general_settings">软件设置</string>
     <string name="require_http">启用 HTTP 入站</string>
@@ -363,5 +361,32 @@
     <string name="ss_aead_provider">Shadowsocks AEAD 提供程序</string>
     <string name="dns_hijacking">DNS 劫持</string>
     <string name="dns_hijacking_sum">劫持所有 53 端口的传入连接到本地 DNS</string>
+    <string name="group_basic">基本</string>
+    <string name="group_settings">分组设置</string>
+    <string name="subscription">订阅</string>
+    <string name="subscription_settings">订阅设置</string>
+    <string name="group_type">分组类型</string>
+    <string name="subscription_type">订阅类型</string>
+    <string name="delete_group_prompt">您确定要删除该分组吗 ?</string>
+    <string name="force_resolve">强制解析</string>
+    <string name="force_resolve_sum">更新时解析所有域名到 IP 地址. 如果可能, 主机与服务器名称指示值将被自动覆盖</string>
+    <string name="force_vmess_aead">强制 VMess AEAD</string>
+    <string name="force_vmess_aead_sum">重写带有不安全的认证方式的 VMess 配置到 AEAD 认证</string>
+    <string name="deduplication_sum">更新时移除重复配置</string>
+    <string name="raw">原始</string>
+    <string name="update_settings">更新设置</string>
+    <string name="auto_update">自动更新</string>
+    <string name="auto_update_delay">自动更新间隔 (秒)</string>
+    <string name="update_when_connected_only">仅在连接时更新</string>
+    <string name="update_when_connected_only_sum">防止 IP 地址泄漏</string>
+    <string name="subscription_user_agent">用户代理</string>
+    <string name="confirm">确认</string>
+    <string name="missing_plugin">缺少插件</string>
+    <string name="profile_requiring_plugin">%s 需要插件 %s, 但找不到.</string>
+    <string name="action_learn_more">了解更多</string>
+    <string name="action_download">下载</string>
+    <string name="install_from_play_store">从 Play Store 安装</string>
+    <string name="install_from_fdroid">从 F-Droid 安装</string>
+    <string name="download">下载</string>
 
 </resources>

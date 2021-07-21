@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.ktx
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.brook.parseBrook
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
@@ -37,7 +38,6 @@ import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
-import java.util.*
 import kotlin.collections.ArrayList
 
 fun formatObject(obj: Any): String {
@@ -152,7 +152,7 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
         link.parseLink(entitiesByLine)
     }
     var isBadLink = false
-    if (entities.onEach { it.initDefaultValues() }.size == entitiesByLine.onEach { it.initDefaultValues() }.size) run test@{
+    if (entities.onEach { it.initializeDefaultValues() }.size == entitiesByLine.onEach { it.initializeDefaultValues() }.size) run test@{
         entities.forEachIndexed { index, bean ->
             val lineBean = entitiesByLine[index]
             if (bean == lineBean && bean.displayName() != lineBean.displayName()) {
@@ -168,7 +168,7 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): Pair<Int, L
     }
 }
 
-fun <T : AbstractBean> T.applyDefaultValues(): T {
-    initDefaultValues()
+fun <T : Serializable> T.applyDefaultValues(): T {
+    initializeDefaultValues()
     return this
 }

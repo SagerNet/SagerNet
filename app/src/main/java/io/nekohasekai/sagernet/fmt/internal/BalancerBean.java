@@ -31,6 +31,7 @@ import java.util.List;
 
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class BalancerBean extends InternalBean {
 
@@ -43,8 +44,8 @@ public class BalancerBean extends InternalBean {
     public Long groupId;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
         if (name == null) name = "";
         if (strategy == null) strategy = "";
         if (type == null) type = TYPE_LIST;
@@ -108,4 +109,17 @@ public class BalancerBean extends InternalBean {
     public BalancerBean clone() {
         return KryoConverters.deserialize(new BalancerBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<BalancerBean> CREATOR = new CREATOR<BalancerBean>() {
+        @NonNull
+        @Override
+        public BalancerBean newInstance() {
+            return new BalancerBean();
+        }
+
+        @Override
+        public BalancerBean[] newArray(int size) {
+            return new BalancerBean[size];
+        }
+    };
 }

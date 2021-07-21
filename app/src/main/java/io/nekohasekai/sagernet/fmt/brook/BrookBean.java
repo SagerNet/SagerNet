@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
+import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
@@ -36,8 +37,8 @@ public class BrookBean extends AbstractBean {
     public String wsPath;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
         if (protocol == null) protocol = "";
         if (password == null) password = "";
         if (wsPath == null) wsPath = "";
@@ -78,4 +79,19 @@ public class BrookBean extends AbstractBean {
     public BrookBean clone() {
         return KryoConverters.deserialize(new BrookBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<BrookBean> CREATOR = new CREATOR<BrookBean>() {
+        @NonNull
+        @Override
+        public BrookBean newInstance() {
+            return new BrookBean();
+        }
+
+        @Override
+        public BrookBean[] newArray(int size) {
+            return new BrookBean[size];
+        }
+    };
+
+
 }

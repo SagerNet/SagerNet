@@ -304,11 +304,6 @@
             app:key="tcpKeepAliveInterval"
             app:title="@string/tcp_keep_alive_interval"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_airplanemode_active_24"
-            app:key="forceShadowsocksRust"
-            app:summary="@string/force_ss_sum"
-            app:title="@string/force_ss_rust" />
     </PreferenceCategory>
 
 

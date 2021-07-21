@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.pingtunnel;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class PingTunnelBean extends AbstractBean {
 
@@ -54,8 +57,8 @@ public class PingTunnelBean extends AbstractBean {
     }
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
         if (key == null) key = "";
     }
 
@@ -78,4 +81,17 @@ public class PingTunnelBean extends AbstractBean {
     public PingTunnelBean clone() {
         return KryoConverters.deserialize(new PingTunnelBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<PingTunnelBean> CREATOR = new CREATOR<PingTunnelBean>() {
+        @NonNull
+        @Override
+        public PingTunnelBean newInstance() {
+            return new PingTunnelBean();
+        }
+
+        @Override
+        public PingTunnelBean[] newArray(int size) {
+            return new PingTunnelBean[size];
+        }
+    };
 }

@@ -59,7 +59,6 @@ object Key {
     const val BYPASS_LAN_IN_CORE_ONLY = "bypassLanInCoreOnly"
 
     const val SOCKS_PORT = "socksPort"
-    const val FORCE_SHADOWSOCKS_RUST = "forceShadowsocksRust"
     const val ALLOW_ACCESS = "allowAccess"
     const val SPEED_INTERVAL = "speedInterval"
     const val SHOW_DIRECT_SPEED = "showDirectSpeed"
@@ -88,6 +87,16 @@ object Key {
     const val API_PORT = "apiPort"
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
     const val ENABLE_EXPERIMENTAL_TUN = "enableExperimentalTun"
+
+    const val VPN_MODE = "vpnMode"
+    const val MULTI_THREAD_FORWARD = "multiThreadForward"
+    const val ICMP_ECHO_STRATEGY = "icmpEchoStrategy"
+    const val ICMP_ECHO_REPLY_DELAY = "icmpEchoReplyDelay"
+    const val IP_OTHER_STRATEGY = "ipOtherStrategy"
+    const val DNS_HIJACKING = "dnsHijacking"
+
+    const val PROVIDER_TROJAN = "providerTrojan"
+    const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
@@ -152,15 +161,21 @@ object Key {
     const val ROUTE_REVERSE = "routeReverse"
     const val ROUTE_REDIRECT = "routeRedirect"
 
-    const val VPN_MODE = "vpnMode"
-    const val MULTI_THREAD_FORWARD = "multiThreadForward"
-    const val ICMP_ECHO_STRATEGY = "icmpEchoStrategy"
-    const val ICMP_ECHO_REPLY_DELAY = "icmpEchoReplyDelay"
-    const val IP_OTHER_STRATEGY = "ipOtherStrategy"
-    const val DNS_HIJACKING = "dnsHijacking"
+    const val GROUP_NAME = "groupName"
+    const val GROUP_TYPE = "groupType"
 
-    const val PROVIDER_TROJAN = "providerTrojan"
-    const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
+    const val GROUP_SUBSCRIPTION = "groupSubscription"
+    const val SUBSCRIPTION_TYPE = "subscriptionType"
+    const val SUBSCRIPTION_LINK = "subscriptionLink"
+    const val SUBSCRIPTION_TOKEN = "subscriptionToken"
+    const val SUBSCRIPTION_FORCE_RESOLVE = "subscriptionForceResolve"
+    const val SUBSCRIPTION_DEDUPLICATION = "subscriptionDeduplication"
+    const val SUBSCRIPTION_FORCE_VMESS_AEAD = "subscriptionForceVMessAEAD"
+    const val SUBSCRIPTION_UPDATE = "subscriptionUpdate"
+    const val SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY = "subscriptionUpdateWhenConnectedOnly"
+    const val SUBSCRIPTION_USER_AGENT = "subscriptionUserAgent"
+    const val SUBSCRIPTION_AUTO_UPDATE = "subscriptionAutoUpdate"
+    const val SUBSCRIPTION_AUTO_UPDATE_DELAY = "subscriptionAutoUpdateDelay"
 
 }
 
@@ -198,6 +213,17 @@ object PacketStrategy {
     const val DIRECT = 0
     const val DROP = 1
     const val REPLY = 2
+}
+
+object GroupType {
+    const val BASIC = 0
+    const val SUBSCRIPTION = 1
+}
+
+object SubscriptionType {
+    const val RAW = 0
+    const val OOCv1 = 1
+    const val SIP008 = 2
 }
 
 object Action {

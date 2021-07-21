@@ -27,7 +27,7 @@
     <!-- group -->
     <string name="group_name">Group name</string>
     <string name="group_update">Update</string>
-    <string name="group_subscription_link">Subscription link</string>
+    <string name="group_subscription_link">Subscription Link</string>
     <string name="group_name_required">Group name required</string>
     <string name="group_create">Create group</string>
     <string name="group_create_subscription">Create subscription</string>
@@ -58,8 +58,6 @@
     <string name="cag_route">Route Settings</string>
     <string name="allow_access">Allow Connections from the LAN</string>
     <string name="allow_access_sum">Bind inbound servers to 0.0.0.0</string>
-    <string name="force_ss_rust">No v2ray-core shadowsocks</string>
-    <string name="force_ss_sum">Force all shadowsocks profiles to use the same shadowsocks-rust backend as Shadowsocks Android</string>
     <string name="inbound_settings">Inbound Settings</string>
     <string name="general_settings">App Settings</string>
     <string name="require_http">Enable HTTP inbound</string>
@@ -402,5 +400,39 @@
     <string name="protocol_settings">Protocol Settings</string>
     <string name="trojan_provider">Trojan Provider</string>
     <string name="ss_aead_provider">Shadowsocks AEAD Provider</string>
+
+    <string name="group_basic">Basic</string>
+    <string name="group_settings">Group Settings</string>
+    <string name="subscription">Subscription</string>
+    <string name="subscription_settings">Subscription Settings</string>
+
+    <string name="group_type">Group Type</string>
+    <string name="subscription_type">Subscription Type</string>
+    <string name="delete_group_prompt">Are you sure you want to remove this group?</string>
+    <string name="force_resolve">Force Resolve</string>
+    <string name="force_resolve_sum">Resolve all domain names to IP addresses when updating. Host and SNI will be automatically appended if possible</string>
+    <string name="force_vmess_aead">Force VMess AEAD</string>
+    <string name="force_vmess_aead_sum">Rewrite VMess configuration with insecure authentication method to AEAD (alterId 0)</string>
+    <string name="deduplication_sum">Remove duplicate configurations when updating</string>
+
+    <string name="raw">Raw</string>
+    <string name="update_settings">Update Settings</string>
+    <string name="auto_update">Auto Update</string>
+    <string name="auto_update_delay">Auto Update Delay (In minutes)</string>
+    <string name="update_when_connected_only">Update only when connected</string>
+    <string name="update_when_connected_only_sum">Prevent IP address leakage</string>
+    <string name="subscription_user_agent">UserAgent</string>
+
+    <string name="confirm">Confirm</string>
+    <string name="missing_plugin">Missing Plugin</string>
+    <string name="profile_requiring_plugin">%s requires the %s plugin to be installed, but it was not found.</string>
+    <string name="action_learn_more">LEARN MORE</string>
+    <string name="action_download">DOWNLOAD</string>
+
+    <string name="install_from_play_store">Install from Play Store</string>
+    <string name="install_from_fdroid">Install from F-Droid</string>
+    <string name="download">Download</string>
+    <string name="ooc_subscription_token" translatable="false">OOCv1 API Token</string>
+
 
 </resources>

@@ -162,8 +162,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Boolean allowInsecure;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
 
         if (StrUtil.isBlank(uuid)) uuid = "";
 

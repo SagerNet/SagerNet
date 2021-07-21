@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
 

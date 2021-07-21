@@ -52,6 +52,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -61,7 +62,6 @@ import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
 import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
 import io.nekohasekai.sagernet.ktx.*
@@ -84,7 +84,8 @@ import kotlin.properties.Delegates
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false,
     val selectedItem: ProxyEntity? = null,
-) : ToolbarFragment(R.layout.layout_group_list), PopupMenu.OnMenuItemClickListener,
+) : ToolbarFragment(R.layout.layout_group_list),
+    PopupMenu.OnMenuItemClickListener,
     Toolbar.OnMenuItemClickListener {
 
     lateinit var adapter: GroupPagerAdapter
@@ -115,7 +116,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         groupPager = view.findViewById(R.id.group_pager)
         tabLayout = view.findViewById(R.id.group_tab)
         adapter = GroupPagerAdapter()
-        ProfileManager.addListener(adapter)
+        GroupManager.addListener(adapter)
 
         groupPager.adapter = adapter
         groupPager.offscreenPageLimit = 2
@@ -173,7 +174,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     override fun onDestroy() {
         if (::adapter.isInitialized) {
-            ProfileManager.removeListener(adapter)
+            GroupManager.removeListener(adapter)
         }
 
         super.onDestroy()
@@ -182,9 +183,10 @@ class ConfigurationFragment @JvmOverloads constructor(
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
         if (it != null) runOnDefaultDispatcher {
             try {
-                val fileText =
-                    requireContext().contentResolver.openInputStream(it)!!.bufferedReader()
-                        .readText()
+                val fileText = requireContext().contentResolver
+                    .openInputStream(it)!!
+                    .bufferedReader()
+                    .readText()
                 val proxies = ProfileManager.parseSubscription(fileText)?.second
                 if (proxies.isNullOrEmpty()) onMainDispatcher {
                     snackbar(getString(R.string.no_proxies_found_in_file)).show()
@@ -202,10 +204,10 @@ class ConfigurationFragment @JvmOverloads constructor(
     suspend fun import(proxies: List<AbstractBean>) {
         val selectedGroup = selectedGroup
         var targetIndex by Delegates.notNull<Int>()
-        val targetId = if (!selectedGroup.isSubscription) {
+        val targetId = if (selectedGroup.type == GroupType.BASIC) {
             selectedGroup.id
         } else {
-            targetIndex = adapter.groupList.indexOfFirst { !it.isSubscription }
+            targetIndex = adapter.groupList.indexOfFirst { it.ungrouped }
             adapter.groupList[targetIndex].id
         }
 
@@ -251,7 +253,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             R.id.action_import_file -> {
-                importFile.launch("*/*")
+                startFilesForResult(importFile, "*/*")
             }
             R.id.action_new_socks -> {
                 startActivity(Intent(requireActivity(), SocksSettingsActivity::class.java))
@@ -386,7 +388,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         sorted[index].userOrder = (index + 1).toLong()
                     }
                     SagerDatabase.proxyDao.updateProxy(sorted)
-                    ProfileManager.postReload(DataStore.selectedGroup)
+                    GroupManager.postUpdated(DataStore.selectedGroup)
 
                 }
             }
@@ -396,10 +398,12 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     inner class TestDialog {
         val binding = LayoutProgressBinding.inflate(layoutInflater)
-        val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
+        val builder = MaterialAlertDialogBuilder(requireContext())
+            .setView(binding.root)
             .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { _, _ ->
                 cancel()
-            }).setCancelable(false)
+            })
+            .setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
         val adapter = TestAdapter()
@@ -437,8 +441,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             override fun getItemCount() = results.size
         }
 
-        inner class TestResultHolder(val binding: LayoutProfileBinding) :
-            RecyclerView.ViewHolder(binding.root) {
+        inner class TestResultHolder(val binding: LayoutProfileBinding) : RecyclerView.ViewHolder(binding.root) {
             init {
                 binding.edit.isGone = true
                 binding.share.isGone = true
@@ -473,9 +476,11 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 if (profile.status == 3) {
                     binding.content.setOnClickListener {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.error_title)
                             .setMessage(profile.error ?: "<?>")
-                            .setPositiveButton(android.R.string.ok, null).show()
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
                     }
                 } else {
                     binding.content.setOnClickListener {}
@@ -713,7 +718,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
 
-    inner class GroupPagerAdapter : FragmentStateAdapter(this), ProfileManager.GroupListener {
+    inner class GroupPagerAdapter : FragmentStateAdapter(this),
+        GroupManager.Listener {
 
         var selectedGroupIndex = 0
         var groupList: ArrayList<ProxyGroup> = ArrayList()
@@ -723,7 +729,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             runOnDefaultDispatcher {
                 groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 if (groupList.isEmpty()) {
-                    SagerDatabase.groupDao.createGroup(ProxyGroup(isDefault = true))
+                    SagerDatabase.groupDao.createGroup(ProxyGroup(ungrouped = true))
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
 
@@ -739,7 +745,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 onMainDispatcher {
                     notifyDataSetChanged()
-                    val hideTab = groupList.size == 1 && groupList[0].isDefault
+                    val hideTab = groupList.size == 1 && groupList[0].ungrouped
                     tabLayout.isGone = hideTab
                     toolbar.elevation = if (hideTab) 0F else dp2px(4).toFloat()
                 }
@@ -771,11 +777,11 @@ class ConfigurationFragment @JvmOverloads constructor(
             return groupList.any { it.id == itemId }
         }
 
-        override suspend fun onAdd(group: ProxyGroup) {
+        override suspend fun groupAdd(group: ProxyGroup) {
             tabLayout.post {
                 groupList.add(group)
 
-                if (groupList.all { it.isDefault }) tabLayout.post {
+                if (groupList.any { !it.ungrouped }) tabLayout.post {
                     tabLayout.visibility = View.VISIBLE
                 }
 
@@ -784,7 +790,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
 
-        override suspend fun onRemoved(groupId: Long) {
+        override suspend fun groupRemoved(groupId: Long) {
             val index = groupList.indexOfFirst { it.id == groupId }
             if (index == -1) return
 
@@ -794,7 +800,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
 
-        override suspend fun onUpdated(group: ProxyGroup) {
+        override suspend fun groupUpdated(group: ProxyGroup) {
             val index = groupList.indexOfFirst { it.id == group.id }
             if (index == -1) return
 
@@ -802,6 +808,16 @@ class ConfigurationFragment @JvmOverloads constructor(
                 tabLayout.getTabAt(index)?.text = group.displayName()
             }
         }
+
+        override suspend fun groupUpdated(groupId: Long) {
+            val index = groupList.indexOfFirst { it.id == groupId }
+            if (index == -1) return
+
+            tabLayout.post {
+                tabLayout.getTabAt(index)?.text = groupList[index].displayName()
+            }
+        }
+
     }
 
     class GroupFragment : Fragment() {
@@ -861,7 +877,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             if (::configurationListView.isInitialized && configurationListView.size == 0) {
                 configurationListView.adapter = adapter
                 runOnDefaultDispatcher {
-                    adapter.reloadProfiles(proxyGroup.id)
+                    adapter.reloadProfiles()
                 }
             } else if (!::configurationListView.isInitialized) {
                 onViewCreated(requireView(), null)
@@ -879,7 +895,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
 
-            if (!select && !proxyGroup.isSubscription) {
+            if (!select && proxyGroup.type == GroupType.BASIC) {
 
                 undoManager = UndoSnackbarManager(activity as MainActivity, adapter)
 
@@ -941,7 +957,9 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         inner class ConfigurationAdapter : RecyclerView.Adapter<ConfigurationHolder>(),
-            ProfileManager.Listener, UndoSnackbarManager.Interface<ProxyEntity> {
+            ProfileManager.Listener,
+            GroupManager.Listener,
+            UndoSnackbarManager.Interface<ProxyEntity> {
 
             var configurationIdList: MutableList<Long> = mutableListOf()
             val configurationList = HashMap<Long, ProxyEntity>()
@@ -1066,7 +1084,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             override suspend fun onUpdated(profileId: Long, trafficStats: TrafficStats) {
                 val index = configurationIdList.indexOf(profileId)
                 if (index != -1) {
-                    val holder = layoutManager.findViewByPosition(index)
+                    val holder = layoutManager
+                        .findViewByPosition(index)
                         ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
                     if (holder != null) {
                         holder.entity.stats = trafficStats
@@ -1088,14 +1107,19 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
 
-            override suspend fun onCleared(groupId: Long) {
-                if (groupId != proxyGroup.id) return
-                reloadProfiles(groupId)
+            override suspend fun groupAdd(group: ProxyGroup) = Unit
+            override suspend fun groupRemoved(groupId: Long) = Unit
+
+            override suspend fun groupUpdated(group: ProxyGroup) {
+                groupUpdated(group.id)
             }
 
-            override suspend fun reloadProfiles(groupId: Long) {
-                if (groupId != proxyGroup.id) return
+            override suspend fun groupUpdated(groupId: Long) {
+                if (groupId != groupId) return
+                reloadProfiles()
+            }
 
+            fun reloadProfiles() {
                 val newProfiles = SagerDatabase.proxyDao.getIdsByGroup(proxyGroup.id)
 
                 var selectedProfileIndex = -1
@@ -1117,22 +1141,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
 
                 }
-
-                if (newProfiles.isEmpty() && proxyGroup.isDefault) {
-                    val created = ProfileManager.createProfile(groupId, SOCKSBean().apply {
-                        name = "Local tunnel"
-                        initDefaultValues()
-                    })
-                    if (DataStore.selectedProxy == 0L) {
-                        DataStore.selectedProxy = created.id
-                    }
-                }
             }
 
-        }
-
-        interface ConfigurationHolderImpl {
-            fun bind(proxyEntity: ProxyEntity)
         }
 
         inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
@@ -1192,9 +1202,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 trafficText.isVisible = showTraffic
                 if (showTraffic) {
                     trafficText.text = view.context.getString(
-                        R.string.traffic,
-                        Formatter.formatFileSize(view.context, tx),
-                        Formatter.formatFileSize(view.context, rx)
+                        R.string.traffic, Formatter.formatFileSize(view.context, tx), Formatter.formatFileSize(view.context, rx)
                     )
                 }
 
@@ -1236,9 +1244,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (proxyEntity.status == 3) {
                     profileStatus.setText(R.string.unavailable)
                     profileStatus.setOnClickListener {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.error_title)
                             .setMessage(proxyEntity.error ?: "<?>")
-                            .setPositiveButton(android.R.string.ok, null).show()
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
                     }
                 } else {
                     profileStatus.setOnClickListener(null)
@@ -1247,7 +1257,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 editButton.setOnClickListener {
                     it.context.startActivity(
                         proxyEntity.settingIntent(
-                            it.context, proxyGroup.isSubscription
+                            it.context, proxyGroup.type == GroupType.SUBSCRIPTION
                         )
                     )
                 }
@@ -1308,12 +1318,17 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 shareButton.setColorFilter(Color.WHITE)
 
                                 shareLayout.setOnClickListener {
-                                    MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.insecure)
-                                        .setMessage(resources.openRawResource(validateResult.textRes)
-                                            .bufferedReader().use { it.readText() })
+                                    MaterialAlertDialogBuilder(requireContext())
+                                        .setTitle(R.string.insecure)
+                                        .setMessage(resources
+                                            .openRawResource(validateResult.textRes)
+                                            .bufferedReader()
+                                            .use { it.readText() })
                                         .setPositiveButton(android.R.string.ok) { _, _ ->
                                             showShare(it)
-                                        }.show().apply {
+                                        }
+                                        .show()
+                                        .apply {
                                             findViewById<TextView>(android.R.id.message)?.apply {
                                                 Linkify.addLinks(this, Linkify.WEB_URLS)
                                                 movementMethod = LinkMovementMethod.getInstance()
@@ -1329,12 +1344,17 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 shareButton.setColorFilter(Color.GRAY)
 
                                 shareLayout.setOnClickListener {
-                                    MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.deprecated)
-                                        .setMessage(resources.openRawResource(validateResult.textRes)
-                                            .bufferedReader().use { it.readText() })
+                                    MaterialAlertDialogBuilder(requireContext())
+                                        .setTitle(R.string.deprecated)
+                                        .setMessage(resources
+                                            .openRawResource(validateResult.textRes)
+                                            .bufferedReader()
+                                            .use { it.readText() })
                                         .setPositiveButton(android.R.string.ok) { _, _ ->
                                             showShare(it)
-                                        }.show().apply {
+                                        }
+                                        .show()
+                                        .apply {
                                             findViewById<TextView>(android.R.id.message)?.apply {
                                                 Linkify.addLinks(this, Linkify.WEB_URLS)
                                                 movementMethod = LinkMovementMethod.getInstance()
@@ -1363,7 +1383,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             fun export(link: String) {
                 val success = SagerNet.trySetPrimaryClip(link)
-                (activity as MainActivity).snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
+                (activity as MainActivity)
+                    .snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
                     .show()
             }
 

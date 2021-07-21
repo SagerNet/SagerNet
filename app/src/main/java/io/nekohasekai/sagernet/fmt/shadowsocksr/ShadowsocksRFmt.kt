@@ -65,11 +65,11 @@ fun ShadowsocksRBean.toUri(): String {
 
     return "ssr://" + Base64.encodeUrlSafe(
         "%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
-            Locale.ENGLISH, serverAddress, serverPort, protocol, method, obfs,
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, password)),
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)),
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)),
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, name ?: ""))
+            Locale.ENGLISH, serverAddress, serverPort, protocol, method, obfs, Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, password)), Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)), Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)), Base64.encodeUrlSafe(
+                "%s".format(
+                    Locale.ENGLISH, name ?: ""
+                )
+            )
         )
     )
 }
@@ -84,7 +84,7 @@ fun ShadowsocksRBean.buildShadowsocksRConfig(): String {
         it["protocol_param"] = protocolParam
         it["obfs"] = obfs
         it["obfs_param"] = obfsParam
-        it["ipv6"] =  DataStore.ipv6Mode >= IPv6Mode.ENABLE
+        it["ipv6"] = DataStore.ipv6Mode >= IPv6Mode.ENABLE
     }.toStringPretty()
 }
 

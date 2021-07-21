@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.trojan_go;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -104,8 +106,8 @@ public class TrojanGoBean extends AbstractBean {
     public String plugin;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
 
         if (password == null) password = "";
         if (sni == null) sni = "";
@@ -160,4 +162,17 @@ public class TrojanGoBean extends AbstractBean {
     public TrojanGoBean clone() {
         return KryoConverters.deserialize(new TrojanGoBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<TrojanGoBean> CREATOR = new CREATOR<TrojanGoBean>() {
+        @NonNull
+        @Override
+        public TrojanGoBean newInstance() {
+            return new TrojanGoBean();
+        }
+
+        @Override
+        public TrojanGoBean[] newArray(int size) {
+            return new TrojanGoBean[size];
+        }
+    };
 }

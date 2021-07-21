@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt.shadowsocksr;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class ShadowsocksRBean extends AbstractBean {
 
@@ -40,8 +43,8 @@ public class ShadowsocksRBean extends AbstractBean {
     public String obfsParam;
 
     @Override
-    public void initDefaultValues() {
-        super.initDefaultValues();
+    public void initializeDefaultValues() {
+        super.initializeDefaultValues();
 
         if (password == null) password = "";
         if (StrUtil.isBlank(method)) method = "aes-256-cfb";
@@ -82,4 +85,17 @@ public class ShadowsocksRBean extends AbstractBean {
     public ShadowsocksRBean clone() {
         return KryoConverters.deserialize(new ShadowsocksRBean(), KryoConverters.serialize(this));
     }
+
+    public static final Creator<ShadowsocksRBean> CREATOR = new CREATOR<ShadowsocksRBean>() {
+        @NonNull
+        @Override
+        public ShadowsocksRBean newInstance() {
+            return new ShadowsocksRBean();
+        }
+
+        @Override
+        public ShadowsocksRBean[] newArray(int size) {
+            return new ShadowsocksRBean[size];
+        }
+    };
 }

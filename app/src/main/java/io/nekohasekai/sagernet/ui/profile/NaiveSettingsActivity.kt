@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
 

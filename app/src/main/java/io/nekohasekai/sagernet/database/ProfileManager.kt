@@ -57,23 +57,6 @@ object ProfileManager {
         suspend fun onUpdated(profileId: Long, trafficStats: TrafficStats)
         suspend fun onUpdated(profile: ProxyEntity)
         suspend fun onRemoved(groupId: Long, profileId: Long)
-        suspend fun onCleared(groupId: Long)
-        suspend fun reloadProfiles(groupId: Long)
-    }
-
-    interface GroupListener {
-        suspend fun onAdd(group: ProxyGroup)
-        suspend fun onUpdated(group: ProxyGroup)
-        suspend fun onRemoved(groupId: Long)
-
-        suspend fun onUpdated(groupId: Long) {}
-        suspend fun refreshSubscription(proxyGroup: ProxyGroup) {}
-        suspend fun refreshSubscription(
-            proxyGroup: ProxyGroup,
-            onRefreshStarted: Runnable,
-            onRefreshFinished: (success: Boolean) -> Unit,
-        ) {
-        }
     }
 
     interface RuleListener {
@@ -84,23 +67,12 @@ object ProfileManager {
     }
 
     private val listeners = ArrayList<Listener>()
-    private val groupListeners = ArrayList<GroupListener>()
     private val ruleListeners = ArrayList<RuleListener>()
 
     suspend fun iterator(what: suspend Listener.() -> Unit) {
-        val listeners = synchronized(listeners) {
+        synchronized(listeners) {
             listeners.toList()
-        }
-        for (profileListener in listeners) {
-            what(profileListener)
-        }
-    }
-
-    suspend fun groupIterator(what: suspend GroupListener.() -> Unit) {
-        val groupListeners = synchronized(groupListeners) {
-            groupListeners.toList()
-        }
-        for (listener in groupListeners) {
+        }.forEach { listener ->
             what(listener)
         }
     }
@@ -123,18 +95,6 @@ object ProfileManager {
     fun removeListener(listener: Listener) {
         synchronized(listeners) {
             listeners.remove(listener)
-        }
-    }
-
-    fun addListener(listener: GroupListener) {
-        synchronized(groupListeners) {
-            groupListeners.add(listener)
-        }
-    }
-
-    fun removeListener(listener: GroupListener) {
-        synchronized(groupListeners) {
-            groupListeners.remove(listener)
         }
     }
 
@@ -182,33 +142,18 @@ object ProfileManager {
         iterator { onRemoved(groupId, profileId) }
         if (SagerDatabase.proxyDao.countByGroup(groupId) == 0L) {
             val group = SagerDatabase.groupDao.getById(groupId) ?: return
-            if (group.isDefault) {
+            if (group.ungrouped) {
                 val created = createProfile(groupId, SOCKSBean().apply {
                     name = "Local tunnel"
-                    initDefaultValues()
+                    initializeDefaultValues()
                 })
                 if (DataStore.selectedProxy == 0L) {
                     DataStore.selectedProxy = created.id
                 }
             }
         } else {
-            rearrange(groupId)
+            GroupManager.rearrange(groupId)
         }
-    }
-
-    suspend fun clearGroup(groupId: Long) {
-        DataStore.selectedProxy = 0L
-        SagerDatabase.proxyDao.deleteAll(groupId)
-        if (DataStore.directBootAware) DirectBoot.clean()
-        iterator { onCleared(groupId) }
-    }
-
-    fun rearrange(groupId: Long) {
-        val entities = SagerDatabase.proxyDao.getByGroup(groupId)
-        for (index in entities.indices) {
-            entities[index].userOrder = (index + 1).toLong()
-        }
-        SagerDatabase.proxyDao.updateProxy(entities)
     }
 
     fun getProfile(profileId: Long): ProxyEntity? {
@@ -243,39 +188,8 @@ object ProfileManager {
         iterator { onUpdated(profile) }
     }
 
-    suspend fun postReload(groupId: Long) {
-        iterator { reloadProfiles(groupId) }
-        groupIterator { onUpdated(groupId) }
-    }
-
     suspend fun postTrafficUpdated(profileId: Long, stats: TrafficStats) {
         iterator { onUpdated(profileId, stats) }
-    }
-
-    suspend fun createGroup(group: ProxyGroup): ProxyGroup {
-        group.userOrder = SagerDatabase.groupDao.nextOrder() ?: 1
-        group.id = SagerDatabase.groupDao.createGroup(group)
-        groupIterator { onAdd(group) }
-        return group
-    }
-
-    suspend fun updateGroup(group: ProxyGroup) {
-        SagerDatabase.groupDao.updateGroup(group)
-        groupIterator { onUpdated(group) }
-    }
-
-    suspend fun deleteGroup(groupId: Long) {
-        SagerDatabase.groupDao.deleteById(groupId)
-        SagerDatabase.proxyDao.deleteByGroup(groupId)
-        groupIterator { onRemoved(groupId) }
-    }
-
-    suspend fun deleteGroup(vararg group: ProxyGroup) {
-        SagerDatabase.groupDao.deleteGroup(* group)
-        SagerDatabase.proxyDao.deleteByGroup(* group.map { it.id }.toLongArray())
-        for (proxyGroup in group) {
-            groupIterator { onRemoved(proxyGroup.id) }
-        }
     }
 
     suspend fun createRule(rule: RuleEntity, post: Boolean = true): RuleEntity {
@@ -483,7 +397,7 @@ object ProfileManager {
                         }
                     }
                 }
-                proxies.forEach { it.initDefaultValues() }
+                proxies.forEach { it.initializeDefaultValues() }
                 return 1 to proxies
             } catch (e: YAMLException) {
                 Logs.w(e)
