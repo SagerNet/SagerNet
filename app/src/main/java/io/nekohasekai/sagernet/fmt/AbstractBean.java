@@ -29,11 +29,14 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 import cn.hutool.core.clone.Cloneable;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import io.nekohasekai.sagernet.ExtraType;
 import io.nekohasekai.sagernet.fmt.gson.GsonsKt;
+import io.nekohasekai.sagernet.ktx.KryosKt;
 import io.nekohasekai.sagernet.ktx.NetsKt;
 
 public abstract class AbstractBean extends Serializable implements Cloneable<AbstractBean> {
@@ -41,11 +44,15 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public String serverAddress;
     public int serverPort;
     public String name;
-    public String profileId;
 
     public transient boolean isChain;
     public transient String finalAddress;
     public transient int finalPort;
+
+    public Integer extraType;
+    public String profileId;
+    public String group;
+    public List<String> tags;
 
     public String displayName() {
         if (StrUtil.isNotBlank(name)) {
@@ -86,6 +93,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         finalAddress = serverAddress;
         finalPort = serverPort;
 
+        if (extraType == null) extraType = ExtraType.NONE;
         if (profileId == null) profileId = "";
     }
 
@@ -93,9 +101,14 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public void serializeToBuffer(@NonNull ByteBufferOutput output) {
         serialize(output);
         output.writeString(name);
-
-        output.writeInt(0);
+        output.writeInt(extraType);
+        if (extraType == ExtraType.NONE) return;
         output.writeString(profileId);
+
+        if (extraType == ExtraType.OOCv1) {
+            output.writeString(group);
+            KryosKt.writeStringList(output, tags);
+        }
     }
 
     @Override
@@ -103,8 +116,14 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         deserialize(input);
         name = input.readString();
 
-        int extraVersion = input.readInt();
+        int extraType = input.readInt();
+        if (extraType == ExtraType.NONE) return;
         profileId = input.readString();
+
+        if (extraType == ExtraType.OOCv1) {
+            group = input.readString();
+            tags = KryosKt.readStringList(input);
+        }
     }
 
     public void serialize(ByteBufferOutput output) {

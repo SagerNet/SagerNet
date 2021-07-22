@@ -433,6 +433,10 @@
     <string name="install_from_fdroid">Install from F-Droid</string>
     <string name="download">Download</string>
     <string name="ooc_subscription_token" translatable="false">OOCv1 API Token</string>
+    <string name="ooc_subscription_token_invalid">Invalid OOCv1 Token</string>
     <string name="update_subscription_warning">Proxy is not connected, are you sure you want to continue updating?</string>
+
+    <string name="ooc_warning">Warning</string>
+    <string name="ooc_missing_protocol">The subscription requires support for protocol %s, but it cannot be found. Unsupported profiles will be ignored.</string>
 
 </resources>

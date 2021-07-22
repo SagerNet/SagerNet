@@ -21,32 +21,19 @@
 
 package io.nekohasekai.sagernet.group
 
-import android.annotation.SuppressLint
-import cn.hutool.core.net.DefaultTrustManager
-import cn.hutool.core.util.CharUtil
-import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.json.JSONObject
-import com.github.shadowsocks.plugin.PluginConfiguration
-import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.ExtraType
-import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.ktx.*
-import okhttp3.*
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.security.cert.CertificateException
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLSocketFactory
+import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.okHttpClient
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
-object OpenOnlineConfigUpdater : GroupUpdater() {
-
-    val oocConnSpec = ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
-        .tlsVersions(TlsVersion.TLS_1_3)
-        .build()
+object SIP008Updater : GroupUpdater() {
 
     override suspend fun doUpdate(
         proxyGroup: ProxyGroup,
@@ -55,73 +42,9 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         httpClient: OkHttpClient,
         byUser: Boolean
     ) {
-        val apiToken: JSONObject
-        var baseLink: HttpUrl
-        val certSha256: String?
-        try {
-            apiToken = JSONObject(subscription.token)
 
-            val version = apiToken.getInt("version")
-            if (version != 1) {
-                if (version != null) {
-                    error("Unsupported OOC version $version")
-                } else {
-                    error("Missing field: version")
-                }
-            }
-            val baseUrl = apiToken.getStr("baseUrl")
-            when {
-                baseUrl.isNullOrBlank() -> {
-                    error("Missing field: baseUrl")
-                }
-                baseUrl.endsWith("/") -> {
-                    error("baseUrl must not contain a trailing slash")
-                }
-                else -> try {
-                    baseLink = baseUrl.toHttpUrl()
-                    if (baseUrl.startsWith("http://") && !isExpert) {
-                        error("Protocol scheme must be https")
-                    }
-                } catch (e: Exception) {
-                    error(if (!baseUrl.startsWith("https://")) {
-                        "Protocol scheme must be https"
-                    } else {
-                        e.readableMessage
-                    })
-                }
-            }
-            val secret = apiToken.getStr("secret")
-            if (secret.isNullOrBlank()) error("Missing field: secret")
-            baseLink =
-                baseLink.newBuilder().addPathSegments(secret).addPathSegments("ooc/v1").build()
-
-            val userId = apiToken.getStr("userId")
-            if (userId.isNullOrBlank()) error("Missing field: userId")
-            baseLink = baseLink.newBuilder().addPathSegment(userId).build()
-            certSha256 = apiToken.getStr("certSha256")
-            if (!certSha256.isNullOrBlank()) {
-                when {
-                    certSha256.length != 64 -> {
-                        error("certSha256 must be a SHA-256 hexadecimal string")
-                    }
-                    !certSha256.all { CharUtil.isLetterLower(it) || CharUtil.isNumber(it) } -> {
-                        error("certSha256 must be a hexadecimal string with lowercase letters")
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Logs.v("ooc token check failed, token = ${subscription.token}", e)
-            error(app.getString(R.string.ooc_subscription_token_invalid))
-        }
-
-        val oocHttpClient = if (certSha256.isNullOrBlank()) httpClient else httpClient.newBuilder()
-            .connectionSpecs(listOf(oocConnSpec))
-            .sslSocketFactory(SSLSocketFactory.getDefault() as SSLSocketFactory,
-                    PinnedTrustManager(certSha256))
-            .build()
-
-        val response = oocHttpClient.newCall(Request.Builder()
-            .url(baseLink)
+        val response = httpClient.newCall(Request.Builder()
+            .url(subscription.link)
             .header("User-Agent",
                     subscription.customUserAgent.takeIf { it.isNotBlank() }
                         ?: "SagerNet/${BuildConfig.VERSION_NAME}")
@@ -133,51 +56,18 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         Logs.d(response.toString())
 
         val oocResponse = JSONObject(response.body!!.string())
-        subscription.username = oocResponse.getStr("username")
         subscription.bytesUsed = oocResponse.getLong("bytesUsed", -1)
         subscription.bytesRemaining = oocResponse.getLong("bytesRemaining", -1)
-        subscription.expiryDate = oocResponse.getInt("expiryDate", -1)
-        subscription.protocols = oocResponse.getJSONArray("protocols").filterIsInstance<String>()
         subscription.applyDefaultValues()
 
-        for (protocol in subscription.protocols) {
-            if (protocol !in supportedProtocols) {
-                userInterface?.alert(app.getString(R.string.ooc_missing_protocol, protocol))
-            }
-        }
+        val servers = oocResponse.getJSONArray("servers").filterIsInstance<JSONObject>()
 
         var profiles = mutableListOf<AbstractBean>()
 
-        for (protocol in subscription.protocols) {
-            val profilesInProtocol =
-                oocResponse.getJSONArray(protocol).filterIsInstance<JSONObject>()
-
-            if (protocol == "shadowsocks") for (profile in profilesInProtocol) {
-                val bean = ShadowsocksBean()
-
-                bean.name = profile.getStr("name")
-                bean.serverAddress = profile.getStr("address")
-                bean.serverPort = profile.getInt("port")
-                bean.method = profile.getStr("method")
-                bean.password = profile.getStr("password")
-
-                val pluginName = profile.getStr("pluginName")
-                if (!pluginName.isNullOrBlank()) {
-                    // TODO: check plugin exists
-                    // TODO: check pluginVersion
-                    // TODO: support pluginArguments
-
-                    val pl = PluginConfiguration()
-                    pl.selected = pluginName
-                    pl.pluginsOptions[pl.selected] = PluginOptions(profile.getStr("pluginOptions"))
-                    pl.fixInvalidParams()
-                    bean.plugin = pl.toString()
-                }
-
-                appendExtraInfo(profile, bean)
-
-                profiles.add(bean.applyDefaultValues())
-            }
+        for (profile in servers) {
+            val bean = profile.parseShadowsocks()
+            appendExtraInfo(profile, bean)
+            profiles.add(bean)
         }
 
         if (subscription.forceResolve) forceResolve(okHttpClient, profiles, proxyGroup.id)
@@ -281,27 +171,8 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
     }
 
     fun appendExtraInfo(profile: JSONObject, bean: AbstractBean) {
-        bean.extraType = ExtraType.OOCv1
+        bean.extraType = ExtraType.SIP008
         bean.profileId = profile.getStr("id")
-        bean.group = profile.getStr("group")
-        bean.tags = profile.getJSONArray("tags")?.filterIsInstance<String>()
-    }
-
-    val supportedProtocols = arrayOf("shadowsocks")
-
-    @SuppressLint("CustomX509TrustManager")
-    class PinnedTrustManager(val certSha256: String) : DefaultTrustManager() {
-
-        override fun checkClientTrusted(chain: Array<out X509Certificate>, authType: String) {
-            val serverPK = DigestUtil.sha256Hex(chain[0].publicKey.encoded)
-            if (serverPK != certSha256) throw CertificateException("Excepted certSha256 $certSha256, but was $serverPK")
-        }
-
-        override fun checkServerTrusted(chain: Array<out X509Certificate>, authType: String) {
-            val serverPK = DigestUtil.sha256Hex(chain[0].publicKey.encoded)
-            if (serverPK != certSha256) throw CertificateException("Excepted certSha256 $certSha256, but was $serverPK")
-        }
-
     }
 
 }

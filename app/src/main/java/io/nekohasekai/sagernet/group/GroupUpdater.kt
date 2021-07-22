@@ -21,18 +21,44 @@
 
 package io.nekohasekai.sagernet.group
 
+import io.nekohasekai.sagernet.IPv6Mode
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SubscriptionType
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProxyGroup
-import io.nekohasekai.sagernet.ktx.getValue
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.ktx.setValue
+import io.nekohasekai.sagernet.database.SubscriptionBean
+import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.brook.BrookBean
+import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
+import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
+import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
+import io.nekohasekai.sagernet.ktx.*
+import kotlinx.coroutines.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.OkHttpClient
+import okhttp3.dnsoverhttps.DnsOverHttps
+import java.net.Inet4Address
+import java.net.InetAddress
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 abstract class GroupUpdater {
 
-    abstract suspend fun doUpdate(proxyGroup: ProxyGroup)
+    abstract suspend fun doUpdate(
+        proxyGroup: ProxyGroup,
+        subscription: SubscriptionBean,
+        userInterface: GroupManager.Interface?,
+        httpClient: OkHttpClient,
+        byUser: Boolean
+    )
 
     data class Progress(
         var max: Int
@@ -40,22 +66,147 @@ abstract class GroupUpdater {
         var progress by AtomicInteger()
     }
 
+    protected suspend fun forceResolve(
+        okHttpClient: OkHttpClient, profiles: List<AbstractBean>, groupId: Long?
+    ) {
+        val connected = DataStore.startedProxy > 0
+
+        var dohUrl: String? = null
+        if (connected) {
+            val localDns = DataStore.localDns
+            when {
+                localDns.startsWith("https+local://") -> dohUrl =
+                    localDns.replace("https+local://", "https://")
+                localDns.startsWith("https://") -> dohUrl = localDns
+            }
+        } else {
+            val domesticDns = DataStore.domesticDns
+            when {
+                domesticDns.startsWith("https+local://") -> dohUrl =
+                    domesticDns.replace("https+local://", "https://")
+                domesticDns.startsWith("https://") -> dohUrl = domesticDns
+            }
+        }
+
+        val dohHttpUrl = dohUrl?.toHttpUrlOrNull() ?: (if (connected) {
+            "https://1.0.0.1/dns-query"
+        } else {
+            "https://223.5.5.5/dns-query"
+        }).toHttpUrl()
+
+        val ipv6Mode = DataStore.ipv6Mode
+        val dohClient = DnsOverHttps.Builder().client(okHttpClient).url(dohHttpUrl).apply {
+            if (ipv6Mode == IPv6Mode.DISABLE) includeIPv6(false)
+        }.build()
+        val lookupPool = newFixedThreadPoolContext(5, "DNS Lookup")
+        val lookupJobs = mutableListOf<Job>()
+        val progress = Progress(profiles.size)
+        if (groupId != null) {
+            GroupUpdater.progress[groupId] = progress
+            GroupManager.postReload(groupId)
+        }
+        val ipv6First = ipv6Mode >= IPv6Mode.PREFER
+
+        for (profile in profiles) {
+            when (profile) {
+                // SNI rewrite unsupported
+                is BrookBean -> if (profile.protocol == "wss") continue
+                is NaiveBean, is RelayBatonBean -> continue
+            }
+
+            if (profile.serverAddress.isIpAddress()) continue
+
+            lookupJobs.add(GlobalScope.launch(lookupPool) {
+                try {
+                    val results = dohClient.lookup(profile.serverAddress)
+                    if (results.isEmpty()) error("empty response")
+                    rewriteAddress(profile, results, ipv6First)
+                } catch (e: Exception) {
+                    Logs.d("Lookup ${profile.serverAddress} failed: ${e.readableMessage}")
+                }
+                if (groupId != null) {
+                    progress.progress++
+                    GroupManager.postReload(groupId)
+                }
+            })
+        }
+
+        lookupJobs.joinAll()
+        lookupPool.close()
+    }
+
+    protected fun rewriteAddress(
+        bean: AbstractBean, addresses: List<InetAddress>, ipv6First: Boolean
+    ) {
+        val address = addresses.sortedBy { (it is Inet4Address) xor ipv6First }[0].hostAddress
+
+        with(bean) {
+            when (this) {
+                is SOCKSBean -> {
+                    if (tls && sni.isBlank()) sni = bean.serverAddress
+                }
+                is HttpBean -> {
+                    if (tls && sni.isBlank()) sni = bean.serverAddress
+                }
+                is StandardV2RayBean -> {
+                    when (security) {
+                        "tls" -> if (sni.isBlank()) sni = bean.serverAddress
+                    }
+                }
+                is TrojanBean -> {
+                    if (sni.isBlank()) sni = bean.serverAddress
+                }
+                is TrojanGoBean -> {
+                    if (sni.isBlank()) sni = bean.serverAddress
+                }
+            }
+
+            bean.serverAddress = address
+        }
+    }
+
     companion object {
 
         val updating = Collections.synchronizedSet<Long>(mutableSetOf())
         val progress = Collections.synchronizedMap<Long, Progress>(mutableMapOf())
 
-        fun startUpdate(proxyGroup: ProxyGroup) {
+        fun startUpdate(proxyGroup: ProxyGroup, byUser: Boolean) {
             if (!updating.add(proxyGroup.id)) return
             runOnDefaultDispatcher {
                 GroupManager.postReload(proxyGroup.id)
 
                 val subscription = proxyGroup.subscription!!
+                val connected = DataStore.startedProxy > 0
 
-                when (subscription.type) {
-                    SubscriptionType.RAW -> RawUpdater.doUpdate(proxyGroup)
-                    SubscriptionType.OOCv1 -> OpenOnlineConfigUpdater.doUpdate(proxyGroup)
-//                    SubscriptionType.SIP008 -> OpenOnlineConfigUpdater.doUpdate(proxyGroup)
+                val timeout = Duration.ofSeconds(5)
+                val httpClient = createProxyClient().newBuilder()
+                    .connectTimeout(timeout)
+                    .readTimeout(timeout)
+                    .build()
+                val userInterface = GroupManager.userInterface
+
+                if (userInterface != null) {
+                    if (subscription.updateWhenConnectedOnly && !connected) {
+                        if (!userInterface.confirm(proxyGroup,
+                                    app.getString(R.string.update_subscription_warning))
+                        ) {
+                            finishUpdate(proxyGroup)
+                            cancel()
+                        }
+                    }
+                }
+
+                try {
+                    when (subscription.type) {
+                        SubscriptionType.RAW -> RawUpdater
+                        SubscriptionType.OOCv1 -> OpenOnlineConfigUpdater
+                        SubscriptionType.SIP008 -> SIP008Updater
+                        else -> error("wtf")
+                    }.doUpdate(proxyGroup, subscription, userInterface, httpClient, byUser)
+                } catch (e: Throwable) {
+                    Logs.w(e)
+                    userInterface?.onUpdateFailure(proxyGroup, e.readableMessage)
+                    finishUpdate(proxyGroup)
                 }
             }
         }

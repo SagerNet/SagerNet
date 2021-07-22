@@ -226,6 +226,12 @@ object SubscriptionType {
     const val SIP008 = 2
 }
 
+object ExtraType {
+    const val NONE = 0
+    const val OOCv1 = 1
+    const val SIP008 = 2
+}
+
 object Action {
     const val SERVICE = "io.nekohasekai.sagernet.SERVICE"
     const val CLOSE = "io.nekohasekai.sagernet.CLOSE"

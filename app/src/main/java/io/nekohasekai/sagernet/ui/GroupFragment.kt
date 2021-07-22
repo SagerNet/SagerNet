@@ -41,7 +41,6 @@ import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.databinding.LayoutGroupItemBinding
-import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
@@ -76,9 +75,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
 
         undoManager = UndoSnackbarManager(activity, groupAdapter)
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START
-        ) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.START) {
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -124,243 +122,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         return true
     }
 
-/*
-private suspend fun updateSubscription(
-    proxyGroup: ProxyGroup,
-    onRefreshStarted: Runnable,
-    refreshFinished: (success: Boolean) -> Unit,
-) {
-    synchronized(this) {
-        if (updating[proxyGroup.id] == true) return
-        updating[proxyGroup.id] = true
-    }
-    onRefreshStarted.run()
-
-    fun onRefreshFinished(success: Boolean) {
-        refreshFinished(success)
-        updating[proxyGroup.id] = false
-    }
-
-    runOnDefaultDispatcher {
-        createProxyClient().newCall(
-            Request.Builder().url(proxyGroup.subscriptionLink)
-                .header("User-Agent", "SagerNet/${BuildConfig.VERSION_NAME}").build()
-        ).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                runOnMainDispatcher {
-                    onRefreshFinished(false)
-                    Logs.d("onFailure", e)
-
-                    activity.snackbar(e.readableMessage).show()
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                Logs.d("onResponse: $response")
-
-                var (subType, proxies) = try {
-                    ProfileManager.parseSubscription(
-                        (response.body ?: error("Empty response")).string()
-                    ) ?: error(getString(R.string.no_proxies_found))
-                } catch (e: Exception) {
-                    Logs.w(e)
-                    runOnMainDispatcher {
-                        onRefreshFinished(false)
-                        activity.snackbar(e.readableMessage).show()
-                    }
-                    return
-                }
-
-                val proxiesMap = LinkedHashMap<String, AbstractBean>()
-                for (proxy in proxies) {
-                    var index = 0
-                    var name = proxy.displayName()
-                    while (proxiesMap.containsKey(name)) {
-                        println("Exists name: $name")
-                        index++
-                        name = name.replace(" (${index - 1})", "")
-                        name = "$name ($index)"
-                        proxy.name = name
-                    }
-                    proxiesMap[proxy.displayName()] = proxy
-                }
-                proxies = proxiesMap.values.toList()
-
-                val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
-                val duplicate = ArrayList<String>()
-                if (proxyGroup.deduplication) {
-
-                    Logs.d("Before deduplication: ${proxies.size}")
-
-                    val uniqueProxies = LinkedHashSet<AbstractBean>()
-                    val uniqueNames = HashMap<AbstractBean, String>()
-                    for (proxy in proxies) {
-                        if (!uniqueProxies.add(proxy)) {
-                            val index = uniqueProxies.indexOf(proxy)
-                            if (uniqueNames.containsKey(proxy)) {
-                                val name = uniqueNames[proxy]!!.replace(" ($index)", "")
-                                if (name.isNotBlank()) {
-                                    duplicate.add("$name ($index)")
-                                    uniqueNames[proxy] = ""
-                                }
-                            }
-                            duplicate.add(proxy.displayName() + " ($index)")
-                        } else {
-                            uniqueNames[proxy] = proxy.displayName()
-                        }
-                    }
-                    uniqueProxies.retainAll(uniqueNames.keys)
-                    proxies = uniqueProxies.toList()
-                }
-
-                Logs.d("New profiles: ${proxies.size}")
-
-                val nameMap = proxies.map { bean ->
-                    bean.displayName() to bean
-                }.toMap()
-
-                Logs.d("Unique profiles: ${nameMap.size}")
-
-                val toDelete = ArrayList<ProxyEntity>()
-                val toReplace = exists.mapNotNull { entity ->
-                    val name = entity.displayName()
-                    if (nameMap.contains(name)) name to entity else let {
-                        toDelete.add(entity)
-                        null
-                    }
-                }.toMap()
-
-                Logs.d("toDelete profiles: ${toDelete.size}")
-                Logs.d("toReplace profiles: ${toReplace.size}")
-
-                val toUpdate = ArrayList<ProxyEntity>()
-                val added = mutableListOf<String>()
-                val updated = mutableMapOf<String, String>()
-                val deleted = toDelete.map { it.displayName() }
-
-                var userOrder = 1L
-                var changed = toDelete.size
-                for ((name, bean) in nameMap.entries) {
-                    if (toReplace.contains(name)) {
-                        val entity = toReplace[name]!!
-                        val existsBean = entity.requireBean()
-                        existsBean.applyFeatureSettings(bean)
-                        when {
-                            existsBean != bean -> {
-                                changed++
-                                entity.putBean(bean)
-                                toUpdate.add(entity)
-                                updated[entity.displayName()] = name
-
-                                Logs.d("Updated profile: $name")
-                            }
-                            entity.userOrder != userOrder -> {
-                                entity.putBean(bean)
-                                toUpdate.add(entity)
-                                entity.userOrder = userOrder
-
-                                Logs.d("Reordered profile: $name")
-                            }
-                            else -> {
-                                Logs.d("Ignored profile: $name")
-                            }
-                        }
-                    } else {
-                        changed++
-                        SagerDatabase.proxyDao.addProxy(ProxyEntity(
-                            groupId = proxyGroup.id, userOrder = userOrder
-                        ).apply {
-                            putBean(bean)
-                        })
-                        added.add(name)
-                        Logs.d("Inserted profile: $name")
-                    }
-                    userOrder++
-                }
-
-                SagerDatabase.proxyDao.updateProxy(toUpdate).also {
-                    Logs.d("Updated profiles: $it")
-                }
-
-                SagerDatabase.proxyDao.deleteProxy(toDelete).also {
-                    Logs.d("Deleted profiles: $it")
-                }
-
-                val existCount = SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
-
-                if (existCount != proxies.size) {
-
-                    Logs.e("Exist profiles: $existCount, new profiles: ${proxies.size}")
-
-                }
-
-                runBlocking {
-                    ProfileManager.updateGroup(proxyGroup.apply {
-                        lastUpdate = System.currentTimeMillis()
-                        type = subType
-                    })
-
-                    ProfileManager.postReload(proxyGroup.id)
-                    onMainDispatcher {
-                        onRefreshFinished(true)
-
-                        if (changed == 0 && duplicate.isEmpty()) {
-                            activity.snackbar(
-                                activity.getString(
-                                    R.string.group_no_difference, proxyGroup.displayName()
-                                )
-                            ).show()
-                        } else {
-                            activity.snackbar(
-                                activity.getString(
-                                    R.string.group_updated, proxyGroup.name, changed
-                                )
-                            ).show()
-
-                            delay(1000L)
-
-                            var status = ""
-                            if (added.isNotEmpty()) {
-                                status += activity.getString(
-                                    R.string.group_added,
-                                    added.joinToString("\n", postfix = "\n\n")
-                                )
-                            }
-                            if (updated.isNotEmpty()) {
-                                status += activity.getString(R.string.group_changed,
-                                    updated.map { it }
-                                        .joinToString("\n", postfix = "\n\n") {
-                                            if (it.key == it.value) it.key else "${it.key} => ${it.value}"
-                                        })
-                            }
-                            if (deleted.isNotEmpty()) {
-                                status += activity.getString(
-                                    R.string.group_deleted,
-                                    deleted.joinToString("\n", postfix = "\n\n")
-                                )
-                            }
-                            if (duplicate.isNotEmpty()) {
-                                status += activity.getString(
-                                    R.string.group_duplicate,
-                                    duplicate.joinToString("\n", postfix = "\n\n")
-                                )
-                            }
-
-                            MaterialAlertDialogBuilder(activity).setTitle(
-                                app.getString(
-                                    R.string.group_diff, proxyGroup.displayName()
-                                )
-                            ).setMessage(status.trim())
-                                .setPositiveButton(android.R.string.ok, null).show()
-                        }
-                    }
-                }
-            }
-        })
-    }
-}
-*/
-
     inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>(),
         GroupManager.Listener,
         UndoSnackbarManager.Interface<ProxyGroup> {
@@ -403,9 +164,8 @@ private suspend fun updateSubscription(
         fun move(from: Int, to: Int) {
             val first = groupList[from]
             var previousOrder = first.userOrder
-            val (step, range) = if (from < to) Pair(1, from until to) else Pair(
-                -1, to + 1 downTo from
-            )
+            val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1,
+                    to + 1 downTo from)
             for (i in range) {
                 val next = groupList[i + step]
                 val order = next.userOrder
@@ -546,9 +306,7 @@ private suspend fun updateSubscription(
 
             if (proxyGroup.id in GroupUpdater.updating) {
                 (groupName.parent as LinearLayout).apply {
-                    setPadding(
-                        paddingLeft, dp2px(11), paddingRight, paddingBottom
-                    )
+                    setPadding(paddingLeft, dp2px(11), paddingRight, paddingBottom)
                 }
 
                 subscriptionUpdateProgress.isVisible = true
@@ -566,9 +324,7 @@ private suspend fun updateSubscription(
                 editButton.isGone = true
             } else {
                 (groupName.parent as LinearLayout).apply {
-                    setPadding(
-                        paddingLeft, dp2px(15), paddingRight, paddingBottom
-                    )
+                    setPadding(paddingLeft, dp2px(15), paddingRight, paddingBottom)
                 }
 
                 subscriptionUpdateProgress.isVisible = false
@@ -593,9 +349,10 @@ private suspend fun updateSubscription(
                                 groupStatus.setText(R.string.group_status_empty_subscription)
                             } else {
                                 val date = Date(group.subscription!!.lastUpdated * 100L)
-                                groupStatus.text = app.resources.getString(
-                                    R.string.group_status_proxies_subscription, size, "${date.month + 1} - ${date.date}"
-                                )
+                                groupStatus.text =
+                                    app.resources.getString(R.string.group_status_proxies_subscription,
+                                            size,
+                                            "${date.month + 1} - ${date.date}")
                             }
                         }
                     }

@@ -35,6 +35,12 @@ object GroupManager {
 
     interface Interface {
         suspend fun confirm(group: ProxyGroup, message: String): Boolean
+        suspend fun alert(message: String)
+        suspend fun onUpdateSuccess(
+            group: ProxyGroup, changed: Int, added: List<String>, updated: Map<String, String>,
+            deleted: List<String>, duplicate: List<String>, byUser: Boolean
+        )
+
         suspend fun onUpdateFailure(group: ProxyGroup, message: String)
         suspend fun onRequiringPlugin(group: ProxyGroup, issuer: String, plugin: String)
         suspend fun onRequiringShadowsocksPlugin(group: ProxyGroup, plugin: String)
@@ -110,7 +116,9 @@ object GroupManager {
 
     suspend fun deleteGroup(group: List<ProxyGroup>) {
         SagerDatabase.groupDao.deleteGroup(group)
-        SagerDatabase.proxyDao.deleteByGroup(group.map { it.id }.toLongArray())
+        SagerDatabase.proxyDao.deleteByGroup(group
+            .map { it.id }
+            .toLongArray())
         for (proxyGroup in group) iterator { groupRemoved(proxyGroup.id) }
     }
 

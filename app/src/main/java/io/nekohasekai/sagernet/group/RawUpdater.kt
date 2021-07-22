@@ -24,15 +24,11 @@ package io.nekohasekai.sagernet.group
 import cn.hutool.json.*
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.BuildConfig
-import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
-import io.nekohasekai.sagernet.fmt.naive.NaiveBean
-import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
@@ -40,297 +36,183 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
-import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.*
-import kotlinx.coroutines.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.dnsoverhttps.DnsOverHttps
 import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.error.YAMLException
-import java.net.Inet4Address
-import java.net.InetAddress
-import java.time.Duration
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object RawUpdater : GroupUpdater() {
 
-    override suspend fun doUpdate(proxyGroup: ProxyGroup) {
+    override suspend fun doUpdate(
+        proxyGroup: ProxyGroup,
+        subscription: SubscriptionBean,
+        userInterface: GroupManager.Interface?,
+        httpClient: OkHttpClient,
+        byUser: Boolean
+    ) {
 
-        val subscription = proxyGroup.subscription!!
-        val timeout = Duration.ofSeconds(5)
-        val okHttpClient =
-            createProxyClient().newBuilder().connectTimeout(timeout).readTimeout(timeout).build()
-        val userInterface = GroupManager.userInterface
-
-        try {
-
-            val connected = DataStore.startedProxy > 0
-
-            if (userInterface != null) {
-                if (subscription.updateWhenConnectedOnly && !connected) {
-                    if (!userInterface.confirm(
-                            proxyGroup, app.getString(R.string.update_subscription_warning)
-                        )
-                    ) {
-                        finishUpdate(proxyGroup)
-                        return
-                    }
-                }
-            }
-
-            val response = okHttpClient.newCall(Request
+        val response = httpClient
+            .newCall(Request
                 .Builder()
                 .url(subscription.link.toHttpUrl())
-                .header("User-Agent", subscription.customUserAgent.takeIf { it.isNotBlank() }
-                    ?: "SagerNet/${BuildConfig.VERSION_NAME}")
-                .build()).execute().apply {
+                .header("User-Agent",
+                        subscription.customUserAgent.takeIf { it.isNotBlank() }
+                            ?: "SagerNet/${BuildConfig.VERSION_NAME}")
+                .build())
+            .execute()
+            .apply {
                 if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                 if (body == null) error("ERROR: Empty response")
             }
 
-            Logs.d(response.toString())
+        Logs.d(response.toString())
 
-            var proxies = parseRaw(response.body!!.string())
-                ?: error(app.getString(R.string.no_proxies_found))
+        var proxies =
+            parseRaw(response.body!!.string()) ?: error(app.getString(R.string.no_proxies_found))
 
-            val proxiesMap = LinkedHashMap<String, AbstractBean>()
+        val proxiesMap = LinkedHashMap<String, AbstractBean>()
+        for (proxy in proxies) {
+            var index = 0
+            var name = proxy.displayName()
+            while (proxiesMap.containsKey(name)) {
+                println("Exists name: $name")
+                index++
+                name = name.replace(" (${index - 1})", "")
+                name = "$name ($index)"
+                proxy.name = name
+            }
+            proxiesMap[proxy.displayName()] = proxy
+        }
+        proxies = proxiesMap.values.toList()
+
+        if (subscription.forceResolve) forceResolve(okHttpClient, proxies, proxyGroup.id)
+
+        if (subscription.forceVMessAEAD) {
+            proxies.filterIsInstance<VMessBean>().forEach { it.alterId = 0 }
+        }
+
+        val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
+        val duplicate = ArrayList<String>()
+        if (subscription.deduplication) {
+            Logs.d("Before deduplication: ${proxies.size}")
+            val uniqueProxies = LinkedHashSet<AbstractBean>()
+            val uniqueNames = HashMap<AbstractBean, String>()
             for (proxy in proxies) {
-                var index = 0
-                var name = proxy.displayName()
-                while (proxiesMap.containsKey(name)) {
-                    println("Exists name: $name")
-                    index++
-                    name = name.replace(" (${index - 1})", "")
-                    name = "$name ($index)"
-                    proxy.name = name
-                }
-                proxiesMap[proxy.displayName()] = proxy
-            }
-            proxies = proxiesMap.values.toList()
-
-            if (subscription.forceResolve) forceResolve(proxies, proxyGroup.id)
-
-            if (subscription.forceVMessAEAD) {
-                proxies.filterIsInstance<VMessBean>().forEach { it.alterId = 0 }
-            }
-
-            val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
-            val duplicate = ArrayList<String>()
-            if (subscription.deduplication) {
-                Logs.d("Before deduplication: ${proxies.size}")
-                val uniqueProxies = LinkedHashSet<AbstractBean>()
-                val uniqueNames = HashMap<AbstractBean, String>()
-                for (proxy in proxies) {
-                    if (!uniqueProxies.add(proxy)) {
-                        val index = uniqueProxies.indexOf(proxy)
-                        if (uniqueNames.containsKey(proxy)) {
-                            val name = uniqueNames[proxy]!!.replace(" ($index)", "")
-                            if (name.isNotBlank()) {
-                                duplicate.add("$name ($index)")
-                                uniqueNames[proxy] = ""
-                            }
-                        }
-                        duplicate.add(proxy.displayName() + " ($index)")
-                    } else {
-                        uniqueNames[proxy] = proxy.displayName()
-                    }
-                }
-                uniqueProxies.retainAll(uniqueNames.keys)
-                proxies = uniqueProxies.toList()
-            }
-
-            Logs.d("New profiles: ${proxies.size}")
-
-            val nameMap = proxies.associateBy { bean ->
-                bean.displayName()
-            }
-
-            Logs.d("Unique profiles: ${nameMap.size}")
-
-            val toDelete = ArrayList<ProxyEntity>()
-            val toReplace = exists.mapNotNull { entity ->
-                val name = entity.displayName()
-                if (nameMap.contains(name)) name to entity else let {
-                    toDelete.add(entity)
-                    null
-                }
-            }.toMap()
-
-            Logs.d("toDelete profiles: ${toDelete.size}")
-            Logs.d("toReplace profiles: ${toReplace.size}")
-
-            val toUpdate = ArrayList<ProxyEntity>()
-            val added = mutableListOf<String>()
-            val updated = mutableMapOf<String, String>()
-            val deleted = toDelete.map { it.displayName() }
-
-            var userOrder = 1L
-            var changed = toDelete.size
-            for ((name, bean) in nameMap.entries) {
-                if (toReplace.contains(name)) {
-                    val entity = toReplace[name]!!
-                    val existsBean = entity.requireBean()
-                    existsBean.applyFeatureSettings(bean)
-                    when {
-                        existsBean != bean -> {
-                            changed++
-                            entity.putBean(bean)
-                            toUpdate.add(entity)
-                            updated[entity.displayName()] = name
-
-                            Logs.d("Updated profile: $name")
-                        }
-                        entity.userOrder != userOrder -> {
-                            entity.putBean(bean)
-                            toUpdate.add(entity)
-                            entity.userOrder = userOrder
-
-                            Logs.d("Reordered profile: $name")
-                        }
-                        else -> {
-                            Logs.d("Ignored profile: $name")
+                if (!uniqueProxies.add(proxy)) {
+                    val index = uniqueProxies.indexOf(proxy)
+                    if (uniqueNames.containsKey(proxy)) {
+                        val name = uniqueNames[proxy]!!.replace(" ($index)", "")
+                        if (name.isNotBlank()) {
+                            duplicate.add("$name ($index)")
+                            uniqueNames[proxy] = ""
                         }
                     }
+                    duplicate.add(proxy.displayName() + " ($index)")
                 } else {
-                    changed++
-                    SagerDatabase.proxyDao.addProxy(ProxyEntity(
-                        groupId = proxyGroup.id, userOrder = userOrder
-                    ).apply {
-                        putBean(bean)
-                    })
-                    added.add(name)
-                    Logs.d("Inserted profile: $name")
+                    uniqueNames[proxy] = proxy.displayName()
                 }
-                userOrder++
             }
-
-            SagerDatabase.proxyDao.updateProxy(toUpdate).also {
-                Logs.d("Updated profiles: $it")
-            }
-
-            SagerDatabase.proxyDao.deleteProxy(toDelete).also {
-                Logs.d("Deleted profiles: $it")
-            }
-
-            val existCount = SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
-
-            if (existCount != proxies.size) {
-                Logs.e("Exist profiles: $existCount, new profiles: ${proxies.size}")
-            }
-
-            subscription.lastUpdated = (System.currentTimeMillis() / 1000).toInt()
-            SagerDatabase.groupDao.updateGroup(proxyGroup)
-
-        } catch (e: Exception) {
-            userInterface?.onUpdateFailure(proxyGroup, e.readableMessage)
+            uniqueProxies.retainAll(uniqueNames.keys)
+            proxies = uniqueProxies.toList()
         }
 
-        finishUpdate(proxyGroup)
-    }
+        Logs.d("New profiles: ${proxies.size}")
 
-    suspend fun forceResolve(profiles: List<AbstractBean>, groupId: Long?) {
-        val connected = DataStore.startedProxy > 0
-
-        var dohUrl: String? = null
-        if (connected) {
-            val localDns = DataStore.localDns
-            when {
-                localDns.startsWith("https+local://") -> dohUrl =
-                    localDns.replace("https+local://", "https://")
-                localDns.startsWith("https://") -> dohUrl = localDns
-            }
-        } else {
-            val domesticDns = DataStore.domesticDns
-            when {
-                domesticDns.startsWith("https+local://") -> dohUrl =
-                    domesticDns.replace("https+local://", "https://")
-                domesticDns.startsWith("https://") -> dohUrl = domesticDns
-            }
+        val nameMap = proxies.associateBy { bean ->
+            bean.displayName()
         }
 
-        val dohHttpUrl = dohUrl?.toHttpUrlOrNull() ?: (if (connected) {
-            "https://1.0.0.1/dns-query"
-        } else {
-            "https://223.5.5.5/dns-query"
-        }).toHttpUrl()
+        Logs.d("Unique profiles: ${nameMap.size}")
 
-        val ipv6Mode = DataStore.ipv6Mode
-        val dohClient = DnsOverHttps.Builder().client(okHttpClient).url(dohHttpUrl).apply {
-            if (ipv6Mode == IPv6Mode.DISABLE) includeIPv6(false)
-        }.build()
-        val lookupPool = newFixedThreadPoolContext(5, "DNS Lookup")
-        val lookupJobs = mutableListOf<Job>()
-        val progress = Progress(profiles.size)
-        if (groupId != null) {
-            GroupUpdater.progress[groupId] = progress
-            GroupManager.postReload(groupId)
-        }
-        val ipv6First = ipv6Mode >= IPv6Mode.PREFER
-
-        for (profile in profiles) {
-            when (profile) {
-                // SNI rewrite unsupported
-                is BrookBean -> if (profile.protocol == "wss") continue
-                is NaiveBean, is RelayBatonBean -> continue
+        val toDelete = ArrayList<ProxyEntity>()
+        val toReplace = exists.mapNotNull { entity ->
+            val name = entity.displayName()
+            if (nameMap.contains(name)) name to entity else let {
+                toDelete.add(entity)
+                null
             }
+        }.toMap()
 
-            if (profile.serverAddress.isIpAddress()) continue
+        Logs.d("toDelete profiles: ${toDelete.size}")
+        Logs.d("toReplace profiles: ${toReplace.size}")
 
-            lookupJobs.add(GlobalScope.launch(lookupPool) {
-                try {
-                    val results = dohClient.lookup(profile.serverAddress)
-                    if (results.isEmpty()) error("empty response")
-                    rewriteAddress(profile, results, ipv6First)
-                } catch (e: Exception) {
-                    Logs.d("Lookup ${profile.serverAddress} failed: ${e.readableMessage}")
-                }
-                if (groupId != null) {
-                    progress.progress++
-                    GroupManager.postReload(groupId)
-                }
-            })
-        }
+        val toUpdate = ArrayList<ProxyEntity>()
+        val added = mutableListOf<String>()
+        val updated = mutableMapOf<String, String>()
+        val deleted = toDelete.map { it.displayName() }
 
-        lookupJobs.joinAll()
-        lookupPool.close()
-    }
+        var userOrder = 1L
+        var changed = toDelete.size
+        for ((name, bean) in nameMap.entries) {
+            if (toReplace.contains(name)) {
+                val entity = toReplace[name]!!
+                val existsBean = entity.requireBean()
+                existsBean.applyFeatureSettings(bean)
+                when {
+                    existsBean != bean -> {
+                        changed++
+                        entity.putBean(bean)
+                        toUpdate.add(entity)
+                        updated[entity.displayName()] = name
 
-    private fun rewriteAddress(
-        bean: AbstractBean, addresses: List<InetAddress>, ipv6First: Boolean
-    ) {
-        val address = addresses.sortedBy { (it is Inet4Address) xor ipv6First }[0].hostAddress
+                        Logs.d("Updated profile: $name")
+                    }
+                    entity.userOrder != userOrder -> {
+                        entity.putBean(bean)
+                        toUpdate.add(entity)
+                        entity.userOrder = userOrder
 
-        with(bean) {
-            when (this) {
-                is SOCKSBean -> {
-                    if (tls && sni.isBlank()) sni = bean.serverAddress
-                }
-                is HttpBean -> {
-                    if (tls && sni.isBlank()) sni = bean.serverAddress
-                }
-                is StandardV2RayBean -> {
-                    when (security) {
-                        "tls" -> if (sni.isBlank()) sni = bean.serverAddress
+                        Logs.d("Reordered profile: $name")
+                    }
+                    else -> {
+                        Logs.d("Ignored profile: $name")
                     }
                 }
-                is TrojanBean -> {
-                    if (sni.isBlank()) sni = bean.serverAddress
-                }
-                is TrojanGoBean -> {
-                    if (sni.isBlank()) sni = bean.serverAddress
-                }
+            } else {
+                changed++
+                SagerDatabase.proxyDao.addProxy(ProxyEntity(groupId = proxyGroup.id,
+                        userOrder = userOrder).apply {
+                    putBean(bean)
+                })
+                added.add(name)
+                Logs.d("Inserted profile: $name")
             }
-
-            bean.serverAddress = address
+            userOrder++
         }
+
+        SagerDatabase.proxyDao.updateProxy(toUpdate).also {
+            Logs.d("Updated profiles: $it")
+        }
+
+        SagerDatabase.proxyDao.deleteProxy(toDelete).also {
+            Logs.d("Deleted profiles: $it")
+        }
+
+        val existCount = SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
+
+        if (existCount != proxies.size) {
+            Logs.e("Exist profiles: $existCount, new profiles: ${proxies.size}")
+        }
+
+        subscription.lastUpdated = (System.currentTimeMillis() / 1000).toInt()
+        SagerDatabase.groupDao.updateGroup(proxyGroup)
+        finishUpdate(proxyGroup)
+
+        userInterface?.onUpdateSuccess(proxyGroup,
+                changed,
+                added,
+                updated,
+                deleted,
+                duplicate,
+                byUser)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -345,10 +227,8 @@ object RawUpdater : GroupUpdater() {
                 // clash
                 for (proxy in (Yaml().apply {
                     addTypeDescription(TypeDescription(String::class.java, "str"))
-                }.loadAs(
-                    text, Map::class.java
-                )["proxies"] as? (List<Map<String, Any?>>)
-                    ?: error(app.getString(R.string.no_proxies_found_in_file)))) {
+                }.loadAs(text, Map::class.java)["proxies"] as? (List<Map<String, Any?>>) ?: error(
+                        app.getString(R.string.no_proxies_found_in_file)))) {
 
                     when (proxy["type"] as String) {
                         "socks5" -> {
@@ -511,17 +391,16 @@ object RawUpdater : GroupUpdater() {
                     return listOf(json.parseShadowsocks())
                 }
                 json.containsKey("protocol") -> {
-                    val v2rayConfig = gson.fromJson(
-                        json.toString(), V2RayConfig.OutboundObject::class.java
-                    ).apply { init() }
+                    val v2rayConfig = gson
+                        .fromJson(json.toString(), V2RayConfig.OutboundObject::class.java)
+                        .apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbound") -> {
-                    val v2rayConfig = gson.fromJson(
-                        json
-                            .getJSONObject("outbound")
-                            .toString(), V2RayConfig.OutboundObject::class.java
-                    ).apply { init() }
+                    val v2rayConfig = gson
+                        .fromJson(json.getJSONObject("outbound").toString(),
+                                V2RayConfig.OutboundObject::class.java)
+                        .apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbounds") -> {/*   val fakedns = json["fakedns"]

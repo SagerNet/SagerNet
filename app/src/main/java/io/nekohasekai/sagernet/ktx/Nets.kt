@@ -30,11 +30,19 @@ import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import java.net.*
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.Socket
 
-val okHttpClient = OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build()
+val okHttpClient = OkHttpClient.Builder()
+    .followRedirects(true)
+    .followSslRedirects(true)
+    .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
+    .build()
 
 private lateinit var proxyClient: OkHttpClient
 fun createProxyClient(): OkHttpClient {
