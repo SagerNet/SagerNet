@@ -35,7 +35,10 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.okHttpClient
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.cert.CertificateException
@@ -77,18 +80,10 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 baseUrl.endsWith("/") -> {
                     error("baseUrl must not contain a trailing slash")
                 }
-                else -> try {
-                    baseLink = baseUrl.toHttpUrl()
-                    if (baseUrl.startsWith("http://") && !isExpert) {
-                        error("Protocol scheme must be https")
-                    }
-                } catch (e: Exception) {
-                    error(if (!baseUrl.startsWith("https://")) {
-                        "Protocol scheme must be https"
-                    } else {
-                        e.readableMessage
-                    })
+                !baseUrl.startsWith("https://") -> {
+                    error("Protocol scheme must be https")
                 }
+                else -> baseLink = baseUrl.toHttpUrl()
             }
             val secret = apiToken.getStr("secret")
             if (secret.isNullOrBlank()) error("Missing field: secret")
@@ -186,10 +181,24 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
             Logs.d("Before deduplication: ${profiles.size}")
-            val uniqueProfiles = LinkedHashSet<AbstractBean>(profiles)
-            val cp = profiles.associateBy { it.profileId }.toMutableMap()
-            for (uniqueProfile in uniqueProfiles) cp.remove(uniqueProfile.profileId)
-            for (dupProfile in cp.values) duplicate.add(dupProfile.displayName())
+            val uniqueProfiles = LinkedHashSet<AbstractBean>()
+            val uniqueNames = HashMap<AbstractBean, String>()
+            for (proxy in profiles) {
+                if (!uniqueProfiles.add(proxy)) {
+                    val index = uniqueProfiles.indexOf(proxy)
+                    if (uniqueNames.containsKey(proxy)) {
+                        val name = uniqueNames[proxy]!!.replace(" ($index)", "")
+                        if (name.isNotBlank()) {
+                            duplicate.add("$name ($index)")
+                            uniqueNames[proxy] = ""
+                        }
+                    }
+                    duplicate.add(proxy.displayName() + " ($index)")
+                } else {
+                    uniqueNames[proxy] = proxy.displayName()
+                }
+            }
+            uniqueProfiles.retainAll(uniqueNames.keys)
             profiles = uniqueProfiles.toMutableList()
         }
 

@@ -213,7 +213,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 notifyItemInserted(groupList.size - 1)
 
                 if (group.type == GroupType.SUBSCRIPTION) {
-                    GroupUpdater.startUpdate(group)
+                    GroupUpdater.startUpdate(group, true)
                 }
             }
         }
@@ -299,7 +299,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             }
 
             updateButton.setOnClickListener {
-                GroupUpdater.startUpdate(proxyGroup)
+                GroupUpdater.startUpdate(proxyGroup, true)
             }
 
             shareButton.isVisible = false

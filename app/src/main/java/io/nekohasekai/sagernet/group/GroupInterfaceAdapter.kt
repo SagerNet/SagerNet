@@ -63,7 +63,6 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
         byUser: Boolean
     ) {
         if (changed == 0 && duplicate.isEmpty()) {
-
             if (byUser) context
                 .snackbar(context.getString(R.string.group_no_difference, group.displayName()))
                 .show()
@@ -90,13 +89,16 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
                         duplicate.joinToString("\n", postfix = "\n\n"))
             }
 
-            delay(1000L)
+            onMainDispatcher {
+                delay(1000L)
 
-            MaterialAlertDialogBuilder(context)
-                .setTitle(context.getString(R.string.group_diff, group.displayName()))
-                .setMessage(status.trim())
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(context.getString(R.string.group_diff, group.displayName()))
+                    .setMessage(status.trim())
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+            }
+
         }
 
     }

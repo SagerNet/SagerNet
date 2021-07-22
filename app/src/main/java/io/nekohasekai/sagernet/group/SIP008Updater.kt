@@ -76,10 +76,24 @@ object SIP008Updater : GroupUpdater() {
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
             Logs.d("Before deduplication: ${profiles.size}")
-            val uniqueProfiles = LinkedHashSet<AbstractBean>(profiles)
-            val cp = profiles.associateBy { it.profileId }.toMutableMap()
-            for (uniqueProfile in uniqueProfiles) cp.remove(uniqueProfile.profileId)
-            for (dupProfile in cp.values) duplicate.add(dupProfile.displayName())
+            val uniqueProfiles = LinkedHashSet<AbstractBean>()
+            val uniqueNames = HashMap<AbstractBean, String>()
+            for (proxy in profiles) {
+                if (!uniqueProfiles.add(proxy)) {
+                    val index = uniqueProfiles.indexOf(proxy)
+                    if (uniqueNames.containsKey(proxy)) {
+                        val name = uniqueNames[proxy]!!.replace(" ($index)", "")
+                        if (name.isNotBlank()) {
+                            duplicate.add("$name ($index)")
+                            uniqueNames[proxy] = ""
+                        }
+                    }
+                    duplicate.add(proxy.displayName() + " ($index)")
+                } else {
+                    uniqueNames[proxy] = proxy.displayName()
+                }
+            }
+            uniqueProfiles.retainAll(uniqueNames.keys)
             profiles = uniqueProfiles.toMutableList()
         }
 

@@ -69,6 +69,7 @@ dependencies {
     implementation("org.smali:dexlib2:2.5.2") {
         exclude(group = "com.google.guava", module = "guava")
     }
+    implementation("org.conscrypt:conscrypt-android:2.5.2")
     implementation("com.google.guava:guava:30.1.1-android")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
 

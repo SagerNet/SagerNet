@@ -36,7 +36,6 @@ import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
-import com.esotericsoftware.kryo.unsafe.UnsafeUtil
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
@@ -50,7 +49,10 @@ import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
+import okhttp3.internal.platform.Platform
+import org.conscrypt.Conscrypt
 import org.lsposed.hiddenapibypass.HiddenApiBypass
+import java.security.Security
 
 class SagerNet : Application() {
 
@@ -64,11 +66,11 @@ class SagerNet : Application() {
 
         val configureIntent: (Context) -> PendingIntent by lazy {
             {
-                PendingIntent.getActivity(
-                    it, 0, Intent(
-                        application, MainActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
-                )
+                PendingIntent.getActivity(it,
+                        0,
+                        Intent(application,
+                                MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                        0)
             }
         }
         val activity by lazy { application.getSystemService<ActivityManager>()!! }
@@ -101,31 +103,21 @@ class SagerNet : Application() {
 
         fun updateNotificationChannels() {
             if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
-                notification.createNotificationChannels(
-                    listOf(
-                        NotificationChannel(
-                            "service-vpn",
-                            application.getText(R.string.service_vpn),
-                            if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
-                            else NotificationManager.IMPORTANCE_LOW
-                        ),   // #1355
-                        NotificationChannel(
-                            "service-proxy",
-                            application.getText(R.string.service_proxy),
-                            NotificationManager.IMPORTANCE_LOW
-                        ), NotificationChannel(
-                            "service-transproxy",
-                            application.getText(R.string.service_transproxy),
-                            NotificationManager.IMPORTANCE_LOW
-                        )
-                    )
-                )
+                notification.createNotificationChannels(listOf(NotificationChannel("service-vpn",
+                        application.getText(R.string.service_vpn),
+                        if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
+                        else NotificationManager.IMPORTANCE_LOW),   // #1355
+                        NotificationChannel("service-proxy",
+                                application.getText(R.string.service_proxy),
+                                NotificationManager.IMPORTANCE_LOW),
+                        NotificationChannel("service-transproxy",
+                                application.getText(R.string.service_transproxy),
+                                NotificationManager.IMPORTANCE_LOW)))
             }
         }
 
-        fun startService() = ContextCompat.startForegroundService(
-            application, Intent(application, SagerConnection.serviceClass)
-        )
+        fun startService() = ContextCompat.startForegroundService(application,
+                Intent(application, SagerConnection.serviceClass))
 
         fun reloadService() =
             application.sendBroadcast(Intent(Action.RELOAD).setPackage(application.packageName))
@@ -165,12 +157,13 @@ class SagerNet : Application() {
 
         Theme.apply(this)
         Theme.applyNightTheme()
+
+        Security.insertProviderAt(Conscrypt.newProvider(), 1);
     }
 
-    fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
-        packageName, if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
-        else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES
-    )!!
+    fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,
+            if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
+            else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES)!!
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)

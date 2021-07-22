@@ -29,7 +29,6 @@ import cn.hutool.json.JSONObject
 import com.google.android.material.textfield.TextInputLayout
 import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ktx.readableMessage
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -81,19 +80,15 @@ class OOCv1TokenPreference : EditTextPreference {
                                 linkLayout.error = "baseUrl must not contain a trailing slash"
                                 isValid = false
                             }
+                            !baseUrl.startsWith("https://") -> {
+                                isValid = false
+                                linkLayout.error = "Protocol scheme must be https"
+                            }
                             else -> try {
                                 baseUrl.toHttpUrl()
-                                if (baseUrl.startsWith("http://") && !isExpert) {
-                                    isValid = false
-                                    linkLayout.error = "Protocol scheme must be https"
-                                }
                             } catch (e: Exception) {
                                 isValid = false
-                                linkLayout.error = if (!baseUrl.startsWith("https://")) {
-                                    "Protocol scheme must be https"
-                                } else {
-                                    e.readableMessage
-                                }
+                                linkLayout.error = e.readableMessage
                             }
                         }
                     }
