@@ -304,7 +304,7 @@
     <string name="subscriptions">Subscriptions</string>
     <string name="cleartext_http_warning">Cleartext HTTP traffic is insecure</string>
     <string name="error_title">Error</string>
-    <string name="no_proxies_found">No proxies found in the link</string>
+    <string name="no_proxies_found">No proxies found in the subscription</string>
     <string name="no_proxies_found_in_file">No proxies found in the file</string>
     <string name="no_proxies_found_in_clipboard">No proxies found in the clipboard</string>
     <string name="deduplication">Deduplication</string>
@@ -433,6 +433,6 @@
     <string name="install_from_fdroid">Install from F-Droid</string>
     <string name="download">Download</string>
     <string name="ooc_subscription_token" translatable="false">OOCv1 API Token</string>
-
+    <string name="update_subscription_warning">Proxy is not connected, are you sure you want to continue updating?</string>
 
 </resources>

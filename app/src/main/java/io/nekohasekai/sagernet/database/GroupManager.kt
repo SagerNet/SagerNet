@@ -26,11 +26,11 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 object GroupManager {
 
     interface Listener {
-        suspend fun groupAdd(group: ProxyGroup)
-        suspend fun groupUpdated(group: ProxyGroup)
+        suspend fun groupAdd(group: ProxyGroup) {}
+        suspend fun groupUpdated(group: ProxyGroup) {}
 
-        suspend fun groupRemoved(groupId: Long)
-        suspend fun groupUpdated(groupId: Long)
+        suspend fun groupRemoved(groupId: Long) {}
+        suspend fun groupUpdated(groupId: Long) {}
     }
 
     interface Interface {
@@ -78,7 +78,15 @@ object GroupManager {
         SagerDatabase.proxyDao.updateProxy(entities)
     }
 
-    suspend fun postUpdated(groupId: Long) {
+    suspend fun postUpdate(group: ProxyGroup) {
+        iterator { groupUpdated(group) }
+    }
+
+    suspend fun postUpdate(groupId: Long) {
+        postUpdate(SagerDatabase.groupDao.getById(groupId) ?: return)
+    }
+
+    suspend fun postReload(groupId: Long) {
         iterator { groupUpdated(groupId) }
     }
 

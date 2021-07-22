@@ -21,8 +21,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import android.content.Context
-import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.GroupManager
@@ -34,20 +32,20 @@ import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class GroupInterfaceAdapter(val context: Context) : GroupManager.Interface {
+class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interface {
 
     override suspend fun confirm(group: ProxyGroup, message: String): Boolean {
-        return suspendCancellableCoroutine {
+        return suspendCoroutine {
             runOnMainDispatcher {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.confirm)
                     .setMessage(message)
                     .setPositiveButton(R.string.yes) { _, _ -> it.resume(true) }
                     .setNegativeButton(R.string.no) { _, _ -> it.resume(false) }
-                    .setOnCancelListener { it.cancel() }
+                    .setOnCancelListener { _ -> it.resume(false) }
                     .show()
             }
         }
@@ -55,11 +53,7 @@ class GroupInterfaceAdapter(val context: Context) : GroupManager.Interface {
 
     override suspend fun onUpdateFailure(group: ProxyGroup, message: String) {
         onMainDispatcher {
-            MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.error_title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
+            context.snackbar(message).show()
         }
     }
 
@@ -82,11 +76,7 @@ class GroupInterfaceAdapter(val context: Context) : GroupManager.Interface {
                 }
         } catch (e: IllegalArgumentException) {
             val missingPluginMessage = context.getString(R.string.plugin_unknown, plugin)
-            if (context is ThemedActivity) {
-                context.snackbar(missingPluginMessage).show()
-            } else {
-                Toast.makeText(context, missingPluginMessage, Toast.LENGTH_LONG).show()
-            }
+            context.snackbar(missingPluginMessage).show()
         }
 
         throw CancellationException()
@@ -94,11 +84,7 @@ class GroupInterfaceAdapter(val context: Context) : GroupManager.Interface {
 
     override suspend fun onRequiringShadowsocksPlugin(group: ProxyGroup, plugin: String) {
         val missingPluginMessage = context.getString(R.string.plugin_unknown, plugin)
-        if (context is ThemedActivity) {
-            context.snackbar(missingPluginMessage).show()
-        } else {
-            Toast.makeText(context, missingPluginMessage, Toast.LENGTH_LONG).show()
-        }
+        context.snackbar(missingPluginMessage).show()
     }
 
     private fun showDownloadDialog(pluginEntry: PluginEntry) {

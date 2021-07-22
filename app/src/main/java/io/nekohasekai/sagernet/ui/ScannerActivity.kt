@@ -55,7 +55,8 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
 
-class ScannerActivity : ThemedActivity(), BarcodeCallback {
+class ScannerActivity : ThemedActivity(),
+    BarcodeCallback {
 
     lateinit var capture: CaptureManager
     lateinit var binding: LayoutScannerBinding
@@ -121,17 +122,15 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
                     try {
                         val result = try {
                             qrReader.decode(
-                                BinaryBitmap(GlobalHistogramBinarizer(source)),
-                                mapOf(DecodeHintType.TRY_HARDER to true)
+                                BinaryBitmap(GlobalHistogramBinarizer(source)), mapOf(DecodeHintType.TRY_HARDER to true)
                             )
                         } catch (e: NotFoundException) {
                             qrReader.decode(
-                                BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
-                                mapOf(DecodeHintType.TRY_HARDER to true)
+                                BinaryBitmap(GlobalHistogramBinarizer(source.invert())), mapOf(DecodeHintType.TRY_HARDER to true)
                             )
                         }
 
-                        val results = parseProxies(result.text ?: "").second
+                        val results = parseProxies(result.text ?: "")
 
                         if (results.isNotEmpty()) {
                             onMainDispatcher {
@@ -142,13 +141,15 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
                                 ProfileManager.createProfile(currentGroupId, profile)
                             }
                         } else {
-                            Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                            Toast
+                                .makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
                                 .show()
                         }
                     } catch (e: Throwable) {
                         Logs.w(e)
                         onMainDispatcher {
-                            Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                            Toast
+                                .makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }
@@ -215,7 +216,7 @@ class ScannerActivity : ThemedActivity(), BarcodeCallback {
         finish()
         val text = result.result.text
         runOnDefaultDispatcher {
-            val results = parseProxies(text).second
+            val results = parseProxies(text)
             if (results.isNotEmpty()) {
                 val currentGroupId = DataStore.selectedGroup
 

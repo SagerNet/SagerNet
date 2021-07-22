@@ -57,21 +57,17 @@ class GroupSettingsActivity(
     fun ProxyGroup.init() {
         DataStore.groupName = name ?: "My group " + System.currentTimeMillis() / 1000
         DataStore.groupType = type
-
-        val isSubscription = type == GroupType.SUBSCRIPTION
-        if (isSubscription) {
-            val subscription = subscription!!
-            DataStore.subscriptionType = subscription.type
-            DataStore.subscriptionLink = subscription.link
-            DataStore.subscriptionToken = subscription.token
-            DataStore.subscriptionForceResolve = subscription.forceResolve
-            DataStore.subscriptionDeduplication = subscription.deduplication
-            DataStore.subscriptionForceVMessAEAD = subscription.forceVMessAEAD
-            DataStore.subscriptionUpdateWhenConnectedOnly = subscription.updateWhenConnectedOnly
-            DataStore.subscriptionUserAgent = subscription.customUserAgent
-            DataStore.subscriptionAutoUpdate = subscription.autoUpdate
-            DataStore.subscriptionAutoUpdateDelay = subscription.autoUpdateDelay
-        }
+        val subscription = subscription ?: SubscriptionBean().applyDefaultValues()
+        DataStore.subscriptionType = subscription.type
+        DataStore.subscriptionLink = subscription.link
+        DataStore.subscriptionToken = subscription.token
+        DataStore.subscriptionForceResolve = subscription.forceResolve
+        DataStore.subscriptionDeduplication = subscription.deduplication
+        DataStore.subscriptionForceVMessAEAD = subscription.forceVMessAEAD
+        DataStore.subscriptionUpdateWhenConnectedOnly = subscription.updateWhenConnectedOnly
+        DataStore.subscriptionUserAgent = subscription.customUserAgent
+        DataStore.subscriptionAutoUpdate = subscription.autoUpdate
+        DataStore.subscriptionAutoUpdateDelay = subscription.autoUpdateDelay
     }
 
     fun ProxyGroup.serialize() {

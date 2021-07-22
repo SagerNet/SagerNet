@@ -24,30 +24,46 @@ package io.nekohasekai.sagernet.group
 import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProxyGroup
+import io.nekohasekai.sagernet.ktx.getValue
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.setValue
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 abstract class GroupUpdater {
 
     abstract suspend fun doUpdate(proxyGroup: ProxyGroup)
 
+    data class Progress(
+        var max: Int
+    ) {
+        var progress by AtomicInteger()
+    }
+
     companion object {
 
         val updating = Collections.synchronizedSet<Long>(mutableSetOf())
+        val progress = Collections.synchronizedMap<Long, Progress>(mutableMapOf())
 
         fun startUpdate(proxyGroup: ProxyGroup) {
             if (!updating.add(proxyGroup.id)) return
             runOnDefaultDispatcher {
-                GroupManager.postUpdated(proxyGroup.id)
+                GroupManager.postReload(proxyGroup.id)
 
                 val subscription = proxyGroup.subscription!!
 
                 when (subscription.type) {
                     SubscriptionType.RAW -> RawUpdater.doUpdate(proxyGroup)
                     SubscriptionType.OOCv1 -> OpenOnlineConfigUpdater.doUpdate(proxyGroup)
-                    SubscriptionType.SIP008 -> OpenOnlineConfigUpdater.doUpdate(proxyGroup)
+//                    SubscriptionType.SIP008 -> OpenOnlineConfigUpdater.doUpdate(proxyGroup)
                 }
             }
+        }
+
+        suspend fun finishUpdate(proxyGroup: ProxyGroup) {
+            updating.remove(proxyGroup.id)
+            progress.remove(proxyGroup.id)
+            GroupManager.postUpdate(proxyGroup)
         }
 
     }

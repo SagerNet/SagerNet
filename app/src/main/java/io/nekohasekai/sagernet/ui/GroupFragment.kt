@@ -360,160 +360,6 @@ private suspend fun updateSubscription(
     }
 }
 */
-/*
-    class EditGroupFragment : AlertDialogFragment<GroupInfo, Empty>() {
-
-        lateinit var nameEditText: EditText
-        lateinit var nameLayout: TextInputLayout
-
-        lateinit var linkEditText: EditText
-        lateinit var linkLayout: TextInputLayout
-
-        lateinit var deduplicationCard: MaterialCardView
-        lateinit var deduplication: MaterialCheckBox
-
-        val positive by lazy { (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE) }
-
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            val activity = requireActivity()
-
-            val binding = LayoutEditGroupBinding.inflate(layoutInflater)
-            val proxyGroup = arg.proxyGroup
-
-            nameLayout = binding.groupNameLayout
-            nameEditText = binding.groupName
-            if (proxyGroup != null) {
-                nameEditText.setText(proxyGroup.displayName())
-            }
-
-            nameEditText.addTextChangedListener {
-                validate()
-            }
-
-            linkLayout = binding.groupLinksLayout
-            if (!arg.isSubscription) {
-                linkLayout.isGone = true
-            } else {
-                linkEditText = binding.groupSubscriptionLink
-                if (proxyGroup != null) {
-                    linkEditText.setText(proxyGroup.subscriptionLink)
-                }
-                linkEditText.addTextChangedListener {
-                    validate()
-                }
-            }
-
-            deduplicationCard = binding.deduplicationCard
-            deduplication = binding.deduplication
-            if (!arg.isSubscription) {
-                deduplicationCard.isVisible = false
-            }
-
-            if (proxyGroup != null) {
-                deduplication.isChecked = proxyGroup.deduplication
-            }
-
-            deduplicationCard.setOnClickListener {
-                deduplication.performClick()
-            }
-
-            deduplication.setOnCheckedChangeListener { _, _ ->
-                validate()
-            }
-
-            setTitle(
-                if (arg.proxyGroup == null) {
-                    if (!arg.isSubscription) {
-                        R.string.group_create
-                    } else {
-                        R.string.group_create_subscription
-                    }
-                } else {
-                    if (!arg.isSubscription) {
-                        R.string.group_edit
-                    } else {
-                        R.string.group_edit_subscription
-                    }
-                }
-            )
-
-            setPositiveButton(android.R.string.ok, listener)
-            setNegativeButton(android.R.string.cancel, null)
-
-            if (proxyGroup != null && !proxyGroup.isDefault) {
-                setNeutralButton(R.string.delete, listener)
-            }
-
-            setView(binding.root)
-        }
-
-        override fun onStart() {
-            super.onStart()
-
-            positive.isEnabled = false
-        }
-
-        fun validate() {
-            var pass = true
-
-            val name = nameEditText.text
-            if (name.isBlank()) {
-                pass = false
-                nameLayout.isErrorEnabled = true
-                nameLayout.error = getString(R.string.group_name_required)
-            } else {
-                nameLayout.isErrorEnabled = false
-            }
-
-            if (arg.isSubscription) {
-                val link = linkEditText.text
-                if (link.isNotBlank()) {
-                    try {
-                        val url = link.toString().toHttpUrl()
-                        if ("http".equals(url.scheme, true)) {
-                            linkLayout.error = getString(R.string.cleartext_http_warning)
-                            linkLayout.isErrorEnabled = true
-                        } else {
-                            linkLayout.isErrorEnabled = false
-                        }
-                    } catch (e: Exception) {
-                        linkLayout.error = e.readableMessage
-                        linkLayout.isErrorEnabled = true
-                    }
-                } else {
-                    linkLayout.isErrorEnabled = false
-                    pass = false
-                }
-            }
-            positive.isEnabled = pass
-        }
-
-        override fun onClick(dialog: DialogInterface?, which: Int) {
-            if (which == DialogInterface.BUTTON_POSITIVE) {
-                runOnDefaultDispatcher {
-                    val proxyGroup =
-                        arg.proxyGroup ?: ProxyGroup().apply { isSubscription = arg.isSubscription }
-
-                    proxyGroup.name = nameEditText.text.toString()
-                    if (proxyGroup.isSubscription) {
-                        proxyGroup.subscriptionLink = linkEditText.text.toString()
-                    }
-                    proxyGroup.deduplication = deduplication.isChecked
-
-                    if (arg.proxyGroup == null) {
-                        ProfileManager.createGroup(proxyGroup)
-                    } else {
-                        ProfileManager.updateGroup(proxyGroup)
-                    }
-                }
-            } else if (which == DialogInterface.BUTTON_NEUTRAL) {
-                DeleteConfirmationDialogFragment().apply {
-                    arg(GroupIdToDelete(arg.proxyGroup!!.id))
-                    key()
-                }.show(parentFragmentManager, "delete_group")
-            }
-        }
-    }*/
 
     inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>(),
         GroupManager.Listener,
@@ -706,6 +552,16 @@ private suspend fun updateSubscription(
                 }
 
                 subscriptionUpdateProgress.isVisible = true
+
+                if (!GroupUpdater.progress.containsKey(proxyGroup.id)) {
+                    subscriptionUpdateProgress.isIndeterminate = true
+                } else {
+                    subscriptionUpdateProgress.isIndeterminate = false
+                    val progress = GroupUpdater.progress[proxyGroup.id]!!
+                    subscriptionUpdateProgress.max = progress.max
+                    subscriptionUpdateProgress.progress = progress.progress
+                }
+
                 updateButton.isInvisible = true
                 editButton.isGone = true
             } else {

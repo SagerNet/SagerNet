@@ -64,6 +64,7 @@ import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
 import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
+import io.nekohasekai.sagernet.group.RawUpdater
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.profile.*
@@ -187,7 +188,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     .openInputStream(it)!!
                     .bufferedReader()
                     .readText()
-                val proxies = ProfileManager.parseSubscription(fileText)?.second
+                val proxies = RawUpdater.parseRaw(fileText)
                 if (proxies.isNullOrEmpty()) onMainDispatcher {
                     snackbar(getString(R.string.no_proxies_found_in_file)).show()
                 } else import(proxies)
@@ -239,7 +240,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     snackbar(getString(R.string.clipboard_empty)).show()
                 } else runOnDefaultDispatcher {
                     try {
-                        val proxies = ProfileManager.parseSubscription(text)?.second
+                        val proxies = RawUpdater.parseRaw(text)
                         if (proxies.isNullOrEmpty()) onMainDispatcher {
                             snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
                         } else import(proxies)
@@ -388,7 +389,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         sorted[index].userOrder = (index + 1).toLong()
                     }
                     SagerDatabase.proxyDao.updateProxy(sorted)
-                    GroupManager.postUpdated(DataStore.selectedGroup)
+                    GroupManager.postUpdate(DataStore.selectedGroup)
 
                 }
             }
@@ -808,16 +809,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                 tabLayout.getTabAt(index)?.text = group.displayName()
             }
         }
-
-        override suspend fun groupUpdated(groupId: Long) {
-            val index = groupList.indexOfFirst { it.id == groupId }
-            if (index == -1) return
-
-            tabLayout.post {
-                tabLayout.getTabAt(index)?.text = groupList[index].displayName()
-            }
-        }
-
     }
 
     class GroupFragment : Fragment() {

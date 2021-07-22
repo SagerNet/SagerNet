@@ -21,6 +21,8 @@
 
 package io.nekohasekai.sagernet.fmt;
 
+import androidx.annotation.NonNull;
+
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
@@ -39,6 +41,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public String serverAddress;
     public int serverPort;
     public String name;
+    public String profileId;
 
     public transient boolean isChain;
     public transient String finalAddress;
@@ -82,18 +85,26 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
 
         finalAddress = serverAddress;
         finalPort = serverPort;
+
+        if (profileId == null) profileId = "";
     }
 
     @Override
-    public void serializeToBuffer(ByteBufferOutput output) {
+    public void serializeToBuffer(@NonNull ByteBufferOutput output) {
         serialize(output);
         output.writeString(name);
+
+        output.writeInt(0);
+        output.writeString(profileId);
     }
 
     @Override
-    public void deserializeFromBuffer(ByteBufferInput input) {
+    public void deserializeFromBuffer(@NonNull ByteBufferInput input) {
         deserialize(input);
         name = input.readString();
+
+        int extraVersion = input.readInt();
+        profileId = input.readString();
     }
 
     public void serialize(ByteBufferOutput output) {

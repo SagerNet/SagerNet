@@ -36,6 +36,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+import io.nekohasekai.sagernet.group.RawUpdater
 
 interface ValidateResult
 object ResultSecure : ValidateResult
@@ -85,7 +86,7 @@ fun AbstractBean.isInsecure(): ValidateResult {
         if (allowInsecure) return ResultInsecure(R.raw.insecure)
     } else if (this is ConfigBean) {
         try {
-            val profiles = ProfileManager.parseJSON(JSONObject(content))
+            val profiles = RawUpdater.parseJSON(JSONObject(content))
             val results = profiles.map { it.isInsecure() }
             (results.find { it is ResultInsecure } ?: results.find { it is ResultDeprecated }
             ?: results.find { it is ResultLocal })?.also {
