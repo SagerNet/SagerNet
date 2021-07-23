@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.group
 
+import android.net.Uri
 import cn.hutool.json.*
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.BuildConfig
@@ -59,24 +60,31 @@ object RawUpdater : GroupUpdater() {
         byUser: Boolean
     ) {
 
-        val response = httpClient
-            .newCall(Request
-                .Builder()
-                .url(subscription.link.toHttpUrl())
-                .header("User-Agent",
+        val link = subscription.link
+        var proxies: List<AbstractBean>
+        if (link.startsWith("content://")) {
+            val contentText =
+                app.contentResolver.openInputStream(Uri.parse(link))?.bufferedReader()?.readText()
+
+            proxies = contentText?.let { parseRaw(contentText) }
+                ?: error(app.getString(R.string.no_proxies_found_in_subscription))
+        } else {
+
+            val response = httpClient.newCall(Request.Builder()
+                    .url(subscription.link.toHttpUrl())
+                    .header("User-Agent",
                         subscription.customUserAgent.takeIf { it.isNotBlank() }
                             ?: "SagerNet/${BuildConfig.VERSION_NAME}")
-                .build())
-            .execute()
-            .apply {
+                    .build()).execute().apply {
                 if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                 if (body == null) error("ERROR: Empty response")
             }
 
-        Logs.d(response.toString())
+            Logs.d(response.toString())
+            proxies = parseRaw(response.body!!.string())
+                ?: error(app.getString(R.string.no_proxies_found))
 
-        var proxies =
-            parseRaw(response.body!!.string()) ?: error(app.getString(R.string.no_proxies_found))
+        }
 
         val proxiesMap = LinkedHashMap<String, AbstractBean>()
         for (proxy in proxies) {
@@ -178,8 +186,9 @@ object RawUpdater : GroupUpdater() {
                 }
             } else {
                 changed++
-                SagerDatabase.proxyDao.addProxy(ProxyEntity(groupId = proxyGroup.id,
-                        userOrder = userOrder).apply {
+                SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                    groupId = proxyGroup.id, userOrder = userOrder
+                ).apply {
                     putBean(bean)
                 })
                 added.add(name)
@@ -206,13 +215,9 @@ object RawUpdater : GroupUpdater() {
         SagerDatabase.groupDao.updateGroup(proxyGroup)
         finishUpdate(proxyGroup)
 
-        userInterface?.onUpdateSuccess(proxyGroup,
-                changed,
-                added,
-                updated,
-                deleted,
-                duplicate,
-                byUser)
+        userInterface?.onUpdateSuccess(
+            proxyGroup, changed, added, updated, deleted, duplicate, byUser
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -228,7 +233,8 @@ object RawUpdater : GroupUpdater() {
                 for (proxy in (Yaml().apply {
                     addTypeDescription(TypeDescription(String::class.java, "str"))
                 }.loadAs(text, Map::class.java)["proxies"] as? (List<Map<String, Any?>>) ?: error(
-                        app.getString(R.string.no_proxies_found_in_file)))) {
+                    app.getString(R.string.no_proxies_found_in_file)
+                ))) {
 
                     when (proxy["type"] as String) {
                         "socks5" -> {
@@ -391,16 +397,16 @@ object RawUpdater : GroupUpdater() {
                     return listOf(json.parseShadowsocks())
                 }
                 json.containsKey("protocol") -> {
-                    val v2rayConfig = gson
-                        .fromJson(json.toString(), V2RayConfig.OutboundObject::class.java)
-                        .apply { init() }
+                    val v2rayConfig =
+                        gson.fromJson(json.toString(), V2RayConfig.OutboundObject::class.java)
+                                .apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbound") -> {
-                    val v2rayConfig = gson
-                        .fromJson(json.getJSONObject("outbound").toString(),
-                                V2RayConfig.OutboundObject::class.java)
-                        .apply { init() }
+                    val v2rayConfig = gson.fromJson(
+                        json.getJSONObject("outbound").toString(),
+                        V2RayConfig.OutboundObject::class.java
+                    ).apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbounds") -> {/*   val fakedns = json["fakedns"]
@@ -433,9 +439,9 @@ object RawUpdater : GroupUpdater() {
                        } catch (e: Exception) {
                            Logs.w(e)*/
                     json.getJSONArray("outbounds").filterIsInstance<JSONObject>().forEach {
-                        val v2rayConfig = gson
-                            .fromJson(it.toString(), V2RayConfig.OutboundObject::class.java)
-                            .apply { init() }
+                        val v2rayConfig =
+                            gson.fromJson(it.toString(), V2RayConfig.OutboundObject::class.java)
+                                    .apply { init() }
 
                         proxies.addAll(parseOutbound(v2rayConfig))
                     }/* null

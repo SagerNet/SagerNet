@@ -188,7 +188,7 @@
     <string name="subscriptions">订阅</string>
     <string name="cleartext_http_warning">纯文本 HTTP 流量并不安全</string>
     <string name="error_title">错误</string>
-    <string name="no_proxies_found">未在此订阅内找到服务器配置</string>
+    <string name="no_proxies_found">未在此链接内找到服务器配置</string>
 
     <!-- plugin -->
     <string name="plugin">插件</string>

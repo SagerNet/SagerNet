@@ -21,14 +21,20 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.RemoteException
 import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.preference.PreferenceDataStore
+import cn.hutool.core.codec.Base64Decoder
+import cn.hutool.core.util.ZipUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -36,19 +42,20 @@ import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
-import io.nekohasekai.sagernet.bg.SubscriptionUpdater
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.database.GroupManager
-import io.nekohasekai.sagernet.database.ProfileManager
+import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
+import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
-import io.nekohasekai.sagernet.ktx.launchCustomTab
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.group.GroupUpdater
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
-class MainActivity : ThemedActivity(), SagerConnection.Callback,
-    OnPreferenceDataStoreChangeListener, NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : ThemedActivity(),
+    SagerConnection.Callback,
+    OnPreferenceDataStoreChangeListener,
+    NavigationView.OnNavigationItemSelectedListener {
 
     lateinit var binding: LayoutMainBinding
     lateinit var navigation: NavigationView
@@ -87,7 +94,128 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
         GroupManager.userInterface = GroupInterfaceAdapter(this)
+
+        if (intent?.action == Intent.ACTION_VIEW) {
+            onNewIntent(intent)
+        }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        val uri = intent.data ?: return
+
+        if (uri.scheme == "sn" && uri.host == "subscription" || uri.scheme == "clash") {
+            // import subscription
+
+            displayFragmentWithId(R.id.nav_group)
+
+            runOnDefaultDispatcher {
+                importSubscription(uri)
+            }
+        } else {
+            runOnDefaultDispatcher {
+                importProfile(uri)
+            }
+        }
+    }
+
+    suspend fun importSubscription(uri: Uri) {
+        val group: ProxyGroup
+
+        val url = uri.getQueryParameter("url")
+        if (!url.isNullOrBlank()) {
+            group = ProxyGroup(type = GroupType.SUBSCRIPTION)
+            val subscription = SubscriptionBean().applyDefaultValues()
+            group.subscription = subscription
+
+            // cleartext format
+            subscription.link = url
+            group.name = uri.getQueryParameter("name")
+        } else {
+            val data = uri.encodedQuery.takeIf { !it.isNullOrBlank() } ?: return
+            try {
+                group = KryoConverters.deserialize(
+                    ProxyGroup(), ZipUtil.unZlib(Base64Decoder.decode(data))
+                )
+            } catch (e: Exception) {
+                onMainDispatcher {
+                    MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.error_title)
+                            .setMessage(e.readableMessage)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
+                }
+                return
+            }
+        }
+
+        val name = group.name.takeIf { !it.isNullOrBlank() } ?: group.subscription?.link
+        ?: group.subscription?.token
+        if (name.isNullOrBlank()) return
+
+        group.name = group.name.takeIf { !it.isNullOrBlank() }
+            ?: "Subscription #" + System.currentTimeMillis()
+
+        onMainDispatcher {
+
+            MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.subscription_import)
+                    .setMessage(getString(R.string.subscription_import_message, name))
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        runOnDefaultDispatcher {
+                            finishImportSubscription(group)
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+
+        }
+
+    }
+
+    private suspend fun finishImportSubscription(subscription: ProxyGroup) {
+        GroupManager.createGroup(subscription)
+        GroupUpdater.startUpdate(subscription, true)
+    }
+
+    suspend fun importProfile(uri: Uri) {
+        val profile = try {
+            parseProxies(uri.toString()).getOrNull(0) ?: error(getString(R.string.no_proxies_found))
+        } catch (e: Exception) {
+            onMainDispatcher {
+                MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.error_title)
+                        .setMessage(e.readableMessage)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+            }
+            return
+        }
+
+        onMainDispatcher {
+            MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.profile_import)
+                    .setMessage(getString(R.string.profile_import_message, profile.displayName()))
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        runOnDefaultDispatcher {
+                            finishImportProfile(profile)
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+        }
+
+    }
+
+    private suspend fun finishImportProfile(profile: AbstractBean) {
+        val targetId = DataStore.selectedGroupForImport()
+
+        ProfileManager.createProfile(targetId, profile)
+
+        onMainDispatcher {
+            displayFragmentWithId(R.id.nav_configuration)
+
+            snackbar(resources.getQuantityString(R.plurals.added, 1, 1)).show()
+        }
+    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.isChecked) binding.drawerLayout.closeDrawers() else {
@@ -97,8 +225,9 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
     }
 
     fun displayFragment(fragment: ToolbarFragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment)
-            .commitAllowingStateLoss()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_holder, fragment)
+                .commitAllowingStateLoss()
         binding.drawerLayout.closeDrawers()
     }
 

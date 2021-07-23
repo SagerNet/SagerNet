@@ -303,7 +303,8 @@
     <string name="subscriptions">Subscriptions</string>
     <string name="cleartext_http_warning">Cleartext HTTP traffic is insecure</string>
     <string name="error_title">Error</string>
-    <string name="no_proxies_found">No proxies found in the subscription</string>
+    <string name="no_proxies_found">No proxies found in the link</string>
+    <string name="no_proxies_found_in_subscription">No proxies found in the subscription</string>
     <string name="no_proxies_found_in_file">No proxies found in the file</string>
     <string name="no_proxies_found_in_clipboard">No proxies found in the clipboard</string>
     <string name="deduplication">Deduplication</string>
@@ -451,5 +452,10 @@
     <string name="group_filter_tags_nf">No tags in this subscription</string>
     <string name="subscription_used">%s Used</string>
     <string name="subscription_traffic">%s Used / %s Remaining</string>
+    <string name="subscription_import">Import subscription</string>
+    <string name="subscription_import_message">Confirm you want to import subscription %s? If you are coming from an untrusted source, doing this may result in your IP and this behavior being leaked.</string>
+    <string name="profile_import">Import profile</string>
+    <string name="profile_import_message">Confirm you want to import profile %s?</string>
+
 
 </resources>

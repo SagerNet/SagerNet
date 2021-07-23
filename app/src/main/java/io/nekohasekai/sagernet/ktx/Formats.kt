@@ -38,7 +38,6 @@ import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
-import kotlin.collections.ArrayList
 
 fun formatObject(obj: Any): String {
     return gson.toJson(obj).let { JSONObject(it).toStringPretty() }
@@ -50,7 +49,9 @@ fun String.decodeBase64UrlSafe(): String {
     )
 }
 
-fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): List<AbstractBean> {
+class SubscriptionFoundException(val link: String) : RuntimeException()
+
+fun parseProxies(text: String): List<AbstractBean> {
     val links = text.split('\n').flatMap { it.trim().split(' ') }
     val linksByLine = text.split('\n').map { it.trim() }
 
@@ -58,6 +59,10 @@ fun parseProxies(text: String, initType: Int = 0, badType: Int = 4): List<Abstra
     val entitiesByLine = ArrayList<AbstractBean>()
 
     fun String.parseLink(entities: ArrayList<AbstractBean>) {
+        if (startsWith("clash://install-config?") || startsWith("sn://subscription?")) {
+            throw SubscriptionFoundException(this)
+        }
+
         if (startsWith("sn://")) {
             Logs.d("Try parse universal link: $this")
             runCatching {

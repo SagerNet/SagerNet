@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.widget
 
 import android.content.Context
+import android.net.Uri
 import android.util.AttributeSet
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
@@ -31,42 +32,18 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.readableMessage
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class LinkPreference : EditTextPreference {
+class LinkOrContentPreference : EditTextPreference {
 
-    var defaultValue: String? = null
-
-    constructor(context: Context) : this(context, null)
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-    ) : this(context, attrs, com.takisoft.preferencex.R.attr.editTextPreferenceStyle)
+    constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context, attrs, defStyleAttr
+    )
 
     constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-    ) : this(context, attrs, defStyleAttr, 0)
+        context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int,
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        val a = context.obtainStyledAttributes(
-            attrs, R.styleable.Preference, defStyleAttr, defStyleRes
-        )
-        if (a.hasValue(androidx.preference.R.styleable.Preference_defaultValue)) {
-            defaultValue = onGetDefaultValue(
-                a, androidx.preference.R.styleable.Preference_defaultValue
-            )?.toString()
-        } else if (a.hasValue(androidx.preference.R.styleable.Preference_android_defaultValue)) {
-            defaultValue = onGetDefaultValue(
-                a, androidx.preference.R.styleable.Preference_android_defaultValue
-            )?.toString()
-        }
-    }
 
     init {
         dialogLayoutResource = R.layout.layout_link_dialog
@@ -79,7 +56,12 @@ class LinkPreference : EditTextPreference {
                     linkLayout.isErrorEnabled = false
                     return
                 }
+
                 try {
+                    if (Uri.parse(link.toString()).scheme == "content") {
+                        linkLayout.isErrorEnabled = false
+                        return
+                    }
                     val url = link.toString().toHttpUrl()
                     if ("http".equals(url.scheme, true)) {
                         linkLayout.error = app.getString(R.string.cleartext_http_warning)
@@ -91,22 +73,11 @@ class LinkPreference : EditTextPreference {
                     linkLayout.error = e.readableMessage
                     linkLayout.isErrorEnabled = true
                 }
+
             }
             validate()
             it.addTextChangedListener {
                 validate()
-            }
-        }
-
-        setOnPreferenceChangeListener { _, newValue ->
-            if ((newValue as String).isBlank()) {
-                text = defaultValue
-                false
-            } else try {
-                newValue.toHttpUrl()
-                true
-            } catch (ignored: Exception) {
-                false
             }
         }
     }

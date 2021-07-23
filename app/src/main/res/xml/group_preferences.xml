@@ -27,7 +27,7 @@
             app:title="@string/subscription_type"
             app:useSimpleSummaryProvider="true" />
 
-        <io.nekohasekai.sagernet.widget.LinkPreference
+        <io.nekohasekai.sagernet.widget.LinkOrContentPreference
             app:icon="@drawable/ic_baseline_link_24"
             app:key="subscriptionLink"
             app:title="@string/group_subscription_link"

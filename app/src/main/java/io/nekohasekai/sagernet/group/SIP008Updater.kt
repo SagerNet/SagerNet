@@ -21,13 +21,16 @@
 
 package io.nekohasekai.sagernet.group
 
+import android.net.Uri
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.ExtraType
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.okHttpClient
 import okhttp3.OkHttpClient
@@ -43,24 +46,37 @@ object SIP008Updater : GroupUpdater() {
         byUser: Boolean
     ) {
 
-        val response = httpClient.newCall(Request.Builder()
-            .url(subscription.link)
-            .header("User-Agent",
-                    subscription.customUserAgent.takeIf { it.isNotBlank() }
-                        ?: "SagerNet/${BuildConfig.VERSION_NAME}")
-            .build()).execute().apply {
-            if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
-            if (body == null) error("ERROR: Empty response")
+        val link = subscription.link
+        val sip008Response:JSONObject
+        if (link.startsWith("content://")) {
+            val contentText =
+                app.contentResolver.openInputStream(Uri.parse(link))?.bufferedReader()?.readText()
+
+            sip008Response = contentText?.let { JSONObject(contentText) }
+                ?: error(app.getString(R.string.no_proxies_found_in_subscription))
+        } else {
+
+            val response = httpClient.newCall(Request.Builder()
+                    .url(subscription.link)
+                    .header("User-Agent",
+                        subscription.customUserAgent.takeIf { it.isNotBlank() }
+                            ?: "SagerNet/${BuildConfig.VERSION_NAME}")
+                    .build()).execute().apply {
+                if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
+                if (body == null) error("ERROR: Empty response")
+            }
+
+            Logs.d(response.toString())
+
+            sip008Response = JSONObject(response.body!!.string())
+
         }
 
-        Logs.d(response.toString())
-
-        val oocResponse = JSONObject(response.body!!.string())
-        subscription.bytesUsed = oocResponse.getLong("bytesUsed", -1)
-        subscription.bytesRemaining = oocResponse.getLong("bytesRemaining", -1)
+        subscription.bytesUsed = sip008Response.getLong("bytesUsed", -1)
+        subscription.bytesRemaining = sip008Response.getLong("bytesRemaining", -1)
         subscription.applyDefaultValues()
 
-        val servers = oocResponse.getJSONArray("servers").filterIsInstance<JSONObject>()
+        val servers = sip008Response.getJSONArray("servers").filterIsInstance<JSONObject>()
 
         var profiles = mutableListOf<AbstractBean>()
 

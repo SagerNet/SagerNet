@@ -78,6 +78,51 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
 
+            <intent-filter android:label="@string/subscription_import">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="subscription"
+                    android:scheme="sn" />
+
+            </intent-filter>
+
+            <intent-filter android:label="@string/subscription_import">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="install-config"
+                    android:scheme="clash" />
+            </intent-filter>
+
+            <intent-filter android:label="@string/profile_import">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="sn" />
+                <data android:scheme="ss" />
+                <data android:scheme="ssr" />
+                <data android:scheme="socks" />
+                <data android:scheme="vmess" />
+                <data android:scheme="vless" />
+                <data android:scheme="trojan" />
+                <data android:scheme="trojan-go" />
+                <data android:scheme="naive+https" />
+                <data android:scheme="naive+quic" />
+                <data android:scheme="pingtunnel" />
+                <data android:scheme="relaybaton" />
+                <data android:scheme="brook" />
+
+            </intent-filter>
+
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />

@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.ui
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.format.Formatter
@@ -190,6 +191,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (proxies.isNullOrEmpty()) onMainDispatcher {
                     snackbar(getString(R.string.no_proxies_found_in_file)).show()
                 } else import(proxies)
+            } catch (e: SubscriptionFoundException) {
+                (requireActivity() as MainActivity).importSubscription(Uri.parse(e.link))
             } catch (e: Exception) {
                 Logs.w(e)
 
@@ -242,6 +245,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                         if (proxies.isNullOrEmpty()) onMainDispatcher {
                             snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
                         } else import(proxies)
+                    } catch (e: SubscriptionFoundException) {
+                        (requireActivity() as MainActivity).importSubscription(Uri.parse(e.link))
                     } catch (e: Exception) {
                         Logs.w(e)
 

@@ -102,6 +102,36 @@ public class SubscriptionBean extends Serializable {
 
     }
 
+    public void serializeForShare(ByteBufferOutput output) {
+        output.writeInt(0);
+
+        output.writeInt(type);
+
+        if (type == SubscriptionType.OOCv1) {
+            output.writeString(token);
+        } else {
+            output.writeString(link);
+        }
+
+        output.writeBoolean(forceResolve);
+        output.writeBoolean(deduplication);
+        output.writeBoolean(forceVMessAEAD);
+        output.writeBoolean(updateWhenConnectedOnly);
+        output.writeString(customUserAgent);
+
+        if (type != SubscriptionType.RAW) {
+            output.writeLong(bytesUsed);
+            output.writeLong(bytesRemaining);
+        }
+
+        if (type == SubscriptionType.OOCv1) {
+            output.writeString(username);
+            output.writeInt(expiryDate);
+            KryosKt.writeStringList(output, protocols);
+        }
+
+    }
+
     @Override
     public void deserializeFromBuffer(ByteBufferInput input) {
         int version = input.readInt();
@@ -134,6 +164,33 @@ public class SubscriptionBean extends Serializable {
                 selectedGroups = KryosKt.readStringSet(input);
                 selectedTags = KryosKt.readStringSet(input);
             }
+        }
+    }
+
+    public void deserializeFromShare(ByteBufferInput input) {
+        int version = input.readInt();
+
+        type = input.readInt();
+        if (type == SubscriptionType.OOCv1) {
+            token = input.readString();
+        } else {
+            link = input.readString();
+        }
+        forceResolve = input.readBoolean();
+        deduplication = input.readBoolean();
+        forceVMessAEAD = input.readBoolean();
+        updateWhenConnectedOnly = input.readBoolean();
+        customUserAgent = input.readString();
+
+        if (type != SubscriptionType.RAW) {
+            bytesUsed = input.readLong();
+            bytesRemaining = input.readLong();
+        }
+
+        if (type == SubscriptionType.OOCv1) {
+            username = input.readString();
+            expiryDate = input.readInt();
+            protocols = KryosKt.readStringList(input);
         }
     }
 

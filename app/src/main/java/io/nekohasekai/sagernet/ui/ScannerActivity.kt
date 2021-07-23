@@ -26,6 +26,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.ShortcutManager
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -122,11 +123,13 @@ class ScannerActivity : ThemedActivity(),
                     try {
                         val result = try {
                             qrReader.decode(
-                                BinaryBitmap(GlobalHistogramBinarizer(source)), mapOf(DecodeHintType.TRY_HARDER to true)
+                                BinaryBitmap(GlobalHistogramBinarizer(source)),
+                                mapOf(DecodeHintType.TRY_HARDER to true)
                             )
                         } catch (e: NotFoundException) {
                             qrReader.decode(
-                                BinaryBitmap(GlobalHistogramBinarizer(source.invert())), mapOf(DecodeHintType.TRY_HARDER to true)
+                                BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
+                                mapOf(DecodeHintType.TRY_HARDER to true)
                             )
                         }
 
@@ -141,10 +144,15 @@ class ScannerActivity : ThemedActivity(),
                                 ProfileManager.createProfile(currentGroupId, profile)
                             }
                         } else {
-                            Toast
-                                .makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                                    .show()
                         }
+                    } catch (e: SubscriptionFoundException) {
+                        startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                            action = Intent.ACTION_VIEW
+                            data = Uri.parse(e.link)
+                        })
+                        finish()
                     } catch (e: Throwable) {
                         Logs.w(e)
                         onMainDispatcher {
