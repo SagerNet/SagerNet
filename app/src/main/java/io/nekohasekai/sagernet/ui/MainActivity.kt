@@ -36,6 +36,7 @@ import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.SagerConnection
+import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProfileManager
@@ -82,19 +83,9 @@ class MainActivity : ThemedActivity(), SagerConnection.Callback,
 
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.coordinator, ListHolderListener)
-
-        /* ViewCompat.setOnApplyWindowInsetsListener(fab) { view, insets ->
-             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                 bottomMargin = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom +
-                         resources.getDimensionPixelOffset(R.dimen.mtrl_bottomappbar_fab_bottom_margin)
-             }
-             insets
-         }*/
-
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
-
         GroupManager.userInterface = GroupInterfaceAdapter(this)
     }
 

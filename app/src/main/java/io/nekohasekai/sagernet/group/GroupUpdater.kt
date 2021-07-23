@@ -171,8 +171,14 @@ abstract class GroupUpdater {
         val progress = Collections.synchronizedMap<Long, Progress>(mutableMapOf())
 
         fun startUpdate(proxyGroup: ProxyGroup, byUser: Boolean) {
-            if (!updating.add(proxyGroup.id)) return
             runOnDefaultDispatcher {
+                executeUpdate(proxyGroup, byUser)
+            }
+        }
+
+        suspend fun executeUpdate(proxyGroup: ProxyGroup, byUser: Boolean): Boolean {
+            return coroutineScope {
+                if (!updating.add(proxyGroup.id)) cancel()
                 GroupManager.postReload(proxyGroup.id)
 
                 val subscription = proxyGroup.subscription!!
@@ -187,8 +193,9 @@ abstract class GroupUpdater {
 
                 if (userInterface != null) {
                     if (subscription.updateWhenConnectedOnly && !connected) {
-                        if (!userInterface.confirm(proxyGroup,
-                                    app.getString(R.string.update_subscription_warning))
+                        if (!userInterface.confirm(
+                                    proxyGroup, app.getString(R.string.update_subscription_warning)
+                            )
                         ) {
                             finishUpdate(proxyGroup)
                             cancel()
@@ -203,13 +210,16 @@ abstract class GroupUpdater {
                         SubscriptionType.SIP008 -> SIP008Updater
                         else -> error("wtf")
                     }.doUpdate(proxyGroup, subscription, userInterface, httpClient, byUser)
+                    true
                 } catch (e: Throwable) {
                     Logs.w(e)
                     userInterface?.onUpdateFailure(proxyGroup, e.readableMessage)
                     finishUpdate(proxyGroup)
+                    false
                 }
             }
         }
+
 
         suspend fun finishUpdate(proxyGroup: ProxyGroup) {
             updating.remove(proxyGroup.id)

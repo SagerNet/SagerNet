@@ -219,7 +219,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                 createPreferences(savedInstanceState, rootKey)
 
                 if (isSubscription) {
-                    findPreference<Preference>(Key.PROFILE_NAME)?.isEnabled = false
+//                    findPreference<Preference>(Key.PROFILE_NAME)?.isEnabled = false
                 }
             }
         }

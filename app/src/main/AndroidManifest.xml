@@ -245,6 +245,16 @@
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />
 
+        <service
+            android:name="androidx.work.multiprocess.RemoteWorkManagerService"
+            android:process=":bg"
+            tools:replace="android:process" />
+
+        <service
+            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+            android:process=":bg"
+            tools:replace="android:process" />
+
     </application>
 
 </manifest>

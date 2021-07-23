@@ -210,7 +210,6 @@
     <!-- notification category -->
     <string name="service_vpn">VPN Service</string>
     <string name="service_proxy">Proxy Service</string>
-    <string name="service_transproxy">Transproxy Service</string>
     <string name="forward_success">SagerNet started.</string>
     <string name="invalid_server">Invalid server name</string>
     <string name="service_failed">Failed: </string>
@@ -438,5 +437,9 @@
 
     <string name="ooc_warning">Warning</string>
     <string name="ooc_missing_protocol">The subscription requires support for protocol %s, but it cannot be found. Unsupported profiles will be ignored.</string>
+
+    <string name="service_subscription">Subscription Update Service</string>
+    <string name="subscription_update">Subscription Update</string>
+    <string name="subscription_update_message">Updating %s…</string>
 
 </resources>

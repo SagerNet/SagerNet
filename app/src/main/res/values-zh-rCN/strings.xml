@@ -118,7 +118,6 @@
     <!-- notification category -->
     <string name="service_vpn">VPN 服务</string>
     <string name="service_proxy">代理服务</string>
-    <string name="service_transproxy">透明代理服务</string>
     <string name="forward_success">SagerNet 已启动.</string>
     <string name="invalid_server">无效的服务器</string>
     <string name="service_failed">失败: </string>
@@ -376,7 +375,7 @@
     <string name="raw">原始</string>
     <string name="update_settings">更新设置</string>
     <string name="auto_update">自动更新</string>
-    <string name="auto_update_delay">自动更新间隔 (秒)</string>
+    <string name="auto_update_delay">自动更新间隔 (分)</string>
     <string name="update_when_connected_only">仅在连接时更新</string>
     <string name="update_when_connected_only_sum">防止 IP 地址泄漏</string>
     <string name="subscription_user_agent">用户代理</string>

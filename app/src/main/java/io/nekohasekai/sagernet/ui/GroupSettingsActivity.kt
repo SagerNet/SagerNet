@@ -39,8 +39,10 @@ import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SubscriptionType
+import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
+import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -245,6 +247,8 @@ class GroupSettingsActivity(
             }
             GroupManager.updateGroup(entity.apply { serialize() })
         }
+
+        SubscriptionUpdater.reconfigureUpdater()
         if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
         finish()
 

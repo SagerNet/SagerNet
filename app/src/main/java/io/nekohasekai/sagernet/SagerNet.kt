@@ -49,83 +49,13 @@ import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libv2ray.Libv2ray
-import okhttp3.internal.platform.Platform
 import org.conscrypt.Conscrypt
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.security.Security
+import androidx.work.Configuration as WorkConfiguration
 
-class SagerNet : Application() {
-
-    companion object {
-        var started = false
-
-        lateinit var application: SagerNet
-        val deviceStorage by lazy {
-            if (Build.VERSION.SDK_INT < 24) application else DeviceStorageApp(application)
-        }
-
-        val configureIntent: (Context) -> PendingIntent by lazy {
-            {
-                PendingIntent.getActivity(it,
-                        0,
-                        Intent(application,
-                                MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        0)
-            }
-        }
-        val activity by lazy { application.getSystemService<ActivityManager>()!! }
-        val clipboard by lazy { application.getSystemService<ClipboardManager>()!! }
-        val connectivity by lazy { application.getSystemService<ConnectivityManager>()!! }
-        val notification by lazy { application.getSystemService<NotificationManager>()!! }
-        val user by lazy { application.getSystemService<UserManager>()!! }
-        val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
-        val directBootSupported by lazy {
-            Build.VERSION.SDK_INT >= 24 && try {
-                app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus == DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
-            } catch (_: RuntimeException) {
-                false
-            }
-        }
-
-        val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
-
-        fun getClipboardText(): String {
-            return clipboard.primaryClip?.takeIf { it.itemCount > 0 }
-                ?.getItemAt(0)?.text?.toString() ?: ""
-        }
-
-        fun trySetPrimaryClip(clip: String) = try {
-            clipboard.setPrimaryClip(ClipData.newPlainText(null, clip))
-            true
-        } catch (e: RuntimeException) {
-            false
-        }
-
-        fun updateNotificationChannels() {
-            if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
-                notification.createNotificationChannels(listOf(NotificationChannel("service-vpn",
-                        application.getText(R.string.service_vpn),
-                        if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
-                        else NotificationManager.IMPORTANCE_LOW),   // #1355
-                        NotificationChannel("service-proxy",
-                                application.getText(R.string.service_proxy),
-                                NotificationManager.IMPORTANCE_LOW),
-                        NotificationChannel("service-transproxy",
-                                application.getText(R.string.service_transproxy),
-                                NotificationManager.IMPORTANCE_LOW)))
-            }
-        }
-
-        fun startService() = ContextCompat.startForegroundService(application,
-                Intent(application, SagerConnection.serviceClass))
-
-        fun reloadService() =
-            application.sendBroadcast(Intent(Action.RELOAD).setPackage(application.packageName))
-
-        fun stopService() =
-            application.sendBroadcast(Intent(Action.CLOSE).setPackage(application.packageName))
-
-    }
+class SagerNet : Application(),
+    WorkConfiguration.Provider {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
@@ -158,16 +88,104 @@ class SagerNet : Application() {
         Theme.apply(this)
         Theme.applyNightTheme()
 
-        Security.insertProviderAt(Conscrypt.newProvider(), 1);
+        Security.insertProviderAt(Conscrypt.newProvider(), 1)
     }
 
-    fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(packageName,
-            if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
-            else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES)!!
+    fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
+            packageName, if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
+    else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES
+    )!!
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         updateNotificationChannels()
+    }
+
+    override fun getWorkManagerConfiguration(): WorkConfiguration {
+        return WorkConfiguration.Builder()
+            .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
+            .build()
+    }
+
+    companion object {
+        var started = false
+
+        lateinit var application: SagerNet
+        val deviceStorage by lazy {
+            if (Build.VERSION.SDK_INT < 24) application else DeviceStorageApp(application)
+        }
+
+        val configureIntent: (Context) -> PendingIntent by lazy {
+            {
+                PendingIntent.getActivity(
+                        it, 0, Intent(
+                        application, MainActivity::class.java
+                ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
+                )
+            }
+        }
+        val activity by lazy { application.getSystemService<ActivityManager>()!! }
+        val clipboard by lazy { application.getSystemService<ClipboardManager>()!! }
+        val connectivity by lazy { application.getSystemService<ConnectivityManager>()!! }
+        val notification by lazy { application.getSystemService<NotificationManager>()!! }
+        val user by lazy { application.getSystemService<UserManager>()!! }
+        val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
+        val directBootSupported by lazy {
+            Build.VERSION.SDK_INT >= 24 && try {
+                app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus == DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
+            } catch (_: RuntimeException) {
+                false
+            }
+        }
+
+        val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
+
+        fun getClipboardText(): String {
+            return clipboard.primaryClip?.takeIf { it.itemCount > 0 }
+                ?.getItemAt(0)?.text?.toString() ?: ""
+        }
+
+        fun trySetPrimaryClip(clip: String) = try {
+            clipboard.setPrimaryClip(ClipData.newPlainText(null, clip))
+            true
+        } catch (e: RuntimeException) {
+            false
+        }
+
+        fun updateNotificationChannels() {
+            if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
+                notification.createNotificationChannels(
+                        listOf(
+                                NotificationChannel(
+                                        "service-vpn",
+                                        application.getText(R.string.service_vpn),
+                                        if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
+                                        else NotificationManager.IMPORTANCE_LOW
+                                ),   // #1355
+                                NotificationChannel(
+                                        "service-proxy",
+                                        application.getText(R.string.service_proxy),
+                                        NotificationManager.IMPORTANCE_LOW
+                                ), NotificationChannel(
+                                "service-subscription",
+                                application.getText(R.string.service_subscription),
+                                NotificationManager.IMPORTANCE_DEFAULT
+                        )
+                        )
+                )
+            }
+        }
+
+        fun startService() = ContextCompat.startForegroundService(
+                application, Intent(application, SagerConnection.serviceClass)
+        )
+
+        fun reloadService() =
+            application.sendBroadcast(Intent(Action.RELOAD).setPackage(application.packageName))
+
+        fun stopService() =
+            application.sendBroadcast(Intent(Action.CLOSE).setPackage(application.packageName))
+
     }
 
 }

@@ -116,7 +116,6 @@
     <!-- notification category -->
     <string name="service_vpn">VPN 服務</string>
     <string name="service_proxy">代理服務</string>
-    <string name="service_transproxy">透明代理服務</string>
     <string name="forward_success">SagerNet 已啟動。</string>
     <string name="invalid_server">伺服器名稱無效</string>
     <string name="stop">停止</string>
