@@ -467,6 +467,7 @@ object RawUpdater : GroupUpdater() {
             }
         }
 
+        proxies.forEach { it.initializeDefaultValues() }
         return proxies
     }
 

@@ -111,6 +111,8 @@ object ProfileManager {
     }
 
     suspend fun createProfile(groupId: Long, bean: AbstractBean): ProxyEntity {
+        bean.applyDefaultValues()
+
         val profile = ProxyEntity(groupId = groupId).apply {
             id = 0
             putBean(bean)

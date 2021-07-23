@@ -50,7 +50,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public transient String finalAddress;
     public transient int finalPort;
 
-    public Integer extraType;
+    public int extraType;
     public String profileId;
     public String group;
     public List<String> tags;
@@ -94,7 +94,6 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         finalAddress = serverAddress;
         finalPort = serverPort;
 
-        if (extraType == null) extraType = ExtraType.NONE;
         if (profileId == null) profileId = "";
         if (group == null) group = "";
         if (tags == null) tags = new ArrayList<>();
