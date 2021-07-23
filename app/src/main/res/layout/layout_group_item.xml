@@ -68,16 +68,15 @@
                 app:srcCompat="@drawable/ic_image_edit" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/share"
+                android:id="@+id/options"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/share"
                 android:focusable="true"
                 android:nextFocusLeft="@+id/container"
                 android:padding="12dp"
-                app:srcCompat="@drawable/ic_social_share" />
+                app:srcCompat="@drawable/ic_baseline_more_vert_24" />
 
         </LinearLayout>
 

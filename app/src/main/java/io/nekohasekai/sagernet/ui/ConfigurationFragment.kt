@@ -304,41 +304,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_balancer -> {
                 startActivity(Intent(requireActivity(), BalancerSettingsActivity::class.java))
             }
-            R.id.action_export_clipboard -> {
-                runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
-                    val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
-                    SagerNet.trySetPrimaryClip(links)
-                    onMainDispatcher {
-                        snackbar(getString(R.string.copy_toast_msg)).show()
-                    }
-                }
-            }
-            R.id.action_export_file -> {
-                startFilesForResult(exportProfiles, "profiles.txt")
-            }/* R.id.test -> {
-                runOnDefaultDispatcher {
-                    try {
-                        val managedChannel = createChannel()
-                        val observatoryService =
-                            ObservatoryServiceGrpcKt.ObservatoryServiceCoroutineStub(managedChannel)
-                        val status =
-                            observatoryService.getOutboundStatus(GetOutboundStatusRequest.getDefaultInstance()).status
-                        val message =
-                            "${status.statusCount}\n" + status.statusList.joinToString("\n") { it.outboundTag + ": " + it.alive + ", " + it.delay + ", " + it.lastErrorReason }
-                        onMainDispatcher {
-                            MaterialAlertDialogBuilder(requireContext()).setMessage(message)
-                                .setPositiveButton(android.R.string.ok, null).show()
-                        }
-                        managedChannel.shutdownNow()
-                    } catch (e: StatusException) {
-                        onMainDispatcher {
-                            MaterialAlertDialogBuilder(requireContext()).setMessage(e.readableMessage)
-                                .setPositiveButton(android.R.string.ok, null).show()
-                        }
-                    }
-                }
-            }*/
             R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
@@ -814,32 +779,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             mainJob.cancel()
         }
     }
-
-    private val exportProfiles =
-        registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
-            if (data != null) {
-                runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
-                    val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
-                    try {
-                        (requireActivity() as MainActivity).contentResolver.openOutputStream(
-                            data
-                        )!!.bufferedWriter().use {
-                            it.write(links)
-                        }
-                        onMainDispatcher {
-                            snackbar(getString(R.string.action_export_msg)).show()
-                        }
-                    } catch (e: Exception) {
-                        Logs.w(e)
-                        onMainDispatcher {
-                            snackbar(e.readableMessage).show()
-                        }
-                    }
-
-                }
-            }
-        }
 
     inner class GroupPagerAdapter : FragmentStateAdapter(this),
         GroupManager.Listener {

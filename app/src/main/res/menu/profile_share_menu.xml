@@ -17,7 +17,7 @@
     </item>
     <item
         android:id="@+id/action_group_clipboard"
-        android:title="@string/action_export">
+        android:title="@string/action_export_clipboard">
         <menu>
             <item
                 android:id="@+id/action_standard_clipboard"
@@ -37,7 +37,7 @@
         <menu>
             <item
                 android:id="@+id/action_config_export_clipboard"
-                android:title="@string/action_export" />
+                android:title="@string/action_export_clipboard" />
             <item
                 android:id="@+id/action_config_export_file"
                 android:title="@string/action_export_file" />

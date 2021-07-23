@@ -290,6 +290,11 @@
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />
 
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
+
         <service
             android:name="androidx.work.multiprocess.RemoteWorkManagerService"
             android:process=":bg"

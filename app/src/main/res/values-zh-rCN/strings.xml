@@ -137,20 +137,13 @@
     <string name="edit">编辑</string>
     <string name="share">分享</string>
     <string name="add_profile">添加服务器配置</string>
-    <string name="action_socks">SOCKS</string>
-    <string name="action_http">HTTP</string>
-    <string name="action_shadowsocks">Shadowsocks</string>
-    <string name="action_shadowsocksr">ShadowsocksR</string>
-    <string name="action_vmess">VMess</string>
-    <string name="action_vless">VLESS</string>
-    <string name="action_trojan">Trojan</string>
 
     <string name="action_create_group">空白组</string>
     <string name="action_from_link">添加订阅</string>
 
     <string name="action_scan_china_apps">扫描中国应用</string>
     <string name="action_export_file">导出到文件</string>
-    <string name="action_export">导出到剪切板</string>
+    <string name="action_export_clipboard">导出到剪切板</string>
     <string name="action_import">从剪切板导入</string>
     <string name="action_import_file">从文件中导入</string>
     <string name="action_export_msg">导出成功!</string>
@@ -402,5 +395,12 @@
     <string name="group_filter_ns">您需要一个 OOCv1 订阅以使用筛选功能</string>
     <string name="subscription_used">已用 %s</string>
     <string name="subscription_traffic">已用 %s  / 剩余 %s</string>
+    <string name="subscription_import">导入订阅</string>
+    <string name="subscription_import_message">确认要导入订阅 %s？如果来源不可信, 您的 IP 和行为将被泄露.</string>
+    <string name="profile_import">导入配置</string>
+    <string name="profile_import_message">确认要导入配置 %s？</string>
+    <string name="no_proxies_found_in_subscription">未在此订阅内找到服务器配置</string>
+    <string name="action_export">导出</string>
+    <string name="clear_profiles_message">您确定要清空该分组吗?</string>
 
 </resources>

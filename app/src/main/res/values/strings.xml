@@ -260,7 +260,8 @@
 
     <string name="action_scan_china_apps">Scan China apps</string>
     <string name="action_export_file">Export to file</string>
-    <string name="action_export">Export to Clipboard</string>
+    <string name="action_export_clipboard">Export to Clipboard</string>
+    <string name="action_export">Export</string>
     <string name="action_import">Import from Clipboard</string>
     <string name="action_import_file">Import from file</string>
     <string name="action_export_msg">Successfully export!</string>
@@ -456,6 +457,6 @@
     <string name="subscription_import_message">Confirm you want to import subscription %s? If you are coming from an untrusted source, doing this may result in your IP and this behavior being leaked.</string>
     <string name="profile_import">Import profile</string>
     <string name="profile_import_message">Confirm you want to import profile %s?</string>
-
+    <string name="clear_profiles_message">Are you sure you want to clear this group?</string>
 
 </resources>

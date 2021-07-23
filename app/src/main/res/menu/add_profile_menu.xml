@@ -68,19 +68,6 @@
         </menu>
     </item>
     <item
-        android:icon="@drawable/ic_file_file_upload"
-        android:title="@string/action_export"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_export_clipboard"
-                android:title="@string/action_export" />
-            <item
-                android:id="@+id/action_export_file"
-                android:title="@string/action_export_file" />
-        </menu>
-    </item>
-    <item
         android:id="@+id/action_clear_traffic_statistics"
         android:title="@string/clear_traffic_statistics" />
     <item

@@ -139,7 +139,7 @@
 
     <string name="action_scan_china_apps">掃描中國應用程式</string>
     <string name="action_export_file">匯出至檔案</string>
-    <string name="action_export">匯出至剪貼簿</string>
+    <string name="action_export_clipboard">匯出至剪貼簿</string>
     <string name="action_import">自剪貼簿匯入</string>
     <string name="action_import_file">自檔案匯入</string>
     <string name="action_export_msg">匯出成功！</string>

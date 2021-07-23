@@ -15,7 +15,7 @@
     <item
         android:id="@+id/action_export_clipboard"
         android:icon="?attr/actionModeCopyDrawable"
-        android:title="@string/action_export"
+        android:title="@string/action_export_clipboard"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_import_clipboard"

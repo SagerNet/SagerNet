@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_http_24.xml" value="0.3375" />
         <entry key="app/src/main/res/drawable/ic_baseline_nat_24.xml" value="0.182" />
         <entry key="app/src/main/res/drawable/ic_baseline_system_update_alt_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_file_file_upload.xml" value="0.268" />
         <entry key="app/src/main/res/drawable/ic_image_edit.xml" value="0.2265" />
         <entry key="app/src/main/res/drawable/ic_navigation_close.xml" value="0.285" />
         <entry key="app/src/main/res/drawable/ic_service_active.xml" value="0.135" />
@@ -52,6 +53,7 @@
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/add_route_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/export_only_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/group_action_menu.xml" value="0.21581196581196582" />
         <entry key="app/src/main/res/menu/import_asset_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/main_drawer_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/per_app_proxy_menu.xml" value="0.2636752136752137" />

@@ -156,9 +156,8 @@ class ScannerActivity : ThemedActivity(),
                     } catch (e: Throwable) {
                         Logs.w(e)
                         onMainDispatcher {
-                            Toast
-                                .makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
+                                    .show()
                         }
                     }
                 }
@@ -224,15 +223,28 @@ class ScannerActivity : ThemedActivity(),
         finish()
         val text = result.result.text
         runOnDefaultDispatcher {
-            val results = parseProxies(text)
-            if (results.isNotEmpty()) {
-                val currentGroupId = DataStore.selectedGroup
+            try {
+                val results = parseProxies(text)
+                if (results.isNotEmpty()) {
+                    val currentGroupId = DataStore.selectedGroup
 
-                for (profile in results) {
-                    ProfileManager.createProfile(currentGroupId, profile)
+                    for (profile in results) {
+                        ProfileManager.createProfile(currentGroupId, profile)
+                    }
+                } else {
+                    Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT).show()
+            } catch (e: SubscriptionFoundException) {
+                startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                    action = Intent.ACTION_VIEW
+                    data = Uri.parse(e.link)
+                })
+                finish()
+            } catch (e: Throwable) {
+                Logs.w(e)
+                onMainDispatcher {
+                    Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
