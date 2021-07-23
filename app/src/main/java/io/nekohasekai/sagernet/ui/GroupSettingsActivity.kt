@@ -42,7 +42,6 @@ import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
-import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -57,7 +56,7 @@ class GroupSettingsActivity(
     OnPreferenceDataStoreChangeListener {
 
     fun ProxyGroup.init() {
-        DataStore.groupName = name ?: "My group " + System.currentTimeMillis() / 1000
+        DataStore.groupName = name ?: ""
         DataStore.groupType = type
         val subscription = subscription ?: SubscriptionBean().applyDefaultValues()
         DataStore.subscriptionType = subscription.type
@@ -73,7 +72,8 @@ class GroupSettingsActivity(
     }
 
     fun ProxyGroup.serialize() {
-        name = DataStore.groupName
+        name = DataStore.groupName.takeIf { it.isNotBlank() }
+            ?: "My group " + System.currentTimeMillis() / 1000
         type = DataStore.groupType
 
         val isSubscription = type == GroupType.SUBSCRIPTION
@@ -103,9 +103,6 @@ class GroupSettingsActivity(
         rootKey: String?,
     ) {
         addPreferencesFromResource(R.xml.group_preferences)
-    }
-
-    fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
 
         val groupType = findPreference<SimpleMenuPreference>(Key.GROUP_TYPE)!!
         val groupSubscription = findPreference<PreferenceCategory>(Key.GROUP_SUBSCRIPTION)!!
@@ -151,6 +148,9 @@ class GroupSettingsActivity(
             subscriptionAutoUpdateDelay.isEnabled = (newValue as Boolean)
             true
         }
+    }
+
+    fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
     }
 
     fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
@@ -218,8 +218,7 @@ class GroupSettingsActivity(
                 }
 
                 onMainDispatcher {
-                    supportFragmentManager
-                        .beginTransaction()
+                    supportFragmentManager.beginTransaction()
                         .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
                             activity = this@GroupSettingsActivity
                         })

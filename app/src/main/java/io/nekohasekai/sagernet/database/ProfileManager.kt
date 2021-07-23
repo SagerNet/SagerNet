@@ -140,18 +140,7 @@ object ProfileManager {
             DataStore.selectedProxy = 0L
         }
         iterator { onRemoved(groupId, profileId) }
-        if (SagerDatabase.proxyDao.countByGroup(groupId) == 0L) {
-            val group = SagerDatabase.groupDao.getById(groupId) ?: return
-            if (group.ungrouped) {
-                val created = createProfile(groupId, SOCKSBean().apply {
-                    name = "Local tunnel"
-                    initializeDefaultValues()
-                })
-                if (DataStore.selectedProxy == 0L) {
-                    DataStore.selectedProxy = created.id
-                }
-            }
-        } else {
+        if (SagerDatabase.proxyDao.countByGroup(groupId) > 1) {
             GroupManager.rearrange(groupId)
         }
     }

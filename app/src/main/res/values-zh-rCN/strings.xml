@@ -15,7 +15,7 @@
     <string name="menu_group">分组</string>
     <string name="menu_about">关于</string>
 
-    <string name="group_default">默认</string>
+    <string name="group_default">未分组</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">切换</string>
@@ -33,7 +33,7 @@
     <string name="group_status_empty">空</string>
     <string name="group_status_empty_subscription">从未更新</string>
     <string name="group_status_proxies">%d 个配置</string>
-    <string name="group_status_proxies_subscription">%d 个配置, 最后更新于 %s.</string>
+    <string name="group_status_proxies_subscription">%d 个配置 | 更新于 %s</string>
     <string name="group_no_difference">%s: 没有变化</string>
     <string name="group_updated">%s: 更新了 %d 个节点</string>
     <string name="group_show_diff">变化</string>
@@ -394,5 +394,13 @@
     <string name="subscription_update">订阅更新</string>
     <string name="subscription_update_message">正更新 %s …</string>
     <string name="update_subscription_warning">代理未连接, 您确定要继续更新吗?</string>
+    <string name="group_filter">筛选</string>
+    <string name="group_filter_groups">组</string>
+    <string name="group_filter_tags">标签</string>
+    <string name="group_filter_groups_nf">该订阅中没有分组</string>
+    <string name="group_filter_tags_nf">该订阅中没有标签</string>
+    <string name="group_filter_ns">您需要一个 OOCv1 订阅以使用筛选功能</string>
+    <string name="subscription_used">已用 %s</string>
+    <string name="subscription_traffic">已用 %s  / 剩余 %s</string>
 
 </resources>

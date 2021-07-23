@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "69f4787b90c290dce09994b13682e792",
+    "identityHash": "1239f165d8e5bf435ab3644e8fe25ff2",
     "entities": [
       {
         "tableName": "proxy_groups",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userOrder` INTEGER NOT NULL, `isDefault` INTEGER NOT NULL, `name` TEXT, `isSubscription` INTEGER NOT NULL, `subscriptionLink` TEXT NOT NULL, `lastUpdate` INTEGER NOT NULL, `type` INTEGER NOT NULL, `deduplication` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userOrder` INTEGER NOT NULL, `ungrouped` INTEGER NOT NULL, `name` TEXT, `type` INTEGER NOT NULL, `subscription` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,8 +21,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "isDefault",
-            "columnName": "isDefault",
+            "fieldPath": "ungrouped",
+            "columnName": "ungrouped",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -33,34 +33,16 @@
             "notNull": false
           },
           {
-            "fieldPath": "isSubscription",
-            "columnName": "isSubscription",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "subscriptionLink",
-            "columnName": "subscriptionLink",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "lastUpdate",
-            "columnName": "lastUpdate",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "type",
             "columnName": "type",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "deduplication",
-            "columnName": "deduplication",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "subscription",
+            "columnName": "subscription",
+            "affinity": "BLOB",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -74,7 +56,7 @@
       },
       {
         "tableName": "proxy_entities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `vlessBean` BLOB, `trojanBean` BLOB, `trojanGoBean` BLOB, `chainBean` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `status` INTEGER NOT NULL, `ping` INTEGER NOT NULL, `uuid` TEXT NOT NULL, `error` TEXT, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `vlessBean` BLOB, `trojanBean` BLOB, `trojanGoBean` BLOB, `naiveBean` BLOB, `ptBean` BLOB, `rbBean` BLOB, `brookBean` BLOB, `configBean` BLOB, `chainBean` BLOB, `balancerBean` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -111,6 +93,30 @@
             "columnName": "rx",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ping",
+            "columnName": "ping",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "error",
+            "columnName": "error",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "socksBean",
@@ -161,8 +167,44 @@
             "notNull": false
           },
           {
+            "fieldPath": "naiveBean",
+            "columnName": "naiveBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ptBean",
+            "columnName": "ptBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rbBean",
+            "columnName": "rbBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brookBean",
+            "columnName": "brookBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "configBean",
+            "columnName": "configBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
             "fieldPath": "chainBean",
             "columnName": "chainBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "balancerBean",
+            "columnName": "balancerBean",
             "affinity": "BLOB",
             "notNull": false
           }
@@ -187,7 +229,7 @@
       },
       {
         "tableName": "rules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `userOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `domains` TEXT NOT NULL, `ip` TEXT NOT NULL, `port` TEXT NOT NULL, `sourcePort` TEXT NOT NULL, `network` TEXT NOT NULL, `source` TEXT NOT NULL, `protocol` TEXT NOT NULL, `attrs` TEXT NOT NULL, `outbound` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `userOrder` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `domains` TEXT NOT NULL, `ip` TEXT NOT NULL, `port` TEXT NOT NULL, `sourcePort` TEXT NOT NULL, `network` TEXT NOT NULL, `source` TEXT NOT NULL, `protocol` TEXT NOT NULL, `attrs` TEXT NOT NULL, `outbound` INTEGER NOT NULL, `reverse` INTEGER NOT NULL, `redirect` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -266,6 +308,18 @@
             "columnName": "outbound",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "reverse",
+            "columnName": "reverse",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "redirect",
+            "columnName": "redirect",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -313,7 +367,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '69f4787b90c290dce09994b13682e792')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1239f165d8e5bf435ab3644e8fe25ff2')"
     ]
   }
 }

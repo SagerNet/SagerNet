@@ -87,16 +87,17 @@ public class SubscriptionBean extends Serializable {
         output.writeInt(autoUpdateDelay);
         output.writeInt(lastUpdated);
 
-        switch (type) {
-            case SubscriptionType.SIP008:
-                output.writeLong(bytesUsed);
-                output.writeLong(bytesRemaining);
-            case SubscriptionType.OOCv1:
-                output.writeString(username);
-                output.writeInt(expiryDate);
-                KryosKt.writeStringList(output, protocols);
-                KryosKt.writeStringList(output, selectedGroups);
-                KryosKt.writeStringList(output, selectedTags);
+        if (type != SubscriptionType.RAW) {
+            output.writeLong(bytesUsed);
+            output.writeLong(bytesRemaining);
+        }
+
+        if (type == SubscriptionType.OOCv1) {
+            output.writeString(username);
+            output.writeInt(expiryDate);
+            KryosKt.writeStringList(output, protocols);
+            KryosKt.writeStringList(output, selectedGroups);
+            KryosKt.writeStringList(output, selectedTags);
         }
 
     }
@@ -120,18 +121,19 @@ public class SubscriptionBean extends Serializable {
         autoUpdateDelay = input.readInt();
         lastUpdated = input.readInt();
 
-        switch (type) {
-            case SubscriptionType.SIP008:
-                bytesUsed = input.readLong();
-                bytesRemaining = input.readLong();
-            case SubscriptionType.OOCv1:
-                username = input.readString();
-                expiryDate = input.readInt();
-                protocols = KryosKt.readStringList(input);
-                if (input.canReadVarInt()) {
-                    selectedGroups = KryosKt.readStringSet(input);
-                    selectedTags = KryosKt.readStringSet(input);
-                }
+        if (type != SubscriptionType.RAW) {
+            bytesUsed = input.readLong();
+            bytesRemaining = input.readLong();
+        }
+
+        if (type == SubscriptionType.OOCv1) {
+            username = input.readString();
+            expiryDate = input.readInt();
+            protocols = KryosKt.readStringList(input);
+            if (input.canReadVarInt()) {
+                selectedGroups = KryosKt.readStringSet(input);
+                selectedTags = KryosKt.readStringSet(input);
+            }
         }
     }
 

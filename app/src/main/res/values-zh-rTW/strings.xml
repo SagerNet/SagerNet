@@ -15,7 +15,6 @@
     <string name="menu_group">組</string>
     <string name="menu_about">關於</string>
 
-    <string name="group_default">預設</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">切換</string>
@@ -33,7 +32,7 @@
     <string name="group_status_empty">空組</string>
     <string name="group_status_empty_subscription">尚未更新</string>
     <string name="group_status_proxies">%d 個代理</string>
-    <string name="group_status_proxies_subscription">%d 個代理，上次更新於 %s。</string>
+    <string name="group_status_proxies_subscription">%d 個代理 | 更新於 %s</string>
     <string name="group_no_difference">%s: 沒有變化</string>
     <string name="group_updated">%s: 更新了 %d 個代理</string>
     <string name="group_show_diff">變化</string>

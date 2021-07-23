@@ -23,15 +23,13 @@ package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.Formatter
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.isGone
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +40,10 @@ import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.databinding.LayoutGroupItemBinding
 import io.nekohasekai.sagernet.group.GroupUpdater
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.FixedLinearLayoutManager
+import io.nekohasekai.sagernet.ktx.dp2px
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.delay
@@ -75,8 +76,9 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
 
         undoManager = UndoSnackbarManager(activity, groupAdapter)
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.START) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START
+        ) {
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -129,7 +131,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         val groupList = ArrayList<ProxyGroup>()
 
         suspend fun reload() {
-            val groups = SagerDatabase.groupDao.allGroups()
+            val groups = SagerDatabase.groupDao.allGroups().toMutableList()
+            val hideUngrouped =
+                SagerDatabase.proxyDao.countByGroup(groups.find { it.ungrouped }!!.id) == 0L
+            if (groups.size > 1 && hideUngrouped) groups.removeAll { it.ungrouped }
+
             groupList.clear()
             groupList.addAll(groups)
             groupListView.post {
@@ -164,8 +170,9 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         fun move(from: Int, to: Int) {
             val first = groupList[from]
             var previousOrder = first.userOrder
-            val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1,
-                    to + 1 downTo from)
+            val (step, range) = if (from < to) Pair(1, from until to) else Pair(
+                -1, to + 1 downTo from
+            )
             for (i in range) {
                 val next = groupList[i + step]
                 val order = next.userOrder
@@ -201,10 +208,18 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             val groups = actions.map { it.second }
             runOnDefaultDispatcher {
                 GroupManager.deleteGroup(groups)
+                reload()
             }
         }
 
         override suspend fun groupAdd(group: ProxyGroup) {
+            if (groupList.size == 1 && groupList[0].ungrouped) {
+                groupList.clear()
+                onMainDispatcher {
+                    notifyItemRemoved(0)
+                }
+            }
+
             groupList.add(group)
             delay(300L)
 
@@ -273,6 +288,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         lateinit var proxyGroup: ProxyGroup
         val groupName = binding.groupName
         val groupStatus = binding.groupStatus
+        val groupTraffic = binding.groupTraffic
+        val groupUser = binding.groupUser
         val editButton = binding.edit
         val shareButton = binding.share
         val updateButton = binding.groupUpdate
@@ -291,11 +308,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 startActivity(Intent(it.context, GroupSettingsActivity::class.java).apply {
                     putExtra(GroupSettingsActivity.EXTRA_GROUP_ID, group.id)
                 })
-                /* EditGroupFragment().apply {
-                     arg(GroupInfo(proxyGroup.isSubscription, group))
-                     key()
-                 }.show(parentFragmentManager, "edit_group")*/
-
             }
 
             updateButton.setOnClickListener {
@@ -332,6 +344,33 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 editButton.isGone = proxyGroup.ungrouped
             }
 
+            val subscription = proxyGroup.subscription
+            val textLayout = groupTraffic.parent as View
+            if (subscription != null && subscription.bytesUsed > 0L) {
+                groupTraffic.isVisible = true
+                groupTraffic.text = if (subscription.bytesRemaining > 0L) {
+                    getString(
+                        R.string.subscription_traffic, Formatter.formatFileSize(
+                            context, subscription.bytesUsed
+                        ), Formatter.formatFileSize(
+                            context, subscription.bytesRemaining
+                        )
+                    )
+                } else {
+                    getString(
+                        R.string.subscription_used, Formatter.formatFileSize(
+                            context, subscription.bytesUsed
+                        )
+                    )
+                }
+                groupStatus.setPadding(0)
+            } else {
+                groupTraffic.isVisible = false
+                groupStatus.setPadding(0, 0, 0, dp2px(4))
+            }
+
+            groupUser.text = subscription?.username ?: ""
+
             runOnDefaultDispatcher {
                 val size = SagerDatabase.proxyDao.countByGroup(proxyGroup.id)
                 onMainDispatcher {
@@ -340,20 +379,21 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                             if (size == 0L) {
                                 groupStatus.setText(R.string.group_status_empty)
                             } else {
-                                groupStatus.text =
-                                    app.resources.getString(R.string.group_status_proxies, size)
+                                groupStatus.text = getString(R.string.group_status_proxies, size)
                             }
                         }
                         GroupType.SUBSCRIPTION -> {
-                            if (size == 0L) {
-                                groupStatus.setText(R.string.group_status_empty_subscription)
+                            groupStatus.text = if (size == 0L) {
+                                getString(R.string.group_status_empty_subscription)
                             } else {
                                 val date = Date(group.subscription!!.lastUpdated * 100L)
-                                groupStatus.text =
-                                    app.resources.getString(R.string.group_status_proxies_subscription,
-                                            size,
-                                            "${date.month + 1} - ${date.date}")
+                                getString(
+                                    R.string.group_status_proxies_subscription,
+                                    size,
+                                    "${date.month + 1} - ${date.date}"
+                                )
                             }
+
                         }
                     }
                 }

@@ -18,7 +18,7 @@
     <string name="theme">Theme</string>
     <string name="document">Document</string>
 
-    <string name="group_default">Default</string>
+    <string name="group_default">Ungrouped</string>
     <string name="profile_type">socks5</string>
 
     <string name="quick_toggle">Toggle</string>
@@ -37,7 +37,7 @@
     <string name="group_status_empty">Empty group</string>
     <string name="group_status_empty_subscription">Not updated yet</string>
     <string name="group_status_proxies">%d Proxies</string>
-    <string name="group_status_proxies_subscription">%d Proxies, updated on %s.</string>
+    <string name="group_status_proxies_subscription">%d Proxies | Updated on %s</string>
     <string name="group_no_difference">%s: No difference</string>
     <string name="group_updated">%s: Updated %d proxies</string>
     <string name="group_show_diff">Diff</string>
@@ -446,7 +446,10 @@
     <string name="group_filter_groups">Groups</string>
     <string name="group_filter_tags">Tags</string>
 
+    <string name="group_filter_ns">OOCv1 subscription is required to use the filtering feature</string>
     <string name="group_filter_groups_nf">No groups in this subscription</string>
     <string name="group_filter_tags_nf">No tags in this subscription</string>
+    <string name="subscription_used">%s Used</string>
+    <string name="subscription_traffic">%s Used / %s Remaining</string>
 
 </resources>

@@ -30,7 +30,6 @@ import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
-import kotlin.properties.Delegates
 
 object DataStore : OnPreferenceDataStoreChangeListener {
 
@@ -56,18 +55,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     fun selectedGroupForImport(): Long {
         val groups = SagerDatabase.groupDao.allGroups()
-        val selectedGroup = SagerDatabase.groupDao.getById(selectedGroup) ?: groups[0]
-        var targetIndex by Delegates.notNull<Int>()
-        return if (!selectedGroup.ungrouped) {
-            selectedGroup.id
-        } else {
-            targetIndex = groups.indexOfFirst { it.ungrouped }
-            groups[targetIndex].id
-        }
+        val sid = DataStore.selectedGroup
+        return (groups.find { it.id == sid && it.type == GroupType.BASIC } ?: groups.find { it.ungrouped }!!).id
     }
 
-    var appTheme by configurationStore.int(Key.APP_THEME) { 0 }
-    var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME) { 0 }
+    var appTheme by configurationStore.int(Key.APP_THEME)
+    var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME)
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "IPIfNonMatch" }
@@ -161,7 +154,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
     val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
 
-    var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP)
+    var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP) { true }
     var appendHttpProxy by configurationStore.boolean(Key.APPEND_HTTP_PROXY) { true }
     var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)

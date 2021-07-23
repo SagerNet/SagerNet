@@ -659,6 +659,10 @@ fun buildV2RayConfig(
                                                 maxEarlyData = bean.wsMaxEarlyData
                                             }
 
+                                            if (bean.earlyDataHeaderName.isNotBlank()) {
+                                                earlyDataHeaderName = bean.earlyDataHeaderName
+                                            }
+
                                             if (bean.wsUseBrowserForwarder) {
                                                 useBrowserForwarding = true
                                                 requireWs = true

@@ -47,8 +47,8 @@ import javax.net.ssl.SSLSocketFactory
 object OpenOnlineConfigUpdater : GroupUpdater() {
 
     val oocConnSpec = ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
-        .tlsVersions(TlsVersion.TLS_1_3)
-        .build()
+            .tlsVersions(TlsVersion.TLS_1_3)
+            .build()
 
     override suspend fun doUpdate(
         proxyGroup: ProxyGroup,
@@ -109,16 +109,16 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         }
 
         val oocHttpClient = if (certSha256.isNullOrBlank()) httpClient else httpClient.newBuilder()
-            .connectionSpecs(listOf(oocConnSpec))
-            .sslSocketFactory(
+                .connectionSpecs(listOf(oocConnSpec))
+                .sslSocketFactory(
                     SSLSocketFactory.getDefault() as SSLSocketFactory,
                     PinnedTrustManager(certSha256)
-            )
-            .build()
+                )
+                .build()
 
         val response = oocHttpClient.newCall(Request.Builder().url(baseLink).header("User-Agent",
-                subscription.customUserAgent.takeIf { it.isNotBlank() }
-                    ?: "SagerNet/${BuildConfig.VERSION_NAME}").build()).execute().apply {
+            subscription.customUserAgent.takeIf { it.isNotBlank() }
+                ?: "SagerNet/${BuildConfig.VERSION_NAME}").build()).execute().apply {
             if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
             if (body == null) error("ERROR: Empty response")
         }
@@ -251,7 +251,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
             } else {
                 changed++
                 SagerDatabase.proxyDao.addProxy(ProxyEntity(
-                        groupId = proxyGroup.id, userOrder = userOrder
+                    groupId = proxyGroup.id, userOrder = userOrder
                 ).apply {
                     putBean(bean)
                 })
@@ -280,7 +280,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         finishUpdate(proxyGroup)
 
         userInterface?.onUpdateSuccess(
-                proxyGroup, changed, added, updated, deleted, duplicate, byUser
+            proxyGroup, changed, added, updated, deleted, duplicate, byUser
         )
     }
 

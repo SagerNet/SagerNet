@@ -28,6 +28,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -95,6 +96,8 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
 
         if (extraType == null) extraType = ExtraType.NONE;
         if (profileId == null) profileId = "";
+        if (group == null) group = "";
+        if (tags == null) tags = new ArrayList<>();
     }
 
     @Override
