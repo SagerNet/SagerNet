@@ -280,10 +280,11 @@ class BaseService {
 
                 // change the state
                 data.changeState(State.Stopped, msg)
+                DataStore.startedProfile = 0L
 
                 // stop the service if nothing has bound to it
                 if (restart) startRunner() else { //   BootReceiver.enabled = false
-                    if (!keepState) DataStore.startedProxy = 0L
+                    if (!keepState) DataStore.currentProfile = 0L
                     stopSelf()
                 }
             }
@@ -334,7 +335,8 @@ class BaseService {
                         Logs.w(it)
                         stopRunner(false, it.readableMessage)
                     }
-                    DataStore.startedProxy = profile.id
+                    DataStore.currentProfile = profile.id
+                    DataStore.startedProfile = profile.id
                     startProcesses()
                     data.changeState(State.Connected)
                 } catch (_: CancellationException) { // if the job was cancelled, it is canceller's responsibility to call stopRunner

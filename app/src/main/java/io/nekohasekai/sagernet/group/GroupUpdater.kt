@@ -69,7 +69,7 @@ abstract class GroupUpdater {
     protected suspend fun forceResolve(
         okHttpClient: OkHttpClient, profiles: List<AbstractBean>, groupId: Long?
     ) {
-        val connected = DataStore.startedProxy > 0
+        val connected = DataStore.startedProfile > 0
 
         var dohUrl: String? = null
         if (connected) {
@@ -93,6 +93,8 @@ abstract class GroupUpdater {
         } else {
             "https://223.5.5.5/dns-query"
         }).toHttpUrl()
+
+        Logs.d("Using doh url $dohHttpUrl")
 
         val ipv6Mode = DataStore.ipv6Mode
         val dohClient = DnsOverHttps.Builder().client(okHttpClient).url(dohHttpUrl).apply {
@@ -182,7 +184,7 @@ abstract class GroupUpdater {
                 GroupManager.postReload(proxyGroup.id)
 
                 val subscription = proxyGroup.subscription!!
-                val connected = DataStore.startedProxy > 0
+                val connected = DataStore.startedProfile > 0
 
                 val timeout = Duration.ofSeconds(5)
                 val httpClient = createProxyClient().newBuilder()
@@ -193,10 +195,7 @@ abstract class GroupUpdater {
 
                 if (userInterface != null) {
                     if (subscription.updateWhenConnectedOnly && !connected) {
-                        if (!userInterface.confirm(
-                                    proxyGroup, app.getString(R.string.update_subscription_warning)
-                            )
-                        ) {
+                        if (!userInterface.confirm(app.getString(R.string.update_subscription_warning))) {
                             finishUpdate(proxyGroup)
                             cancel()
                         }

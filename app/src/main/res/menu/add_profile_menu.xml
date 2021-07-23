@@ -107,5 +107,17 @@
                 android:title="@string/connection_test_clear_results" />
         </menu>
     </item>
+    <item
+        android:id="@+id/action_group_filter"
+        android:title="@string/group_filter">
+        <menu>
+            <item
+                android:id="@+id/action_filter_groups"
+                android:title="@string/group_filter_groups" />
+            <item
+                android:id="@+id/action_filter_tags"
+                android:title="@string/group_filter_tags" />
+        </menu>
+    </item>
 
 </menu>

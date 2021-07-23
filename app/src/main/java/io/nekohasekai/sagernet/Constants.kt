@@ -103,6 +103,7 @@ object Key {
     const val PROFILE_NAME = "profileName"
     const val PROFILE_GROUP = "profileGroup"
     const val PROFILE_STARTED = "profileStarted"
+    const val PROFILE_CURRENT = "profileCurrent"
 
     const val SERVER_ADDRESS = "serverAddress"
     const val SERVER_PORT = "serverPort"

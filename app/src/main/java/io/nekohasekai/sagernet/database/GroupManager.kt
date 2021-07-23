@@ -27,15 +27,15 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 object GroupManager {
 
     interface Listener {
-        suspend fun groupAdd(group: ProxyGroup) {}
-        suspend fun groupUpdated(group: ProxyGroup) {}
+        suspend fun groupAdd(group: ProxyGroup)
+        suspend fun groupUpdated(group: ProxyGroup)
 
-        suspend fun groupRemoved(groupId: Long) {}
-        suspend fun groupUpdated(groupId: Long) {}
+        suspend fun groupRemoved(groupId: Long)
+        suspend fun groupUpdated(groupId: Long)
     }
 
     interface Interface {
-        suspend fun confirm(group: ProxyGroup, message: String): Boolean
+        suspend fun confirm(message: String): Boolean
         suspend fun alert(message: String)
         suspend fun onUpdateSuccess(
             group: ProxyGroup,

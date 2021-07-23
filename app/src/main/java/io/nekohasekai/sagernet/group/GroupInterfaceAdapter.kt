@@ -33,17 +33,15 @@ import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interface {
 
-    override suspend fun confirm(group: ProxyGroup, message: String): Boolean {
+    override suspend fun confirm(message: String): Boolean {
         return suspendCoroutine {
             runOnMainDispatcher {
-                MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.confirm)
+                MaterialAlertDialogBuilder(context).setTitle(R.string.confirm)
                     .setMessage(message)
                     .setPositiveButton(R.string.yes) { _, _ -> it.resume(true) }
                     .setNegativeButton(R.string.no) { _, _ -> it.resume(false) }
@@ -63,16 +61,19 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
         byUser: Boolean
     ) {
         if (changed == 0 && duplicate.isEmpty()) {
-            if (byUser) context
-                .snackbar(context.getString(R.string.group_no_difference, group.displayName()))
-                .show()
+            if (byUser) context.snackbar(
+                    context.getString(
+                            R.string.group_no_difference, group.displayName()
+                    )
+            ).show()
         } else {
             context.snackbar(context.getString(R.string.group_updated, group.name, changed)).show()
 
             var status = ""
             if (added.isNotEmpty()) {
-                status += context.getString(R.string.group_added,
-                        added.joinToString("\n", postfix = "\n\n"))
+                status += context.getString(
+                        R.string.group_added, added.joinToString("\n", postfix = "\n\n")
+                )
             }
             if (updated.isNotEmpty()) {
                 status += context.getString(R.string.group_changed,
@@ -81,22 +82,24 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
                         })
             }
             if (deleted.isNotEmpty()) {
-                status += context.getString(R.string.group_deleted,
-                        deleted.joinToString("\n", postfix = "\n\n"))
+                status += context.getString(
+                        R.string.group_deleted, deleted.joinToString("\n", postfix = "\n\n")
+                )
             }
             if (duplicate.isNotEmpty()) {
-                status += context.getString(R.string.group_duplicate,
-                        duplicate.joinToString("\n", postfix = "\n\n"))
+                status += context.getString(
+                        R.string.group_duplicate, duplicate.joinToString("\n", postfix = "\n\n")
+                )
             }
 
             onMainDispatcher {
                 delay(1000L)
 
-                MaterialAlertDialogBuilder(context)
-                    .setTitle(context.getString(R.string.group_diff, group.displayName()))
-                    .setMessage(status.trim())
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                MaterialAlertDialogBuilder(context).setTitle(
+                        context.getString(
+                                R.string.group_diff, group.displayName()
+                        )
+                ).setMessage(status.trim()).setPositiveButton(android.R.string.ok, null).show()
             }
 
         }
@@ -110,13 +113,11 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
     }
 
     override suspend fun alert(message: String) {
-        return suspendCancellableCoroutine {
+        return suspendCoroutine {
             runOnMainDispatcher {
-                MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.ooc_warning)
+                MaterialAlertDialogBuilder(context).setTitle(R.string.ooc_warning)
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok) { _, _ -> it.resume(Unit) }
-                    .setPositiveButton(android.R.string.cancel) { _, _ -> it.cancel() }
                     .setOnCancelListener { _ -> it.resume(Unit) }
                     .show()
             }
@@ -130,11 +131,14 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
         try {
             val pluginEntity = enumValueOf<PluginEntry>(plugin)
 
-            MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.missing_plugin)
-                .setMessage(context.getString(R.string.profile_requiring_plugin,
-                        issuer,
-                        context.getString(pluginEntity.nameId)))
+            MaterialAlertDialogBuilder(context).setTitle(R.string.missing_plugin)
+                .setMessage(
+                        context.getString(
+                                R.string.profile_requiring_plugin,
+                                issuer,
+                                context.getString(pluginEntity.nameId)
+                        )
+                )
                 .setPositiveButton(R.string.action_download) { _, _ ->
                     showDownloadDialog(pluginEntity)
                 }
@@ -174,8 +178,7 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
         items.add(context.getString(R.string.download))
         downloadIndex = index
 
-        MaterialAlertDialogBuilder(context)
-            .setTitle(pluginEntry.name)
+        MaterialAlertDialogBuilder(context).setTitle(pluginEntry.name)
             .setItems(items.toTypedArray()) { _, which ->
                 when (which) {
                     playIndex -> context.launchCustomTab("https://play.google.com/store/apps/details?id=${pluginEntry.packageName}")

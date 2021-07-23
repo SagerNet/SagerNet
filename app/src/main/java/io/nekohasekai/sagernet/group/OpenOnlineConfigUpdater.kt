@@ -38,7 +38,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.ktx.okHttpClient
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.cert.CertificateException
@@ -111,16 +110,15 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
 
         val oocHttpClient = if (certSha256.isNullOrBlank()) httpClient else httpClient.newBuilder()
             .connectionSpecs(listOf(oocConnSpec))
-            .sslSocketFactory(SSLSocketFactory.getDefault() as SSLSocketFactory,
-                    PinnedTrustManager(certSha256))
+            .sslSocketFactory(
+                    SSLSocketFactory.getDefault() as SSLSocketFactory,
+                    PinnedTrustManager(certSha256)
+            )
             .build()
 
-        val response = oocHttpClient.newCall(Request.Builder()
-            .url(baseLink)
-            .header("User-Agent",
-                    subscription.customUserAgent.takeIf { it.isNotBlank() }
-                        ?: "SagerNet/${BuildConfig.VERSION_NAME}")
-            .build()).execute().apply {
+        val response = oocHttpClient.newCall(Request.Builder().url(baseLink).header("User-Agent",
+                subscription.customUserAgent.takeIf { it.isNotBlank() }
+                    ?: "SagerNet/${BuildConfig.VERSION_NAME}").build()).execute().apply {
             if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
             if (body == null) error("ERROR: Empty response")
         }
@@ -175,7 +173,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
             }
         }
 
-        if (subscription.forceResolve) forceResolve(okHttpClient, profiles, proxyGroup.id)
+        if (subscription.forceResolve) forceResolve(httpClient, profiles, proxyGroup.id)
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
@@ -252,8 +250,9 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 }
             } else {
                 changed++
-                SagerDatabase.proxyDao.addProxy(ProxyEntity(groupId = proxyGroup.id,
-                        userOrder = userOrder).apply {
+                SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                        groupId = proxyGroup.id, userOrder = userOrder
+                ).apply {
                     putBean(bean)
                 })
                 added.add(name)
@@ -280,13 +279,9 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         SagerDatabase.groupDao.updateGroup(proxyGroup)
         finishUpdate(proxyGroup)
 
-        userInterface?.onUpdateSuccess(proxyGroup,
-                changed,
-                added,
-                updated,
-                deleted,
-                duplicate,
-                byUser)
+        userInterface?.onUpdateSuccess(
+                proxyGroup, changed, added, updated, deleted, duplicate, byUser
+        )
     }
 
     fun appendExtraInfo(profile: JSONObject, bean: AbstractBean) {

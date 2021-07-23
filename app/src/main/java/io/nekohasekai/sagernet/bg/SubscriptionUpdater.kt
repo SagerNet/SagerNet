@@ -77,7 +77,7 @@ object SubscriptionUpdater {
         override suspend fun doWork(): Result {
             var subscriptions =
                 SagerDatabase.groupDao.subscriptions().filter { it.subscription!!.autoUpdate }
-            if (DataStore.startedProxy == 0L) {
+            if (DataStore.startedProfile == 0L) {
                 subscriptions = subscriptions.filter { !it.subscription!!.updateWhenConnectedOnly }
             }
 

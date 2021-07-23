@@ -35,8 +35,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, KeyValuePair::class],
-    version = 11
+        entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, KeyValuePair::class],
+        version = 1
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
 @GenerateRoomMigrations
@@ -47,9 +47,12 @@ abstract class SagerDatabase : RoomDatabase() {
         private val instance by lazy {
             SagerNet.application.getDatabasePath(Key.DB_PROFILE).parentFile?.mkdirs()
             Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build()).allowMainThreadQueries()
-                .enableMultiInstanceInvalidation().fallbackToDestructiveMigration()
-                .setQueryExecutor { GlobalScope.launch { it.run() } }.build()
+                .addMigrations(*SagerDatabase_Migrations.build())
+                .allowMainThreadQueries()
+                .enableMultiInstanceInvalidation()
+                .fallbackToDestructiveMigration()
+                .setQueryExecutor { GlobalScope.launch { it.run() } }
+                .build()
         }
 
         val profileCacheDao get() = instance.profileCacheDao()

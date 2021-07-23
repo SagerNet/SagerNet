@@ -40,7 +40,21 @@ fun ByteBufferInput.readStringList(): List<String> {
     }
 }
 
+fun ByteBufferInput.readStringSet(): Set<String> {
+    return linkedSetOf<String>().apply {
+        repeat(readInt()) {
+            add(readString())
+        }
+    }
+}
+
+
 fun ByteBufferOutput.writeStringList(list: List<String>) {
+    writeInt(list.size)
+    for (str in list) writeString(str)
+}
+
+fun ByteBufferOutput.writeStringList(list: Set<String>) {
     writeInt(list.size)
     for (str in list) writeString(str)
 }

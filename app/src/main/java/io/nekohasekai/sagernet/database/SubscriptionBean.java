@@ -27,9 +27,10 @@ import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-import cn.hutool.core.collection.CollUtil;
 import io.nekohasekai.sagernet.SubscriptionType;
 import io.nekohasekai.sagernet.fmt.Serializable;
 import io.nekohasekai.sagernet.ktx.KryosKt;
@@ -58,6 +59,9 @@ public class SubscriptionBean extends Serializable {
     public String username;
     public Integer expiryDate;
     public List<String> protocols;
+
+    public Set<String> selectedGroups;
+    public Set<String> selectedTags;
 
     public SubscriptionBean() {
     }
@@ -91,6 +95,8 @@ public class SubscriptionBean extends Serializable {
                 output.writeString(username);
                 output.writeInt(expiryDate);
                 KryosKt.writeStringList(output, protocols);
+                KryosKt.writeStringList(output, selectedGroups);
+                KryosKt.writeStringList(output, selectedTags);
         }
 
     }
@@ -122,6 +128,10 @@ public class SubscriptionBean extends Serializable {
                 username = input.readString();
                 expiryDate = input.readInt();
                 protocols = KryosKt.readStringList(input);
+                if (input.canReadVarInt()) {
+                    selectedGroups = KryosKt.readStringSet(input);
+                    selectedTags = KryosKt.readStringSet(input);
+                }
         }
     }
 
@@ -144,7 +154,9 @@ public class SubscriptionBean extends Serializable {
 
         if (username == null) username = "";
         if (expiryDate == null) expiryDate = 0;
-        if (CollUtil.isEmpty(protocols)) protocols = new ArrayList<>();
+        if (protocols == null) protocols = new ArrayList<>();
+        if (selectedGroups == null) selectedGroups = new LinkedHashSet<>();
+        if (selectedTags == null) selectedTags = new LinkedHashSet<>();
 
     }
 

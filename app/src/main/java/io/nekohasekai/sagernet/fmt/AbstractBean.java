@@ -100,11 +100,12 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     @Override
     public void serializeToBuffer(@NonNull ByteBufferOutput output) {
         serialize(output);
+
+        output.writeInt(0);
         output.writeString(name);
         output.writeInt(extraType);
         if (extraType == ExtraType.NONE) return;
         output.writeString(profileId);
-
         if (extraType == ExtraType.OOCv1) {
             output.writeString(group);
             KryosKt.writeStringList(output, tags);
@@ -114,9 +115,11 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     @Override
     public void deserializeFromBuffer(@NonNull ByteBufferInput input) {
         deserialize(input);
-        name = input.readString();
 
-        int extraType = input.readInt();
+        int extraVersion = input.readInt();
+
+        name = input.readString();
+        extraType = input.readInt();
         if (extraType == ExtraType.NONE) return;
         profileId = input.readString();
 
