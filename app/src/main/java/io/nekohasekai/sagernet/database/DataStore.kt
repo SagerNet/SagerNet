@@ -69,7 +69,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME) { 0 }
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
-    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
+    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "IPIfNonMatch" }
     var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "mph" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
     var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }

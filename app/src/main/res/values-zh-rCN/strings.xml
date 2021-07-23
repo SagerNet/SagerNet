@@ -387,5 +387,12 @@
     <string name="install_from_play_store">从 Play Store 安装</string>
     <string name="install_from_fdroid">从 F-Droid 安装</string>
     <string name="download">下载</string>
+    <string name="ooc_subscription_token_invalid">无效的 OOCv1 Token</string>
+    <string name="ooc_warning">警告</string>
+    <string name="ooc_missing_protocol">该订阅要求 %s 协议支持, 但找不到. 不支持的配置将被忽略.</string>
+    <string name="service_subscription">订阅更新服务</string>
+    <string name="subscription_update">订阅更新</string>
+    <string name="subscription_update_message">正更新 %s …</string>
+    <string name="update_subscription_warning">代理未连接, 您确定要继续更新吗?</string>
 
 </resources>

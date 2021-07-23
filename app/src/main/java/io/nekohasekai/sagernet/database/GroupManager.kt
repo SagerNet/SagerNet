@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.database
 
+import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.utils.DirectBoot
 
 object GroupManager {
@@ -37,8 +38,13 @@ object GroupManager {
         suspend fun confirm(group: ProxyGroup, message: String): Boolean
         suspend fun alert(message: String)
         suspend fun onUpdateSuccess(
-            group: ProxyGroup, changed: Int, added: List<String>, updated: Map<String, String>,
-            deleted: List<String>, duplicate: List<String>, byUser: Boolean
+            group: ProxyGroup,
+            changed: Int,
+            added: List<String>,
+            updated: Map<String, String>,
+            deleted: List<String>,
+            duplicate: List<String>,
+            byUser: Boolean
         )
 
         suspend fun onUpdateFailure(group: ProxyGroup, message: String)
@@ -112,14 +118,14 @@ object GroupManager {
         SagerDatabase.groupDao.deleteById(groupId)
         SagerDatabase.proxyDao.deleteByGroup(groupId)
         iterator { groupRemoved(groupId) }
+        SubscriptionUpdater.reconfigureUpdater()
     }
 
     suspend fun deleteGroup(group: List<ProxyGroup>) {
         SagerDatabase.groupDao.deleteGroup(group)
-        SagerDatabase.proxyDao.deleteByGroup(group
-            .map { it.id }
-            .toLongArray())
+        SagerDatabase.proxyDao.deleteByGroup(group.map { it.id }.toLongArray())
         for (proxyGroup in group) iterator { groupRemoved(proxyGroup.id) }
+        SubscriptionUpdater.reconfigureUpdater()
     }
 
 }

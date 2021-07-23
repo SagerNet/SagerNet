@@ -440,6 +440,6 @@
 
     <string name="service_subscription">Subscription Update Service</string>
     <string name="subscription_update">Subscription Update</string>
-    <string name="subscription_update_message">Updating %s…</string>
+    <string name="subscription_update_message">Updating %s …</string>
 
 </resources>
