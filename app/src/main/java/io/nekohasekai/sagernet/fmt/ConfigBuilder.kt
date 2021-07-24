@@ -360,13 +360,15 @@ fun buildV2RayConfig(
             }
         }
 
-        val enableExperimentalTun = DataStore.vpnMode ==  VpnMode.EXPERIMENTAL_FORWARDING
+        val enableExperimentalTun = DataStore.vpnMode == VpnMode.EXPERIMENTAL_FORWARDING
         val needIncludeSelf =
             enableExperimentalTun || proxy.balancerBean == null && proxies.size > 1 || extraProxies.any { (key, value) ->
                 val (_, balancer) = key
                 val (isBalancer, _) = balancer
                 isBalancer && value.size > 1
             }
+
+        var rootBalancer: RoutingObject.RuleObject? = null
 
         fun buildChain(
             tagOutbound: String,
@@ -448,18 +450,18 @@ fun buildV2RayConfig(
                                 this,
                                 SocksOutboundConfigurationObject().apply {
                                     servers = listOf(SocksOutboundConfigurationObject.ServerObject()
-                                        .apply {
-                                            address = bean.serverAddress
-                                            port = bean.serverPort
-                                            if (!bean.username.isNullOrBlank()) {
-                                                users =
-                                                    listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
-                                                        .apply {
-                                                            user = bean.username
-                                                            pass = bean.password
-                                                        })
-                                            }
-                                        })
+                                            .apply {
+                                                address = bean.serverAddress
+                                                port = bean.serverPort
+                                                if (!bean.username.isNullOrBlank()) {
+                                                    users =
+                                                        listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
+                                                                .apply {
+                                                                    user = bean.username
+                                                                    pass = bean.password
+                                                                })
+                                                }
+                                            })
                                 })
                             if (bean.tls || needKeepAliveInterval) {
                                 streamSettings = StreamSettingsObject().apply {
@@ -485,18 +487,18 @@ fun buildV2RayConfig(
                                 this,
                                 HTTPOutboundConfigurationObject().apply {
                                     servers = listOf(HTTPOutboundConfigurationObject.ServerObject()
-                                        .apply {
-                                            address = bean.serverAddress
-                                            port = bean.serverPort
-                                            if (!bean.username.isNullOrBlank()) {
-                                                users =
-                                                    listOf(HTTPInboundConfigurationObject.AccountObject()
-                                                        .apply {
-                                                            user = bean.username
-                                                            pass = bean.password
-                                                        })
-                                            }
-                                        })
+                                            .apply {
+                                                address = bean.serverAddress
+                                                port = bean.serverPort
+                                                if (!bean.username.isNullOrBlank()) {
+                                                    users =
+                                                        listOf(HTTPInboundConfigurationObject.AccountObject()
+                                                                .apply {
+                                                                    user = bean.username
+                                                                    pass = bean.password
+                                                                })
+                                                }
+                                            })
                                 })
                             if (bean.tls || needKeepAliveInterval) {
                                 streamSettings = StreamSettingsObject().apply {
@@ -523,20 +525,21 @@ fun buildV2RayConfig(
                                     this,
                                     VMessOutboundConfigurationObject().apply {
                                         vnext = listOf(
-                                            VMessOutboundConfigurationObject.ServerObject().apply {
-                                                    address = bean.serverAddress
-                                                    port = bean.serverPort
-                                                    users =
-                                                        listOf(VMessOutboundConfigurationObject.ServerObject.UserObject()
-                                                            .apply {
-                                                                id = bean.uuidOrGenerate()
-                                                                alterId = bean.alterId
-                                                                security =
-                                                                    bean.encryption.takeIf { it.isNotBlank() }
-                                                                        ?: "auto"
-                                                                level = 8
-                                                            })
-                                                })
+                                            VMessOutboundConfigurationObject.ServerObject()
+                                                    .apply {
+                                                        address = bean.serverAddress
+                                                        port = bean.serverPort
+                                                        users =
+                                                            listOf(VMessOutboundConfigurationObject.ServerObject.UserObject()
+                                                                    .apply {
+                                                                        id = bean.uuidOrGenerate()
+                                                                        alterId = bean.alterId
+                                                                        security =
+                                                                            bean.encryption.takeIf { it.isNotBlank() }
+                                                                                ?: "auto"
+                                                                        level = 8
+                                                                    })
+                                                    })
                                     })
                             } else if (bean is VLESSBean) {
                                 protocol = "vless"
@@ -544,17 +547,18 @@ fun buildV2RayConfig(
                                     this,
                                     VLESSOutboundConfigurationObject().apply {
                                         vnext = listOf(
-                                            VLESSOutboundConfigurationObject.ServerObject().apply {
-                                                    address = bean.serverAddress
-                                                    port = bean.serverPort
-                                                    users =
-                                                        listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
-                                                            .apply {
-                                                                id = bean.uuidOrGenerate()
-                                                                encryption = bean.encryption
-                                                                level = 8
-                                                            })
-                                                })
+                                            VLESSOutboundConfigurationObject.ServerObject()
+                                                    .apply {
+                                                        address = bean.serverAddress
+                                                        port = bean.serverPort
+                                                        users =
+                                                            listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
+                                                                    .apply {
+                                                                        id = bean.uuidOrGenerate()
+                                                                        encryption = bean.encryption
+                                                                        level = 8
+                                                                    })
+                                                    })
                                     })
                             }
 
@@ -579,14 +583,14 @@ fun buildV2RayConfig(
                                                 listOf(TLSObject.CertificateObject().apply {
                                                     usage = "verify"
                                                     certificate = bean.certificates.split("\n")
-                                                        .filter { it.isNotBlank() }
+                                                            .filter { it.isNotBlank() }
                                                 })
                                         }
 
                                         if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
                                             pinnedPeerCertificateChainSha256 =
                                                 bean.pinnedPeerCertificateChainSha256.split("\n")
-                                                    .filter { it.isNotBlank() }
+                                                        .filter { it.isNotBlank() }
                                         }
 
                                         if (bean.allowInsecure) {
@@ -604,25 +608,25 @@ fun buildV2RayConfig(
                                                     if (bean.host.isNotBlank() || bean.path.isNotBlank()) {
                                                         request =
                                                             TcpObject.HeaderObject.HTTPRequestObject()
-                                                                .apply {
-                                                                    headers = mutableMapOf()
-                                                                    if (bean.host.isNotBlank()) {
-                                                                        headers["Host"] =
-                                                                            TcpObject.HeaderObject.StringOrListObject()
-                                                                                .apply {
-                                                                                    valueY =
-                                                                                        bean.host.split(
-                                                                                            ","
-                                                                                        )
-                                                                                            .map { it.trim() }
-                                                                                }
+                                                                    .apply {
+                                                                        headers = mutableMapOf()
+                                                                        if (bean.host.isNotBlank()) {
+                                                                            headers["Host"] =
+                                                                                TcpObject.HeaderObject.StringOrListObject()
+                                                                                        .apply {
+                                                                                            valueY =
+                                                                                                bean.host.split(
+                                                                                                    ","
+                                                                                                )
+                                                                                                        .map { it.trim() }
+                                                                                        }
+                                                                        }
+                                                                        if (bean.path.isNotBlank()) {
+                                                                            path = bean.path.split(
+                                                                                ","
+                                                                            )
+                                                                        }
                                                                     }
-                                                                    if (bean.path.isNotBlank()) {
-                                                                        path = bean.path.split(
-                                                                            ","
-                                                                        )
-                                                                    }
-                                                                }
                                                     }
                                                 }
                                             }
@@ -712,12 +716,12 @@ fun buildV2RayConfig(
                                 ShadowsocksOutboundConfigurationObject().apply {
                                     servers =
                                         listOf(ShadowsocksOutboundConfigurationObject.ServerObject()
-                                            .apply {
-                                                address = bean.serverAddress
-                                                port = bean.serverPort
-                                                method = bean.method
-                                                password = bean.password
-                                            })
+                                                .apply {
+                                                    address = bean.serverAddress
+                                                    port = bean.serverPort
+                                                    method = bean.method
+                                                    password = bean.password
+                                                })
                                     if (needKeepAliveInterval) {
                                         streamSettings = StreamSettingsObject().apply {
                                             sockopt = StreamSettingsObject.SockoptObject().apply {
@@ -733,12 +737,12 @@ fun buildV2RayConfig(
                                 TrojanOutboundConfigurationObject().apply {
                                     servers =
                                         listOf(TrojanOutboundConfigurationObject.ServerObject()
-                                            .apply {
-                                                address = bean.serverAddress
-                                                port = bean.serverPort
-                                                password = bean.password
-                                                level = 8
-                                            })
+                                                .apply {
+                                                    address = bean.serverAddress
+                                                    port = bean.serverPort
+                                                    password = bean.password
+                                                    level = 8
+                                                })
                                 })
                             streamSettings = StreamSettingsObject().apply {
                                 network = "tcp"
@@ -871,7 +875,7 @@ fun buildV2RayConfig(
                     }
                 })
                 if (tagOutbound == TAG_AGENT) {
-                    routing.rules.add(RoutingObject.RuleObject().apply {
+                    rootBalancer = RoutingObject.RuleObject().apply {
                         type = "field"
                         inboundTag = mutableListOf()
 
@@ -879,7 +883,7 @@ fun buildV2RayConfig(
                         if (requireHttp) inboundTag.add(TAG_HTTP)
                         if (requireTransproxy) inboundTag.add(TAG_TRANS)
                         balancerTag = "balancer-$tagOutbound"
-                    })
+                    }
                     outbounds.add(0, OutboundObject().apply {
                         protocol = "loopback"
                         settings = LazyOutboundConfigurationObject(
@@ -1154,12 +1158,14 @@ fun buildV2RayConfig(
                 )
             }
 
-            routing.rules.add(0, RoutingObject.RuleObject().apply {
+            routing.rules.add(RoutingObject.RuleObject().apply {
                 type = "field"
                 inboundTag = listOf(TAG_DNS_IN)
                 outboundTag = TAG_DNS_OUT
             })
         }
+
+        if (rootBalancer != null) routing.rules.add(rootBalancer)
 
         stats = emptyMap()
 
@@ -1224,9 +1230,10 @@ fun buildCustomConfig(
 
     val bean = proxy.configBean!!
     val config = JSONObject(bean.content)
-    val inbounds = config.getJSONArray("inbounds")?.filterIsInstance<JSONObject>()
-        ?.map { gson.fromJson(it.toString(), InboundObject::class.java) }?.toMutableList()
-        ?: ArrayList()
+    val inbounds = config.getJSONArray("inbounds")
+            ?.filterIsInstance<JSONObject>()
+            ?.map { gson.fromJson(it.toString(), InboundObject::class.java) }
+            ?.toMutableList() ?: ArrayList()
 
     val dnsArr = config.getJSONObject("dns")?.getJSONArray("servers")?.map {
         if (it is String) DnsObject.StringOrServerObject().apply {
