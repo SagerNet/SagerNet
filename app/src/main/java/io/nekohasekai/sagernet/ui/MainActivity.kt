@@ -34,10 +34,7 @@ import cn.hutool.core.util.ZipUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import io.nekohasekai.sagernet.GroupType
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
@@ -132,6 +129,14 @@ class MainActivity : ThemedActivity(),
             // cleartext format
             subscription.link = url
             group.name = uri.getQueryParameter("name")
+
+            val type = uri.getQueryParameter("type")
+            when (type?.lowercase()) {
+                "sip008" -> {
+                    subscription.type = SubscriptionType.SIP008
+                }
+            }
+
         } else {
             val data = uri.encodedQuery.takeIf { !it.isNullOrBlank() } ?: return
             try {
