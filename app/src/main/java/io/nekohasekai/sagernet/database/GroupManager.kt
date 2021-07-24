@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.database
 
 import io.nekohasekai.sagernet.bg.SubscriptionUpdater
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.utils.DirectBoot
 
 object GroupManager {
@@ -104,7 +105,7 @@ object GroupManager {
 
     suspend fun createGroup(group: ProxyGroup): ProxyGroup {
         group.userOrder = SagerDatabase.groupDao.nextOrder() ?: 1
-        group.id = SagerDatabase.groupDao.createGroup(group)
+        group.id = SagerDatabase.groupDao.createGroup(group.applyDefaultValues())
         iterator { groupAdd(group) }
         return group
     }

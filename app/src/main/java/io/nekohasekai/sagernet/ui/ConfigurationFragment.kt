@@ -92,7 +92,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
     lateinit var groupPager: ViewPager2
-    val selectedGroup get() = adapter.groupList[tabLayout.selectedTabPosition]
+    val selectedGroup get() = if (tabLayout.isGone) adapter.groupList[0] else adapter.groupList[tabLayout.selectedTabPosition]
     val alwaysShowAddress by lazy { DataStore.alwaysShowAddress }
     val securityAdvisory by lazy { DataStore.securityAdvisory }
 
@@ -206,7 +206,6 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     suspend fun import(proxies: List<AbstractBean>) {
-        val selectedGroup = selectedGroup
         val targetId = DataStore.selectedGroupForImport()
         val targetIndex = adapter.groupList.indexOfFirst { it.id == targetId }
 

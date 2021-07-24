@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 @Entity(tableName = "proxy_groups")
 data class ProxyGroup(
@@ -43,8 +44,7 @@ data class ProxyGroup(
     var export = false
 
     override fun initializeDefaultValues() {
-        userOrder = 0L;
-        ungrouped = false;
+        subscription?.applyDefaultValues()
     }
 
     override fun serializeToBuffer(output: ByteBufferOutput) {

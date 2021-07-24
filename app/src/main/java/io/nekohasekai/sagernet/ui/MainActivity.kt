@@ -123,7 +123,7 @@ class MainActivity : ThemedActivity(),
         val url = uri.getQueryParameter("url")
         if (!url.isNullOrBlank()) {
             group = ProxyGroup(type = GroupType.SUBSCRIPTION)
-            val subscription = SubscriptionBean().applyDefaultValues()
+            val subscription = SubscriptionBean()
             group.subscription = subscription
 
             // cleartext format
