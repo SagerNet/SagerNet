@@ -117,6 +117,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         groupPager = view.findViewById(R.id.group_pager)
         tabLayout = view.findViewById(R.id.group_tab)
         adapter = GroupPagerAdapter()
+        ProfileManager.addListener(adapter)
         GroupManager.addListener(adapter)
 
         groupPager.adapter = adapter
@@ -176,6 +177,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     override fun onDestroy() {
         if (::adapter.isInitialized) {
             GroupManager.removeListener(adapter)
+            ProfileManager.removeListener(adapter)
         }
 
         super.onDestroy()
@@ -461,7 +463,8 @@ class ConfigurationFragment @JvmOverloads constructor(
     inner class TestDialog {
         val binding = LayoutProgressBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
-                .setNegativeButton(android.R.string.cancel,
+                .setNegativeButton(
+                    android.R.string.cancel,
                     DialogInterface.OnClickListener { _, _ ->
                         cancel()
                     })
@@ -781,6 +784,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     inner class GroupPagerAdapter : FragmentStateAdapter(this),
+        ProfileManager.Listener,
         GroupManager.Listener {
 
         var selectedGroupIndex = 0
@@ -877,6 +881,24 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         override suspend fun groupUpdated(groupId: Long) = Unit
+
+        override suspend fun onAdd(profile: ProxyEntity) {
+            if (groupList.find { it.id == profile.groupId } == null) {
+                DataStore.selectedGroup = profile.groupId
+                reload()
+            }
+        }
+
+        override suspend fun onUpdated(profileId: Long, trafficStats: TrafficStats) = Unit
+
+        override suspend fun onUpdated(profile: ProxyEntity) = Unit
+
+        override suspend fun onRemoved(groupId: Long, profileId: Long) {
+            val group = groupList.find { it.id == groupId } ?: return
+            if (group.ungrouped && SagerDatabase.proxyDao.countByGroup(groupId) == 0L) {
+                reload()
+            }
+        }
     }
 
     class GroupFragment : Fragment() {
@@ -1111,9 +1133,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                 runOnDefaultDispatcher {
                     for (entity in profiles) {
                         ProfileManager.deleteProfile(entity.groupId, entity.id)
-                    }
-                    if (proxyGroup.ungrouped && configurationIdList.isEmpty()) {
-                        (requireParentFragment() as ConfigurationFragment).adapter.reload()
                     }
                 }
             }

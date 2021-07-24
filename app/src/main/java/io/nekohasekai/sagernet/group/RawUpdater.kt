@@ -101,7 +101,7 @@ object RawUpdater : GroupUpdater() {
         }
         proxies = proxiesMap.values.toList()
 
-        if (subscription.forceResolve) forceResolve(okHttpClient, proxies, proxyGroup.id)
+        if (subscription.forceResolve) forceResolve(httpClient, proxies, proxyGroup.id)
 
         if (subscription.forceVMessAEAD) {
             proxies.filterIsInstance<VMessBean>().forEach { it.alterId = 0 }

@@ -32,7 +32,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.ktx.okHttpClient
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -47,7 +46,7 @@ object SIP008Updater : GroupUpdater() {
     ) {
 
         val link = subscription.link
-        val sip008Response:JSONObject
+        val sip008Response: JSONObject
         if (link.startsWith("content://")) {
             val contentText =
                 app.contentResolver.openInputStream(Uri.parse(link))?.bufferedReader()?.readText()
@@ -56,15 +55,13 @@ object SIP008Updater : GroupUpdater() {
                 ?: error(app.getString(R.string.no_proxies_found_in_subscription))
         } else {
 
-            val response = httpClient.newCall(Request.Builder()
-                    .url(subscription.link)
-                    .header("User-Agent",
-                        subscription.customUserAgent.takeIf { it.isNotBlank() }
-                            ?: "SagerNet/${BuildConfig.VERSION_NAME}")
-                    .build()).execute().apply {
-                if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
-                if (body == null) error("ERROR: Empty response")
-            }
+            val response =
+                httpClient.newCall(Request.Builder().url(subscription.link).header("User-Agent",
+                    subscription.customUserAgent.takeIf { it.isNotBlank() }
+                        ?: "SagerNet/${BuildConfig.VERSION_NAME}").build()).execute().apply {
+                    if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
+                    if (body == null) error("ERROR: Empty response")
+                }
 
             Logs.d(response.toString())
 
@@ -86,7 +83,7 @@ object SIP008Updater : GroupUpdater() {
             profiles.add(bean)
         }
 
-        if (subscription.forceResolve) forceResolve(okHttpClient, profiles, proxyGroup.id)
+        if (subscription.forceResolve) forceResolve(httpClient, profiles, proxyGroup.id)
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
@@ -163,8 +160,9 @@ object SIP008Updater : GroupUpdater() {
                 }
             } else {
                 changed++
-                SagerDatabase.proxyDao.addProxy(ProxyEntity(groupId = proxyGroup.id,
-                        userOrder = userOrder).apply {
+                SagerDatabase.proxyDao.addProxy(ProxyEntity(
+                    groupId = proxyGroup.id, userOrder = userOrder
+                ).apply {
                     putBean(bean)
                 })
                 added.add(name)
@@ -191,13 +189,9 @@ object SIP008Updater : GroupUpdater() {
         SagerDatabase.groupDao.updateGroup(proxyGroup)
         finishUpdate(proxyGroup)
 
-        userInterface?.onUpdateSuccess(proxyGroup,
-                changed,
-                added,
-                updated,
-                deleted,
-                duplicate,
-                byUser)
+        userInterface?.onUpdateSuccess(
+            proxyGroup, changed, added, updated, deleted, duplicate, byUser
+        )
     }
 
     fun appendExtraInfo(profile: JSONObject, bean: AbstractBean) {

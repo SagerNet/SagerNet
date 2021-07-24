@@ -41,7 +41,7 @@ import java.net.Socket
 val okHttpClient = OkHttpClient.Builder()
     .followRedirects(true)
     .followSslRedirects(true)
-    .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
+    .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT, ConnectionSpec.RESTRICTED_TLS))
     .build()
 
 private lateinit var proxyClient: OkHttpClient

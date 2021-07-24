@@ -188,13 +188,13 @@ abstract class GroupUpdater {
 
                 val timeout = Duration.ofSeconds(5)
                 val httpClient = createProxyClient().newBuilder()
-                    .connectTimeout(timeout)
-                    .readTimeout(timeout)
-                    .build()
+                        .connectTimeout(timeout)
+                        .readTimeout(timeout)
+                        .build()
                 val userInterface = GroupManager.userInterface
 
                 if (userInterface != null) {
-                    if (subscription.updateWhenConnectedOnly && !connected) {
+                    if ((subscription.link?.startsWith("http://") == true || subscription.updateWhenConnectedOnly) && !connected) {
                         if (!userInterface.confirm(app.getString(R.string.update_subscription_warning))) {
                             finishUpdate(proxyGroup)
                             cancel()
