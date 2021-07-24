@@ -113,6 +113,7 @@ jobs:
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          ./run init action library
           ./gradlew :plugin:naive:assembleOssRelease
           APK=$(find plugin/naive/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
@@ -240,4 +241,5 @@ jobs:
           cat > service_account_credentials.json << EOF
           ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
           EOF
+          ./run init action library
           ./gradlew :plugin:naive:publishPlayReleaseBundle
