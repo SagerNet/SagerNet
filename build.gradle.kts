@@ -4,7 +4,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("com.github.ben-manes.versions") version "0.39.0" apply false
-    id("com.google.protobuf") version "0.8.16" apply false
+    id("com.google.protobuf") version "0.8.17" apply false
 }
 
 buildscript {
@@ -23,8 +23,8 @@ buildscript {
 
         classpath("com.android.tools.build:gradle:$androidPluginVersion")
         classpath(kotlin("gradle-plugin", kotlinVersion))
-        classpath("org.mozilla.rust-android-gradle:plugin:0.8.6")
-        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.0")
+        classpath("org.mozilla.rust-android-gradle:plugin:0.8.7")
+        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.1")
         classpath("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
     }
 }

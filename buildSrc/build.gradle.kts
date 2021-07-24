@@ -12,7 +12,7 @@ dependencies {
     implementation("com.android.tools.build:gradle-api:$androidPluginVersion")
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib"))
-    implementation("cn.hutool:hutool-crypto:5.7.4")
+    implementation("cn.hutool:hutool-crypto:5.7.5")
     implementation("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
     implementation("org.kohsuke:github-api:1.131")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
