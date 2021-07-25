@@ -327,7 +327,7 @@
     <string name="append_http_proxy_sum">浏览器 / 一些支持的应用 将直接使用 HTTP 代理, 而不经过虚拟网卡设备 (Android 10+)</string>
     <string name="vpn_settings">VPN 设置</string>
     <string name="vpn_mode">VPN 模式</string>
-    <string name="vpn_mode_forwarding">原生转发 (实验性)</string>
+    <string name="vpn_mode_forwarding">原生转发</string>
     <string name="multi_thread_forwarding">并发转发</string>
     <string name="multi_thread_forwarding_sum">使用协程转发 TCP/IP 流量, 使用更多 CPU, 仅适用于大流量场景</string>
     <string name="icmp_echo_strategy">ICMP Echo 策略</string>

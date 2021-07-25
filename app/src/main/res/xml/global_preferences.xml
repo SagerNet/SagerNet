@@ -82,7 +82,7 @@
 
     <PreferenceCategory app:title="@string/vpn_settings">
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
+            app:defaultValue="1"
             app:entries="@array/vpn_mode"
             app:entryValues="@array/int_array_2"
             app:icon="@drawable/ic_baseline_vpn_key_24"
