@@ -34,6 +34,14 @@ object EditTextPreferenceModifiers {
         }
     }
 
+    object Hosts : EditTextPreference.OnBindEditTextListener {
+
+        override fun onBindEditText(editText: EditText) {
+            editText.setHorizontallyScrolling(true)
+            editText.setSelection(editText.text.length)
+        }
+    }
+
     object Port : EditTextPreference.OnBindEditTextListener {
         private val portLengthFilter = arrayOf(InputFilter.LengthFilter(5))
 

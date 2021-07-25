@@ -206,11 +206,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             providerTrojan.setEntryValues(R.array.trojan_provider_value)
         }
 
+        val dnsHosts = findPreference<EditTextPreference>(Key.DNS_HOSTS)!!
+
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         muxConcurrency.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portSocks5.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         portHttp.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         apiPort.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+        dnsHosts.setOnBindEditTextListener(EditTextPreferenceModifiers.Hosts)
 
         val metedNetwork = findPreference<Preference>(Key.METERED_NETWORK)!!
         if (Build.VERSION.SDK_INT < 28) {
@@ -243,6 +246,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         directDns.onPreferenceChangeListener = reloadListener
         enableDnsRouting.onPreferenceChangeListener = reloadListener
         enableFakeDns.onPreferenceChangeListener = reloadListener
+        dnsHosts.onPreferenceChangeListener = reloadListener
 
         portLocalDns.onPreferenceChangeListener = reloadListener
         ipv6Mode.onPreferenceChangeListener = reloadListener

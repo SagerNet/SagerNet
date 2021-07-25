@@ -90,7 +90,7 @@ fun String.unwrapHost(): String {
 }
 
 fun AbstractBean.wrapUri(): String {
-    return if (Validator.isIpv6(serverAddress)) {
+    return if (Validator.isIpv6(finalAddress)) {
         "[$finalAddress]:$finalPort"
     } else {
         "$finalAddress:$finalPort"

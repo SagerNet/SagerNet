@@ -141,7 +141,6 @@ open class V2RayInstance(val profile: ProxyEntity) {
                         pluginConfigs[port] = profile.type to bean.buildRelayBatonConfig(port)
                     }
                     bean is BrookBean -> {
-                        if (needChain) error("Brook is incompatible with chain")
                         initPlugin("brook-plugin")
                     }
                     bean is ConfigBean -> {

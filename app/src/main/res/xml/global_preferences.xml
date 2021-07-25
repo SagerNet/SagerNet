@@ -201,13 +201,19 @@
             app:key="directDns"
             app:title="@string/direct_dns"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="domain:googleapis.cn googleapis.com"
+            app:icon="@drawable/ic_baseline_transform_24"
+            app:key="dnsHosts"
+            app:title="@string/dns_hosts"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_camera_24"
             app:key="enableDnsRouting"
             app:summary="@string/dns_routing_message"
             app:title="@string/enable_dns_routing" />
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_transform_24"
+            app:icon="@drawable/ic_action_lock"
             app:key="enableFakeDns"
             app:summary="@string/fakedns_message"
             app:title="@string/enable_fakedns" />

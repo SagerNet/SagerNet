@@ -343,8 +343,6 @@
     <string name="protocol_settings">协议设置</string>
     <string name="trojan_provider">Trojan 提供程序</string>
     <string name="ss_aead_provider">Shadowsocks AEAD 提供程序</string>
-    <string name="dns_hijacking">DNS 劫持</string>
-    <string name="dns_hijacking_sum">劫持所有 53 端口的传入连接到本地 DNS</string>
     <string name="group_basic">基本</string>
     <string name="group_settings">分组设置</string>
     <string name="subscription">订阅</string>
@@ -400,5 +398,6 @@
     <string name="dns_routing_message">使用直连 DNS 解析绕过路由中的 domains. 注意潜在的 DNS 泄漏</string>
     <string name="enable_fakedns">启用 FakeDNS</string>
     <string name="fakedns_message">可能导致其他应用程序在代理停止后需要重新启动以重新连接到网络</string>
+    <string name="dns_hosts">域名重写</string>
 
 </resources>

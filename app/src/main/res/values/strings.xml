@@ -93,6 +93,7 @@
     <string name="dns_routing_message">Resolve domains in bypass routes with Direct DNS. Be aware of potential DNS leaks</string>
     <string name="enable_fakedns">Enable FakeDNS</string>
     <string name="fakedns_message">May cause other applications need to be restarted to reconnect to the network after proxy stopped</string>
+    <string name="dns_hosts">Domain rewrite</string>
 
     <string name="port_local_dns">Local DNS Port</string>
     <string name="require_transproxy">Enable Transproxy Inbound</string>
@@ -385,8 +386,6 @@
     <string name="icmp_echo_strategy">ICMP Echo Strategy</string>
     <string name="icmp_echo_reply_delay">ICMP Echo Reply Delay</string>
     <string name="ip_other_strategy">Other Internet Protocol Strategy</string>
-    <string name="dns_hijacking">DNS Hijacking</string>
-    <string name="dns_hijacking_sum">Hijack incoming connections with port 53 to Local DNS</string>
 
     <string name="drop">Drop</string>
     <string name="direct">Direct</string>

@@ -140,7 +140,9 @@ fun buildV2RayConfig(proxy: ProxyEntity, forTest: Boolean = false, testPort: Int
     return V2RayConfig().apply {
 
         dns = DnsObject().apply {
-            hosts = mapOf("domain:googleapis.cn" to "googleapis.com")
+            hosts = DataStore.hosts.split("\n")
+                .associate { it.substringBefore(" ") to it.substringAfter(" ") }
+                .toMutableMap()
             servers = mutableListOf()
 
             servers.addAll(remoteDns.map {
