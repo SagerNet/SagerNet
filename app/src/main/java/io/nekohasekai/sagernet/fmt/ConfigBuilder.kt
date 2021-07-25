@@ -509,7 +509,7 @@ fun buildV2RayConfig(proxy: ProxyEntity, forTest: Boolean = false, testPort: Int
                                         }
 
                                         if (bean.alpn.isNotBlank()) {
-                                            alpn = bean.alpn.split(",")
+                                            alpn = bean.alpn.split("\n")
                                         }
 
                                         if (bean.certificates.isNotBlank()) {
@@ -668,9 +668,12 @@ fun buildV2RayConfig(proxy: ProxyEntity, forTest: Boolean = false, testPort: Int
                             streamSettings = StreamSettingsObject().apply {
                                 network = "tcp"
                                 security = "tls"
-                                if (bean.sni.isNotBlank()) {
-                                    tlsSettings = TLSObject().apply {
+                                tlsSettings = TLSObject().apply {
+                                    if (bean.sni.isNotBlank()) {
                                         serverName = bean.sni
+                                    }
+                                    if (bean.alpn.isNotBlank()) {
+                                        alpn = bean.alpn.split("\n")
                                     }
                                 }
                                 if (needKeepAliveInterval) {
