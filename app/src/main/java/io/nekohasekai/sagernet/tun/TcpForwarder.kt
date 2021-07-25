@@ -51,12 +51,7 @@ class TcpForwarder(val tun: TunThread) {
         }
     }
 
-    class TcpSession(
-        val localAddress: InetAddress,
-        val localPort: Short,
-        val remoteAddress: InetAddress,
-        val remotePort: Short
-    ) {
+    class TcpSession(val localAddress: InetAddress, val localPort: Short, val remoteAddress: InetAddress, val remotePort: Short) {
         val time = SystemClock.elapsedRealtime() + LAUNCH_DELAY
         var uid = 0
         var packages: Array<String>? = null
@@ -65,9 +60,7 @@ class TcpForwarder(val tun: TunThread) {
 
     fun processTcp(packet: ByteArray, ipHeader: IPHeader) {
 
-        val tcpHeader = TCPHeader(
-            ipHeader, packet, ipHeader.headerLength
-        )
+        val tcpHeader = TCPHeader(ipHeader, packet, ipHeader.headerLength)
         val localIp = ipHeader.sourceAddress
         val localPort = tcpHeader.sourcePort
         val remoteIp = ipHeader.destinationAddress
@@ -85,40 +78,30 @@ class TcpForwarder(val tun: TunThread) {
                 tcpSessions.put(localPort, session)
                 if (tun.dumpUid) {
                     session.uid = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        SagerNet.connectivity.getConnectionOwnerUid(
-                            OsConstants.IPPROTO_TCP, InetSocketAddress(
-                                session.localAddress,
-                                session.localPort.toUShort().toInt(),
-                            ), InetSocketAddress(
-                                session.remoteAddress, session.remotePort.toUShort().toInt()
-                            )
-                        )
+                        SagerNet.connectivity.getConnectionOwnerUid(OsConstants.IPPROTO_TCP, InetSocketAddress(
+                            session.localAddress,
+                            session.localPort.toUShort().toInt(),
+                        ), InetSocketAddress(session.remoteAddress, session.remotePort.toUShort()
+                            .toInt()))
                     } else {
-                        UidDumperLegacy.dumpUid(
-                            UidDumperLegacy.TCP_IPV4_PROC,
-                            UidDumperLegacy.IPV4_PATTERN,
-                            session.localPort.toUShort().toInt()
-                        )
+                        UidDumperLegacy.dumpUid(UidDumperLegacy.TCP_IPV4_PROC, UidDumperLegacy.IPV4_PATTERN, session.localPort.toUShort()
+                            .toInt())
                     }
 
                     session.packages = app.packageManager.getPackagesForUid(session.uid)
 
-                    if (tun.enableLog) Logs.d(
-                        "Accepted tcp connection from ${session.packages?.joinToString() ?: "unknown app"}: ${ipHeader.sourceAddress.hostAddress}:${
-                            tcpHeader.sourcePort.toUShort().toInt()
-                        } ==> ${ipHeader.destinationAddress}:${
-                            tcpHeader.destinationPort.toUShort().toInt()
-                        }"
-                    )
+                    if (tun.enableLog) Logs.d("Accepted tcp connection from ${session.packages?.joinToString() ?: "unknown app"}: ${ipHeader.sourceAddress.hostAddress}:${
+                        tcpHeader.sourcePort.toUShort().toInt()
+                    } ==> ${ipHeader.destinationAddress}:${
+                        tcpHeader.destinationPort.toUShort().toInt()
+                    }")
 
                 } else if (tun.enableLog) {
-                    Logs.d(
-                        "Accepted tcp connection ${ipHeader.sourceAddress.hostAddress}:${
-                            tcpHeader.sourcePort.toUShort().toInt()
-                        } ==> ${ipHeader.destinationAddress}:${
-                            tcpHeader.destinationPort.toUShort().toInt()
-                        }"
-                    )
+                    Logs.d("Accepted tcp connection ${ipHeader.sourceAddress.hostAddress}:${
+                        tcpHeader.sourcePort.toUShort().toInt()
+                    } ==> ${ipHeader.destinationAddress}:${
+                        tcpHeader.destinationPort.toUShort().toInt()
+                    }")
 
                 }
 
@@ -182,57 +165,49 @@ class TcpForwarder(val tun: TunThread) {
             }
 
             var remotePort = session.remotePort.toUShort().toInt()
-            if (remotePort == 53 || remoteIp in arrayOf(
-                    VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
-                )
-            ) {
+            if (remotePort == 53 || remoteIp in arrayOf(VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER)) {
                 remoteIp = LOCALHOST
                 remotePort = tun.dnsPort
 
                 channelFeature = Bootstrap().group(tun.outboundLoop)
-                        .channel(NioSocketChannel::class.java)
-                        .handler(object : ChannelInitializer<Channel>() {
-                            override fun initChannel(channel: Channel) {
-                                channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
-                            }
-                        })
-                        .connect(remoteIp, remotePort)
-                        .addListener(ChannelFutureListener {
-                            if (it.isSuccess) {
-                                session.channel?.close()
-                                session.channel = it.channel()
-                            } else {
-                                ctx.fireExceptionCaught(it.cause())
-                            }
-                        })
+                    .channel(NioSocketChannel::class.java)
+                    .handler(object : ChannelInitializer<Channel>() {
+                        override fun initChannel(channel: Channel) {
+                            channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
+                        }
+                    })
+                    .connect(remoteIp, remotePort)
+                    .addListener(ChannelFutureListener {
+                        if (it.isSuccess) {
+                            session.channel?.close()
+                            session.channel = it.channel()
+                        } else {
+                            ctx.fireExceptionCaught(it.cause())
+                        }
+                    })
 
             } else {
                 channelFeature = Bootstrap().group(tun.outboundLoop)
-                        .channel(NioSocketChannel::class.java)
-                        .handler(object : ChannelInitializer<Channel>() {
-                            override fun initChannel(channel: Channel) {
-                                channel.pipeline().addFirst(
-                                    Socks5ProxyHandler(
-                                        InetSocketAddress(
-                                            LOCALHOST, DataStore.socksPort
-                                        )
-                                    )
-                                )
-                                channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
-                            }
-                        })
-                        .option(ChannelOption.SO_KEEPALIVE, true)
-                        .option(ChannelOption.AUTO_CLOSE, false)
-                        .option(ChannelOption.TCP_NODELAY, true)
-                        .connect(remoteIp, remotePort)
-                        .addListener(ChannelFutureListener {
-                            if (it.isSuccess) {
-                                session.channel?.close()
-                                session.channel = it.channel()
-                            } else {
-                                ctx.fireExceptionCaught(it.cause())
-                            }
-                        })
+                    .channel(NioSocketChannel::class.java)
+                    .handler(object : ChannelInitializer<Channel>() {
+                        override fun initChannel(channel: Channel) {
+                            channel.pipeline()
+                                .addFirst(Socks5ProxyHandler(InetSocketAddress(LOCALHOST, DataStore.socksPort)))
+                            channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
+                        }
+                    })
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.AUTO_CLOSE, false)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .connect(remoteIp, remotePort)
+                    .addListener(ChannelFutureListener {
+                        if (it.isSuccess) {
+                            session.channel?.close()
+                            session.channel = it.channel()
+                        } else {
+                            ctx.fireExceptionCaught(it.cause())
+                        }
+                    })
             }
 
         }
@@ -248,14 +223,14 @@ class TcpForwarder(val tun: TunThread) {
         }
 
         override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-            Logs.w(cause)
+            if (!tun.closed) Logs.w(cause)
             ctx.close()
             channelFeature.channel()?.close()
         }
 
     }
 
-    class ChannelForwardAdapter(val channel: Channel) : ChannelInboundHandlerAdapter() {
+    inner class ChannelForwardAdapter(val channel: Channel) : ChannelInboundHandlerAdapter() {
 
         override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
             channel.writeAndFlush(msg)
@@ -266,7 +241,7 @@ class TcpForwarder(val tun: TunThread) {
         }
 
         override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-            Logs.w(cause)
+            if (!tun.closed) Logs.w(cause)
             ctx.close()
             channel.close()
         }
@@ -282,17 +257,17 @@ class TcpForwarder(val tun: TunThread) {
 
     fun start() {
         channelFuture = ServerBootstrap().group(tun.serverLoop, tun.outboundLoop)
-                .channel(NioServerSocketChannel::class.java)
-                .childHandler(object : ChannelInitializer<Channel>() {
-                    override fun initChannel(channel: Channel) {
-                        channel.pipeline().addLast(Forwarder())
-                    }
+            .channel(NioServerSocketChannel::class.java)
+            .childHandler(object : ChannelInitializer<Channel>() {
+                override fun initChannel(channel: Channel) {
+                    channel.pipeline().addLast(Forwarder())
+                }
 
-                    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-                        Logs.w(cause)
-                    }
-                })
-                .bind(0)
+                override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+                    Logs.w(cause)
+                }
+            })
+            .bind(0)
     }
 
     fun destroy() {

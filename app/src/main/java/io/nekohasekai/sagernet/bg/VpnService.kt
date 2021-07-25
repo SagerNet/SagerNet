@@ -146,10 +146,9 @@ class VpnService : BaseVpnService(),
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
                 .setSession(profile.displayName())
                 .setMtu(VPN_MTU)
-        val dnsMode = DataStore.dnsModeFinal
-        val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
+        val useFakeDns = DataStore.enableFakeDns
         val ipv6Mode = DataStore.ipv6Mode
-        val enableExperimentalTun = DataStore.vpnMode == VpnMode.EXPERIMENTAL_FORWARDING
+        val useNativeForwarding = DataStore.vpnMode == VpnMode.EXPERIMENTAL_FORWARDING
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
         if (useFakeDns) {
@@ -186,21 +185,17 @@ class VpnService : BaseVpnService(),
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) builder.setMetered(metered)
 
-        val useSystemDns = dnsMode == DnsMode.SYSTEM
-
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
         val needBypassRootUid =
-            enableExperimentalTun || data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
+            useNativeForwarding || data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
         val needIncludeSelf =
-            enableExperimentalTun || data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
+            useNativeForwarding || data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
             val allApps by lazy {
-                packageManager.getInstalledPackages(
-                    PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES
-                ).filter {
+                packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS).filter {
                     when (it.packageName) {
                         packageName -> false
                         "android" -> true
@@ -243,13 +238,7 @@ class VpnService : BaseVpnService(),
             builder.addDisallowedApplication(packageName)
         }
 
-        if (useSystemDns) {
-            DataStore.systemDnsFinal.split("\n").forEach {
-                builder.addDnsServer(it)
-            }
-        } else {
-            builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
-        }
+        builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && DataStore.appendHttpProxy && DataStore.requireHttp) {
             builder.setHttpProxy(ProxyInfo.buildDirectProxy(LOCALHOST, DataStore.httpPort))
@@ -259,10 +248,10 @@ class VpnService : BaseVpnService(),
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        if (enableExperimentalTun) builder.setBlocking(enableExperimentalTun)
+        if (useNativeForwarding) builder.setBlocking(useNativeForwarding)
         conn = builder.establish() ?: throw NullConnectionException()
 
-        if (!enableExperimentalTun) {
+        if (!useNativeForwarding) {
             val cmd = arrayListOf(
                 File(applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS).canonicalPath,
                 "--netif-ipaddr",
@@ -276,16 +265,14 @@ class VpnService : BaseVpnService(),
                 "--loglevel",
                 "warning"
             )
-            if (!useSystemDns) {
-                cmd += "--dnsgw"
-                cmd += "$LOCALHOST:${DataStore.localDNSPort}"
-            }
+            cmd += "--dnsgw"
+            cmd += "$LOCALHOST:${DataStore.localDNSPort}"
             if (ipv6Mode != IPv6Mode.DISABLE) {
                 cmd += "--netif-ip6addr"
                 cmd += PRIVATE_VLAN6_ROUTER
             }
             cmd += "--enable-udprelay"
-            data.processes!!.start(cmd, onRestartCallback = {
+            data.proxy!!.processes.start(cmd, onRestartCallback = {
                 try {
                     sendFd(conn.fileDescriptor)
                 } catch (e: ErrnoException) {

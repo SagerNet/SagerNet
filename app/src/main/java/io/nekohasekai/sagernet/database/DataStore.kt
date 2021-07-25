@@ -56,7 +56,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     fun selectedGroupForImport(): Long {
         val groups = SagerDatabase.groupDao.allGroups()
         val sid = DataStore.selectedGroup
-        return (groups.find { it.id == sid && it.type == GroupType.BASIC } ?: groups.find { it.ungrouped }!!).id
+        return (groups.find { it.id == sid && it.type == GroupType.BASIC }
+            ?: groups.find { it.ungrouped }!!).id
     }
 
     var appTheme by configurationStore.int(Key.APP_THEME)
@@ -74,14 +75,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
-    var dnsMode by configurationStore.stringToInt(Key.DNS_MODE) { 2 }
-
     // https://github.com/SagerNet/SagerNet/issues/180
-    var systemDns by configurationStore.string(Key.SYSTEM_DNS) { "1.0.0.1" }
-    var localDns by configurationStore.string(Key.LOCAL_DNS) { "https://1.0.0.1/dns-query" }
-
-    var enableDomesticDns by configurationStore.boolean(Key.ENABLE_DOMESTIC_DNS)
-    var domesticDns by configurationStore.string(Key.DOMESTIC_DNS) { "https+local://223.5.5.5/dns-query" }
+    var remoteDns by configurationStore.string(Key.REMOTE_DNS) { "https://1.0.0.1/dns-query" }
+    var directDns by configurationStore.string(Key.DIRECT_DNS) { "https+local://223.5.5.5/dns-query" }
+    var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING)
+    var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS)
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
@@ -165,7 +163,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var multiThreadForward by configurationStore.boolean(Key.MULTI_THREAD_FORWARD)
     var icmpEchoStrategy by configurationStore.stringToInt(Key.ICMP_ECHO_STRATEGY)
     var icmpEchoReplyDelay by configurationStore.stringToLong(Key.ICMP_ECHO_REPLY_DELAY) { 50 }
-    var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY)
+    var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY) { PacketStrategy.DIRECT }
 
     // protocol
 
@@ -245,7 +243,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 1440 }
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
-    var dnsModeFinal by profileCacheStore.int("dnsModeFinal")
     var systemDnsFinal by profileCacheStore.string("systemDnsFinal")
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {

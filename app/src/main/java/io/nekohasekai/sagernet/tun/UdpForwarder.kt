@@ -261,7 +261,7 @@ class UdpForwarder(val tun: TunThread) {
             ctx: ChannelHandlerContext, cause: Throwable
         ) {
             ctx.close()
-            if (tun.enableLog) Logs.w(cause)
+            if (!tun.closed) Logs.w(cause)
         }
 
     }

@@ -190,32 +190,27 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">
-        <com.takisoft.preferencex.SimpleMenuPreference
-            android:defaultValue="2"
-            app:entries="@array/dns_mode_entry"
-            app:entryValues="@array/dns_mode_value"
-            app:icon="@drawable/ic_action_dns"
-            app:key="dnsMode"
-            app:title="@string/dns_mode"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:defaultValue="1.0.0.1"
-            app:key="systemDns"
-            app:title="@string/dns_system"
-            app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:defaultValue="https://1.0.0.1/dns-query"
-            app:key="localDns"
-            app:title="@string/dns_local"
+            app:icon="@drawable/ic_action_dns"
+            app:key="remoteDns"
+            app:title="@string/remote_dns"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:key="enableDomesticDns"
-            app:title="@string/enable_domestic_dns" />
         <EditTextPreference
             app:defaultValue="https+local://223.5.5.5/dns-query"
-            app:key="domesticDns"
-            app:title="@string/dns_domestic"
+            app:key="directDns"
+            app:title="@string/direct_dns"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_camera_24"
+            app:key="enableDnsRouting"
+            app:summary="@string/dns_routing_message"
+            app:title="@string/enable_dns_routing" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_transform_24"
+            app:key="enableFakeDns"
+            app:summary="@string/fakedns_message"
+            app:title="@string/enable_fakedns" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/inbound_settings">

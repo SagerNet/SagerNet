@@ -37,13 +37,11 @@ object Key {
     const val SERVICE_MODE = "serviceMode"
     const val MODE_VPN = "vpn"
     const val MODE_PROXY = "proxy"
-    const val MODE_TRANS = "transproxy"
 
-    const val DNS_MODE = "dnsMode"
-    const val SYSTEM_DNS = "systemDns"
-    const val LOCAL_DNS = "localDns"
-    const val ENABLE_DOMESTIC_DNS = "enableDomesticDns"
-    const val DOMESTIC_DNS = "domesticDns"
+    const val REMOTE_DNS = "remoteDns"
+    const val DIRECT_DNS = "directDns"
+    const val ENABLE_DNS_ROUTING = "enableDnsRouting"
+    const val ENABLE_FAKEDNS = "enableFakeDns"
 
     const val IPV6_MODE = "ipv6Mode"
 
@@ -188,13 +186,6 @@ object TrojanProvider {
 object ShadowsocksAEADProvider {
     const val V2RAY = 0
     const val SHADOWSOCKS_RUST = 1
-}
-
-object DnsMode {
-    const val SYSTEM = 0
-    const val LOCAL = 2
-    const val FAKEDNS = 3
-    const val FAKEDNS_LOCAL = 4
 }
 
 object IPv6Mode {

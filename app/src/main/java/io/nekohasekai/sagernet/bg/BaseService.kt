@@ -51,7 +51,11 @@ class BaseService {
         /**
          * Idle state is only used by UI and will never be returned by BaseService.
          */
-        Idle, Connecting(true), Connected(true), Stopping, Stopped,
+        Idle,
+        Connecting(true),
+        Connected(true),
+        Stopping,
+        Stopped,
     }
 
     interface ExpectedException
@@ -60,7 +64,6 @@ class BaseService {
 
     class Data internal constructor(private val service: Interface) {
         var state = State.Stopped
-        var processes: GuardedProcessPool? = null
         var proxy: ProxyInstance? = null
         var notification: ServiceNotification? = null
 
@@ -83,7 +86,8 @@ class BaseService {
         }
     }
 
-    class Binder(private var data: Data? = null) : ISagerNetService.Stub(), CoroutineScope,
+    class Binder(private var data: Data? = null) : ISagerNetService.Stub(),
+        CoroutineScope,
         AutoCloseable {
         private val callbacks = object : RemoteCallbackList<ISagerNetServiceCallback>() {
             override fun onCallbackDied(callback: ISagerNetServiceCallback?, cookie: Any?) {
@@ -194,7 +198,6 @@ class BaseService {
 
         override fun protect(fd: Int) {
             (data?.proxy?.service as VpnService?)?.protect(fd)
-            Logs.d("Protected $fd")
         }
 
         fun stateChanged(s: State, msg: String?) = launch {
@@ -238,7 +241,7 @@ class BaseService {
         val isVpnService get() = false
 
         suspend fun startProcesses() {
-            data.proxy!!.start()
+            data.proxy!!.launch()
         }
 
         fun startRunner() {
@@ -248,11 +251,7 @@ class BaseService {
         }
 
         fun killProcesses(scope: CoroutineScope) {
-            data.proxy?.stop()
-            data.processes?.run {
-                close(scope)
-                data.processes = null
-            }
+            data.proxy?.destroy(scope)
         }
 
         fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = true) {
@@ -273,7 +272,6 @@ class BaseService {
                         unregisterReceiver(data.closeReceiver)
                         data.closeReceiverRegistered = false
                     }
-                    data.proxy?.shutdown()
                     data.binder.profilePersisted(listOfNotNull(data.proxy).map { it.profile.id })
                     data.proxy = null
                 }
@@ -327,11 +325,11 @@ class BaseService {
                     Executable.killAll()    // clean up old processes
                     preInit()
                     try {
-                        proxy.init(this@Interface)
+                        proxy.init()
                     } catch (jsonEx: JSONException) {
                         error(jsonEx.readableMessage.replace("cn.hutool.json.", ""))
                     }
-                    data.processes = GuardedProcessPool {
+                    proxy.processes = GuardedProcessPool {
                         Logs.w(it)
                         stopRunner(false, it.readableMessage)
                     }

@@ -73,7 +73,7 @@
     <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as well</string>
     <string name="security_settings">Security Settings</string>
     <string name="allow_insecure">Allow Insecure</string>
-    <string name="allow_insecure_sum">Disable certificate checking. When enabled, this configuration is as secure as plaintext.</string>
+    <string name="allow_insecure_sum">Disable certificate checking. When enabled, this configuration is as secure as plaintext</string>
 
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="speed_detail">Proxy： %1$s↑ %2$s↓\nDirect： %3$s↑ %4$s↓</string>
@@ -87,16 +87,13 @@
 
     <string name="cag_dns">DNS Settings</string>
 
-    <string name="dns_mode" translatable="false">DNS Mode</string>
-    <string name="dns_mode_system">System</string>
-    <string name="dns_mode_local">Local</string>
-    <string name="dns_mode_fakedns" translatable="false">FakeDNS</string>
-    <string name="dns_mode_fakedns_local">FakeDNS + Local</string>
+    <string name="remote_dns">Remote DNS</string>
+    <string name="direct_dns">Direct DNS</string>
+    <string name="enable_dns_routing">Enable DNS Routing</string>
+    <string name="dns_routing_message">Resolve domains in bypass routes with Direct DNS. Be aware of potential DNS leaks</string>
+    <string name="enable_fakedns">Enable FakeDNS</string>
+    <string name="fakedns_message">May cause other applications need to be restarted to reconnect to the network after proxy stopped</string>
 
-    <string name="dns_system">System DNS</string>
-    <string name="dns_local">Local DNS</string>
-    <string name="enable_domestic_dns">Enable Domestic DNS</string>
-    <string name="dns_domestic">Domestic DNS</string>
     <string name="port_local_dns">Local DNS Port</string>
     <string name="require_transproxy">Enable Transproxy Inbound</string>
     <string name="transproxy_mode">Transproxy Mode</string>

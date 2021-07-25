@@ -145,11 +145,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
-        val dnsMode = findPreference<SimpleMenuPreference>(Key.DNS_MODE)!!
-        val systemDns = findPreference<EditTextPreference>(Key.SYSTEM_DNS)!!
-        val localDns = findPreference<EditTextPreference>(Key.LOCAL_DNS)!!
-        val enableDomesticDns = findPreference<SwitchPreference>(Key.ENABLE_DOMESTIC_DNS)!!
-        val domesticDns = findPreference<EditTextPreference>(Key.DOMESTIC_DNS)!!
+        val remoteDns = findPreference<EditTextPreference>(Key.REMOTE_DNS)!!
+        val directDns = findPreference<EditTextPreference>(Key.DIRECT_DNS)!!
+        val enableDnsRouting = findPreference<SwitchPreference>(Key.ENABLE_DNS_ROUTING)!!
+        val enableFakeDns = findPreference<SwitchPreference>(Key.ENABLE_FAKEDNS)!!
 
         val requireTransproxy = findPreference<SwitchPreference>(Key.REQUIRE_TRANSPROXY)!!
         val transproxyPort = findPreference<EditTextPreference>(Key.TRANSPROXY_PORT)!!
@@ -165,26 +164,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         requireTransproxy.setOnPreferenceChangeListener { _, newValue ->
             transproxyPort.isEnabled = newValue as Boolean
             transproxyMode.isEnabled = newValue
-            needReload()
-            true
-        }
-
-        fun updateDnsMode(newMode: Int) {
-            systemDns.isVisible = newMode == DnsMode.SYSTEM
-            val useLocalDns = newMode in intArrayOf(DnsMode.LOCAL, DnsMode.FAKEDNS_LOCAL)
-            localDns.isVisible = useLocalDns
-            enableDomesticDns.isVisible = useLocalDns
-            domesticDns.isVisible = useLocalDns
-            domesticDns.isEnabled = useLocalDns && enableDomesticDns.isChecked
-        }
-        updateDnsMode(DataStore.dnsMode)
-        enableDomesticDns.setOnPreferenceChangeListener { _, newValue ->
-            domesticDns.isEnabled = newValue as Boolean
-            needReload()
-            true
-        }
-        dnsMode.setOnPreferenceChangeListener { _, newValue ->
-            updateDnsMode((newValue as String).toInt())
             needReload()
             true
         }
@@ -205,13 +184,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 icmpEchoReplyDelay.isEnabled = icmpEchoStrategy.value == "${PacketStrategy.REPLY}"
             }
             ipOtherStrategy.isVisible = isForwarding
-
-            if (isForwarding) {
-                if (dnsMode.value == "${DnsMode.SYSTEM}") dnsMode.value = "${DnsMode.LOCAL}"
-                if (!enableDomesticDns.isChecked) {
-                    enableDomesticDns.isChecked = true
-                }
-            }
         }
 
         updateVpnMode(DataStore.vpnMode)
@@ -267,9 +239,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tcpKeepAliveInterval.onPreferenceChangeListener = reloadListener
         bypassLanInCoreOnly.onPreferenceChangeListener = reloadListener
 
-        systemDns.onPreferenceChangeListener = reloadListener
-        localDns.onPreferenceChangeListener = reloadListener
-        domesticDns.onPreferenceChangeListener = reloadListener
+        remoteDns.onPreferenceChangeListener = reloadListener
+        directDns.onPreferenceChangeListener = reloadListener
+        enableDnsRouting.onPreferenceChangeListener = reloadListener
+        enableFakeDns.onPreferenceChangeListener = reloadListener
 
         portLocalDns.onPreferenceChangeListener = reloadListener
         ipv6Mode.onPreferenceChangeListener = reloadListener

@@ -46,6 +46,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
 
     private lateinit var fd: FileDescriptor
 
+    val closed get() = service.data.proxy?.closed == true
     val loggingHandler = LoggingHandler(LogLevel.TRACE)
     val serverLoop = NioEventLoopGroup()
     val outboundLoop = NioEventLoopGroup()

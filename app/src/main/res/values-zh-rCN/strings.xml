@@ -260,14 +260,6 @@
     <string name="theme">主题颜色</string>
     <string name="donate">捐款</string>
     <string name="donate_info">世界很可爱 请给世界钱</string>
-    <string name="dns_mode">DNS 模式</string>
-    <string name="dns_mode_system">系统</string>
-    <string name="dns_mode_local">本地</string>
-    <string name="dns_mode_fakedns_local">FakeDNS + 本地</string>
-    <string name="dns_system">系统 DNS</string>
-    <string name="dns_local">本地 DNS</string>
-    <string name="enable_domestic_dns">启用国内 DNS</string>
-    <string name="dns_domestic">国内 DNS</string>
     <string name="extra_headers">附加标头</string>
     <string name="username">用户名</string>
     <string name="key_opt">密码 (可选)</string>
@@ -402,5 +394,11 @@
     <string name="no_proxies_found_in_subscription">未在此订阅内找到服务器配置</string>
     <string name="action_export">导出</string>
     <string name="clear_profiles_message">您确定要清空该分组吗?</string>
+    <string name="remote_dns">远程 DNS</string>
+    <string name="direct_dns">直连 DNS</string>
+    <string name="enable_dns_routing">启用 DNS 路由</string>
+    <string name="dns_routing_message">使用直连 DNS 解析绕过路由中的 domains. 注意潜在的 DNS 泄漏</string>
+    <string name="enable_fakedns">启用 FakeDNS</string>
+    <string name="fakedns_message">可能导致其他应用程序在代理停止后需要重新启动以重新连接到网络</string>
 
 </resources>

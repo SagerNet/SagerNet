@@ -67,6 +67,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(
@@ -122,6 +123,8 @@ data class ProxyEntity(
         val configName by lazy { app.getString(R.string.custom_config) }
         val balancerName by lazy { app.getString(R.string.balancer) }
 
+        private val placeHolderBean = SOCKSBean().applyDefaultValues()
+
         @JvmField
         val CREATOR = object : Parcelable.Creator<ProxyEntity> {
             override fun createFromParcel(parcel: Parcel): ProxyEntity {
@@ -143,7 +146,12 @@ data class ProxyEntity(
     var stats: TrafficStats? = null
 
     constructor(parcel: Parcel) : this(
-        parcel.readLong(), parcel.readLong(), parcel.readInt(), parcel.readLong(), parcel.readLong(), parcel.readLong()
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readInt(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong()
     ) {
         dirty = parcel.readByte() > 0
         val byteArray = ByteArray(parcel.readInt())
@@ -344,7 +352,7 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> true
             TYPE_RELAY_BATON -> true
             TYPE_BROOK -> true
-            TYPE_CONFIG -> false
+            TYPE_CONFIG -> true
 
             TYPE_CHAIN -> false
             TYPE_BALANCER -> false

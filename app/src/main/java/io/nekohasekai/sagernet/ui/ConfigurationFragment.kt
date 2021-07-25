@@ -59,6 +59,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.bg.TestInstance
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
@@ -70,11 +71,9 @@ import io.nekohasekai.sagernet.group.RawUpdater
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.profile.*
-import io.nekohasekai.sagernet.utils.TestInstance
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
-import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -187,8 +186,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (it != null) runOnDefaultDispatcher {
             try {
                 val fileText = requireContext().contentResolver.openInputStream(it)!!
-                        .bufferedReader()
-                        .readText()
+                    .bufferedReader()
+                    .readText()
                 val proxies = RawUpdater.parseRaw(fileText)
                 if (proxies.isNullOrEmpty()) onMainDispatcher {
                     snackbar(getString(R.string.no_proxies_found_in_file)).show()
@@ -222,11 +221,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
 
-            snackbar(
-                requireContext().resources.getQuantityString(
-                    R.plurals.added, proxies.size, proxies.size
-                )
-            ).show()
+            snackbar(requireContext().resources.getQuantityString(R.plurals.added,
+                proxies.size,
+                proxies.size)).show()
         }
 
     }
@@ -386,23 +383,21 @@ class ConfigurationFragment @JvmOverloads constructor(
                     onMainDispatcher {
 
                         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_groups)
-                                .setMultiChoiceItems(
-                                    groups, checked
-                                ) { _, which, isChecked ->
-                                    val selected = groups[which]
-                                    if (isChecked) {
-                                        subscription.selectedGroups.add(selected)
-                                    } else {
-                                        subscription.selectedGroups.remove(selected)
-                                    }
+                            .setMultiChoiceItems(groups, checked) { _, which, isChecked ->
+                                val selected = groups[which]
+                                if (isChecked) {
+                                    subscription.selectedGroups.add(selected)
+                                } else {
+                                    subscription.selectedGroups.remove(selected)
                                 }
-                                .setPositiveButton(android.R.string.ok) { _, _ ->
-                                    runOnDefaultDispatcher {
-                                        GroupManager.updateGroup(group)
-                                    }
+                            }
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                runOnDefaultDispatcher {
+                                    GroupManager.updateGroup(group)
                                 }
-                                .setNegativeButton(android.R.string.cancel, null)
-                                .show()
+                            }
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show()
 
                     }
 
@@ -421,8 +416,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
                     val groups = profiles.flatMap { it.requireBean().tags ?: listOf() }
-                            .toSet()
-                            .toTypedArray()
+                        .toSet()
+                        .toTypedArray()
                     val checked = groups.map { it in subscription.selectedTags }.toBooleanArray()
 
                     if (groups.isEmpty()) {
@@ -433,23 +428,21 @@ class ConfigurationFragment @JvmOverloads constructor(
                     onMainDispatcher {
 
                         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_tags)
-                                .setMultiChoiceItems(
-                                    groups, checked
-                                ) { _, which, isChecked ->
-                                    val selected = groups[which]
-                                    if (isChecked) {
-                                        subscription.selectedTags.add(selected)
-                                    } else {
-                                        subscription.selectedTags.remove(selected)
-                                    }
+                            .setMultiChoiceItems(groups, checked) { _, which, isChecked ->
+                                val selected = groups[which]
+                                if (isChecked) {
+                                    subscription.selectedTags.add(selected)
+                                } else {
+                                    subscription.selectedTags.remove(selected)
                                 }
-                                .setPositiveButton(android.R.string.ok) { _, _ ->
-                                    runOnDefaultDispatcher {
-                                        GroupManager.updateGroup(group)
-                                    }
+                            }
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                runOnDefaultDispatcher {
+                                    GroupManager.updateGroup(group)
                                 }
-                                .setNegativeButton(android.R.string.cancel, null)
-                                .show()
+                            }
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show()
 
                     }
 
@@ -462,12 +455,10 @@ class ConfigurationFragment @JvmOverloads constructor(
     inner class TestDialog {
         val binding = LayoutProgressBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
-                .setNegativeButton(
-                    android.R.string.cancel,
-                    DialogInterface.OnClickListener { _, _ ->
-                        cancel()
-                    })
-                .setCancelable(false)
+            .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { _, _ ->
+                cancel()
+            })
+            .setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
         val adapter = TestAdapter()
@@ -494,9 +485,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         inner class TestAdapter : RecyclerView.Adapter<TestResultHolder>() {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TestResultHolder(
-                LayoutProfileBinding.inflate(layoutInflater, parent, false)
-            )
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                TestResultHolder(LayoutProfileBinding.inflate(layoutInflater, parent, false))
 
             override fun onBindViewHolder(holder: TestResultHolder, position: Int) {
                 holder.bind(results[position])
@@ -506,8 +496,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         inner class TestResultHolder(val binding: LayoutProfileBinding) : RecyclerView.ViewHolder(
-            binding.root
-        ) {
+            binding.root) {
             init {
                 binding.edit.isGone = true
                 binding.share.isGone = true
@@ -543,9 +532,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (profile.status == 3) {
                     binding.content.setOnClickListener {
                         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                                .setMessage(profile.error ?: "<?>")
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                            .setMessage(profile.error ?: "<?>")
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
                     }
                 } else {
                     binding.content.setOnClickListener {}
@@ -631,9 +620,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                         try {
                             if (icmpPing) {
                                 val start = SystemClock.elapsedRealtime()
-                                val result = icmpTestMethod.invoke(
-                                    InetAddress.getByName(address), 5000
-                                ) as Boolean
+                                val result = icmpTestMethod.invoke(InetAddress.getByName(address),
+                                    5000) as Boolean
                                 if (!isActive) break
                                 if (result) {
                                     profile.status = 1
@@ -648,11 +636,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 socket.bind(InetSocketAddress(0))
                                 protectFromVpn(socket.fileDescriptor.int)
                                 val start = SystemClock.elapsedRealtime()
-                                socket.connect(
-                                    InetSocketAddress(
-                                        address, profile.requireBean().serverPort
-                                    ), 5000
-                                )
+                                socket.connect(InetSocketAddress(address,
+                                    profile.requireBean().serverPort), 5000)
                                 if (!isActive) break
                                 profile.status = 1
                                 profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
@@ -718,14 +703,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         val test = TestDialog()
         val dialog = test.builder.show()
-        val protector = object : V2RayVPNServiceSupportsSet {
-            override fun onEmitStatus(status: String) = Unit
-            override fun protect(fd: Long): Boolean {
-                protectFromVpn(fd.toInt())
-                return true
-            }
-        }
-
         val mainJob = runOnDefaultDispatcher {
             val group = SagerDatabase.groupDao.getById(DataStore.selectedGroup)!!
             var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
@@ -751,9 +728,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         test.insert(profile)
 
                         try {
-                            val result = TestInstance(
-                                requireContext(), profile, protector
-                            ).doTest(if (reuse) 2 else 1)
+                            val result = TestInstance(profile).doTest(if (reuse) 2 else 1)
                             profile.status = 1
                             profile.ping = result
                         } catch (e: PluginManager.PluginNotFoundException) {
@@ -980,9 +955,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 undoManager = UndoSnackbarManager(activity as MainActivity, adapter)
 
-                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-                    ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START
-                ) {
+                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                    ItemTouchHelper.START) {
                     override fun getSwipeDirs(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -1007,9 +981,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder,
                     ): Boolean {
-                        adapter.move(
-                            viewHolder.bindingAdapterPosition, target.bindingAdapterPosition
-                        )
+                        adapter.move(viewHolder.bindingAdapterPosition,
+                            target.bindingAdapterPosition)
                         return true
                     }
 
@@ -1063,11 +1036,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 parent: ViewGroup,
                 viewType: Int,
             ): ConfigurationHolder {
-                return ConfigurationHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.layout_profile, parent, false
-                    )
-                )
+                return ConfigurationHolder(LayoutInflater.from(parent.context)
+                    .inflate(R.layout.layout_profile, parent, false))
             }
 
             override fun getItemId(position: Int): Long {
@@ -1090,9 +1060,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun move(from: Int, to: Int) {
                 val first = getItemAt(from)
                 var previousOrder = first.userOrder
-                val (step, range) = if (from < to) Pair(1, from until to) else Pair(
-                    -1, to + 1 downTo from
-                )
+                val (step, range) = if (from < to) Pair(1, from until to) else Pair(-1,
+                    to + 1 downTo from)
                 for (i in range) {
                     val next = getItemAt(i + step)
                     val order = next.userOrder
@@ -1167,7 +1136,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val index = configurationIdList.indexOf(profileId)
                 if (index != -1) {
                     val holder = layoutManager.findViewByPosition(index)
-                            ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
+                        ?.let { configurationListView.getChildViewHolder(it) } as ConfigurationHolder?
                     if (holder != null) {
                         holder.entity.stats = trafficStats
                         onMainDispatcher {
@@ -1300,11 +1269,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val showTraffic = rx + tx != 0L
                 trafficText.isVisible = showTraffic
                 if (showTraffic) {
-                    trafficText.text = view.context.getString(
-                        R.string.traffic,
+                    trafficText.text = view.context.getString(R.string.traffic,
                         Formatter.formatFileSize(view.context, tx),
-                        Formatter.formatFileSize(view.context, rx)
-                    )
+                        Formatter.formatFileSize(view.context, rx))
                 }
 
                 var address = proxyEntity.displayAddress()
@@ -1346,20 +1313,17 @@ class ConfigurationFragment @JvmOverloads constructor(
                     profileStatus.setText(R.string.unavailable)
                     profileStatus.setOnClickListener {
                         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                                .setMessage(proxyEntity.error ?: "<?>")
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                            .setMessage(proxyEntity.error ?: "<?>")
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
                     }
                 } else {
                     profileStatus.setOnClickListener(null)
                 }
 
                 editButton.setOnClickListener {
-                    it.context.startActivity(
-                        proxyEntity.settingIntent(
-                            it.context, proxyGroup.type == GroupType.SUBSCRIPTION
-                        )
-                    )
+                    it.context.startActivity(proxyEntity.settingIntent(it.context,
+                        proxyGroup.type == GroupType.SUBSCRIPTION))
                 }
 
                 shareLayout.isGone = select
@@ -1379,17 +1343,13 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                         if (proxyEntity.vmessBean == null) {
                             popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_v2rayn_qr)
-                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
-                                R.id.action_v2rayn_clipboard
-                            )
+                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(R.id.action_v2rayn_clipboard)
                         }
 
                         if (proxyEntity.configBean != null) {
 
                             popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
-                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
-                                R.id.action_standard_clipboard
-                            )
+                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(R.id.action_standard_clipboard)
                         } else if (!proxyEntity.haveLink()) {
                             popup.menu.removeItem(R.id.action_group_qr)
                             popup.menu.removeItem(R.id.action_group_clipboard)
@@ -1419,20 +1379,19 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                 shareLayout.setOnClickListener {
                                     MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.insecure)
-                                            .setMessage(resources.openRawResource(validateResult.textRes)
-                                                    .bufferedReader()
-                                                    .use { it.readText() })
-                                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                                showShare(it)
+                                        .setMessage(resources.openRawResource(validateResult.textRes)
+                                            .bufferedReader()
+                                            .use { it.readText() })
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            showShare(it)
+                                        }
+                                        .show()
+                                        .apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
                                             }
-                                            .show()
-                                            .apply {
-                                                findViewById<TextView>(android.R.id.message)?.apply {
-                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                    movementMethod =
-                                                        LinkMovementMethod.getInstance()
-                                                }
-                                            }
+                                        }
                                 }
                             }
                             is ResultDeprecated -> onMainDispatcher {
@@ -1444,20 +1403,19 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                                 shareLayout.setOnClickListener {
                                     MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.deprecated)
-                                            .setMessage(resources.openRawResource(validateResult.textRes)
-                                                    .bufferedReader()
-                                                    .use { it.readText() })
-                                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                                showShare(it)
+                                        .setMessage(resources.openRawResource(validateResult.textRes)
+                                            .bufferedReader()
+                                            .use { it.readText() })
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            showShare(it)
+                                        }
+                                        .show()
+                                        .apply {
+                                            findViewById<TextView>(android.R.id.message)?.apply {
+                                                Linkify.addLinks(this, Linkify.WEB_URLS)
+                                                movementMethod = LinkMovementMethod.getInstance()
                                             }
-                                            .show()
-                                            .apply {
-                                                findViewById<TextView>(android.R.id.message)?.apply {
-                                                    Linkify.addLinks(this, Linkify.WEB_URLS)
-                                                    movementMethod =
-                                                        LinkMovementMethod.getInstance()
-                                                }
-                                            }
+                                        }
                                 }
                             }
                             else -> onMainDispatcher {
@@ -1482,7 +1440,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             fun export(link: String) {
                 val success = SagerNet.trySetPrimaryClip(link)
                 (activity as MainActivity).snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
-                        .show()
+                    .show()
             }
 
             override fun onMenuItemClick(item: MenuItem): Boolean {
@@ -1490,21 +1448,17 @@ class ConfigurationFragment @JvmOverloads constructor(
                     when (item.itemId) {
                         R.id.action_standard_qr -> showCode(entity.toLink()!!)
                         R.id.action_standard_clipboard -> export(entity.toLink()!!)
-                        R.id.action_universal_qr -> showCode(
-                            entity.requireBean().toUniversalLink()
-                        )
-                        R.id.action_universal_clipboard -> export(
-                            entity.requireBean().toUniversalLink()
-                        )
+                        R.id.action_universal_qr -> showCode(entity.requireBean().toUniversalLink())
+                        R.id.action_universal_clipboard -> export(entity.requireBean()
+                            .toUniversalLink())
                         R.id.action_v2rayn_qr -> showCode(entity.vmessBean!!.toV2rayN())
                         R.id.action_v2rayn_clipboard -> export(entity.vmessBean!!.toV2rayN())
                         R.id.action_config_export_clipboard -> export(entity.exportConfig().first)
                         R.id.action_config_export_file -> {
                             val cfg = entity.exportConfig()
                             DataStore.serverConfig = cfg.first
-                            startFilesForResult(
-                                (parentFragment as ConfigurationFragment).exportConfig, cfg.second
-                            )
+                            startFilesForResult((parentFragment as ConfigurationFragment).exportConfig,
+                                cfg.second)
                         }
                     }
                 } catch (e: Exception) {
@@ -1523,11 +1477,11 @@ class ConfigurationFragment @JvmOverloads constructor(
             if (data != null) {
                 runOnDefaultDispatcher {
                     try {
-                        (requireActivity() as MainActivity).contentResolver.openOutputStream(
-                            data
-                        )!!.bufferedWriter().use {
-                            it.write(DataStore.serverConfig)
-                        }
+                        (requireActivity() as MainActivity).contentResolver.openOutputStream(data)!!
+                            .bufferedWriter()
+                            .use {
+                                it.write(DataStore.serverConfig)
+                            }
                         onMainDispatcher {
                             snackbar(getString(R.string.action_export_msg)).show()
                         }

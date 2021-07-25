@@ -73,18 +73,18 @@ abstract class GroupUpdater {
 
         var dohUrl: String? = null
         if (connected) {
-            val localDns = DataStore.localDns
+            val remoteDns = DataStore.remoteDns
             when {
-                localDns.startsWith("https+local://") -> dohUrl =
-                    localDns.replace("https+local://", "https://")
-                localDns.startsWith("https://") -> dohUrl = localDns
+                remoteDns.startsWith("https+local://") -> dohUrl =
+                    remoteDns.replace("https+local://", "https://")
+                remoteDns.startsWith("https://") -> dohUrl = remoteDns
             }
         } else {
-            val domesticDns = DataStore.domesticDns
+            val directDns = DataStore.directDns
             when {
-                domesticDns.startsWith("https+local://") -> dohUrl =
-                    domesticDns.replace("https+local://", "https://")
-                domesticDns.startsWith("https://") -> dohUrl = domesticDns
+                directDns.startsWith("https+local://") -> dohUrl =
+                    directDns.replace("https+local://", "https://")
+                directDns.startsWith("https://") -> dohUrl = directDns
             }
         }
 
