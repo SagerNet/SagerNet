@@ -1028,6 +1028,7 @@ fun buildV2RayConfig(proxy: ProxyEntity, forTest: Boolean = false, testPort: Int
                         if (bypassDomain.isNotEmpty()) {
                             domains = bypassDomain.toList()
                         }
+                        skipFallback = true
                     }
                 }
             })

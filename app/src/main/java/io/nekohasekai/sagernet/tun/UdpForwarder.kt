@@ -151,14 +151,14 @@ class UdpForwarder(val tun: TunThread) {
 
         private fun calIsDns(): Boolean {
             if (destAddress.socketHost in arrayOf(VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER)) return true
+            if (udpHeader.destinationPort.toUShort().toInt() == 53) return true
             val data = udpHeader.data()
             if (data.size < Header.LENGTH) return false
             return try {
                 val dnsMessage = Message(data)
 
-                dnsMessage.header.getFlag(Flags.QR.toInt()) && dnsMessage.rcode == 0 && dnsMessage.header.getCount(Section.ANSWER) == 0 && dnsMessage.header.getCount(Section.AUTHORITY) == 0
+                !dnsMessage.header.getFlag(Flags.QR.toInt()) && dnsMessage.rcode == 0 && dnsMessage.header.getCount(Section.ANSWER) == 0 && dnsMessage.header.getCount(Section.AUTHORITY) == 0
             } catch (e: Exception) {
-                Logs.d("Port = 53 but not a dns query,", e)
                 false
             }
         }
