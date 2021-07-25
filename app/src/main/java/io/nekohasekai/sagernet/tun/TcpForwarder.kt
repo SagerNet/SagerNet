@@ -182,20 +182,22 @@ class TcpForwarder(val tun: TunThread) {
             }
 
             var remotePort = session.remotePort.toUShort().toInt()
-            if (remotePort == 53 && tun.dnsHijacking || remoteIp in arrayOf(
+            if (remotePort == 53 || remoteIp in arrayOf(
                     VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
                 )
             ) {
                 remoteIp = LOCALHOST
                 remotePort = tun.dnsPort
 
-                channelFeature =
-                    Bootstrap().group(tun.outboundLoop).channel(NioSocketChannel::class.java)
+                channelFeature = Bootstrap().group(tun.outboundLoop)
+                        .channel(NioSocketChannel::class.java)
                         .handler(object : ChannelInitializer<Channel>() {
                             override fun initChannel(channel: Channel) {
                                 channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
                             }
-                        }).connect(remoteIp, remotePort).addListener(ChannelFutureListener {
+                        })
+                        .connect(remoteIp, remotePort)
+                        .addListener(ChannelFutureListener {
                             if (it.isSuccess) {
                                 session.channel?.close()
                                 session.channel = it.channel()
@@ -205,8 +207,8 @@ class TcpForwarder(val tun: TunThread) {
                         })
 
             } else {
-                channelFeature =
-                    Bootstrap().group(tun.outboundLoop).channel(NioSocketChannel::class.java)
+                channelFeature = Bootstrap().group(tun.outboundLoop)
+                        .channel(NioSocketChannel::class.java)
                         .handler(object : ChannelInitializer<Channel>() {
                             override fun initChannel(channel: Channel) {
                                 channel.pipeline().addFirst(
@@ -218,9 +220,11 @@ class TcpForwarder(val tun: TunThread) {
                                 )
                                 channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
                             }
-                        }).option(ChannelOption.SO_KEEPALIVE, true)
+                        })
+                        .option(ChannelOption.SO_KEEPALIVE, true)
                         .option(ChannelOption.AUTO_CLOSE, false)
-                        .option(ChannelOption.TCP_NODELAY, true).connect(remoteIp, remotePort)
+                        .option(ChannelOption.TCP_NODELAY, true)
+                        .connect(remoteIp, remotePort)
                         .addListener(ChannelFutureListener {
                             if (it.isSuccess) {
                                 session.channel?.close()
@@ -278,16 +282,17 @@ class TcpForwarder(val tun: TunThread) {
 
     fun start() {
         channelFuture = ServerBootstrap().group(tun.serverLoop, tun.outboundLoop)
-            .channel(NioServerSocketChannel::class.java)
-            .childHandler(object : ChannelInitializer<Channel>() {
-                override fun initChannel(channel: Channel) {
-                    channel.pipeline().addLast(Forwarder())
-                }
+                .channel(NioServerSocketChannel::class.java)
+                .childHandler(object : ChannelInitializer<Channel>() {
+                    override fun initChannel(channel: Channel) {
+                        channel.pipeline().addLast(Forwarder())
+                    }
 
-                override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-                    Logs.w(cause)
-                }
-            }).bind(0)
+                    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+                        Logs.w(cause)
+                    }
+                })
+                .bind(0)
     }
 
     fun destroy() {

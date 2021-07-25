@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.tun.netty
 
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.tun.UdpForwarder
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter

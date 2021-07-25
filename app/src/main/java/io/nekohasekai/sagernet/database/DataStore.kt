@@ -166,7 +166,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var icmpEchoStrategy by configurationStore.stringToInt(Key.ICMP_ECHO_STRATEGY)
     var icmpEchoReplyDelay by configurationStore.stringToLong(Key.ICMP_ECHO_REPLY_DELAY) { 50 }
     var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY)
-    var dnsHijacking by configurationStore.boolean(Key.DNS_HIJACKING)
 
     // protocol
 

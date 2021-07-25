@@ -485,7 +485,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                             groupStatus.text = if (size == 0L) {
                                 getString(R.string.group_status_empty_subscription)
                             } else {
-                                val date = Date(group.subscription!!.lastUpdated * 100L)
+                                val date = Date(group.subscription!!.lastUpdated * 1000L)
                                 getString(
                                     R.string.group_status_proxies_subscription,
                                     size,

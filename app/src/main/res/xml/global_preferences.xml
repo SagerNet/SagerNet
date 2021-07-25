@@ -116,11 +116,6 @@
             app:key="ipOtherStrategy"
             app:title="@string/ip_other_strategy"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_manage_search_24"
-            app:key="dnsHijacking"
-            app:summary="@string/dns_hijacking_sum"
-            app:title="@string/dns_hijacking" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_route">

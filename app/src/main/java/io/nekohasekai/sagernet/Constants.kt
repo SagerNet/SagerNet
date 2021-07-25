@@ -93,7 +93,6 @@ object Key {
     const val ICMP_ECHO_STRATEGY = "icmpEchoStrategy"
     const val ICMP_ECHO_REPLY_DELAY = "icmpEchoReplyDelay"
     const val IP_OTHER_STRATEGY = "ipOtherStrategy"
-    const val DNS_HIJACKING = "dnsHijacking"
 
     const val PROVIDER_TROJAN = "providerTrojan"
     const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
