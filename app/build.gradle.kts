@@ -94,6 +94,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("com.github.seancfoley:ipaddress:5.3.3")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
+    implementation("dnsjava:dnsjava:3.4.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }

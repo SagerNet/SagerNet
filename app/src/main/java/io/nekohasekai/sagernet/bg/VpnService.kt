@@ -50,12 +50,13 @@ import java.io.FileDescriptor
 import java.io.IOException
 import android.net.VpnService as BaseVpnService
 
-class VpnService : BaseVpnService(), BaseService.Interface {
+class VpnService : BaseVpnService(),
+    BaseService.Interface {
 
     companion object {
         var instance: VpnService? = null
 
-        const val VPN_MTU = 4096
+        const val VPN_MTU = 1500
         const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
         const val PRIVATE_VLAN4_ROUTER = "172.19.0.2"
         const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
@@ -133,7 +134,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
     override suspend fun preInit() = DefaultNetworkListener.start(this) { underlyingNetwork = it }
 
-    inner class NullConnectionException : NullPointerException(), BaseService.ExpectedException {
+    inner class NullConnectionException : NullPointerException(),
+        BaseService.ExpectedException {
         override fun getLocalizedMessage() = getString(R.string.reboot_required)
     }
 
@@ -142,7 +144,8 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         val profile = data.proxy!!.profile
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
-            .setSession(profile.displayName()).setMtu(VPN_MTU)
+                .setSession(profile.displayName())
+                .setMtu(VPN_MTU)
         val dnsMode = DataStore.dnsModeFinal
         val useFakeDns = dnsMode in arrayOf(DnsMode.FAKEDNS, DnsMode.FAKEDNS_LOCAL)
         val ipv6Mode = DataStore.ipv6Mode
@@ -256,7 +259,7 @@ class VpnService : BaseVpnService(), BaseService.Interface {
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        builder.setBlocking(enableExperimentalTun)
+        if (enableExperimentalTun) builder.setBlocking(enableExperimentalTun)
         conn = builder.establish() ?: throw NullConnectionException()
 
         if (!enableExperimentalTun) {

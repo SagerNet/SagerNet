@@ -34,6 +34,7 @@ import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.tun.ip.IPHeader
+import io.nekohasekai.sagernet.tun.ip.NetUtils
 import io.nekohasekai.sagernet.tun.ip.UDPHeader
 import io.nekohasekai.sagernet.tun.ip.ipv4.IPv4Header
 import io.nekohasekai.sagernet.tun.ip.ipv6.IPv6Header
@@ -51,6 +52,7 @@ import io.netty.util.concurrent.DefaultPromise
 import io.netty.util.concurrent.Future
 import io.netty.util.concurrent.GlobalEventExecutor
 import okhttp3.internal.connection.RouteSelector.Companion.socketHost
+import org.xbill.DNS.Message
 import java.net.InetSocketAddress
 
 class UdpForwarder(val tun: TunThread) {
@@ -165,25 +167,29 @@ class UdpForwarder(val tun: TunThread) {
         val future: Future<Channel> get() = promise
 
         init {
-            if (destAddress.port == 53 && tun.dnsHijacking || destAddress.socketHost in arrayOf(
+            if (destAddress.port == 53 || destAddress.socketHost in arrayOf(
                     VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
                 )
             ) {
                 isDns = true
-                Bootstrap().group(tun.outboundLoop).channel(NioDatagramChannel::class.java)
-                    .handler(this).connect(LOCALHOST, tun.dnsPort)
+                Bootstrap().group(tun.outboundLoop)
+                        .channel(NioDatagramChannel::class.java)
+                        .handler(this)
+                        .connect(LOCALHOST, tun.dnsPort)
             } else {
-                Bootstrap().group(tun.outboundLoop).channel(NioDatagramChannel::class.java)
-                    .handler(object : ChannelInitializer<Channel>() {
-                        override fun initChannel(channel: Channel) {
-                            channel.pipeline().apply {
-                                addFirst(
-                                    Socks5UdpMessageEncoder.DEFAULT, Socks5UdpMessageDecoder()
-                                )
-                                addLast(this@UdpSession)
+                Bootstrap().group(tun.outboundLoop)
+                        .channel(NioDatagramChannel::class.java)
+                        .handler(object : ChannelInitializer<Channel>() {
+                            override fun initChannel(channel: Channel) {
+                                channel.pipeline().apply {
+                                    addFirst(
+                                        Socks5UdpMessageEncoder.DEFAULT, Socks5UdpMessageDecoder()
+                                    )
+                                    addLast(this@UdpSession)
+                                }
                             }
-                        }
-                    }).connect(LOCALHOST, tun.socksPort)
+                        })
+                        .connect(LOCALHOST, tun.socksPort)
             }.addListener(ChannelFutureListener {
                 if (it.isSuccess) {
                     promise.trySuccess(it.channel())
@@ -212,7 +218,17 @@ class UdpForwarder(val tun: TunThread) {
             }
         }
 
-        fun sendResponse(data: ByteArray) {
+        fun sendResponse(rawData: ByteArray) {
+
+            val data = if (!isDns) {
+                Logs.d(NetUtils.formatByteArray("Send udp response", rawData))
+
+                rawData
+            } else {
+
+                // v2ray sends 2kb shit for every dns response
+                ArrayUtil.sub(rawData, 0, Message(rawData).numBytes())
+            }
 
             val packet = ArrayUtil.addAll(template, data)
 
@@ -222,7 +238,6 @@ class UdpForwarder(val tun: TunThread) {
             }
 
             val ipHeader: IPHeader
-
             if (udpHeader.ipHeader is IPv4Header) {
                 ipHeader = IPv4Header(packet)
                 ipHeader.setTotalLength(packet.size.toShort())
