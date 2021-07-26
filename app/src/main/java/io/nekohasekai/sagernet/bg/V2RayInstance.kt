@@ -342,8 +342,13 @@ open class V2RayInstance(val profile: ProxyEntity) {
             wsForwarder.destroy()
         }
 
-        processes.close(scope)
-        v2rayPoint.stopLoop()
+        if (::processes.isInitialized) {
+            processes.close(scope)
+        }
+
+        if (::v2rayPoint.isInitialized) {
+            v2rayPoint.stopLoop()
+        }
 
         for (instance in externalInstances.values) {
             instance.destroy(scope)
