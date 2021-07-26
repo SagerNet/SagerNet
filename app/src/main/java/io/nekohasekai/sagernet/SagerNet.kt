@@ -45,6 +45,7 @@ import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
@@ -81,8 +82,9 @@ class SagerNet : Application(),
 
         runOnMainDispatcher {
             externalAssets.mkdirs()
-
             checkMT()
+
+            PackageCache.register()
         }
 
         Theme.apply(this)
@@ -92,8 +94,8 @@ class SagerNet : Application(),
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
-            packageName, if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
-    else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES
+        packageName, if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES
+        else @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES
     )!!
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -118,9 +120,9 @@ class SagerNet : Application(),
         val configureIntent: (Context) -> PendingIntent by lazy {
             {
                 PendingIntent.getActivity(
-                        it, 0, Intent(
+                    it, 0, Intent(
                         application, MainActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
+                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), 0
                 )
             }
         }
@@ -155,29 +157,29 @@ class SagerNet : Application(),
         fun updateNotificationChannels() {
             if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
                 notification.createNotificationChannels(
-                        listOf(
-                                NotificationChannel(
-                                        "service-vpn",
-                                        application.getText(R.string.service_vpn),
-                                        if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
-                                        else NotificationManager.IMPORTANCE_LOW
-                                ),   // #1355
-                                NotificationChannel(
-                                        "service-proxy",
-                                        application.getText(R.string.service_proxy),
-                                        NotificationManager.IMPORTANCE_LOW
-                                ), NotificationChannel(
-                                "service-subscription",
-                                application.getText(R.string.service_subscription),
-                                NotificationManager.IMPORTANCE_DEFAULT
+                    listOf(
+                        NotificationChannel(
+                            "service-vpn",
+                            application.getText(R.string.service_vpn),
+                            if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
+                            else NotificationManager.IMPORTANCE_LOW
+                        ),   // #1355
+                        NotificationChannel(
+                            "service-proxy",
+                            application.getText(R.string.service_proxy),
+                            NotificationManager.IMPORTANCE_LOW
+                        ), NotificationChannel(
+                            "service-subscription",
+                            application.getText(R.string.service_subscription),
+                            NotificationManager.IMPORTANCE_DEFAULT
                         )
-                        )
+                    )
                 )
             }
         }
 
         fun startService() = ContextCompat.startForegroundService(
-                application, Intent(application, SagerConnection.serviceClass)
+            application, Intent(application, SagerConnection.serviceClass)
         )
 
         fun reloadService() =

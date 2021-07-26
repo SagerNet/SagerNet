@@ -21,9 +21,7 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -47,13 +45,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutAppsBinding
 import io.nekohasekai.sagernet.databinding.LayoutAppsItemBinding
 import io.nekohasekai.sagernet.databinding.LayoutLoadingBinding
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.crossFadeFrom
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +67,6 @@ import okhttp3.internal.closeQuietly
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
 import org.jf.dexlib2.iface.DexFile
 import java.io.File
-import java.util.*
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import kotlin.coroutines.coroutineContext
@@ -75,28 +77,10 @@ class AppManagerActivity : ThemedActivity() {
         private var instance: AppManagerActivity? = null
         private const val SWITCH = "switch"
 
-        private var receiver: BroadcastReceiver? = null
-        private var cachedApps: Map<String, PackageInfo>? = null
-        private fun getCachedApps(pm: PackageManager) = synchronized(AppManagerActivity) {
-            if (receiver == null) receiver = app.listenForPackageChanges {
-                synchronized(AppManagerActivity) {
-                    receiver = null
-                    cachedApps = null
-                }
-                instance?.loadApps()
-            } // Labels and icons can change on configuration (locale, etc.) changes, therefore they are not cached.
-            val cachedApps = cachedApps
-                ?: pm.getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
-                    .filter {
-                        when (it.packageName) {
-                            app.packageName -> false
-                            "android" -> true
-                            else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
-                        }
-                    }.associateBy { it.packageName }
-            this.cachedApps = cachedApps
-            cachedApps
-        }
+        private val cachedApps
+            get() = PackageCache.installPackages.toMutableMap().apply {
+                remove(BuildConfig.APPLICATION_ID)
+            }
     }
 
     private class ProxiedApp(
@@ -109,8 +93,10 @@ class AppManagerActivity : ThemedActivity() {
         val sys get() = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
     }
 
-    private inner class AppViewHolder(val binding: LayoutAppsItemBinding) :
-        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+    private inner class AppViewHolder(val binding: LayoutAppsItemBinding) : RecyclerView.ViewHolder(
+        binding.root
+    ),
+        View.OnClickListener {
         private lateinit var item: ProxiedApp
 
         init {
@@ -131,19 +117,20 @@ class AppManagerActivity : ThemedActivity() {
 
         override fun onClick(v: View?) {
             if (isProxiedApp(item)) proxiedUids.delete(item.uid) else proxiedUids[item.uid] = true
-            DataStore.individual =
-                apps.filter { isProxiedApp(it) }.joinToString("\n") { it.packageName }
+            DataStore.individual = apps.filter { isProxiedApp(it) }
+                .joinToString("\n") { it.packageName }
 
             appsAdapter.notifyItemRangeChanged(0, appsAdapter.itemCount, SWITCH)
         }
     }
 
-    private inner class AppsAdapter : RecyclerView.Adapter<AppViewHolder>(), Filterable,
+    private inner class AppsAdapter : RecyclerView.Adapter<AppViewHolder>(),
+        Filterable,
         FastScrollRecyclerView.SectionedAdapter {
         var filteredApps = apps
 
         suspend fun reload() {
-            apps = getCachedApps(packageManager).map { (packageName, packageInfo) ->
+            apps = cachedApps.map { (packageName, packageInfo) ->
                 coroutineContext[Job]!!.ensureActive()
                 ProxiedApp(packageManager, packageInfo.applicationInfo, packageName)
             }.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
@@ -202,9 +189,9 @@ class AppManagerActivity : ThemedActivity() {
 
     private fun initProxiedUids(str: String = DataStore.individual) {
         proxiedUids.clear()
-        val apps = getCachedApps(packageManager)
-        for (line in str.lineSequence()) proxiedUids[(apps[line] ?: continue).applicationInfo.uid] =
-            true
+        val apps = cachedApps
+        for (line in str.lineSequence()) proxiedUids[(apps[line]
+            ?: continue).applicationInfo.uid] = true
     }
 
     private fun isProxiedApp(app: ProxiedApp) = proxiedUids[app.uid]
@@ -294,8 +281,8 @@ class AppManagerActivity : ThemedActivity() {
                             proxiedUids[app.uid] = true
                         }
                     }
-                    DataStore.individual =
-                        apps.filter { isProxiedApp(it) }.joinToString("\n") { it.packageName }
+                    DataStore.individual = apps.filter { isProxiedApp(it) }
+                        .joinToString("\n") { it.packageName }
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
                         appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
@@ -315,8 +302,7 @@ class AppManagerActivity : ThemedActivity() {
                 }
             }
             R.id.action_export_clipboard -> {
-                val success =
-                    SagerNet.trySetPrimaryClip("${DataStore.bypass}\n${DataStore.individual}")
+                val success = SagerNet.trySetPrimaryClip("${DataStore.bypass}\n${DataStore.individual}")
                 Snackbar.make(
                     binding.list,
                     if (success) R.string.action_export_msg else R.string.action_export_err,
@@ -325,8 +311,7 @@ class AppManagerActivity : ThemedActivity() {
                 return true
             }
             R.id.action_import_clipboard -> {
-                val proxiedAppString =
-                    SagerNet.clipboard.primaryClip?.getItemAt(0)?.text?.toString()
+                val proxiedAppString = SagerNet.clipboard.primaryClip?.getItemAt(0)?.text?.toString()
                 if (!proxiedAppString.isNullOrEmpty()) {
                     val i = proxiedAppString.indexOf('\n')
                     try {
@@ -394,28 +379,36 @@ class AppManagerActivity : ThemedActivity() {
                 "com.qq.e",
                 "com.baidu",
                 "com.bytedance",
-                "com.bugly"
+                "com.bugly",
+                "com.miui",
+                "com.oppo",
+                "com.coloros",
+                "com.iqoo",
+                "com.meizu",
+                "com.gionee",
+                "cn.nubia"
             ).joinToString("|") { "${it.replace(".", "\\.")}\\." } + ").*").toRegex()
 
             val bypass = DataStore.bypass
+            val cachedApps = cachedApps
 
-            apps = getCachedApps(packageManager).map { (packageName, packageInfo) ->
+            apps = cachedApps.map { (packageName, packageInfo) ->
                 kotlin.coroutines.coroutineContext[Job]!!.ensureActive()
                 ProxiedApp(packageManager, packageInfo.applicationInfo, packageName)
             }.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
 
-            scan@ for ((pkg, app) in getCachedApps(packageManager).entries) {
+            scan@ for ((pkg, app) in cachedApps.entries) {
                 /*if (!sysApps && app.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
                     continue
                 }*/
 
-                val index =
-                    appsAdapter.filteredApps.indexOfFirst { it.uid == app.applicationInfo.uid }
+                val index = appsAdapter.filteredApps.indexOfFirst { it.uid == app.applicationInfo.uid }
                 var changed = false
 
                 onMainDispatcher {
                     text.text = (txt + " " + app.packageName + "\n\n" + chinaApps.map { it.second }
-                        .reversed().joinToString("\n", postfix = "\n")).trim()
+                        .reversed()
+                        .joinToString("\n", postfix = "\n")).trim()
                 }
 
                 try {
@@ -434,9 +427,9 @@ class AppManagerActivity : ThemedActivity() {
                                 break
                             }
                             for (clazz in dexFile.classes) {
-                                val clazzName =
-                                    clazz.type.substring(1, clazz.type.length - 1).replace("/", ".")
-                                        .replace("$", ".")
+                                val clazzName = clazz.type.substring(1, clazz.type.length - 1)
+                                    .replace("/", ".")
+                                    .replace("$", ".")
 
                                 if (clazzName.matches(chinaRegex)) {
                                     chinaApps.add(
@@ -473,8 +466,8 @@ class AppManagerActivity : ThemedActivity() {
 
             }
 
-            DataStore.individual =
-                apps.filter { isProxiedApp(it) }.joinToString("\n") { it.packageName }
+            DataStore.individual = apps.filter { isProxiedApp(it) }
+                .joinToString("\n") { it.packageName }
 
             apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
 
