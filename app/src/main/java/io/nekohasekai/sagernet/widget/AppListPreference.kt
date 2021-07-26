@@ -19,37 +19,42 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.tun
+package io.nekohasekai.sagernet.widget
 
-import java.io.File
-import java.util.regex.Pattern
+import android.content.Context
+import android.util.AttributeSet
+import androidx.preference.Preference
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.utils.PackageCache
 
-object UidDumperLegacy {
+class AppListPreference : Preference {
 
-    val TCP_IPV4_PROC = File("/proc/net/tcp")
-    val TCP_IPV6_PROC = File("/proc/net/tcp6")
-    val UDP_IPV4_PROC = File("/proc/net/udp")
-    val UDP6_IPV6_PROC = File("/proc/net/udp6")
-
-    val IPV4_PATTERN = Pattern.compile(
-        "\\s+\\d+:\\s([0-9A-F]{8}):" + "([0-9A-F]{4})\\s([0-9A-F]{8}):([0-9A-F]{4})\\s([0-9A-F]{2})\\s[0-9A-F]{8}:[0-9A-F]{8}" + "\\s[0-9A-F]{2}:[0-9A-F]{8}\\s[0-9A-F]{8}\\s+([0-9A-F]+)",
-        (Pattern.CASE_INSENSITIVE or Pattern.UNIX_LINES)
-    )
-    val IPV6_PATTERN = Pattern.compile(
-        ("\\s+\\d+:\\s([0-9A-F]{32}):" + "([0-9A-F]{4})\\s([0-9A-F]{32}):([0-9A-F]{4})\\s([0-9A-F]{2})\\s[0-9A-F]{8}:[0-9A-F]{8}" + "\\s[0-9A-F]{2}:[0-9A-F]{8}\\s[0-9A-F]{8}\\s+([0-9A-F]+)"),
-        (Pattern.CASE_INSENSITIVE or Pattern.UNIX_LINES)
+    constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
+        context, attrs, defStyle
     )
 
-    fun dumpUid(proc: File, pattern: Pattern, port: Int): Int {
-        for (line in proc.readLines()) {
-            val matcher = pattern.matcher(line)
-            while (matcher.find()) {
-                val localPort = matcher.group(2)?.toIntOrNull(16) ?: continue
-                if (localPort != port) continue
-                return matcher.group(6)?.toIntOrNull() ?: continue
-            }
+    constructor(
+        context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
+
+    override fun getSummary(): CharSequence {
+        val packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }.map {
+            PackageCache.installPackages[it]?.applicationInfo?.loadLabel(app.packageManager) ?: it
         }
-        return -1
+        if (packages.isEmpty()) {
+            return context.getString(androidx.preference.R.string.not_set)
+        }
+        val count = packages.size
+        if (count <= 5) return packages.joinToString("\n")
+        return context.getString(R.string.apps_message, count)
+    }
+
+    fun postUpdate() {
+        notifyChanged()
     }
 
 }

@@ -30,8 +30,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "rules")
 @Parcelize
 data class RuleEntity(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0L,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var name: String = "",
     var userOrder: Long = 0L,
     var enabled: Boolean = false,
@@ -46,19 +45,11 @@ data class RuleEntity(
     var outbound: Long = 0,
     var reverse: Boolean = false,
     var redirect: String = "",
+    var packages: List<String> = listOf()
 ) : Parcelable {
 
     fun isBypassRule(): Boolean {
-        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) &&
-                port.isBlank() &&
-                sourcePort.isBlank() &&
-                network.isBlank() &&
-                source.isBlank() &&
-                protocol.isBlank() &&
-                attrs.isBlank() &&
-                !reverse &&
-                redirect.isBlank() &&
-                outbound == -1L
+        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && port.isBlank() && sourcePort.isBlank() && network.isBlank() && source.isBlank() && protocol.isBlank() && attrs.isBlank() && !reverse && redirect.isBlank() && outbound == -1L
     }
 
     fun displayName(): String {
@@ -75,6 +66,7 @@ data class RuleEntity(
         if (protocol.isNotBlank()) summary += "$protocol\n"
         if (attrs.isNotBlank()) summary += "$attrs\n"
         if (reverse) summary += "$redirect\n"
+        if (packages.isNotEmpty()) summary += app.getString(R.string.apps_message, packages.size)
         val lines = summary.trim().split("\n")
         return if (lines.size > 3) {
             lines.subList(0, 3).joinToString("\n", postfix = "\n...")

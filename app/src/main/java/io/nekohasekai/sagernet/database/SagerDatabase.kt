@@ -35,8 +35,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-        entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, KeyValuePair::class],
-        version = 1
+    entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, KeyValuePair::class],
+    version = 2
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
 @GenerateRoomMigrations

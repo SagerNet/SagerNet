@@ -21,6 +21,7 @@
         <entry key="app/src/main/res/drawable/ic_social_share.xml" value="0.283" />
         <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
         <entry key="app/src/main/res/layout/layout_about.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/layout_app_list.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps_item.xml" value="0.2490740740740741" />
@@ -53,6 +54,7 @@
         <entry key="app/src/main/res/menu/add_group_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/add_route_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/app_list_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/export_only_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/group_action_menu.xml" value="0.21581196581196582" />
         <entry key="app/src/main/res/menu/import_asset_menu.xml" value="0.2636752136752137" />

@@ -159,6 +159,7 @@ object Key {
     const val ROUTE_OUTBOUND_RULE = "routeOutboundRule"
     const val ROUTE_REVERSE = "routeReverse"
     const val ROUTE_REDIRECT = "routeRedirect"
+    const val ROUTE_PACKAGES = "routePackages"
 
     const val GROUP_NAME = "groupName"
     const val GROUP_TYPE = "groupType"

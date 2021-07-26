@@ -6,6 +6,10 @@
         app:key="routeName"
         app:title="@string/route_name"
         app:useSimpleSummaryProvider="true" />
+    <io.nekohasekai.sagernet.widget.AppListPreference
+        app:icon="@drawable/ic_baseline_legend_toggle_24"
+        app:key="routePackages"
+        app:title="@string/apps" />
     <PreferenceCategory app:title="@string/cag_route">
         <EditTextPreference
             app:icon="@drawable/ic_baseline_domain_24"

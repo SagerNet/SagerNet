@@ -35,7 +35,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceDataStore
+import androidx.preference.SwitchPreference
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -50,14 +53,14 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
+import io.nekohasekai.sagernet.widget.AppListPreference
 import io.nekohasekai.sagernet.widget.ListListener
 import io.nekohasekai.sagernet.widget.OutboundPreference
 import kotlinx.parcelize.Parcelize
 
 @Suppress("UNCHECKED_CAST")
 class RouteSettingsActivity(
-    @LayoutRes
-    resId: Int = R.layout.layout_settings_activity,
+    @LayoutRes resId: Int = R.layout.layout_settings_activity,
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
@@ -84,6 +87,7 @@ class RouteSettingsActivity(
         }
         DataStore.routeReverse = reverse
         DataStore.routeRedirect = redirect
+        DataStore.routePackages = packages.joinToString("\n")
     }
 
     fun RuleEntity.serialize() {
@@ -104,20 +108,12 @@ class RouteSettingsActivity(
         }
         reverse = DataStore.routeReverse
         redirect = DataStore.routeRedirect
+        packages = DataStore.routePackages.split("\n")
     }
 
     fun needSave(): Boolean {
         if (!DataStore.dirty) return false
-        if (DataStore.routeDomain.isBlank() &&
-            DataStore.routeIP.isBlank() &&
-            DataStore.routePort.isBlank() &&
-            DataStore.routeSourcePort.isBlank() &&
-            DataStore.routeNetwork.isBlank() &&
-            DataStore.routeSource.isBlank() &&
-            DataStore.routeProtocol.isBlank() &&
-            DataStore.routeAttrs.isBlank() &&
-            !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())
-        ) {
+        if (DataStore.routePackages.isBlank() && DataStore.routeDomain.isBlank() && DataStore.routeIP.isBlank() && DataStore.routePort.isBlank() && DataStore.routeSourcePort.isBlank() && DataStore.routeNetwork.isBlank() && DataStore.routeSource.isBlank() && DataStore.routeProtocol.isBlank() && DataStore.routeAttrs.isBlank() && !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())) {
             return false
         }
         return true
@@ -136,8 +132,7 @@ class RouteSettingsActivity(
         if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
             val profile = ProfileManager.getProfile(
                 data!!.getLongExtra(
-                    ProfileSelectActivity.EXTRA_PROFILE_ID,
-                    0
+                    ProfileSelectActivity.EXTRA_PROFILE_ID, 0
                 )
             ) ?: return@runOnDefaultDispatcher
             DataStore.routeOutboundRule = profile.id
@@ -147,14 +142,22 @@ class RouteSettingsActivity(
         }
     }
 
+    val selectAppList = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { (_, _) ->
+        apps.postUpdate()
+    }
+
     lateinit var outbound: OutboundPreference
     lateinit var reverse: SwitchPreference
     lateinit var redirect: EditTextPreference
+    lateinit var apps: AppListPreference
 
     fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
         outbound = findPreference(Key.ROUTE_OUTBOUND)!!
         reverse = findPreference(Key.ROUTE_REVERSE)!!
         redirect = findPreference(Key.ROUTE_REDIRECT)!!
+        apps = findPreference(Key.ROUTE_PACKAGES)!!
 
         fun updateReverse(enabled: Boolean = outbound.value == "3") {
             reverse.isVisible = enabled
@@ -174,8 +177,7 @@ class RouteSettingsActivity(
                 updateReverse(true)
                 selectProfileForAdd.launch(
                     Intent(
-                        this@RouteSettingsActivity,
-                        ProfileSelectActivity::class.java
+                        this@RouteSettingsActivity, ProfileSelectActivity::class.java
                     )
                 )
                 false
@@ -183,6 +185,15 @@ class RouteSettingsActivity(
                 updateReverse(false)
                 true
             }
+        }
+
+        apps.setOnPreferenceClickListener {
+            selectAppList.launch(
+                Intent(
+                    this@RouteSettingsActivity, AppListActivity::class.java
+                )
+            )
+            true
         }
     }
 
@@ -252,10 +263,9 @@ class RouteSettingsActivity(
 
                 onMainDispatcher {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.settings,
-                            MyPreferenceFragmentCompat().apply {
-                                activity = this@RouteSettingsActivity
-                            })
+                        .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
+                            activity = this@RouteSettingsActivity
+                        })
                         .commit()
 
                     DataStore.dirty = false
@@ -272,8 +282,7 @@ class RouteSettingsActivity(
 
         if (!needSave()) {
             onMainDispatcher {
-                MaterialAlertDialogBuilder(this@RouteSettingsActivity)
-                    .setTitle(R.string.empty_route)
+                MaterialAlertDialogBuilder(this@RouteSettingsActivity).setTitle(R.string.empty_route)
                     .setMessage(R.string.empty_route_notice)
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
@@ -308,8 +317,7 @@ class RouteSettingsActivity(
 
     override fun onBackPressed() {
         if (needSave()) {
-            UnsavedChangesDialogFragment().apply { key() }
-                .show(supportFragmentManager, null)
+            UnsavedChangesDialogFragment().apply { key() }.show(supportFragmentManager, null)
         } else super.onBackPressed()
     }
 

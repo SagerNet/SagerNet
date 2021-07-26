@@ -21,18 +21,19 @@
 
 package io.nekohasekai.sagernet.tun
 
-import android.os.Build
 import android.os.SystemClock
-import android.system.OsConstants
 import cn.hutool.cache.impl.LFUCache
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
-import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.INET6_TUN
+import io.nekohasekai.sagernet.ktx.INET_TUN
+import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.tun.ip.IPHeader
 import io.nekohasekai.sagernet.tun.ip.TCPHeader
 import io.nekohasekai.sagernet.tun.ip.ipv4.IPv4Header
+import io.nekohasekai.sagernet.tun.ip.ipv6.IPv6Header
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.*
@@ -42,19 +43,29 @@ import io.netty.handler.proxy.Socks5ProxyHandler
 import okhttp3.internal.connection.RouteSelector.Companion.socketHost
 import java.net.InetAddress
 import java.net.InetSocketAddress
+import java.util.concurrent.ConcurrentHashMap
 
 class TcpForwarder(val tun: TunThread) {
 
     private val tcpSessions = object : LFUCache<Short, TcpSession>(-1, 5 * 60 * 1000L) {
+        init {
+            if (tun.enableLog) cacheMap = ConcurrentHashMap()
+        }
+
         override fun onRemove(key: Short, session: TcpSession) {
             session.channel?.close()
         }
     }
 
-    class TcpSession(val localAddress: InetAddress, val localPort: Short, val remoteAddress: InetAddress, val remotePort: Short) {
+    class TcpSession(
+        val localAddress: InetAddress,
+        val localPort: Short,
+        val remoteAddress: InetAddress,
+        val remotePort: Short
+    ) {
         val time = SystemClock.elapsedRealtime() + LAUNCH_DELAY
         var uid = 0
-        var packages: Array<String>? = null
+        var packages: Collection<String>? = null
         var channel: Channel? = null
     }
 
@@ -77,36 +88,46 @@ class TcpForwarder(val tun: TunThread) {
                 session = TcpSession(localIp, localPort, remoteIp, remotePort)
                 tcpSessions.put(localPort, session)
                 if (tun.dumpUid) {
-                    session.uid = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        SagerNet.connectivity.getConnectionOwnerUid(OsConstants.IPPROTO_TCP, InetSocketAddress(
-                            session.localAddress,
-                            session.localPort.toUShort().toInt(),
-                        ), InetSocketAddress(session.remoteAddress, session.remotePort.toUShort()
-                            .toInt()))
-                    } else {
-                        UidDumperLegacy.dumpUid(UidDumperLegacy.TCP_IPV4_PROC, UidDumperLegacy.IPV4_PATTERN, session.localPort.toUShort()
-                            .toInt())
+                    val localAddress = InetSocketAddress(
+                        session.localAddress,
+                        session.localPort.toUShort().toInt(),
+                    )
+                    val remoteAddress = InetSocketAddress(
+                        session.remoteAddress, session.remotePort.toUShort().toInt()
+                    )
+
+                    session.uid = tun.uidDumper.dumpUid(
+                        ipHeader is IPv6Header, false, localAddress, remoteAddress
+                    )
+
+                    if (tun.enableLog) {
+                        if (session.uid > 0) {
+                            session.packages = PackageCache[session.uid]
+                        } else if (session.uid == 0) {
+                            session.packages = listOf("root")
+                        }
+
+                        Logs.d(
+                            "Accepted tcp connection from ${session.packages?.joinToString() ?: "unknown"} (${session.uid}): ${ipHeader.sourceAddress.hostAddress}:${
+                                tcpHeader.sourcePort.toUShort().toInt()
+                            } ==> ${ipHeader.destinationAddress}:${
+                                tcpHeader.destinationPort.toUShort().toInt()
+                            }"
+                        )
                     }
 
-                    session.packages = app.packageManager.getPackagesForUid(session.uid)
-
-                    if (tun.enableLog) Logs.d("Accepted tcp connection from ${session.packages?.joinToString() ?: "unknown app"}: ${ipHeader.sourceAddress.hostAddress}:${
-                        tcpHeader.sourcePort.toUShort().toInt()
-                    } ==> ${ipHeader.destinationAddress}:${
-                        tcpHeader.destinationPort.toUShort().toInt()
-                    }")
-
                 } else if (tun.enableLog) {
-                    Logs.d("Accepted tcp connection ${ipHeader.sourceAddress.hostAddress}:${
-                        tcpHeader.sourcePort.toUShort().toInt()
-                    } ==> ${ipHeader.destinationAddress}:${
-                        tcpHeader.destinationPort.toUShort().toInt()
-                    }")
+                    Logs.d(
+                        "Accepted tcp connection ${ipHeader.sourceAddress.hostAddress}:${
+                            tcpHeader.sourcePort.toUShort().toInt()
+                        } ==> ${ipHeader.destinationAddress}:${
+                            tcpHeader.destinationPort.toUShort().toInt()
+                        }"
+                    )
 
                 }
 
             }
-
 
             ipHeader.sourceAddress = remoteIp
             tcpHeader.destinationPort = forwardServerPort
@@ -151,6 +172,7 @@ class TcpForwarder(val tun: TunThread) {
 
         lateinit var channelFeature: ChannelFuture
         var localPort: Short = 0
+        var isDns = false
 
         override fun channelActive(ctx: ChannelHandlerContext) {
 
@@ -165,9 +187,16 @@ class TcpForwarder(val tun: TunThread) {
             }
 
             var remotePort = session.remotePort.toUShort().toInt()
-            if (remotePort == 53 || remoteIp in arrayOf(VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER)) {
+            if (remotePort == 53 || remoteIp in arrayOf(
+                    VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
+                )
+            ) {
+                isDns = true
                 remoteIp = LOCALHOST
                 remotePort = tun.dnsPort
+            }
+            if (isDns) {
+                // direct for dns
 
                 channelFeature = Bootstrap().group(tun.outboundLoop)
                     .channel(NioSocketChannel::class.java)
@@ -185,14 +214,19 @@ class TcpForwarder(val tun: TunThread) {
                             ctx.fireExceptionCaught(it.cause())
                         }
                     })
-
             } else {
+                val socksPort = tun.uidMap[session.uid] ?: tun.socksPort
                 channelFeature = Bootstrap().group(tun.outboundLoop)
                     .channel(NioSocketChannel::class.java)
                     .handler(object : ChannelInitializer<Channel>() {
                         override fun initChannel(channel: Channel) {
-                            channel.pipeline()
-                                .addFirst(Socks5ProxyHandler(InetSocketAddress(LOCALHOST, DataStore.socksPort)))
+                            channel.pipeline().addFirst(
+                                Socks5ProxyHandler(
+                                    InetSocketAddress(
+                                        LOCALHOST, socksPort
+                                    )
+                                )
+                            )
                             channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
                         }
                     })
@@ -223,7 +257,7 @@ class TcpForwarder(val tun: TunThread) {
         }
 
         override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-            if (!tun.closed) Logs.w(cause)
+            if (!(tun.closed || tun.running)) Logs.w(cause)
             ctx.close()
             channelFeature.channel()?.close()
         }
@@ -241,7 +275,7 @@ class TcpForwarder(val tun: TunThread) {
         }
 
         override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-            if (!tun.closed) Logs.w(cause)
+            if (!(tun.closed || tun.running)) Logs.w(cause)
             ctx.close()
             channel.close()
         }
@@ -264,7 +298,7 @@ class TcpForwarder(val tun: TunThread) {
                 }
 
                 override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-                    Logs.w(cause)
+                    if (!(tun.closed || tun.running)) Logs.w(cause)
                 }
             })
             .bind(0)

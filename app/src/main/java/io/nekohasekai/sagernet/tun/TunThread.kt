@@ -56,6 +56,12 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
 
     val socksPort = DataStore.socksPort
     val dnsPort = DataStore.localDNSPort
+    val uidDumper = UidDumper(this)
+    val uidMap = service.data.proxy?.config?.uidMap ?: emptyMap()
+
+    init {
+        Logs.d("UIDs: $uidMap")
+    }
 
     override fun interrupt() {
         running = false
@@ -69,7 +75,8 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
 
     var start = 0L
     val enableLog = DataStore.enableLog
-    val dumpUid = enableLog
+    val dumpUid = enableLog || uidMap.isNotEmpty()
+    val multiThreadForward = DataStore.multiThreadForward
 
     val buffer = ByteArray(VpnService.VPN_MTU)
     lateinit var input: FileInputStream
@@ -89,11 +96,7 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
         tcpForwarder.start()
 
         runBlocking {
-            if (!DataStore.multiThreadForward) {
-                loopSingleThread()
-            } else {
-                loopMultiThread()
-            }
+            if (!multiThreadForward) loopSingleThread() else loopMultiThread()
         }
     }
 
@@ -142,6 +145,12 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
                 NetUtils.IPPROTO_UDP -> udpForwarder.processUdp(packet, ipHeader)
                 else -> processOther(packet, length)
             }
+        } catch (e: InterruptedException) {
+            interrupt()
+            IoUtil.close(input)
+            IoUtil.close(output)
+            running = false
+            return
         } catch (e: ErrnoException) {
             Logs.w(e)
             interrupt()
@@ -213,6 +222,5 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
             PacketStrategy.DROP -> return
         }
     }
-
 
 }

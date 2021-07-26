@@ -21,20 +21,14 @@
 
 package io.nekohasekai.sagernet.tun
 
-import android.os.Build
 import android.os.SystemClock
-import android.system.OsConstants
 import cn.hutool.cache.impl.LFUCache
 import cn.hutool.core.util.ArrayUtil
-import io.nekohasekai.sagernet.BuildConfig
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.tun.ip.IPHeader
-import io.nekohasekai.sagernet.tun.ip.NetUtils
 import io.nekohasekai.sagernet.tun.ip.UDPHeader
 import io.nekohasekai.sagernet.tun.ip.ipv4.IPv4Header
 import io.nekohasekai.sagernet.tun.ip.ipv6.IPv6Header
@@ -42,6 +36,7 @@ import io.nekohasekai.sagernet.tun.netty.DefaultSocks5UdpMessage
 import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessage
 import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessageDecoder
 import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessageEncoder
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.Unpooled
 import io.netty.channel.*
@@ -66,8 +61,6 @@ class UdpForwarder(val tun: TunThread) {
         }
     }
 
-    private val dumpUid = tun.dumpUid
-
     fun processUdp(packet: ByteArray, ipHeader: IPHeader) {
         val udpHeader = UDPHeader(ipHeader)
         val localPort = udpHeader.sourcePort
@@ -78,8 +71,6 @@ class UdpForwarder(val tun: TunThread) {
             tun.write(packet, ipHeader.packetLength)
             return
         }
-
-        val remoteAddress = InetSocketAddress(remoteIp, remotePortInt)
 
         var session = udpSessions[localPort]
         if (session != null && (session.remotePort != remotePort || session.remoteIp != remoteIp || session.future.now?.isActive == false)) {
@@ -92,41 +83,56 @@ class UdpForwarder(val tun: TunThread) {
             session = UdpSession(udpHeader)
             udpSessions.put(localPort, session)
 
-            if (dumpUid) {
-                session.uid = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    SagerNet.connectivity.getConnectionOwnerUid(OsConstants.IPPROTO_UDP, InetSocketAddress(session.localIp, session.localPort.toUShort()
-                        .toInt()), session.destAddress)
-                } else {
-                    UidDumperLegacy.dumpUid(UidDumperLegacy.UDP_IPV4_PROC, UidDumperLegacy.IPV4_PATTERN, session.localPort.toUShort()
-                        .toInt())
-                }
-                if (session.uid > 0) {
-                    session.packages = app.packageManager.getPackagesForUid(session.uid)
-                } else if (session.uid == 0) {
-                    session.packages = arrayOf("root")
-                }
+            if (tun.dumpUid) {
 
-                if (session.packages?.contains(BuildConfig.APPLICATION_ID) == false) {
-                    Logs.d("Accepted udp connection from ${session.packages?.joinToString() ?: "unknown app"}: ${ipHeader.sourceAddress.hostAddress}:${
+                session.uid = tun.uidDumper.dumpUid(
+                    ipHeader is IPv6Header, true, session.localAddress, session.destAddress
+                )
+
+                if (tun.enableLog) {
+
+                    if (session.uid > 0) {
+                        session.packages = PackageCache[session.uid]
+                    } else if (session.uid == 0) {
+                        session.packages = listOf("root")
+                    }
+
+                    Logs.d(
+                        "Accepted udp connection from ${session.packages?.joinToString() ?: "unknown"} (${session.uid}): ${ipHeader.sourceAddress.hostAddress}:${
+                            udpHeader.sourcePort.toUShort().toInt()
+                        } ==> ${ipHeader.destinationAddress}:${
+                            udpHeader.destinationPort.toUShort().toInt()
+                        }"
+                    )
+
+                }
+            } else if (tun.enableLog) {
+                Logs.d(
+                    "Accepted udp connection ${ipHeader.sourceAddress.hostAddress}:${
                         udpHeader.sourcePort.toUShort().toInt()
                     } ==> ${ipHeader.destinationAddress}:${
                         udpHeader.destinationPort.toUShort().toInt()
-                    }")
-                }
-            } else if (tun.enableLog) {
-                Logs.d("Accepted udp connection ${ipHeader.sourceAddress.hostAddress}:${
-                    udpHeader.sourcePort.toUShort().toInt()
-                } ==> ${ipHeader.destinationAddress}:${
-                    udpHeader.destinationPort.toUShort().toInt()
-                }")
+                    }"
+                )
             }
+
+            session.connect()
         } else {
             session.udpHeader = udpHeader
         }
-
         val data = Unpooled.wrappedBuffer(udpHeader.data())
 
-        val message: Any = if (session.isDns) DatagramPacket(data, InetSocketAddress(LOCALHOST, tun.dnsPort)) else DefaultSocks5UdpMessage((0).toByte(), if (ipHeader is IPv4Header) Socks5AddressType.IPv4 else Socks5AddressType.IPv6, remoteAddress.socketHost, remoteAddress.port, data)
+        val message: Any = if (session.isDns) DatagramPacket(
+            data, InetSocketAddress(
+                LOCALHOST, tun.dnsPort
+            )
+        ) else DefaultSocks5UdpMessage(
+            (0).toByte(),
+            if (ipHeader is IPv4Header) Socks5AddressType.IPv4 else Socks5AddressType.IPv6,
+            session.destAddress.socketHost,
+            session.destAddress.port,
+            data
+        )
 
         session.future.sync().get().writeAndFlush(message)
     }
@@ -137,11 +143,13 @@ class UdpForwarder(val tun: TunThread) {
         val localPort = udpHeader.sourcePort
         val remoteIp = udpHeader.ipHeader.destinationAddress
         val remotePort = udpHeader.destinationPort
+
+        val localAddress = InetSocketAddress(localIp, localPort.toUShort().toInt())
         val destAddress = InetSocketAddress(remoteIp, remotePort.toUShort().toInt())
 
         val time = SystemClock.elapsedRealtime() + LAUNCH_DELAY
         var uid = 0
-        var packages: Array<String>? = null
+        var packages: Collection<String>? = null
         var isDns = false
         var isSelf = false
         var template = createTemplate(udpHeader).header()
@@ -150,20 +158,25 @@ class UdpForwarder(val tun: TunThread) {
         val future: Future<Channel> get() = promise
 
         private fun calIsDns(): Boolean {
-            if (destAddress.socketHost in arrayOf(VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER)) return true
+            if (destAddress.socketHost in arrayOf(
+                    VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
+                )
+            ) return true
             if (udpHeader.destinationPort.toUShort().toInt() == 53) return true
             val data = udpHeader.data()
             if (data.size < Header.LENGTH) return false
             return try {
                 val dnsMessage = Message(data)
 
-                !dnsMessage.header.getFlag(Flags.QR.toInt()) && dnsMessage.rcode == 0 && dnsMessage.header.getCount(Section.ANSWER) == 0 && dnsMessage.header.getCount(Section.AUTHORITY) == 0
+                !dnsMessage.header.getFlag(Flags.QR.toInt()) && dnsMessage.rcode == 0 && dnsMessage.header.getCount(
+                    Section.ANSWER
+                ) == 0 && dnsMessage.header.getCount(Section.AUTHORITY) == 0
             } catch (e: Exception) {
                 false
             }
         }
 
-        init {
+        fun connect() {
             if (calIsDns()) {
                 isDns = true
                 Bootstrap().group(tun.outboundLoop)
@@ -181,7 +194,7 @@ class UdpForwarder(val tun: TunThread) {
                             }
                         }
                     })
-                    .connect(LOCALHOST, tun.socksPort)
+                    .connect(LOCALHOST, tun.uidMap[uid] ?: tun.socksPort)
             }.addListener(ChannelFutureListener {
                 if (it.isSuccess) {
                     promise.trySuccess(it.channel())
@@ -202,7 +215,6 @@ class UdpForwarder(val tun: TunThread) {
             }
         }
 
-
         override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
             when (msg) {
                 is Socks5UdpMessage -> sendResponse(msg.data().array())
@@ -212,11 +224,7 @@ class UdpForwarder(val tun: TunThread) {
 
         fun sendResponse(rawData: ByteArray) {
 
-            val data = if (!isDns) {
-                Logs.d(NetUtils.formatByteArray("Send udp response", rawData))
-
-                rawData
-            } else {
+            val data = if (!isDns) rawData else {
 
                 // v2ray sends 2kb shit for every dns response
                 ArrayUtil.sub(rawData, 0, Message(rawData).numBytes())

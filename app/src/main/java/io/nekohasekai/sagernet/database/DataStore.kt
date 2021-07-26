@@ -227,6 +227,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND_RULE)
     var routeReverse by profileCacheStore.boolean(Key.ROUTE_REVERSE)
     var routeRedirect by profileCacheStore.string(Key.ROUTE_REDIRECT)
+    var routePackages by profileCacheStore.string(Key.ROUTE_PACKAGES)
     var serverConfig by profileCacheStore.string(Key.SERVER_CONFIG)
 
     var groupName by profileCacheStore.string(Key.GROUP_NAME)

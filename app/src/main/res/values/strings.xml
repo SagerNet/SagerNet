@@ -455,4 +455,9 @@
     <string name="profile_import_message">Confirm you want to import profile %s?</string>
     <string name="clear_profiles_message">Are you sure you want to clear this group?</string>
 
+    <string name="apps">Applications</string>
+    <string name="select_apps">Select Applications</string>
+    <string name="apps_message">%d Applications</string>
+    <string name="need_nf">To support application-based routing, the VPN Mode must be Native Forwarding.</string>
+
 </resources>

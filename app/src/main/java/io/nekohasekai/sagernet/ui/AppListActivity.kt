@@ -21,10 +21,8 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -32,7 +30,6 @@ import android.util.SparseBooleanArray
 import android.view.*
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.TextView
 import androidx.annotation.UiThread
 import androidx.core.util.contains
 import androidx.core.util.set
@@ -42,39 +39,29 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import io.nekohasekai.sagernet.BuildConfig
-import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.databinding.LayoutAppsBinding
+import io.nekohasekai.sagernet.databinding.LayoutAppListBinding
 import io.nekohasekai.sagernet.databinding.LayoutAppsItemBinding
-import io.nekohasekai.sagernet.databinding.LayoutLoadingBinding
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.crossFadeFrom
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ui.profile.ConfigEditActivity
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import okhttp3.internal.closeQuietly
-import org.jf.dexlib2.dexbacked.DexBackedDexFile
-import org.jf.dexlib2.iface.DexFile
-import java.io.File
-import java.util.zip.ZipException
-import java.util.zip.ZipFile
 import kotlin.coroutines.coroutineContext
 
-class AppManagerActivity : ThemedActivity() {
+class AppListActivity : ThemedActivity() {
     companion object {
-        @SuppressLint("StaticFieldLeak")
-        private var instance: AppManagerActivity? = null
         private const val SWITCH = "switch"
 
         private val cachedApps
@@ -117,7 +104,7 @@ class AppManagerActivity : ThemedActivity() {
 
         override fun onClick(v: View?) {
             if (isProxiedApp(item)) proxiedUids.delete(item.uid) else proxiedUids[item.uid] = true
-            DataStore.individual = apps.filter { isProxiedApp(it) }
+            DataStore.routePackages = apps.filter { isProxiedApp(it) }
                 .joinToString("\n") { it.packageName }
 
             appsAdapter.notifyItemRangeChanged(0, appsAdapter.itemCount, SWITCH)
@@ -181,13 +168,13 @@ class AppManagerActivity : ThemedActivity() {
 
     private val loading by lazy { findViewById<View>(R.id.loading) }
 
-    private lateinit var binding: LayoutAppsBinding
+    private lateinit var binding: LayoutAppListBinding
     private val proxiedUids = SparseBooleanArray()
     private var loader: Job? = null
     private var apps = emptyList<ProxiedApp>()
     private val appsAdapter = AppsAdapter()
 
-    private fun initProxiedUids(str: String = DataStore.individual) {
+    private fun initProxiedUids(str: String = DataStore.routePackages) {
         proxiedUids.clear()
         val apps = cachedApps
         for (line in str.lineSequence()) proxiedUids[(apps[line]
@@ -211,31 +198,15 @@ class AppManagerActivity : ThemedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = LayoutAppsBinding.inflate(layoutInflater)
+        binding = LayoutAppListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         ListHolderListener.setup(this)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
-            setTitle(R.string.proxied_apps)
+            setTitle(R.string.select_apps)
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
-        }
-
-        if (!DataStore.proxyApps) {
-            DataStore.proxyApps = true
-        }
-
-        binding.bypassGroup.check(if (DataStore.bypass) R.id.appProxyModeBypass else R.id.appProxyModeOn)
-        binding.bypassGroup.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.appProxyModeDisable -> {
-                    DataStore.proxyApps = false
-                    finish()
-                }
-                R.id.appProxyModeOn -> DataStore.bypass = false
-                R.id.appProxyModeBypass -> DataStore.bypass = true
-            }
         }
 
         initProxiedUids()
@@ -255,23 +226,18 @@ class AppManagerActivity : ThemedActivity() {
             appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
         }
 
-        instance = this
         loadApps()
     }
 
-    private var sysApps = true
+    private var sysApps = false
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.per_app_proxy_menu, menu)
+        menuInflater.inflate(R.menu.app_list_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_scan_china_apps -> {
-                scanChinaApps()
-                return true
-            }
             R.id.action_invert_selections -> {
                 runOnDefaultDispatcher {
                     for (app in apps) {
@@ -281,7 +247,7 @@ class AppManagerActivity : ThemedActivity() {
                             proxiedUids[app.uid] = true
                         }
                     }
-                    DataStore.individual = apps.filter { isProxiedApp(it) }
+                    DataStore.routePackages = apps.filter { isProxiedApp(it) }
                         .joinToString("\n") { it.packageName }
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
@@ -294,7 +260,7 @@ class AppManagerActivity : ThemedActivity() {
             R.id.action_clear_selections -> {
                 runOnDefaultDispatcher {
                     proxiedUids.clear()
-                    DataStore.individual = ""
+                    DataStore.routePackages = ""
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
                         appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
@@ -302,7 +268,7 @@ class AppManagerActivity : ThemedActivity() {
                 }
             }
             R.id.action_export_clipboard -> {
-                val success = SagerNet.trySetPrimaryClip("${DataStore.bypass}\n${DataStore.individual}")
+                val success = SagerNet.trySetPrimaryClip("false\n${DataStore.routePackages}")
                 Snackbar.make(
                     binding.list,
                     if (success) R.string.action_export_msg else R.string.action_export_err,
@@ -315,13 +281,8 @@ class AppManagerActivity : ThemedActivity() {
                 if (!proxiedAppString.isNullOrEmpty()) {
                     val i = proxiedAppString.indexOf('\n')
                     try {
-                        val (enabled, apps) = if (i < 0) {
-                            proxiedAppString to ""
-                        } else proxiedAppString.substring(
-                            0, i
-                        ) to proxiedAppString.substring(i + 1)
-                        binding.bypassGroup.check(if (enabled.toBoolean()) R.id.appProxyModeBypass else R.id.appProxyModeOn)
-                        DataStore.individual = apps
+                        val apps = if (i < 0) "" else proxiedAppString.substring(i + 1)
+                        DataStore.routePackages = apps
                         Snackbar.make(
                             binding.list, R.string.action_import_msg, Snackbar.LENGTH_LONG
                         ).show()
@@ -337,150 +298,9 @@ class AppManagerActivity : ThemedActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun scanChinaApps() {
-
-        val text: TextView
-
-        val dialog = MaterialAlertDialogBuilder(this).setView(
-            LayoutLoadingBinding.inflate(layoutInflater).apply {
-                text = loadingText
-            }.root
-        ).setCancelable(false).show()
-
-        val txt = text.text.toString()
-
-        runOnDefaultDispatcher {
-            val chinaApps = ArrayList<Pair<PackageInfo, String>>()
-            val chinaRegex = ("(" + arrayOf(
-                "com.tencent",
-                "com.alibaba",
-                "com.umeng",
-                "com.qihoo",
-                "com.ali",
-                "com.alipay",
-                "com.amap",
-                "com.sina",
-                "com.weibo",
-                "com.vivo",
-                "com.xiaomi",
-                "com.huawei",
-                "com.taobao",
-                "com.secneo",
-                "s.h.e.l.l",
-                "com.stub",
-                "com.kiwisec",
-                "com.secshell",
-                "com.wrapper",
-                "cn.securitystack",
-                "com.mogosec",
-                "com.secoen",
-                "com.netease",
-                "com.mx",
-                "com.qq.e",
-                "com.baidu",
-                "com.bytedance",
-                "com.bugly",
-                "com.miui",
-                "com.oppo",
-                "com.coloros",
-                "com.iqoo",
-                "com.meizu",
-                "com.gionee",
-                "cn.nubia"
-            ).joinToString("|") { "${it.replace(".", "\\.")}\\." } + ").*").toRegex()
-
-            val bypass = DataStore.bypass
-            val cachedApps = cachedApps
-
-            apps = cachedApps.map { (packageName, packageInfo) ->
-                kotlin.coroutines.coroutineContext[Job]!!.ensureActive()
-                ProxiedApp(packageManager, packageInfo.applicationInfo, packageName)
-            }.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
-
-            scan@ for ((pkg, app) in cachedApps.entries) {
-                /*if (!sysApps && app.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
-                    continue
-                }*/
-
-                val index = appsAdapter.filteredApps.indexOfFirst { it.uid == app.applicationInfo.uid }
-                var changed = false
-
-                onMainDispatcher {
-                    text.text = (txt + " " + app.packageName + "\n\n" + chinaApps.map { it.second }
-                        .reversed()
-                        .joinToString("\n", postfix = "\n")).trim()
-                }
-
-                try {
-
-                    val dex = File(app.applicationInfo.publicSourceDir)
-                    val zipFile = ZipFile(dex)
-                    var dexFile: DexFile
-
-                    for (entry in zipFile.entries()) {
-                        if (entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
-                            val input = zipFile.getInputStream(entry).readBytes()
-                            dexFile = try {
-                                DexBackedDexFile.fromInputStream(null, input.inputStream())
-                            } catch (e: Exception) {
-                                Logs.w(e)
-                                break
-                            }
-                            for (clazz in dexFile.classes) {
-                                val clazzName = clazz.type.substring(1, clazz.type.length - 1)
-                                    .replace("/", ".")
-                                    .replace("$", ".")
-
-                                if (clazzName.matches(chinaRegex)) {
-                                    chinaApps.add(
-                                        app to app.applicationInfo.loadLabel(packageManager)
-                                            .toString()
-                                    )
-                                    zipFile.closeQuietly()
-
-                                    if (bypass) {
-                                        changed = !proxiedUids[app.applicationInfo.uid]
-                                        proxiedUids[app.applicationInfo.uid] = true
-                                    } else {
-                                        proxiedUids.delete(app.applicationInfo.uid)
-                                    }
-
-                                    continue@scan
-                                }
-                            }
-                        }
-                    }
-                    zipFile.closeQuietly()
-
-                    if (bypass) {
-                        proxiedUids.delete(app.applicationInfo.uid)
-                    } else {
-                        changed = !proxiedUids[index]
-                        proxiedUids[app.applicationInfo.uid] = true
-                    }
-
-                } catch (e: ZipException) {
-                    Logs.w("Error in pkg ${app.packageName}:${app.versionName}", e)
-                    continue
-                }
-
-            }
-
-            DataStore.individual = apps.filter { isProxiedApp(it) }
-                .joinToString("\n") { it.packageName }
-
-            apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
-
-            onMainDispatcher {
-                appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
-
-                dialog.dismiss()
-            }
-
-        }
-
-
+    override fun onSupportNavigateUp(): Boolean {
+        if (!super.onSupportNavigateUp()) finish()
+        return true
     }
 
     override fun supportNavigateUpTo(upIntent: Intent) =
@@ -491,7 +311,6 @@ class AppManagerActivity : ThemedActivity() {
     } else super.onKeyUp(keyCode, event)
 
     override fun onDestroy() {
-        instance = null
         loader?.cancel()
         super.onDestroy()
     }
