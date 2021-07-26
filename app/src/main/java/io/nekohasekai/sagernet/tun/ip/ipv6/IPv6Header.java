@@ -105,16 +105,15 @@ public class IPv6Header extends IPHeader {
         if (headerOffset != 0) {
             return protocol;
         }
+        headerOffset = OFFSET_HEADER;
         int nextHeader = getNextHeader();
-        int nextOffset = offset + OFFSET_HEADER;
-        int headerOffset = packetLength - offset - getPayloadLength();
-        while (nextOffset < headerOffset && nextHeader != NetUtils.IPPROTO_ICMP && nextHeader != NetUtils.IPPROTO_ICMPv6 && nextHeader != NetUtils.IPPROTO_TCP && nextHeader != NetUtils.IPPROTO_UDP) {
-            nextHeader = readInt8(nextOffset);
-            int optDataLen = readInt8(nextOffset + 1);
-            nextOffset += 2 + optDataLen;
+        int maxHeader = packetLength - offset - getPayloadLength();
+        while (headerOffset < maxHeader && nextHeader != NetUtils.IPPROTO_ICMPv6 && nextHeader != NetUtils.IPPROTO_TCP && nextHeader != NetUtils.IPPROTO_UDP) {
+            nextHeader = readInt8(headerOffset);
+            int optDataLen = readInt8(headerOffset + 1);
+            headerOffset += 2 + optDataLen;
         }
         protocol = nextHeader;
-        headerOffset = nextOffset;
         return protocol;
     }
 
