@@ -968,7 +968,7 @@ fun buildV2RayConfig(
                         balancerTag = balancerMap[rule.outbound]
                     }
                     else -> outboundTag = when (val outId = rule.outbound) {
-                        0L -> TAG_AGENT
+                        0L -> tagProxy
                         -1L -> TAG_DIRECT
                         -2L -> TAG_BLOCK
                         else -> if (outId == proxy.id) tagProxy else tagMap[outId]
@@ -1101,7 +1101,7 @@ fun buildV2RayConfig(
             if (!dns.isIpAddress()) continue
             routing.rules.add(0, RoutingObject.RuleObject().apply {
                 type = "field"
-                outboundTag = TAG_AGENT
+                outboundTag = tagProxy
                 ip = listOf(dns)
             })
         }
