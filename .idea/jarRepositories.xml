@@ -36,5 +36,10 @@
       <option name="name" value="maven" />
       <option name="url" value="https://dl.bintray.com/takisoft/android" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="Gradle Central Plugin Repository2" />
+      <option name="name" value="Gradle Central Plugin Repository2" />
+      <option name="url" value="https://plugins.gradle.org/m2" />
+    </remote-repository>
   </component>
 </project>

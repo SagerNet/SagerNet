@@ -1,45 +1,23 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-plugins {
-    id("com.github.ben-manes.versions") version "0.39.0" apply false
-    id("com.google.protobuf") version "0.8.17" apply false
-}
-
-buildscript {
-    apply(from = "repositories.gradle.kts")
-
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-
-    dependencies {
-        val androidPluginVersion = rootProject.extra["androidPluginVersion"].toString()
-        val kotlinVersion = rootProject.extra["kotlinVersion"].toString()
-        val playPublisherVersion = rootProject.extra["playPublisherVersion"].toString()
-
-        classpath("com.android.tools.build:gradle:$androidPluginVersion")
-        classpath(kotlin("gradle-plugin", kotlinVersion))
-        classpath("org.mozilla.rust-android-gradle:plugin:0.8.7")
-        classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.1")
-        classpath("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
-    }
-}
-
 allprojects {
     apply(from = "${rootProject.projectDir}/repositories.gradle.kts")
     apply(plugin = "com.github.ben-manes.versions")
     tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+        val regex = listOf(
+            "alpha", "beta", "rc", "cr", "m", "preview", "b", "ea"
+        ).map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-+]*") }
         resolutionStrategy {
             componentSelection {
                 all {
-
-                    val rejected = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea")
-                        .map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-+]*") }
-                        .any { it.matches(candidate.version) }
+                    val rejected = regex.any {
+                        it.matches(candidate.version)
+                    } && regex.all {
+                        !it.matches(
+                            currentVersion
+                        )
+                    }
                     if (rejected) {
                         reject("Release candidate")
                     }
@@ -47,7 +25,7 @@ allprojects {
             }
         }
         // optional parameters
-        checkForGradleUpdate = true
+        checkForGradleUpdate = false
         outputFormatter = "json"
         outputDir = "build/dependencyUpdates"
         reportfileName = "report"
@@ -62,5 +40,17 @@ tasks.register<Delete>("clean") {
 subprojects {
     tasks.whenTaskAdded {
         if (name.contains("uploadCrashlyticsMappingFile")) enabled = false
+    }
+}
+
+tasks.named<Wrapper>("wrapper") {
+    distributionType = Wrapper.DistributionType.ALL
+
+    doLast {
+        val sha256 = java.net.URL("$distributionUrl.sha256")
+            .openStream()
+            .use { it.reader().readText().trim() }
+
+        file("gradle/wrapper/gradle-wrapper.properties").appendText("distributionSha256Sum=$sha256")
     }
 }
