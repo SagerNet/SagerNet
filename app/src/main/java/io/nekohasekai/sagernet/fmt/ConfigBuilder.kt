@@ -206,6 +206,7 @@ fun buildV2RayConfig(
 
         dns = DnsObject().apply {
             hosts = DataStore.hosts.split("\n")
+                .filter { it.isNotBlank() }
                 .associate { it.substringBefore(" ") to it.substringAfter(" ") }
                 .toMutableMap()
             servers = mutableListOf()
