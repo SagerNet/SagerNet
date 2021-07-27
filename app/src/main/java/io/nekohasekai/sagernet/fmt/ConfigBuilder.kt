@@ -1126,17 +1126,12 @@ fun buildV2RayConfig(
             }
         }
 
-        if (bypassIP.isNotEmpty() || bypassDomain.isNotEmpty()) {
+        if (bypassDomain.isNotEmpty()) {
             dns.servers.addAll(directDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
                         address = it
-                        if (bypassIP.isNotEmpty()) {
-                            expectIPs = bypassIP.toList()
-                        }
-                        if (bypassDomain.isNotEmpty()) {
-                            domains = bypassDomain.toList()
-                        }
+                        domains = bypassDomain.toList()
                         skipFallback = true
                     }
                 }
