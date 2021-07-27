@@ -108,7 +108,7 @@ class RouteSettingsActivity(
         }
         reverse = DataStore.routeReverse
         redirect = DataStore.routeRedirect
-        packages = DataStore.routePackages.split("\n")
+        packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }
     }
 
     fun needSave(): Boolean {
