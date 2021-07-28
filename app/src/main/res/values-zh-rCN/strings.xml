@@ -1,25 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SagerNet</string>
     <string name="app_desc">适用于 Android 之通用代理工具, 使用 Kotlin 编写。</string>
-
     <string name="project">项目</string>
     <string name="github">源代码</string>
     <string name="telegram">Telegram 更新频道</string>
     <string name="oss_licenses">开放源代码协议</string>
-
     <string name="app_version">版本</string>
     <string name="logcat">导出调试信息</string>
     <string name="logcat_summary">这种非常有用哇</string>
-
     <string name="menu_configuration">配置</string>
     <string name="menu_group">分组</string>
     <string name="menu_about">关于</string>
-
     <string name="group_default">未分组</string>
     <string name="profile_type">socks5</string>
-
     <string name="quick_toggle">切换</string>
-
     <!-- group -->
     <string name="group_name">分组名</string>
     <string name="group_update">更新</string>
@@ -29,7 +24,6 @@
     <string name="group_create_subscription">添加订阅</string>
     <string name="group_edit">编辑</string>
     <string name="group_edit_subscription">编辑订阅</string>
-
     <string name="group_status_empty">空</string>
     <string name="group_status_empty_subscription">从未更新</string>
     <string name="group_status_proxies">%d 个配置</string>
@@ -37,11 +31,13 @@
     <string name="group_no_difference">%s: 没有变化</string>
     <string name="group_updated">%s: 更新了 %d 个节点</string>
     <string name="group_show_diff">变化</string>
-    <string name="group_delete_confirm_prompt">您确定要删除这个分组吗?</string>
-    <string name="group_added">新增: \n%s</string>
-    <string name="group_changed">更新: \n%s</string>
-    <string name="group_deleted">删除: \n%s</string>
-
+    <string name="group_delete_confirm_prompt">您确定要删除这个分组吗\?</string>
+    <string name="group_added">新增:
+\n%s</string>
+    <string name="group_changed">更新:
+\n%s</string>
+    <string name="group_deleted">删除:
+\n%s</string>
     <!-- misc -->
     <string name="service_mode">运行模式</string>
     <string name="service_mode_proxy">仅代理</string>
@@ -61,16 +57,15 @@
     <string name="ws_browser_forwarding">浏览器转发</string>
     <string name="ws_browser_forwarding_sum">转发相应的 WebSockets 到浏览器.</string>
     <string name="speed_interval">速度通知更新间隔</string>
-
     <string name="traffic">%1$s↑ %2$s↓</string>
-    <string name="speed_detail">代理： %1$s↑ %2$s↓\n直连： %3$s↑ %4$s↓</string>
+    <string name="speed_detail">代理： %1$s↑ %2$s↓
+\n直连： %3$s↑ %4$s↓</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">测试中…</string>
     <string name="connection_test_available">连接成功: HTTPS 握手耗时 %dms</string>
     <string name="connection_test_error">连接失败: %s</string>
     <string name="connection_test_fail">网络不可用</string>
     <string name="connection_test_error_status_code">错误代码: #%d</string>
-
     <!-- proxy category -->
     <string name="profile_name">配置名称</string>
     <string name="server_address">服务器</string>
@@ -91,10 +86,8 @@
     <string name="tls">使用 TLS</string>
     <string name="sni">服务器名称指示</string>
     <string name="encryption">加密</string>
-
     <!-- feature category -->
     <string name="ipv6">IPv6 路由</string>
-
     <string name="metered">按流量计费</string>
     <string name="metered_summary">让系统认为此 VPN 按流量计费</string>
     <string name="menu_route">路由</string>
@@ -106,41 +99,34 @@
     <string name="scanning">扫描中…</string>
     <string name="invert_selections">反选</string>
     <string name="clear_selections">清空</string>
-
     <string name="bypass_apps">绕过</string>
     <string name="show_system_apps">显示系统应用</string>
-
     <string name="auto_connect">自动连接</string>
     <string name="auto_connect_summary">SagerNet 将在手机启动或更新完成后自动重新连接</string>
     <string name="direct_boot_aware">允许在解锁前启动</string>
     <string name="direct_boot_aware_summary">您正在使用的服务器可能会受到更少的保护</string>
-
     <!-- notification category -->
     <string name="service_vpn">VPN 服务</string>
     <string name="service_proxy">代理服务</string>
     <string name="forward_success">SagerNet 已启动.</string>
     <string name="invalid_server">无效的服务器</string>
-    <string name="service_failed">失败: </string>
+    <string name="service_failed">失败:</string>
     <string name="stop">停止</string>
     <string name="stopping">正在停止…</string>
     <string name="vpn_error">%s</string>
     <string name="vpn_permission_denied">VPN 服务权限请求被拒绝</string>
     <string name="reboot_required">无法启动 VPN 服务 , 您可能需要重启手机</string>
-
     <!-- alert category -->
     <string name="profile_empty">请选择一个服务器配置</string>
     <string name="connect">连接</string>
     <string name="clipboard_empty">剪切板没有内容</string>
-
     <!-- menu category -->
     <string name="settings">设置</string>
     <string name="edit">编辑</string>
     <string name="share">分享</string>
     <string name="add_profile">添加服务器配置</string>
-
     <string name="action_create_group">空白组</string>
     <string name="action_from_link">添加订阅</string>
-
     <string name="action_scan_china_apps">扫描中国应用</string>
     <string name="action_export_file">导出到文件</string>
     <string name="action_export_clipboard">导出到剪切板</string>
@@ -150,39 +136,31 @@
     <string name="action_export_err">导出失败</string>
     <string name="action_import_msg">导入成功!</string>
     <string name="action_import_err">导入失败</string>
-
     <!-- share -->
-
     <!-- profile -->
     <string name="profile_config">服务器配置</string>
     <string name="delete">删除</string>
-    <string name="delete_confirm_prompt">您确定要删除这个服务器配置吗?</string>
+    <string name="delete_confirm_prompt">您确定要删除这个服务器配置吗\?</string>
     <string name="share_qr_nfc">二维码</string>
     <string name="add_profile_methods_scan_qr_code">扫描二维码</string>
     <string name="add_profile_methods_manual_settings">手动输入</string>
     <plurals name="removed">
-        <item quantity="one">已删除</item>
-        <item quantity="other">%d 项已删除</item>
+        <item quantity="other">已删除</item>
     </plurals>
     <plurals name="added">
-        <item quantity="one">已添加</item>
-        <item quantity="other">%d 服务器配置已添加</item>
+        <item quantity="other">已添加</item>
     </plurals>
     <string name="undo">还原</string>
-
     <!-- tasker -->
-
     <!-- status -->
     <string name="connecting">正在连接…</string>
     <string name="vpn_connected">已连接 , 点击此处测试连接</string>
     <string name="not_connected">未连接</string>
-
     <!-- subscriptions -->
     <string name="subscriptions">订阅</string>
     <string name="cleartext_http_warning">纯文本 HTTP 流量并不安全</string>
     <string name="error_title">错误</string>
     <string name="no_proxies_found">未在此链接内找到服务器配置</string>
-
     <!-- plugin -->
     <string name="plugin">插件</string>
     <string name="plugin_configure">设置…</string>
@@ -190,13 +168,11 @@
     <string name="plugin_unknown">未知插件: %s</string>
     <string name="plugin_untrusted">请注意: 此插件的不来自可靠的来源.</string>
     <string name="plugin_auto_connect_unlock_only">此插件可能不支持自动连接</string>
-
-    <string name="proxy_cat">"服务器设置"</string>
-    <string name="unsaved_changes_prompt">"是否要保存修改？"</string>
+    <string name="proxy_cat">服务器设置</string>
+    <string name="unsaved_changes_prompt">是否要保存修改？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="apply">应用</string>
-
     <string name="license">授权协议</string>
     <string name="route_proxy">代理</string>
     <string name="route_bypass">绕过</string>
@@ -221,7 +197,8 @@
     <string name="kcp_seed">mKCP 混淆密码</string>
     <string name="grpc_service_name">gRPC 服务名称</string>
     <string name="alpn">应用层协议协商</string>
-    <string name="group_duplicate">重复:\n%s</string>
+    <string name="group_duplicate">重复:
+\n%s</string>
     <string name="deduplication">去重</string>
     <string name="version_x">版本 (%s)</string>
     <string name="show_stop">显示停止按钮</string>
@@ -243,7 +220,7 @@
     <string name="mux_for_all_sum">如果服务器不支持, 则将无法连接</string>
     <string name="tcp_keep_alive_interval">TCP 保持活跃数据包发送间隔</string>
     <string name="route_add">新建路由规则</string>
-    <string name="delete_route_prompt">您确定要移除此路吗?</string>
+    <string name="delete_route_prompt">您确定要移除此路由吗\?</string>
     <string name="route_name">路由名称</string>
     <string name="route_profile">选择配置…</string>
     <string name="empty_route">空路由</string>
@@ -348,7 +325,7 @@
     <string name="subscription_settings">订阅设置</string>
     <string name="group_type">分组类型</string>
     <string name="subscription_type">订阅类型</string>
-    <string name="delete_group_prompt">您确定要删除该分组吗 ?</string>
+    <string name="delete_group_prompt">您确定要删除该分组吗 \?</string>
     <string name="force_resolve">强制解析</string>
     <string name="force_resolve_sum">更新时解析所有域名到 IP 地址. 如果可能, 主机与服务器名称指示值将被自动覆盖</string>
     <string name="force_vmess_aead">强制 VMess AEAD</string>
@@ -375,7 +352,7 @@
     <string name="service_subscription">订阅更新服务</string>
     <string name="subscription_update">订阅更新</string>
     <string name="subscription_update_message">正更新 %s …</string>
-    <string name="update_subscription_warning">代理未连接, 您确定要继续更新吗?</string>
+    <string name="update_subscription_warning">代理未连接, 您确定要继续更新吗\?</string>
     <string name="group_filter">筛选</string>
     <string name="group_filter_groups">组</string>
     <string name="group_filter_tags">标签</string>
@@ -383,14 +360,14 @@
     <string name="group_filter_tags_nf">该订阅中没有标签</string>
     <string name="group_filter_ns">您需要一个 OOCv1 订阅以使用筛选功能</string>
     <string name="subscription_used">已用 %s</string>
-    <string name="subscription_traffic">已用 %s  / 剩余 %s</string>
+    <string name="subscription_traffic">已用 %s / 剩余 %s</string>
     <string name="subscription_import">导入订阅</string>
     <string name="subscription_import_message">确认要导入订阅 %s？如果来源不可信, 您的 IP 和行为将被泄露.</string>
     <string name="profile_import">导入配置</string>
     <string name="profile_import_message">确认要导入配置 %s？</string>
     <string name="no_proxies_found_in_subscription">未在此订阅内找到服务器配置</string>
     <string name="action_export">导出</string>
-    <string name="clear_profiles_message">您确定要清空该分组吗?</string>
+    <string name="clear_profiles_message">您确定要清空该分组吗\?</string>
     <string name="remote_dns">远程 DNS</string>
     <string name="direct_dns">直连 DNS</string>
     <string name="enable_dns_routing">启用 DNS 路由</string>
@@ -402,5 +379,4 @@
     <string name="select_apps">选择应用</string>
     <string name="apps_message">%d 个应用</string>
     <string name="need_nf">要支持基于应用的路由, VPN 模式必须为原生转发.</string>
-
 </resources>
