@@ -139,7 +139,6 @@
                     android:id="@+id/profile_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/profile_type"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="?attr/accentOrTextSecondary" />
 
