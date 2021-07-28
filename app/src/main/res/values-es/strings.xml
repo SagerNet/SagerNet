@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="github">Código fuente</string>
+    <string name="project">Proyecto</string>
+    <string name="app_desc">La cadena de herramientas de proxy universal para Android, escrita en Kotlin.</string>
+</resources>

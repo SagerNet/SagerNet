@@ -16,7 +16,6 @@
     <string name="theme">Theme</string>
     <string name="document">Document</string>
     <string name="group_default">Ungrouped</string>
-    <string name="profile_type">SOCKS5</string>
     <string name="quick_toggle">Toggle</string>
     <string name="tile_title">Switcher</string>
     <!-- group -->
@@ -55,7 +54,7 @@
     <string name="general_settings">App Settings</string>
     <string name="require_http">Enable HTTP inbound</string>
     <string name="cag_ws">WebSocket Settings</string>
-    <string name="ws_max_early_data">Max early data</string>
+    <string name="ws_max_early_data" translatable="false">Max early data</string>
     <string name="ws_browser_forwarding">Browser Forwarding</string>
     <string name="ws_browser_forwarding_sum">Forward corresponding WebSockets through the browser.</string>
     <string name="speed_interval">Speed Notification Update Interval</string>
@@ -237,7 +236,7 @@
     <string name="action_export_err">Failed to export.</string>
     <string name="action_import_msg">Successfully import!</string>
     <string name="action_import_err">Failed to import.</string>
-    <string name="file_manager_missing">Please check if DocumentsUI is missing in your ROM.</string>
+    <string name="file_manager_missing">Your device lacks an Android standard file selector, please install one, such as Material Files.</string>
     <!-- share -->
     <!-- profile -->
     <string name="profile_config">Profile config</string>
