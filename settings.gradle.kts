@@ -1,4 +1,5 @@
 include(":library:core")
+include(":library:epoll")
 include(":library:include")
 include(":library:shadowsocks")
 include(":library:shadowsocksr")

@@ -132,9 +132,9 @@ fun Project.setupCommon() {
             applicationVariants.forEach { variant ->
                 variant.outputs.forEach {
                     it as BaseVariantOutputImpl
-                    it.outputFileName =
-                        it.outputFileName.replace("app", "${project.name}-" + variant.versionName)
-                            .replace("-release", "").replace("-oss", "")
+                    it.outputFileName = it.outputFileName.replace(
+                        "app", "${project.name}-" + variant.versionName
+                    ).replace("-release", "").replace("-oss", "")
                 }
             }
         }
@@ -174,6 +174,27 @@ fun Project.setupNdkLibrary() {
         externalNativeBuild.ndkBuild.path("src/main/jni/Android.mk")
     }
 }
+
+fun Project.setupCMakeLibrary() {
+    setupCommon()
+    setupNdk()
+    android.apply {
+        defaultConfig {
+            externalNativeBuild.cmake {
+                val targetAbi = requireTargetAbi()
+                if (targetAbi.isNotBlank()) {
+                    abiFilters(targetAbi)
+                } else {
+                    abiFilters("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+                }
+                arguments("-j${Runtime.getRuntime().availableProcessors()}")
+            }
+        }
+
+        externalNativeBuild.cmake.path("src/main/cpp/CMakeLists.txt")
+    }
+}
+
 
 fun Project.setupPlay() {
     val serviceAccountCredentialsFile = rootProject.file("service_account_credentials.json")
@@ -381,9 +402,9 @@ fun Project.setupPlugin(projectName: String) {
 
             outputs.all {
                 this as BaseVariantOutputImpl
-                outputFileName =
-                    outputFileName.replace(project.name, "${project.name}-plugin-$versionName")
-                        .replace("-release", "").replace("-oss", "")
+                outputFileName = outputFileName.replace(
+                    project.name, "${project.name}-plugin-$versionName"
+                ).replace("-release", "").replace("-oss", "")
 
             }
         }
@@ -460,9 +481,9 @@ fun Project.setupApp() {
         applicationVariants.all {
             outputs.all {
                 this as BaseVariantOutputImpl
-                outputFileName =
-                    outputFileName.replace(project.name, "SN-$versionName").replace("-release", "")
-                        .replace("-oss", "")
+                outputFileName = outputFileName.replace(project.name, "SN-$versionName")
+                    .replace("-release", "")
+                    .replace("-oss", "")
 
             }
         }

@@ -8,6 +8,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/editorkit" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/netty" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/netty-jni-util" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/preferencex" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/v2ray-core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/badvpn" vcs="Git" />

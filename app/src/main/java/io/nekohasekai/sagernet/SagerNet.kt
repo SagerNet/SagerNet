@@ -40,6 +40,7 @@ import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
@@ -110,6 +111,7 @@ class SagerNet : Application(),
     }
 
     companion object {
+
         var started = false
 
         lateinit var application: SagerNet

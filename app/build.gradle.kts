@@ -31,6 +31,8 @@ dependencies {
 
     implementation(fileTree("libs"))
 
+    implementation(project(":library:core"))
+    implementation(project(":library:epoll"))
     compileOnly(project(":library:include"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
@@ -90,6 +92,7 @@ dependencies {
 
     implementation(project(":library:proto-stub"))
     implementation("io.grpc:grpc-okhttp:1.39.0")
+
     implementation("io.netty:netty-all:4.1.66.Final")
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("com.github.seancfoley:ipaddress:5.3.3")

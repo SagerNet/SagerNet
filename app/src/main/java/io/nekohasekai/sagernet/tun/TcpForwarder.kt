@@ -37,7 +37,7 @@ import io.nekohasekai.sagernet.utils.PackageCache
 import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.*
-import io.netty.channel.socket.nio.NioServerSocketChannel
+import io.netty.channel.socket.ServerSocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.proxy.Socks5ProxyHandler
 import okhttp3.internal.connection.RouteSelector.Companion.socketHost
@@ -198,8 +198,8 @@ class TcpForwarder(val tun: TunThread) {
             if (isDns) {
                 // direct for dns
 
-                channelFeature = Bootstrap().group(tun.outboundLoop)
-                    .channel(NioSocketChannel::class.java)
+                channelFeature = Bootstrap().group(tun.eventLoop)
+                    .channel(tun.socketChannelClazz)
                     .handler(object : ChannelInitializer<Channel>() {
                         override fun initChannel(channel: Channel) {
                             channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
@@ -216,8 +216,8 @@ class TcpForwarder(val tun: TunThread) {
                     })
             } else {
                 val socksPort = tun.uidMap[session.uid] ?: tun.socksPort
-                channelFeature = Bootstrap().group(tun.outboundLoop)
-                    .channel(NioSocketChannel::class.java)
+                channelFeature = Bootstrap().group(tun.eventLoop)
+                    .channel(tun.socketChannelClazz)
                     .handler(object : ChannelInitializer<Channel>() {
                         override fun initChannel(channel: Channel) {
                             channel.pipeline().addFirst(
@@ -286,12 +286,12 @@ class TcpForwarder(val tun: TunThread) {
 
     private lateinit var channelFuture: ChannelFuture
     val forwardServerPort by lazy {
-        (channelFuture.sync().channel() as NioServerSocketChannel).localAddress().port.toShort()
+        (channelFuture.sync().channel() as ServerSocketChannel).localAddress().port.toShort()
     }
 
     fun start() {
-        channelFuture = ServerBootstrap().group(tun.serverLoop, tun.outboundLoop)
-            .channel(NioServerSocketChannel::class.java)
+        channelFuture = ServerBootstrap().group(tun.eventLoop)
+            .channel(tun.serverSocketChannelClazz)
             .childHandler(object : ChannelInitializer<Channel>() {
                 override fun initChannel(channel: Channel) {
                     channel.pipeline().addLast(Forwarder())

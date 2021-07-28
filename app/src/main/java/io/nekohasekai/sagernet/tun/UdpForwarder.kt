@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.toByteArray
 import io.nekohasekai.sagernet.tun.ip.IPHeader
 import io.nekohasekai.sagernet.tun.ip.UDPHeader
 import io.nekohasekai.sagernet.tun.ip.ipv4.IPv4Header
@@ -41,7 +42,6 @@ import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.Unpooled
 import io.netty.channel.*
 import io.netty.channel.socket.DatagramPacket
-import io.netty.channel.socket.nio.NioDatagramChannel
 import io.netty.handler.codec.socksx.v5.Socks5AddressType
 import io.netty.util.concurrent.DefaultPromise
 import io.netty.util.concurrent.Future
@@ -179,13 +179,13 @@ class UdpForwarder(val tun: TunThread) {
         fun connect() {
             if (calIsDns()) {
                 isDns = true
-                Bootstrap().group(tun.outboundLoop)
-                    .channel(NioDatagramChannel::class.java)
+                Bootstrap().group(tun.eventLoop)
+                    .channel(tun.datagramChannelClazz)
                     .handler(this)
                     .connect(LOCALHOST, tun.dnsPort)
             } else {
-                Bootstrap().group(tun.outboundLoop)
-                    .channel(NioDatagramChannel::class.java)
+                Bootstrap().group(tun.eventLoop)
+                    .channel(tun.datagramChannelClazz)
                     .handler(object : ChannelInitializer<Channel>() {
                         override fun initChannel(channel: Channel) {
                             channel.pipeline().apply {
@@ -217,8 +217,8 @@ class UdpForwarder(val tun: TunThread) {
 
         override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
             when (msg) {
-                is Socks5UdpMessage -> sendResponse(msg.data().array())
-                is DatagramPacket -> sendResponse(msg.content().array())
+                is Socks5UdpMessage -> sendResponse(msg.data().toByteArray())
+                is DatagramPacket -> sendResponse(msg.content().toByteArray())
             }
         }
 

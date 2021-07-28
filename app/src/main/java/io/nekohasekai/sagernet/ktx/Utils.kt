@@ -62,6 +62,7 @@ import java.io.FileDescriptor
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.Socket
+import java.nio.channels.FileChannel
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong

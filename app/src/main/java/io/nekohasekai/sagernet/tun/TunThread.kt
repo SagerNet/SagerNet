@@ -32,7 +32,12 @@ import io.nekohasekai.sagernet.tun.ip.ipv4.ICMPHeader
 import io.nekohasekai.sagernet.tun.ip.ipv4.IPv4Header
 import io.nekohasekai.sagernet.tun.ip.ipv6.ICMPv6Header
 import io.nekohasekai.sagernet.tun.ip.ipv6.IPv6Header
+import io.netty.channel.epoll.*
 import io.netty.channel.nio.NioEventLoopGroup
+import io.netty.channel.socket.ServerSocketChannel
+import io.netty.channel.socket.nio.NioDatagramChannel
+import io.netty.channel.socket.nio.NioServerSocketChannel
+import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.logging.LogLevel
 import io.netty.handler.logging.LoggingHandler
 import kotlinx.coroutines.*
@@ -48,8 +53,10 @@ class TunThread(val service: VpnService) : Thread("TUN Thread") {
 
     val closed get() = service.data.proxy?.closed == true
     val loggingHandler = LoggingHandler(LogLevel.TRACE)
-    val serverLoop = NioEventLoopGroup()
-    val outboundLoop = NioEventLoopGroup()
+    val eventLoop = if (Epoll.isAvailable()) EpollEventLoopGroup() else NioEventLoopGroup()
+    val serverSocketChannelClazz: Class<out ServerSocketChannel> = if (Epoll.isAvailable()) EpollServerSocketChannel::class.java else NioServerSocketChannel::class.java
+    val socketChannelClazz = if (Epoll.isAvailable()) EpollSocketChannel::class.java else NioSocketChannel::class.java
+    val datagramChannelClazz = if (Epoll.isAvailable()) EpollDatagramChannel::class.java else NioDatagramChannel::class.java
 
     val tcpForwarder = TcpForwarder(this)
     val udpForwarder = UdpForwarder(this)

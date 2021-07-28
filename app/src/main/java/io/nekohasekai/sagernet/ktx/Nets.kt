@@ -30,6 +30,9 @@ import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.Unpooled
+import io.netty.buffer.UnpooledDirectByteBuf
 import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -46,7 +49,11 @@ val okHttpClient = OkHttpClient.Builder()
 
 private lateinit var proxyClient: OkHttpClient
 fun createProxyClient(): OkHttpClient {
-    if (!SagerNet.started) return okHttpClient
+    if (!SagerNet.started) {
+        if (DataStore.startedProfile == 0L) {
+            return okHttpClient
+        }
+    }
 
     if (!::proxyClient.isInitialized) {
         proxyClient = okHttpClient.newBuilder().proxy(requireProxy()).build()
@@ -109,4 +116,11 @@ fun mkPort(): Int {
     val port = socket.localPort
     socket.close()
     return port
+}
+
+fun ByteBuf.toByteArray(): ByteArray {
+    if (this is UnpooledDirectByteBuf) {
+        return Unpooled.copiedBuffer(this).array()
+    }
+    return array()
 }
