@@ -7,7 +7,7 @@
 
 The universal proxy toolchain for Android, written in Kotlin.
 
-## DOCUMENTS
+## Documents
 
 https://sagernet.org
 
@@ -52,7 +52,19 @@ The application is designed to be used whenever possible.
 * Reverse proxy
 * Custom config (V2Ray / Trojan-Go)
 
-## OPEN SOURCE LICENSES
+## Localization
+
+Is SagerNet not in your language, or the translation is incorrect or incomplete? Get involved in the translations on our [Weblate](https://hosted.weblate.org/engage/sagernet/).
+
+[![Translation status](https://hosted.weblate.org/widgets/sagernet/-/horizontal-auto.svg)](https://hosted.weblate.org/engage/sagernet/)
+
+### Adding a new language
+
+First and foremost, Android must already support the specific language and locale you want to add. We cannot work with languages that Android and the SDK do not support, the tools simply break down. Next, if you are considering adding a country-specific variant of a language (e.g. de-AT), first make sure that the main language is well maintained (e.g. de). Your contribution might be useful to more people if you contribute to the existing version of your language rather than the country-specific variant.
+
+Anyone can create a new language via Weblate.
+
+## Credits
 
 <ul>
     <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: <code>GPL 3.0</code></li>
@@ -64,7 +76,7 @@ The application is designed to be used whenever possible.
     <li><a href="https://github.com/txthinking/brook/blob/master/LICENSE">txthinking/brook</a>:  <code>GPL 3.0</code></li>
 </ul>
 
-## LICENSE
+## License
 
 ```
 Copyright (C) 2021 by nekohasekai <sekai@neko.services>
