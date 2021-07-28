@@ -254,16 +254,16 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         return outboundStats to statsOutbounds
     }
 
-    suspend fun directStats(direct: String): Long {
+    suspend fun bypassStats(direct: String): Long {
         if (!isInitialized()) return 0L
-        return queryStats(config.directTag, direct)
+        return queryStats(config.bypassTag, direct)
     }
 
-    suspend fun uplinkDirect() = directStats("uplink").also {
+    suspend fun uplinkDirect() = bypassStats("uplink").also {
         uplinkTotalDirect += it
     }
 
-    suspend fun downlinkDirect() = directStats("downlink").also {
+    suspend fun downlinkDirect() = bypassStats("downlink").also {
         downlinkTotalDirect += it
     }
 
