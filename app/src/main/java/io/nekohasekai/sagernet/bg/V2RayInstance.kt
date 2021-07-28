@@ -120,7 +120,9 @@ open class V2RayInstance(val profile: ProxyEntity) {
                             }
                             TrojanProvider.TROJAN_GO -> {
                                 initPlugin("trojan-go-plugin")
-                                pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(port, mux)
+                                pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
+                                    port, mux
+                                )
                             }
                         }
                     }
@@ -147,10 +149,14 @@ open class V2RayInstance(val profile: ProxyEntity) {
                         when (bean.type) {
                             "trojan-go" -> {
                                 initPlugin("trojan-go-plugin")
-                                pluginConfigs[port] = profile.type to buildCustomTrojanConfig(bean.content, port)
+                                pluginConfigs[port] = profile.type to buildCustomTrojanConfig(
+                                    bean.content, port
+                                )
                             }
                             else -> {
-                                externalInstances[port] = ExternalInstance(profile, port)
+                                externalInstances[port] = ExternalInstance(v2rayPoint.supportSet, profile, port).apply {
+                                    init()
+                                }
                             }
                         }
                     }
@@ -172,28 +178,56 @@ open class V2RayInstance(val profile: ProxyEntity) {
 
                 when {
                     profile.useExternalShadowsocks() -> {
-                        val configFile = File(context.noBackupFilesDir, "shadowsocks_" + SystemClock.elapsedRealtime() + ".json")
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
+                        )
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val commands = mutableListOf(File(SagerNet.application.applicationInfo.nativeLibraryDir, Executable.SS_LOCAL).absolutePath, "-c", configFile.absolutePath, "--log-without-time")
+                        val commands = mutableListOf(
+                            File(
+                                SagerNet.application.applicationInfo.nativeLibraryDir,
+                                Executable.SS_LOCAL
+                            ).absolutePath, "-c", configFile.absolutePath, "--log-without-time"
+                        )
 
                         if (DataStore.enableLog) commands.add("-v")
 
                         processes.start(commands)
                     }
                     bean is ShadowsocksRBean -> {
-                        val configFile = File(context.noBackupFilesDir, "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json")
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "shadowsocksr_" + SystemClock.elapsedRealtime() + ".json"
+                        )
 
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        processes.start(listOf(File(SagerNet.application.applicationInfo.nativeLibraryDir, Executable.SSR_LOCAL).absolutePath, "-b", LOCALHOST, "-c", configFile.absolutePath, "-l", "$port", "-u"))
+                        processes.start(
+                            listOf(
+                                File(
+                                    SagerNet.application.applicationInfo.nativeLibraryDir,
+                                    Executable.SSR_LOCAL
+                                ).absolutePath,
+                                "-b",
+                                LOCALHOST,
+                                "-c",
+                                configFile.absolutePath,
+                                "-l",
+                                "$port",
+                                "-u"
+                            )
+                        )
                     }
                     bean is TrojanBean -> {
-                        val configFile = File(context.noBackupFilesDir, "trojan_" + SystemClock.elapsedRealtime() + ".json")
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "trojan_" + SystemClock.elapsedRealtime() + ".json"
+                        )
 
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
@@ -217,30 +251,52 @@ open class V2RayInstance(val profile: ProxyEntity) {
                         processes.start(commands)
                     }
                     bean is TrojanGoBean || bean is ConfigBean && bean.type == "trojan-go" -> {
-                        val configFile = File(context.noBackupFilesDir, "trojan_go_" + SystemClock.elapsedRealtime() + ".json")
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
+                        )
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val commands = mutableListOf(initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath)
+                        val commands = mutableListOf(
+                            initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
+                        )
 
                         processes.start(commands)
                     }
                     bean is NaiveBean -> {
-                        val configFile = File(context.noBackupFilesDir, "naive_" + SystemClock.elapsedRealtime() + ".json")
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "naive_" + SystemClock.elapsedRealtime() + ".json"
+                        )
 
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val commands = mutableListOf(initPlugin("naive-plugin").path, configFile.absolutePath)
+                        val commands = mutableListOf(
+                            initPlugin("naive-plugin").path, configFile.absolutePath
+                        )
 
                         processes.start(commands)
                     }
                     bean is PingTunnelBean -> {
                         if (needChain) error("PingTunnel is incompatible with chain")
 
-                        val commands = mutableListOf("su", "-c", initPlugin("pingtunnel-plugin").path, "-type", "client", "-sock5", "1", "-l", "$LOCALHOST:$port", "-s", bean.serverAddress)
+                        val commands = mutableListOf(
+                            "su",
+                            "-c",
+                            initPlugin("pingtunnel-plugin").path,
+                            "-type",
+                            "client",
+                            "-sock5",
+                            "1",
+                            "-l",
+                            "$LOCALHOST:$port",
+                            "-s",
+                            bean.serverAddress
+                        )
 
                         if (bean.key.isNotBlank() && bean.key != "1") {
                             commands.add("-key")
@@ -250,13 +306,21 @@ open class V2RayInstance(val profile: ProxyEntity) {
                         processes.start(commands)
                     }
                     bean is RelayBatonBean -> {
-                        val configFile = File(context.noBackupFilesDir, "rb_" + SystemClock.elapsedRealtime() + ".toml")
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "rb_" + SystemClock.elapsedRealtime() + ".toml"
+                        )
 
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val commands = mutableListOf(initPlugin("relaybaton-plugin").path, "client", "--config", configFile.absolutePath)
+                        val commands = mutableListOf(
+                            initPlugin("relaybaton-plugin").path,
+                            "client",
+                            "--config",
+                            configFile.absolutePath
+                        )
 
                         processes.start(commands)
                     }
