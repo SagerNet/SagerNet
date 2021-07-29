@@ -1136,7 +1136,7 @@ fun buildV2RayConfig(
             })
         }
 
-        routing.rules.add(RoutingObject.RuleObject().apply {
+        routing.rules.add(0, RoutingObject.RuleObject().apply {
             type = "field"
             inboundTag = listOf(TAG_DNS_IN)
             outboundTag = TAG_DNS_OUT
