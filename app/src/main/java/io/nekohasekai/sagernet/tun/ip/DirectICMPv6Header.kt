@@ -19,69 +19,42 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ktx
+package io.nekohasekai.sagernet.tun.ip
 
-import android.util.Log
-import cn.hutool.core.util.StrUtil
-import io.nekohasekai.sagernet.BuildConfig
+class DirectICMPv6Header(val ipHeader: DirectIPHeader) : DirectHeader(
+    ipHeader.buffer, ipHeader.headerLength
+) {
 
-object Logs {
+    var type by int8(OFFSET_TYPE)
+    var code by int8(OFFSET_CODE)
+    var checksum by int16(OFFSET_CHECKSUM)
 
-    private fun mkTag(): String {
-        val stackTrace = Thread.currentThread().stackTrace
-        return StrUtil.subAfter(stackTrace[4].className, ".", true)
+    fun revertEcho() {
+        buffer.setByte(offset + OFFSET_TYPE, 129)
+        val checksum0 = buffer.getUnsignedByte(offset + OFFSET_CHECKSUM)
+        if (checksum0 > 0) {
+            buffer.setByte(offset + OFFSET_CHECKSUM, checksum0 - 1)
+        } else {
+            buffer.setByte(offset + OFFSET_CHECKSUM, 255)
+            buffer.setByte(
+                offset + OFFSET_CHECKSUM + 1,
+                buffer.getUnsignedByte(offset + OFFSET_CHECKSUM + 1) - 1
+            )
+        }
     }
 
-    fun v(message: String) {
-        //  if (BuildConfig.DEBUG) {
-        Log.v(mkTag(), message)
-//        }
+    private fun updateChecksum(): Short {
+        var sum = ipHeader.readSum(offset, ipHeader.dataLength)
+        while (sum shr 16 > 0) {
+            sum = (sum and 0xFFFF) + (sum shr 16)
+        }
+        return sum.inv().toShort()
     }
 
-    fun v(message: String, exception: Throwable) {
-        //  if (BuildConfig.DEBUG) {
-        Log.v(mkTag(), message, exception)
-//        }
-    }
-
-    fun d(message: String) {
-        //  if (BuildConfig.DEBUG) {
-        Log.d(mkTag(), message)
-//        }
-    }
-
-    fun d(message: String, exception: Throwable) {
-        //  if (BuildConfig.DEBUG) {
-        Log.d(mkTag(), message, exception)
-//        }
-    }
-
-    fun i(message: String) {
-        Log.i(mkTag(), message)
-    }
-
-    fun i(message: String, exception: Throwable) {
-        Log.i(mkTag(), message, exception)
-    }
-
-    fun w(message: String) {
-        Log.w(mkTag(), message)
-    }
-
-    fun w(message: String, exception: Throwable) {
-        Log.w(mkTag(), message, exception)
-    }
-
-    fun w(exception: Throwable) {
-        Log.w(mkTag(), exception)
-    }
-
-    fun e(message: String) {
-        Log.e(mkTag(), message)
-    }
-
-    fun e(message: String, exception: Throwable) {
-        Log.e(mkTag(), message, exception)
+    companion object {
+        private const val OFFSET_TYPE = 0
+        private const val OFFSET_CODE = 1
+        private const val OFFSET_CHECKSUM = 2
     }
 
 }

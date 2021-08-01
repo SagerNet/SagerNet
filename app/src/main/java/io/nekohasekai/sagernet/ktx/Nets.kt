@@ -19,6 +19,8 @@
  *                                                                            *
  ******************************************************************************/
 
+@file:Suppress("SpellCheckingInspection")
+
 package io.nekohasekai.sagernet.ktx
 
 import android.os.Build
@@ -32,7 +34,6 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
-import io.netty.buffer.UnpooledDirectByteBuf
 import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -124,3 +125,9 @@ fun ByteBuf.toByteArray(): ByteArray {
     }
     return array()
 }
+
+const val IPPROTO_ICMP = 1
+const val IPPROTO_ICMPv6 = 58
+
+const val IPPROTO_TCP = 6
+const val IPPROTO_UDP = 17

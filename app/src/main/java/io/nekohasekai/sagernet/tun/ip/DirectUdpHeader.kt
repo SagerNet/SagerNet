@@ -19,56 +19,58 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.tun.ip.ipv6;
+package io.nekohasekai.sagernet.tun.ip
 
-import io.nekohasekai.sagernet.tun.ip.Header;
+import io.netty.buffer.ByteBuf
 
-public class ICMPv6Header extends Header {
+class DirectUdpHeader(val ipHeader: DirectIPHeader) : DirectHeader(
+    ipHeader.buffer, ipHeader.headerLength
+) {
 
-    private static final short OFFSET_TYPE = 0;
-    private static final short OFFSET_CODE = 1;
-    private static final short OFFSET_CRC = 2;
-    private static final short OFFSET_AID = 4;
-    private static final short OFFSET_SEQ = 6;
-    private static final short OFFSET_DATA = 8;
+    var sourcePort by int16(OFFSET_SOURCE_PORT)
+    var destinationPort by int16(OFFSET_DESTINATION_PORT)
+    var totalLength by int16(OFFSET_LENGTH)
+    var checksum by int16(OFFSET_CHECKSUM)
+    val headerLength = 8
+    val dataLength = ipHeader.dataLength - headerLength
 
-    private final IPv6Header ipHeader;
-
-    public ICMPv6Header(IPv6Header header) {
-        super(header.packet, header.getHeaderLength());
-        ipHeader = header;
+    fun revertPort() {
+        val sourcePort = buffer.copy(offset + OFFSET_SOURCE_PORT, 2)
+        buffer.setBytes(
+            offset + OFFSET_SOURCE_PORT, buffer.slice(offset + OFFSET_DESTINATION_PORT, 2)
+        )
+        buffer.setBytes(offset + OFFSET_DESTINATION_PORT, sourcePort)
+        sourcePort.release()
     }
 
-
-    public int getType() {
-        return readInt8(offset + OFFSET_TYPE);
+    fun updateChecksum() {
+        checksum = 0
+        val dataLength = ipHeader.dataLength
+        var sum = ipHeader.getAddressSum()
+        sum += ipHeader.protocol.toLong()
+        sum += dataLength.toLong()
+        sum += ipHeader.readSum(offset, dataLength)
+        checksum = ipHeader.finishSum(sum)
     }
 
-    public void setType(int type) {
-        writeInt8(type, offset + OFFSET_TYPE);
+    fun header(): ByteBuf {
+        return buffer.slice(0, offset + headerLength)
     }
 
-    public byte getCode() {
-        return readByte(offset + OFFSET_CODE);
+    fun data(): ByteBuf {
+        return buffer.slice(offset + headerLength, ipHeader.dataLength - headerLength)
     }
 
-    public short getCrc() {
-        return readShort(offset + OFFSET_CRC);
+    fun copyHeader(): DirectUdpHeader {
+        return DirectUdpHeader(ipHeader.newInstance(buffer.copy(0, offset + headerLength)))
     }
 
-    public void setCrc(short crc) {
-        writeShort(crc, offset + OFFSET_CRC);
-    }
+    companion object {
 
-    public void revertEcho() {
-        packet[offset + OFFSET_TYPE] = (byte) 129;
-        int crc = packet[offset + OFFSET_CRC] & 0xFF;
-        if (crc == 0) {
-            packet[offset + OFFSET_CRC] = (byte) 255;
-            packet[offset + OFFSET_CRC + 1] = (byte) ((packet[offset + OFFSET_CRC] & 0xFF) - 1);
-        } else {
-            packet[offset + OFFSET_CRC] = (byte) (crc - 1);
-        }
+        private const val OFFSET_SOURCE_PORT = 0
+        private const val OFFSET_DESTINATION_PORT = 2
+        private const val OFFSET_LENGTH = 4
+        private const val OFFSET_CHECKSUM = 6
     }
 
 }

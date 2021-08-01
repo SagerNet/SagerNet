@@ -19,36 +19,54 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.tun.ip;
 
-import static io.netty.buffer.ByteBufUtil.appendPrettyHexDump;
-import static io.netty.util.internal.StringUtil.NEWLINE;
+package io.nekohasekai.sagernet.tun.ip
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
+class DirectTcpHeader(val ipHeader: DirectIPHeader) : DirectHeader(
+    ipHeader.buffer, ipHeader.headerLength
+) {
 
-import io.nekohasekai.sagernet.bg.VpnService;
-import io.netty.buffer.Unpooled;
+    var sourcePort by int16(OFFSET_SOURCE_PORT)
+    var destinationPort by int16(OFFSET_DESTINATION_PORT)
+    var checksum by int16(OFFSET_CHECKSUM)
 
-public class NetUtils {
-
-    public static final int IPPROTO_ICMP = 1;
-    public static final int IPPROTO_ICMPv6 = 58;
-
-    public static final int IPPROTO_TCP = 6;
-    public static final int IPPROTO_UDP = 17;
-
-    public static String formatByteArray(String prefix, byte[] byteArray) {
-        int length = byteArray.length;
-        if (length == 0) {
-            return prefix + ": 0B";
-        } else {
-            StringBuilder buf = new StringBuilder();
-            buf.append(prefix).append(": ").append(length).append('B');
-            buf.append(NEWLINE);
-            appendPrettyHexDump(buf, Unpooled.wrappedBuffer(byteArray));
-            return buf.toString();
-        }
+    fun revertPort() {
+        val sourcePort = buffer.copy(offset + OFFSET_SOURCE_PORT, 2)
+        buffer.setBytes(
+            offset + OFFSET_SOURCE_PORT, buffer.slice(offset + OFFSET_DESTINATION_PORT, 2)
+        )
+        buffer.setBytes(offset + OFFSET_DESTINATION_PORT, sourcePort)
     }
 
+    var headerLength by field(OFFSET_DATA_OFFSET, {
+        (buffer.getUnsignedByte(it).toInt() ushr 4) * 4
+    }, { index, value ->
+        buffer.setByte(
+            index,
+            ((value * 4) ushr 4 shl 4) or (buffer.getUnsignedByte(index).toInt() shl 4 ushr 4)
+        )
+    })
+
+    fun updateChecksum() {
+        checksum = 0
+        val dataLength = ipHeader.dataLength
+        var sum = ipHeader.getAddressSum()
+        sum += ipHeader.protocol.toLong()
+        sum += dataLength.toLong()
+        sum += ipHeader.readSum(offset, dataLength)
+        while (sum shr 16 > 0) {
+            sum = (sum and 0xFFFF) + (sum shr 16)
+        }
+        checksum = sum.inv().toUShort().toInt()
+    }
+
+    companion object {
+
+        private const val OFFSET_SOURCE_PORT = 0
+        private const val OFFSET_DESTINATION_PORT = 2
+        private const val OFFSET_DATA_OFFSET = 12
+        private const val OFFSET_CHECKSUM = 16
+
+
+    }
 }

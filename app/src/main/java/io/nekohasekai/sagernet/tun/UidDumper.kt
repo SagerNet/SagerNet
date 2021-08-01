@@ -33,7 +33,7 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
 
-class UidDumper(val tun: TunThread) {
+class UidDumper(val multiThread: Boolean) {
 
     private companion object {
 
@@ -47,9 +47,7 @@ class UidDumper(val tun: TunThread) {
     private data class ProcStats constructor(val remoteAddress: InetSocketAddress, val uid: Int)
     private inner class TunMap : LFUCache<Int, ProcStats>(-1, 5 * 60 * 1000L) {
         init {
-            if (tun.multiThreadForward) {
-                cacheMap = ConcurrentHashMap()
-            }
+            if (multiThread) cacheMap = ConcurrentHashMap()
         }
     }
 

@@ -19,41 +19,41 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.tun.ip;
+package io.nekohasekai.sagernet.tun.ip
 
-import java.net.InetAddress;
+class DirectICMPHeader(val ipHeader: DirectIPHeader) : DirectHeader(
+    ipHeader.buffer, ipHeader.headerLength
+) {
 
-public abstract class IPHeader extends Header {
+    var type by int8(OFFSET_TYPE)
+    var code by int8(OFFSET_CODE)
+    var checksum by int16(OFFSET_CHECKSUM)
 
-    public int packetLength;
-
-    public IPHeader(byte[] packet, int offset, int length) {
-        super(packet, offset);
-        packetLength = length;
+    fun revertEcho() {
+        buffer.setByte(offset + OFFSET_TYPE, 0)
+        val checksum0 = buffer.getUnsignedByte(offset + OFFSET_CHECKSUM)
+        if (checksum0 >= 247) {
+            buffer.setByte(offset + OFFSET_CHECKSUM, checksum0 - 248)
+            buffer.setByte(
+                offset + OFFSET_CHECKSUM + 1, buffer.getUnsignedByte(offset + OFFSET_CHECKSUM) + 1
+            )
+        } else {
+            buffer.setByte(offset + OFFSET_CHECKSUM, checksum0 + 8)
+        }
     }
 
-    public abstract int getVersion();
+    private fun updateChecksum(): Short {
+        var sum = ipHeader.readSum(offset, ipHeader.dataLength)
+        while (sum shr 16 > 0) {
+            sum = (sum and 0xFFFF) + (sum shr 16)
+        }
+        return sum.inv().toShort()
+    }
 
-    public abstract int getProtocol();
-
-    public abstract InetAddress getSourceAddress();
-
-    public abstract void setSourceAddress(InetAddress address);
-
-    public abstract InetAddress getDestinationAddress();
-
-    public abstract void setDestinationAddress(InetAddress address);
-
-    public abstract void revertAddress();
-
-    public abstract int getHeaderLength();
-
-    public abstract long getIPChecksum();
-
-    public abstract void updateChecksum();
-
-    public abstract int getDataLength();
-
-    public abstract IPHeader copyOf();
+    companion object {
+        private const val OFFSET_TYPE = 0
+        private const val OFFSET_CODE = 1
+        private const val OFFSET_CHECKSUM = 2
+    }
 
 }

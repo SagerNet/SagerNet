@@ -29,39 +29,39 @@ import io.nekohasekai.sagernet.ktx.INET6_TUN
 import io.nekohasekai.sagernet.ktx.INET_TUN
 import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.tun.ip.IPHeader
-import io.nekohasekai.sagernet.tun.ip.TCPHeader
-import io.nekohasekai.sagernet.tun.ip.ipv4.IPv4Header
-import io.nekohasekai.sagernet.tun.ip.ipv6.IPv6Header
+import io.nekohasekai.sagernet.tun.ip.DirectIPHeader
+import io.nekohasekai.sagernet.tun.ip.DirectIPv4Header
+import io.nekohasekai.sagernet.tun.ip.DirectIPv6Header
+import io.nekohasekai.sagernet.tun.ip.DirectTcpHeader
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
+import io.netty.buffer.ByteBuf
 import io.netty.channel.*
 import io.netty.channel.socket.ServerSocketChannel
-import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.proxy.Socks5ProxyHandler
 import okhttp3.internal.connection.RouteSelector.Companion.socketHost
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
 
-class TcpForwarder(val tun: TunThread) {
+class DirectTcpForwarder(val tun: DirectTunThread) {
 
-    private val tcpSessions = object : LFUCache<Short, TcpSession>(-1, 5 * 60 * 1000L) {
+    private val tcpSessions = object : LFUCache<Int, TcpSession>(-1, 5 * 60 * 1000L) {
         init {
-            if (tun.enableLog) cacheMap = ConcurrentHashMap()
+            if (tun.multiThreadForward) cacheMap = ConcurrentHashMap()
         }
 
-        override fun onRemove(key: Short, session: TcpSession) {
+        override fun onRemove(key: Int, session: TcpSession) {
             session.channel?.close()
         }
     }
 
     class TcpSession(
         val localAddress: InetAddress,
-        val localPort: Short,
+        val localPort: Int,
         val remoteAddress: InetAddress,
-        val remotePort: Short
+        val remotePort: Int
     ) {
         val time = SystemClock.elapsedRealtime() + LAUNCH_DELAY
         var uid = 0
@@ -69,12 +69,12 @@ class TcpForwarder(val tun: TunThread) {
         var channel: Channel? = null
     }
 
-    fun processTcp(packet: ByteArray, ipHeader: IPHeader) {
+    fun processTcp(packet: ByteBuf, ipHeader: DirectIPHeader) {
 
-        val tcpHeader = TCPHeader(ipHeader, packet, ipHeader.headerLength)
-        val localIp = ipHeader.sourceAddress
+        val tcpHeader = DirectTcpHeader(ipHeader)
+        val localIp = ipHeader.sourceInetAddress
         val localPort = tcpHeader.sourcePort
-        val remoteIp = ipHeader.destinationAddress
+        val remoteIp = ipHeader.destinationInetAddress
         val remotePort = tcpHeader.destinationPort
 
         if (localPort != forwardServerPort) {
@@ -88,16 +88,11 @@ class TcpForwarder(val tun: TunThread) {
                 session = TcpSession(localIp, localPort, remoteIp, remotePort)
                 tcpSessions.put(localPort, session)
                 if (tun.dumpUid) {
-                    val localAddress = InetSocketAddress(
-                        session.localAddress,
-                        session.localPort.toUShort().toInt(),
-                    )
-                    val remoteAddress = InetSocketAddress(
-                        session.remoteAddress, session.remotePort.toUShort().toInt()
-                    )
+                    val localAddress = InetSocketAddress(session.localAddress, session.localPort)
+                    val remoteAddress = InetSocketAddress(session.remoteAddress, session.remotePort)
 
                     session.uid = tun.uidDumper.dumpUid(
-                        ipHeader is IPv6Header, false, localAddress, remoteAddress
+                        ipHeader is DirectIPv6Header, false, localAddress, remoteAddress
                     )
 
                     if (tun.enableLog) {
@@ -108,38 +103,25 @@ class TcpForwarder(val tun: TunThread) {
                         }
 
                         Logs.d(
-                            "Accepted tcp connection from ${session.packages?.joinToString() ?: "unknown"} (${session.uid}): ${ipHeader.sourceAddress.hostAddress}:${
-                                tcpHeader.sourcePort.toUShort().toInt()
-                            } ==> ${ipHeader.destinationAddress}:${
-                                tcpHeader.destinationPort.toUShort().toInt()
-                            }"
+                            "Accepted tcp connection from ${session.packages?.joinToString() ?: "unknown"} (${session.uid}): ${localIp.hostAddress}:$localPort ==> ${remoteIp.hostAddress}:$remotePort"
                         )
                     }
 
                 } else if (tun.enableLog) {
                     Logs.d(
-                        "Accepted tcp connection ${ipHeader.sourceAddress.hostAddress}:${
-                            tcpHeader.sourcePort.toUShort().toInt()
-                        } ==> ${ipHeader.destinationAddress}:${
-                            tcpHeader.destinationPort.toUShort().toInt()
-                        }"
+                        "Accepted tcp connection $${localIp.hostAddress}:$localPort ==> ${remoteIp.hostAddress}:$remotePort"
                     )
 
                 }
 
             }
 
-            ipHeader.sourceAddress = remoteIp
+            ipHeader.sourceInetAddress = remoteIp
             tcpHeader.destinationPort = forwardServerPort
 
-            if (ipHeader is IPv4Header) {
-                ipHeader.destinationAddress = INET_TUN
-                ipHeader.updateChecksum()
+            ipHeader.destinationInetAddress = if (ipHeader is DirectIPv4Header) INET_TUN else INET6_TUN
 
-            } else {
-                ipHeader.destinationAddress = INET6_TUN
-            }
-
+            ipHeader.updateChecksum()
             tcpHeader.updateChecksum()
 
         } else {
@@ -150,19 +132,11 @@ class TcpForwarder(val tun: TunThread) {
                 return
             }
 
-            ipHeader.sourceAddress = remoteIp
+            ipHeader.sourceInetAddress = remoteIp
             tcpHeader.sourcePort = session.remotePort
-
-            if (ipHeader is IPv4Header) {
-                ipHeader.destinationAddress = INET_TUN
-                ipHeader.updateChecksum()
-
-            } else {
-                ipHeader.destinationAddress = INET6_TUN
-            }
-
+            ipHeader.destinationInetAddress = if (ipHeader is DirectIPv4Header) INET_TUN else INET6_TUN
+            ipHeader.updateChecksum()
             tcpHeader.updateChecksum()
-
         }
 
         tun.write(packet, ipHeader.packetLength)
@@ -171,14 +145,14 @@ class TcpForwarder(val tun: TunThread) {
     inner class Forwarder : ChannelInboundHandlerAdapter() {
 
         lateinit var channelFeature: ChannelFuture
-        var localPort: Short = 0
+        var localPort = 0
         var isDns = false
 
         override fun channelActive(ctx: ChannelHandlerContext) {
 
             val clientAddress = ctx.channel().remoteAddress() as InetSocketAddress
             var remoteIp = clientAddress.socketHost
-            localPort = clientAddress.port.toShort()
+            localPort = clientAddress.port
             val session = tcpSessions[localPort]
             if (session == null) {
                 if (tun.enableLog) Logs.w("No session saved with key: $localPort")
@@ -186,7 +160,7 @@ class TcpForwarder(val tun: TunThread) {
                 return
             }
 
-            var remotePort = session.remotePort.toUShort().toInt()
+            var remotePort = session.remotePort
             if (remotePort == 53 || remoteIp in arrayOf(
                     VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
                 )
@@ -284,9 +258,9 @@ class TcpForwarder(val tun: TunThread) {
 
     // fwd server
 
-    private lateinit var channelFuture: ChannelFuture
+    lateinit var channelFuture: ChannelFuture
     val forwardServerPort by lazy {
-        (channelFuture.sync().channel() as ServerSocketChannel).localAddress().port.toShort()
+        (channelFuture.sync().channel() as ServerSocketChannel).localAddress().port
     }
 
     fun start() {

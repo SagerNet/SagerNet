@@ -38,7 +38,7 @@ import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.tun.TunThread
+import io.nekohasekai.sagernet.tun.DirectTunThread
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.Subnet
@@ -75,7 +75,7 @@ class VpnService : BaseVpnService(),
     }
 
     lateinit var conn: ParcelFileDescriptor
-    lateinit var tun: TunThread
+    lateinit var tun: DirectTunThread
 
     private var active = false
     private var metered = false
@@ -144,8 +144,8 @@ class VpnService : BaseVpnService(),
 
         val profile = data.proxy!!.profile
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
-                .setSession(profile.displayName())
-                .setMtu(VPN_MTU)
+            .setSession(profile.displayName())
+            .setMtu(VPN_MTU)
         val useFakeDns = DataStore.enableFakeDns
         val ipv6Mode = DataStore.ipv6Mode
         val useNativeForwarding = DataStore.vpnMode == VpnMode.EXPERIMENTAL_FORWARDING
@@ -187,10 +187,8 @@ class VpnService : BaseVpnService(),
 
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
-        val needBypassRootUid =
-            useNativeForwarding || data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
-        val needIncludeSelf =
-            useNativeForwarding || data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
+        val needBypassRootUid = useNativeForwarding || data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
+        val needIncludeSelf = useNativeForwarding || data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
@@ -248,7 +246,7 @@ class VpnService : BaseVpnService(),
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        if (useNativeForwarding) builder.setBlocking(useNativeForwarding)
+        if (useNativeForwarding) builder.setBlocking(true)
         conn = builder.establish() ?: throw NullConnectionException()
 
         if (!useNativeForwarding) {
@@ -281,7 +279,7 @@ class VpnService : BaseVpnService(),
             })
             sendFd(conn.fileDescriptor)
         } else {
-            tun = TunThread(this)
+            tun = DirectTunThread(this)
             tun.start()
         }
     }
