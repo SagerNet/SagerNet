@@ -397,7 +397,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             }
 
             runOnDefaultDispatcher {
-                val showMenu = SagerDatabase.proxyDao.countByGroup(proxyGroup.id) > 0
+                val showMenu = SagerDatabase.proxyDao.countByGroup(group.id) > 0
                 onMainDispatcher {
                     optionsButton.isVisible = showMenu
                 }
@@ -471,9 +471,9 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             groupUser.text = subscription?.username ?: ""
 
             runOnDefaultDispatcher {
-                val size = SagerDatabase.proxyDao.countByGroup(proxyGroup.id)
+                val size = SagerDatabase.proxyDao.countByGroup(group.id)
                 onMainDispatcher {
-                    @Suppress("DEPRECATION") when (proxyGroup.type) {
+                    @Suppress("DEPRECATION") when (group.type) {
                         GroupType.BASIC -> {
                             if (size == 0L) {
                                 groupStatus.setText(R.string.group_status_empty)
