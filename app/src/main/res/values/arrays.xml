@@ -611,5 +611,11 @@
         <item>SIP008</item>
     </string-array>
 
+    <string-array name="hysteria_auth_type">
+        <item>@string/plugin_disabled</item>
+        <item>STRING</item>
+        <item>BASE64</item>
+    </string-array>
+
 
 </resources>

@@ -213,6 +213,7 @@
     <string name="action_ping_tunnel" translatable="false">Ping Tunnel</string>
     <string name="action_relay_baton" translatable="false">RelayBaton</string>
     <string name="action_brook" translatable="false">Brook</string>
+    <string name="action_hysteria" translatable="false">Hysteria</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -395,4 +396,9 @@
     <string name="select_apps">Select Applications</string>
     <string name="apps_message">%d Applications</string>
     <string name="need_nf">To support application-based routing, the VPN Mode must be Native Forwarding.</string>
+    <string name="hysteria_obfs">Obfuscation Password</string>
+    <string name="hysteria_auth_type">Authentication Type</string>
+    <string name="hysteria_auth_payload">Authentication Payload</string>
+    <string name="hysteria_upload_mbps">Max Upload Speed (in Mbps)</string>
+    <string name="hysteria_download_mbps">Max Download Speed (in Mbps)</string>
 </resources>

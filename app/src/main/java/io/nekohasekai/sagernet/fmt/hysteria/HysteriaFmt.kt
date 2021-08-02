@@ -19,34 +19,46 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt
+package io.nekohasekai.sagernet.fmt.hysteria
 
-import io.nekohasekai.sagernet.database.ProxyEntity
+import cn.hutool.core.util.NumberUtil
+import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 
-object TypeMap : HashMap<String, Int>() {
-    init {
-        this["socks"] = ProxyEntity.TYPE_SOCKS
-        this["http"] = ProxyEntity.TYPE_HTTP
-        this["ss"] = ProxyEntity.TYPE_SS
-        this["ssr"] = ProxyEntity.TYPE_SSR
-        this["vmess"] = ProxyEntity.TYPE_VMESS
-        this["vless"] = ProxyEntity.TYPE_VLESS
-        this["trojan"] = ProxyEntity.TYPE_TROJAN
-        this["trojan-go"] = ProxyEntity.TYPE_TROJAN_GO
-        this["naive"] = ProxyEntity.TYPE_NAIVE
-        this["pt"] = ProxyEntity.TYPE_PING_TUNNEL
-        this["rb"] = ProxyEntity.TYPE_RELAY_BATON
-        this["brook"] = ProxyEntity.TYPE_BROOK
-        this["config"] = ProxyEntity.TYPE_CONFIG
-        this["hysteria"] = ProxyEntity.TYPE_HYSTERIA
-    }
-
-    val reversed = HashMap<Int, String>()
-
-    init {
-        TypeMap.forEach { (key, type) ->
-            reversed[type] = key
+fun JSONObject.parseHysteria(): HysteriaBean {
+    return HysteriaBean().apply {
+        serverAddress = getStr("server").substringBefore(":")
+        serverPort = getStr("server").substringAfter(":")
+            .takeIf { NumberUtil.isInteger(it) }
+            ?.toInt() ?: 443
+        uploadMbps = getInt("up_mbps")
+        downloadMbps = getInt("down_mbps")
+        obfuscation = getStr("obfs")
+        getStr("auth")?.also {
+            authPayloadType = HysteriaBean.TYPE_BASE64
+            authPayload = it
         }
+        getStr("auth_str")?.also {
+            authPayloadType = HysteriaBean.TYPE_STRING
+            authPayload = it
+        }
+        sni = getStr("server_name")
+        allowInsecure = getBool("insecure")
     }
+}
 
+fun HysteriaBean.buildHysteriaConfig(port: Int): String {
+    return JSONObject().also {
+        it["server"] = "$serverAddress:$serverPort"
+        it["up_mbps"] = uploadMbps
+        it["down_mbps"] = downloadMbps
+        it["socks5"] = JSONObject(mapOf("listen" to "$LOCALHOST:$port"))
+        it["obfs"] = obfuscation
+        when (authPayloadType) {
+            HysteriaBean.TYPE_BASE64 -> it["auth"] = authPayload
+            HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload
+        }
+        if (sni.isNotBlank()) it["server_name"] = sni
+        if (allowInsecure) it["insecure"] = true
+    }.toStringPretty()
 }

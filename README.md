@@ -36,10 +36,9 @@ The application is designed to be used whenever possible.
 
 #### Subscription
 
-* Universal base64 format
-* Shadowsocks SIP008
-* Just My Socks' proprietary format
-* Clash
+* Raw: All widely used formats (base64, clash or origin configuration)
+* [Open Online Config](https://github.com/Shadowsocks-NET/OpenOnlineConfig)
+* [Shadowsocks SIP008](https://shadowsocks.org/en/wiki/SIP008-Online-Configuration-Delivery.html)
 
 #### Features
 
@@ -55,13 +54,19 @@ The application is designed to be used whenever possible.
 
 ## Localization
 
-Is SagerNet not in your language, or the translation is incorrect or incomplete? Get involved in the translations on our [Weblate](https://hosted.weblate.org/engage/sagernet/).
+Is SagerNet not in your language, or the translation is incorrect or incomplete? Get involved in the
+translations on our [Weblate](https://hosted.weblate.org/engage/sagernet/).
 
 [![Translation status](https://hosted.weblate.org/widgets/sagernet/-/horizontal-auto.svg)](https://hosted.weblate.org/engage/sagernet/)
 
 ### Adding a new language
 
-First and foremost, Android must already support the specific language and locale you want to add. We cannot work with languages that Android and the SDK do not support, the tools simply break down. Next, if you are considering adding a country-specific variant of a language (e.g. de-AT), first make sure that the main language is well maintained (e.g. de). Your contribution might be useful to more people if you contribute to the existing version of your language rather than the country-specific variant.
+First and foremost, Android must already support the specific language and locale you want to add.
+We cannot work with languages that Android and the SDK do not support, the tools simply break down.
+Next, if you are considering adding a country-specific variant of a language (e.g. de-AT), first
+make sure that the main language is well maintained (e.g. de). Your contribution might be useful to
+more people if you contribute to the existing version of your language rather than the
+country-specific variant.
 
 Anyone can create a new language via Weblate.
 

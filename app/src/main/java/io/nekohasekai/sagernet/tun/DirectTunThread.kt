@@ -180,6 +180,10 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
                     processOther(buffer, length)
                 }
             }
+        } catch (e: SecurityException) {
+            interrupt()
+            running = false
+            return
         } catch (e: InterruptedException) {
             interrupt()
             running = false

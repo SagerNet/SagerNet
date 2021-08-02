@@ -30,6 +30,7 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
@@ -449,6 +450,9 @@ object RawUpdater : GroupUpdater() {
                 }
                 json.containsKey("remote_addr") -> {
                     return listOf(json.parseTrojanGo())
+                }
+                json.containsKey("up_mbps") -> {
+                    return listOf(json.parseHysteria())
                 }
                 else -> json.forEach { _, it ->
                     if (it is JSON) {

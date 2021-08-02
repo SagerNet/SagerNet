@@ -161,6 +161,29 @@ jobs:
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin brook
+  hysteria:
+    name: Native Build (Hysteria)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'plugin/hysteria/*' > hysteria_status
+      - name: Hysteria Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/hysteria/src/main/jniLibs
+          key: ${{ hashFiles('bin/lib/hysteria/*', 'hysteria_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run plugin hysteria
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: ubuntu-latest

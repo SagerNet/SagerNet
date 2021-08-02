@@ -37,6 +37,8 @@ import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
+import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
+import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
@@ -145,6 +147,10 @@ open class V2RayInstance(val profile: ProxyEntity) {
                     bean is BrookBean -> {
                         initPlugin("brook-plugin")
                     }
+                    bean is HysteriaBean -> {
+                        initPlugin("hysteria-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildHysteriaConfig(port)
+                    }
                     bean is ConfigBean -> {
                         when (bean.type) {
                             "trojan-go" -> {
@@ -154,7 +160,9 @@ open class V2RayInstance(val profile: ProxyEntity) {
                                 )
                             }
                             else -> {
-                                externalInstances[port] = ExternalInstance(v2rayPoint.supportSet, profile, port).apply {
+                                externalInstances[port] = ExternalInstance(
+                                    v2rayPoint.supportSet, profile, port
+                                ).apply {
                                     init()
                                 }
                             }
@@ -351,6 +359,28 @@ open class V2RayInstance(val profile: ProxyEntity) {
 
                         commands.add("--socks5")
                         commands.add("$LOCALHOST:$port")
+
+                        processes.start(commands)
+                    }
+                    bean is HysteriaBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "hysteria_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf(
+                            initPlugin("hysteria-plugin").path,
+                            "--no-check",
+                            "--config",
+                            configFile.absolutePath,
+                            "--log-level",
+                            if (DataStore.enableLog) "trace" else "warn",
+                            "client"
+                        )
 
                         processes.start(commands)
                     }

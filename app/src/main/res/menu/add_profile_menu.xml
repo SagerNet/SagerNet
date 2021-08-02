@@ -55,6 +55,10 @@
                         android:id="@+id/action_new_brook"
                         android:title="@string/action_brook" />
                     <item
+                        android:id="@+id/action_new_hysteria"
+                        android:title="@string/action_hysteria" />
+
+                    <item
                         android:id="@+id/action_new_config"
                         android:title="@string/custom_config" />
                     <item

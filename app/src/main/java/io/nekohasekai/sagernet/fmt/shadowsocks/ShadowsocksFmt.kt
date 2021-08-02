@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
+import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.github.shadowsocks.plugin.PluginOptions
@@ -30,7 +31,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import cn.hutool.json.JSONObject as HSONObject
 
 val methodsV2fly = arrayOf(
     "none", "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305"
@@ -179,7 +179,7 @@ fun ShadowsocksBean.toUri(): String {
 
 }
 
-fun HSONObject.parseShadowsocks(): ShadowsocksBean {
+fun JSONObject.parseShadowsocks(): ShadowsocksBean {
     return ShadowsocksBean().apply {
         var pluginStr = ""
         val pId = getStr("plugin")
@@ -207,7 +207,7 @@ fun ShadowsocksBean.buildShadowsocksConfig(port: Int): String {
         throw IllegalArgumentException("Cipher $method is deprecated.")
     }
 
-    val proxyConfig = HSONObject().also {
+    val proxyConfig = JSONObject().also {
         it["server"] = finalAddress
         it["server_port"] = finalPort
         it["method"] = method

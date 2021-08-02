@@ -290,6 +290,10 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_brook -> {
                 startActivity(Intent(requireActivity(), BrookSettingsActivity::class.java))
             }
+            R.id.action_new_hysteria -> {
+                startActivity(Intent(requireActivity(), HysteriaSettingsActivity::class.java))
+            }
+
             R.id.action_new_config -> {
                 startActivity(Intent(requireActivity(), ConfigSettingsActivity::class.java))
             }
@@ -1279,10 +1283,8 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 val pf = requireParentFragment() as ConfigurationFragment
 
-                if (proxyEntity.requireBean().name.isNotBlank()) {
-                    if (!pf.alwaysShowAddress) {
-                        address = ""
-                    }
+                if (proxyEntity.requireBean().name.isBlank() || !pf.alwaysShowAddress) {
+                    address = ""
                 }
 
                 profileAddress.text = address
@@ -1346,13 +1348,17 @@ class ConfigurationFragment @JvmOverloads constructor(
                             popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(R.id.action_v2rayn_clipboard)
                         }
 
-                        if (proxyEntity.configBean != null) {
-
-                            popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
-                            popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(R.id.action_standard_clipboard)
-                        } else if (!proxyEntity.haveLink()) {
-                            popup.menu.removeItem(R.id.action_group_qr)
-                            popup.menu.removeItem(R.id.action_group_clipboard)
+                        when {
+                            proxyEntity.configBean != null || proxyEntity.hysteriaBean != null -> {
+                                popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
+                                popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
+                                    R.id.action_standard_clipboard
+                                )
+                            }
+                            !proxyEntity.haveLink() -> {
+                                popup.menu.removeItem(R.id.action_group_qr)
+                                popup.menu.removeItem(R.id.action_group_clipboard)
+                            }
                         }
 
                         if (proxyEntity.ptBean != null || proxyEntity.brookBean != null) {

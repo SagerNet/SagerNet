@@ -6,6 +6,7 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="../../.gradle/caches/transforms-3/60c79b6b6cf50df0de760b958b8bc3be/transformed/material-1.3.0/res/drawable/design_snackbar_background.xml" value="0.147" />
         <entry key="../../.local/lib/android/sdk/platforms/android-30/data/res/layout-watch/preference_material.xml" value="0.17435897435897435" />
+        <entry key="app/src/main/res/drawable/ic_action_copyright.xml" value="0.3375" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_emoji_emotions_24.xml" value="0.3375" />
         <entry key="app/src/main/res/drawable/ic_baseline_flip_camera_android_24.xml" value="0.207" />
@@ -18,6 +19,7 @@
         <entry key="app/src/main/res/drawable/ic_service_active.xml" value="0.135" />
         <entry key="app/src/main/res/drawable/ic_service_idle.xml" value="0.2255" />
         <entry key="app/src/main/res/drawable/ic_service_stopped.xml" value="0.2035" />
+        <entry key="app/src/main/res/drawable/ic_settings_password.xml" value="0.3375" />
         <entry key="app/src/main/res/drawable/ic_social_share.xml" value="0.283" />
         <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
         <entry key="app/src/main/res/layout/layout_about.xml" value="0.33" />
@@ -74,6 +76,7 @@
         <entry key="app/src/main/res/xml/global_preferences.xml" value="1.0" />
         <entry key="app/src/main/res/xml/group_preferences.xml" value="0.16" />
         <entry key="app/src/main/res/xml/http_preferences.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/xml/hysteria_preferences.xml" value="0.1" />
         <entry key="app/src/main/res/xml/name_preferences.xml" value="0.1423076923076923" />
         <entry key="app/src/main/res/xml/pingtunnel_preferences.xml" value="0.19907407407407407" />
         <entry key="app/src/main/res/xml/relaybaton_preferences.xml" value="0.2636752136752137" />

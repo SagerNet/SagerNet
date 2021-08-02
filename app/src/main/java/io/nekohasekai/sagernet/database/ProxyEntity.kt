@@ -36,6 +36,8 @@ import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
+import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
+import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
@@ -96,6 +98,7 @@ data class ProxyEntity(
     var ptBean: PingTunnelBean? = null,
     var rbBean: RelayBatonBean? = null,
     var brookBean: BrookBean? = null,
+    var hysteriaBean: HysteriaBean? = null,
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
     var balancerBean: BalancerBean? = null
@@ -114,6 +117,7 @@ data class ProxyEntity(
         const val TYPE_PING_TUNNEL = 10
         const val TYPE_RELAY_BATON = 11
         const val TYPE_BROOK = 12
+        const val TYPE_HYSTERIA = 15
 
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14
@@ -173,6 +177,7 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> ptBean = KryoConverters.pingTunnelDeserialize(byteArray)
             TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
             TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
+            TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_BALANCER -> balancerBean = KryoConverters.balancerBeanDeserialize(byteArray)
@@ -205,6 +210,7 @@ data class ProxyEntity(
         TYPE_PING_TUNNEL -> "PingTunnel"
         TYPE_RELAY_BATON -> "relaybaton"
         TYPE_BROOK -> "Brook"
+        TYPE_HYSTERIA -> "Hysteria"
         TYPE_CHAIN -> chainName
         TYPE_CONFIG -> configName
         TYPE_BALANCER -> balancerName
@@ -213,23 +219,6 @@ data class ProxyEntity(
 
     fun displayName() = requireBean().displayName()
     fun displayAddress() = requireBean().displayAddress()
-
-    /*fun urlFixed(): String {
-        val bean = requireBean()
-        if (bean is ChainBean) {
-            if (bean.proxies.isNotEmpty()) {
-                val firstEntity = ProfileManager.getProfile(bean.proxies[0])
-                if (firstEntity != null) {
-                    return firstEntity.urlFixed();
-                }
-            }
-        }
-        return if (Validator.isIpv6(bean.serverAddress)) {
-            "[${bean.serverAddress}]:${bean.serverPort}"
-        } else {
-            "${bean.serverAddress}:${bean.serverPort}"
-        }
-    }*/
 
     fun requireBean(): AbstractBean {
         return when (type) {
@@ -245,8 +234,9 @@ data class ProxyEntity(
             TYPE_PING_TUNNEL -> ptBean
             TYPE_RELAY_BATON -> rbBean
             TYPE_BROOK -> brookBean
-            TYPE_CONFIG -> configBean
+            TYPE_HYSTERIA -> hysteriaBean
 
+            TYPE_CONFIG -> configBean
             TYPE_CHAIN -> chainBean
             TYPE_BALANCER -> balancerBean
             else -> error("Undefined type $type")
@@ -277,6 +267,7 @@ data class ProxyEntity(
             is RelayBatonBean -> toUniversalLink()
             is BrookBean -> toUniversalLink()
             is ConfigBean -> toUniversalLink()
+            is HysteriaBean -> toUniversalLink()
             else -> null
         }
     }
@@ -285,57 +276,54 @@ data class ProxyEntity(
         var name = "profile.json"
 
         return with(requireBean()) {
-            when (this) {
-                is ShadowsocksRBean -> buildShadowsocksRConfig()
-                is TrojanGoBean -> buildTrojanGoConfig(DataStore.socksPort, false)
-                is NaiveBean -> buildNaiveConfig(DataStore.socksPort)
-                is RelayBatonBean -> {
-                    name = "profile.toml"
-                    buildRelayBatonConfig(DataStore.socksPort)
+            StringBuilder().apply {
+                val config = buildV2RayConfig(this@ProxyEntity)
+                append(config.config)
+
+                if (!config.index.all { it.chain.isEmpty() }) {
+                    name = "profiles.txt"
                 }
-                else -> StringBuilder().apply {
-                    val config = buildV2RayConfig(this@ProxyEntity)
-                    append(config.config)
 
-                    if (!config.index.all { it.chain.isEmpty() }) {
-                        name = "profiles.txt"
-                    }
+                for ((isBalancer, chain) in config.index) {
+                    chain.entries.forEachIndexed { index, (port, profile) ->
+                        val needChain = !isBalancer && index != chain.size - 1
+                        val bean = profile.requireBean()
+                        when {
+                            profile.useExternalShadowsocks() -> {
+                                bean as ShadowsocksBean
+                                append("\n\n")
+                                append(bean.buildShadowsocksConfig(port))
 
-                    for ((isBalancer, chain) in config.index) {
-                        chain.entries.forEachIndexed { index, (port, profile) ->
-                            val needChain = !isBalancer && index != chain.size - 1
-                            val bean = profile.requireBean()
-                            when {
-                                profile.useExternalShadowsocks() -> {
-                                    bean as ShadowsocksBean
-                                    append("\n\n")
-                                    append(bean.buildShadowsocksConfig(port))
-
-                                }
-                                bean is ShadowsocksRBean -> {
-                                    append("\n\n")
-                                    append(bean.buildShadowsocksRConfig())
-                                }
-                                bean is TrojanGoBean -> {
-                                    append("\n\n")
-                                    append(
-                                        bean.buildTrojanGoConfig(
-                                            port, index == 0 && DataStore.enableMux
-                                        )
+                            }
+                            bean is ShadowsocksRBean -> {
+                                append("\n\n")
+                                append(bean.buildShadowsocksRConfig())
+                            }
+                            bean is TrojanGoBean -> {
+                                append("\n\n")
+                                append(
+                                    bean.buildTrojanGoConfig(
+                                        port, index == 0 && DataStore.enableMux
                                     )
-                                }
-                                bean is NaiveBean -> {
-                                    append(bean.buildNaiveConfig(port))
-                                }
-                                bean is RelayBatonBean -> {
-                                    append(bean.buildRelayBatonConfig(port))
-                                }
+                                )
+                            }
+                            bean is NaiveBean -> {
+                                append("\n\n")
+                                append(bean.buildNaiveConfig(port))
+                            }
+                            bean is RelayBatonBean -> {
+                                append("\n\n")
+                                append(bean.buildRelayBatonConfig(port))
+                            }
+                            bean is HysteriaBean -> {
+                                append("\n\n")
+                                append(bean.buildHysteriaConfig(port))
                             }
                         }
                     }
-                }.toString()
-            } to name
-        }
+                }
+            }.toString()
+        } to name
     }
 
     fun needExternal(): Boolean {
@@ -343,20 +331,12 @@ data class ProxyEntity(
             TYPE_SOCKS -> false
             TYPE_HTTP -> false
             TYPE_SS -> useExternalShadowsocks()
-            TYPE_SSR -> true
             TYPE_VMESS -> false
             TYPE_VLESS -> false
             TYPE_TROJAN -> DataStore.providerTrojan != TrojanProvider.V2RAY
-            TYPE_TROJAN_GO -> true
-            TYPE_NAIVE -> true
-            TYPE_PING_TUNNEL -> true
-            TYPE_RELAY_BATON -> true
-            TYPE_BROOK -> true
-            TYPE_CONFIG -> true
-
             TYPE_CHAIN -> false
             TYPE_BALANCER -> false
-            else -> error("Undefined type $type")
+            else -> true
         }
     }
 
@@ -401,8 +381,9 @@ data class ProxyEntity(
         ptBean = null
         rbBean = null
         brookBean = null
-        configBean = null
+        hysteriaBean = null
 
+        configBean = null
         chainBean = null
         balancerBean = null
 
@@ -455,6 +436,10 @@ data class ProxyEntity(
                 type = TYPE_BROOK
                 brookBean = bean
             }
+            is HysteriaBean -> {
+                type = TYPE_HYSTERIA
+                hysteriaBean = bean
+            }
             is ConfigBean -> {
                 type = TYPE_CONFIG
                 configBean = bean
@@ -487,8 +472,9 @@ data class ProxyEntity(
                 TYPE_PING_TUNNEL -> PingTunnelSettingsActivity::class.java
                 TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
                 TYPE_BROOK -> BrookSettingsActivity::class.java
-                TYPE_CONFIG -> ConfigSettingsActivity::class.java
+                TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
 
+                TYPE_CONFIG -> ConfigSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
                 TYPE_BALANCER -> BalancerSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
