@@ -63,19 +63,20 @@ object RawUpdater : GroupUpdater() {
         val link = subscription.link
         var proxies: List<AbstractBean>
         if (link.startsWith("content://")) {
-            val contentText =
-                app.contentResolver.openInputStream(Uri.parse(link))?.bufferedReader()?.readText()
+            val contentText = app.contentResolver.openInputStream(Uri.parse(link))
+                ?.bufferedReader()
+                ?.readText()
 
             proxies = contentText?.let { parseRaw(contentText) }
                 ?: error(app.getString(R.string.no_proxies_found_in_subscription))
         } else {
 
             val response = httpClient.newCall(Request.Builder()
-                    .url(subscription.link.toHttpUrl())
-                    .header("User-Agent",
-                        subscription.customUserAgent.takeIf { it.isNotBlank() }
-                            ?: "SagerNet/${BuildConfig.VERSION_NAME}")
-                    .build()).execute().apply {
+                .url(subscription.link.toHttpUrl())
+                .header("User-Agent",
+                    subscription.customUserAgent.takeIf { it.isNotBlank() }
+                        ?: "SagerNet/${BuildConfig.VERSION_NAME}")
+                .build()).execute().apply {
                 if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                 if (body == null) error("ERROR: Empty response")
             }
@@ -244,8 +245,7 @@ object RawUpdater : GroupUpdater() {
                                 username = proxy["username"] as String?
                                 password = proxy["password"] as String?
                                 tls = proxy["tls"]?.toString() == "true"
-                                sni =
-                                    proxy["sni"] as String? //                            udp = proxy["udp"]?.toString() == "true"
+                                sni = proxy["sni"] as String?
                                 name = proxy["name"] as String?
                             })
                         }
@@ -290,9 +290,8 @@ object RawUpdater : GroupUpdater() {
                                     "alterId" -> bean.alterId = opt.value.toString().toInt()
                                     "cipher" -> bean.encryption = opt.value as String
                                     "network" -> bean.type = opt.value as String
-                                    "tls" -> bean.security =
-                                        if (opt.value?.toString() == "true") "tls" else ""
-                                    "skip-cert-verify" -> bean.allowInsecure = true
+                                    "tls" -> bean.security = if (opt.value?.toString() == "true") "tls" else ""
+                                    "skip-cert-verify" -> bean.allowInsecure = opt.value == "true"
                                     "ws-path" -> bean.path = opt.value as String
                                     "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
                                         when (wsOpt.key.lowercase()) {
@@ -302,21 +301,18 @@ object RawUpdater : GroupUpdater() {
                                     "servername" -> bean.host = opt.value as String
                                     "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
                                         when (h2Opt.key.lowercase()) {
-                                            "host" -> bean.host =
-                                                (h2Opt.value as List<String>).first()
+                                            "host" -> bean.host = (h2Opt.value as List<String>).first()
                                             "path" -> bean.path = h2Opt.value as String
                                         }
                                     }
                                     "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
                                         when (httpOpt.key.lowercase()) {
-                                            "path" -> bean.path =
-                                                (httpOpt.value as List<String>).first()
+                                            "path" -> bean.path = (httpOpt.value as List<String>).first()
                                         }
                                     }
                                     "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
                                         when (grpcOpt.key.lowercase()) {
-                                            "grpc-service-name" -> bean.path =
-                                                grpcOpt.value as String
+                                            "grpc-service-name" -> bean.path = grpcOpt.value as String
                                         }
                                     }
                                 }
@@ -332,7 +328,7 @@ object RawUpdater : GroupUpdater() {
                                     "port" -> bean.serverPort = opt.value.toString().toInt()
                                     "password" -> bean.password = opt.value as String
                                     "sni" -> bean.sni = opt.value as String?
-                                    "skip-cert-verify" -> bean.allowInsecure = true
+                                    "skip-cert-verify" -> bean.allowInsecure = opt.value == "true"
                                 }
                             }
                             proxies.add(bean)
@@ -399,9 +395,9 @@ object RawUpdater : GroupUpdater() {
                     return listOf(json.parseShadowsocks())
                 }
                 json.containsKey("protocol") -> {
-                    val v2rayConfig =
-                        gson.fromJson(json.toString(), V2RayConfig.OutboundObject::class.java)
-                                .apply { init() }
+                    val v2rayConfig = gson.fromJson(
+                        json.toString(), V2RayConfig.OutboundObject::class.java
+                    ).apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbound") -> {
@@ -441,9 +437,9 @@ object RawUpdater : GroupUpdater() {
                        } catch (e: Exception) {
                            Logs.w(e)*/
                     json.getJSONArray("outbounds").filterIsInstance<JSONObject>().forEach {
-                        val v2rayConfig =
-                            gson.fromJson(it.toString(), V2RayConfig.OutboundObject::class.java)
-                                    .apply { init() }
+                        val v2rayConfig = gson.fromJson(
+                            it.toString(), V2RayConfig.OutboundObject::class.java
+                        ).apply { init() }
 
                         proxies.addAll(parseOutbound(v2rayConfig))
                     }/* null
@@ -531,8 +527,7 @@ object RawUpdater : GroupUpdater() {
                     }
                 }
                 "vmess", "vless" -> {
-                    val v2rayBean =
-                        (if (protocol == "vmess") VMessBean() else VLESSBean()).applyDefaultValues()
+                    val v2rayBean = (if (protocol == "vmess") VMessBean() else VLESSBean()).applyDefaultValues()
                     streamSettings?.apply {
                         v2rayBean.security = security ?: v2rayBean.security
                         when (security) {
@@ -569,8 +564,9 @@ object RawUpdater : GroupUpdater() {
                                                                     v2rayBean.host = value.valueX
                                                                 }
                                                                 value.valueY != null -> {
-                                                                    v2rayBean.host =
-                                                                        value.valueY.joinToString(",")
+                                                                    v2rayBean.host = value.valueY.joinToString(
+                                                                        ","
+                                                                    )
                                                                 }
                                                             }
                                                         }
