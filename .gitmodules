@@ -64,3 +64,6 @@
 [submodule "external/netty-jni-util"]
 	path = external/netty-jni-util
 	url = https://github.com/netty/netty-jni-util
+[submodule "plugin/hysteria/src/main/go/hysteria"]
+	path = plugin/hysteria/src/main/go/hysteria
+	url = https://github.com/HyNetwork/hysteria

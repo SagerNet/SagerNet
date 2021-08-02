@@ -73,6 +73,7 @@
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/plugin/api" />
             <option value="$PROJECT_DIR$/plugin/brook" />
+            <option value="$PROJECT_DIR$/plugin/hysteria" />
             <option value="$PROJECT_DIR$/plugin/naive" />
             <option value="$PROJECT_DIR$/plugin/pingtunnel" />
             <option value="$PROJECT_DIR$/plugin/relaybaton" />

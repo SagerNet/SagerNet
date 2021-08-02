@@ -13,6 +13,7 @@ include(":plugin:pingtunnel")
 include(":plugin:relaybaton")
 include(":plugin:brook")
 include(":plugin:trojan")
+include(":plugin:hysteria")
 
 include(":external:preferencex:preferencex")
 include(":external:preferencex:preferencex-simplemenu")

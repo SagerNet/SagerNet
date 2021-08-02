@@ -28,6 +28,7 @@ The application is designed to be used whenever possible.
 * NaïveProxy ( naive-plugin )
 * relaybaton ( relaybaton-plugin )
 * Brook ( brook-plugin )
+* Hysteria ( hysteria-plugin )
 
 ##### ROOT required
 
@@ -74,6 +75,7 @@ Anyone can create a new language via Weblate.
     <li><a href="https://github.com/esrrhs/pingtunnel/blob/master/LICENSE">esrrhs/pingtunnel</a>:  <code>MIT</code></li>
     <li><a href="https://github.com/iyouport-org/relaybaton/blob/ech/LICENSE">iyouport-org/relaybaton</a>:  <code>MIT</code></li>
     <li><a href="https://github.com/txthinking/brook/blob/master/LICENSE">txthinking/brook</a>:  <code>GPL 3.0</code></li>
+    <li><a href="https://github.com/HyNetwork/hysteria/blob/master/LICENSE.md">HyNetwork/hysteria</a>:  <code>MIT</code></li>
 </ul>
 
 ## License
