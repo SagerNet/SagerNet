@@ -43,12 +43,9 @@ class DirectICMPv6Header(val ipHeader: DirectIPHeader) : DirectHeader(
         }
     }
 
-    private fun updateChecksum(): Short {
-        var sum = ipHeader.readSum(offset, ipHeader.dataLength)
-        while (sum shr 16 > 0) {
-            sum = (sum and 0xFFFF) + (sum shr 16)
-        }
-        return sum.inv().toShort()
+    fun updateChecksum() {
+        checksum = 0
+        checksum = ipHeader.finishSum(ipHeader.readSum(offset, ipHeader.dataLength))
     }
 
     companion object {

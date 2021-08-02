@@ -43,6 +43,7 @@ import io.netty.channel.*
 import io.netty.channel.socket.DatagramPacket
 import io.netty.handler.codec.socksx.v5.Socks5AddressType
 import io.netty.util.IllegalReferenceCountException
+import io.netty.util.ReferenceCountUtil
 import io.netty.util.concurrent.Future
 import io.netty.util.concurrent.GenericFutureListener
 import org.xbill.DNS.Message
@@ -224,6 +225,7 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
                 is Socks5UdpMessage -> sendResponse(msg.data())
                 is DatagramPacket -> sendResponse(msg.content())
             }
+            ReferenceCountUtil.release(msg)
         }
 
         fun sendResponse(rawData: ByteBuf) {
@@ -265,7 +267,6 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
 
             tun.write(packet, ipHeader.packetLength)
             packet.release()
-            rawData.release()
 
             if (isDns) udpSessions.remove(localPort)
         }

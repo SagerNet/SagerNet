@@ -54,10 +54,7 @@ class DirectTcpHeader(val ipHeader: DirectIPHeader) : DirectHeader(
         sum += ipHeader.protocol.toLong()
         sum += dataLength.toLong()
         sum += ipHeader.readSum(offset, dataLength)
-        while (sum shr 16 > 0) {
-            sum = (sum and 0xFFFF) + (sum shr 16)
-        }
-        checksum = sum.inv().toUShort().toInt()
+        checksum = ipHeader.finishSum(sum)
     }
 
     companion object {

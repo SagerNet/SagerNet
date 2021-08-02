@@ -50,15 +50,12 @@ class DirectIPv4Header(buffer: ByteBuf, packetLength: Int) : DirectIPHeader(buff
             )
         )
         buffer.setBytes(OFFSET_DESTINATION_ADDRESS, sourceAddress)
+        sourceAddress.release()
     }
 
     override fun updateChecksum() {
         checksum = 0
-        var sum = readSum(offset, headerLength)
-        while ((sum ushr 16) > 0) {
-            sum = (sum ushr 16) + sum.toUShort().toLong()
-        }
-        checksum = sum.inv().toUShort().toInt()
+        checksum = finishSum(readSum(offset, headerLength))
     }
 
     override fun getAddressSum(): Long {
