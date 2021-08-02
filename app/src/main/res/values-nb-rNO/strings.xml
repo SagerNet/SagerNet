@@ -57,8 +57,8 @@
     <string name="header_type">Hodetype</string>
     <string name="network">Nettverk</string>
     <string name="alter_id">Alt-ID</string>
-    <string name="group_diff">Diff (%s)</string>
-    <string name="group_show_diff">Diff</string>
+    <string name="group_diff">Forskjell (%s)</string>
+    <string name="group_show_diff">Forskjell</string>
     <string name="group_updated">%s: Oppdaterte %d mellomtjenere</string>
     <string name="group_no_difference">%s: Ingen forskjell</string>
     <string name="group_status_proxies_subscription">%d mellomtjenere | Oppdatert %s</string>
@@ -361,4 +361,9 @@
     <string name="menu_configuration">Konfigurasjon</string>
     <string name="logcat_summary">Så nyttig veldig wow</string>
     <string name="app_desc">Den universelle proxy -verktøykjeden for Android, skrevet i Kotlin.</string>
+    <string name="group_filter">Raffinering</string>
+    <string name="standard">Standard</string>
+    <string name="obfs">Obfs</string>
+    <string name="speed">%s/s</string>
+    <string name="traffic">%1$s↑ %2$s↓</string>
 </resources>

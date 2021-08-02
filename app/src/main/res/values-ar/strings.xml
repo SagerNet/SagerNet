@@ -9,9 +9,9 @@
     <string name="oss_licenses">تراخيص مفتوحة المصدر</string>
     <string name="telegram">قناة تحديث Telegram</string>
     <string name="github">مصدر الرمز</string>
-    <string name="app_desc">سلسلة أدوات الوكيل العالمية لنظام Android ، مكتوبة بلغة Kotlin.</string>
+    <string name="app_desc">سلسلة أدوات البروکسی العالمية لنظام Android ، مكتوبة بلغة Kotlin.</string>
     <string name="project">مشروع</string>
-    <string name="group_status_proxies">%d وكلاء</string>
+    <string name="group_status_proxies">%d البروکسیز</string>
     <string name="group_status_empty_subscription">لم يتم تحديثه بعد</string>
     <string name="group_status_empty">مجموعة فارغة</string>
     <string name="group_edit_subscription">تحرير الاشتراك‬</string>
@@ -28,4 +28,24 @@
     <string name="document">وثيقة</string>
     <string name="theme">موضوع</string>
     <string name="menu_about">حول</string>
+    <string name="group_status_proxies_subscription">%d البروکسیز | تم التحديث في %s</string>
+    <string name="group_updated">%s: تم تحديث %d البروکسیز</string>
+    <string name="port_http">منفذ بروکسی HTTP</string>
+    <string name="port_proxy">منفذ بروکسی SOCKS5</string>
+    <string name="service_mode_proxy">البروکسی فقط</string>
+    <string name="port_transproxy">منفذ ترانسبروكسى</string>
+    <string name="service_mode_vpn">VPN</string>
+    <string name="service_mode">وضع الخدمة</string>
+    <string name="group_duplicate">ينسخ:
+\n%s</string>
+    <string name="group_deleted">تم الحذف:
+\n%s</string>
+    <string name="group_changed">محدث:
+\n%s</string>
+    <string name="group_added">تمت الإضافة:
+\n%s</string>
+    <string name="group_delete_confirm_prompt">هل أنت متأكد أنك تريد إزالة هذه المجموعة؟</string>
+    <string name="group_diff">الفارق (%s)</string>
+    <string name="group_show_diff">الفارق</string>
+    <string name="group_no_difference">%s: لا فرق</string>
 </resources>

@@ -91,7 +91,7 @@
     <string name="server_port">پورت سرور</string>
     <string name="server_address">سرور</string>
     <string name="profile_name">نام پروفایل</string>
-    <string name="connection_test_url">آدرس مورد استفاده جهت تست اتصال ها</string>
+    <string name="connection_test_url">تست اتصال نشانی وب</string>
     <string name="key_opt">کلید (اختیاری)</string>
     <string name="password_opt">رمز عبور (اختیاری)</string>
     <string name="username_opt">نام کاربری (اختیاری)</string>
@@ -290,7 +290,7 @@
     <string name="mux_for_all_sum">اگر سرور از Mux پشتیبانی نکند ، دیگر نمی توانیم به آن متصل شویم.</string>
     <string name="mux_for_all">فعالسازی Mux برای همه پروتکل های پشتیبانی شده</string>
     <string name="mux_concurrency">اتصالات همزمان Mux</string>
-    <string name="mux_sum">Mux برای کاهش تأخیر دست دادن TCP طراحی شده است، برای افزایش توان اتصال نیست. استفاده از Mux برای تماشای فیلم، بارگیری یا تست سرعت معمولاً خلاف تولید است</string>
+    <string name="mux_sum">تسهیم کننده Mux برای کاهش تأخیر TCP طراحی شده است، قادر به افزایش توان اتصال نیست. استفاده از Mux برای تماشای فیلم، بارگیری یا تست سرعت معمولاً خلاف قوانین تولید است</string>
     <string name="enable_mux">فعالسازی تسهیم کننده</string>
     <string name="traffic_sniffing">فعال کردن استشمام ترافیک</string>
     <string name="dm_mph">حداقل هش کامل</string>

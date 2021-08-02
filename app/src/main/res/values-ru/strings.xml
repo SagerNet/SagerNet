@@ -100,14 +100,14 @@
     <string name="project">Проект</string>
     <string name="app_desc">Универсальный набор инструментов прокси для Android, написанный на Kotlin.</string>
     <plurals name="added">
-        <item quantity="one">Добавлен</item>
-        <item quantity="few">прокси добавлены</item>
+        <item quantity="one"></item>
+        <item quantity="few">Добавлен</item>
         <item quantity="many">%d прокси добавлены</item>
         <item quantity="other">%d прокси добавлены</item>
     </plurals>
     <plurals name="removed">
-        <item quantity="one">Удаленный</item>
-        <item quantity="few">элементы удалены</item>
+        <item quantity="one"></item>
+        <item quantity="few">Удаленный</item>
         <item quantity="many">%d элементы удалены</item>
         <item quantity="other">%d элементы удалены</item>
     </plurals>
