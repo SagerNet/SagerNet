@@ -161,7 +161,7 @@ jobs:
           upload apks/*
   play:
     name: Publish to Play Store
-    if: github.event.inputs.upload != 'y'
+    if: github.event.inputs.play != 'y'
     runs-on: ubuntu-latest
     needs:
       - native

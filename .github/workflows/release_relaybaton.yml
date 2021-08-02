@@ -126,7 +126,7 @@ jobs:
           ./ghr -delete -prerelease -t "${{ github.token }}" -n "${{ github.event.inputs.tag }}" "${{ github.event.inputs.tag }}" apks
   upload:
     name: Upload Release
-    if: github.event.inputs.upload != 'y'
+    if: github.event.inputs.play != 'y'
     runs-on: ubuntu-latest
     needs: build
     steps:
