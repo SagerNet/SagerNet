@@ -139,7 +139,11 @@ class ScannerActivity : ThemedActivity(),
                             onMainDispatcher {
                                 finish()
                             }
-                            val currentGroupId = DataStore.selectedGroup
+                            val currentGroupId = DataStore.selectedGroupForImport()
+                            if (DataStore.selectedGroup != currentGroupId) {
+                                DataStore.selectedGroup = currentGroupId
+                            }
+
                             for (profile in results) {
                                 ProfileManager.createProfile(currentGroupId, profile)
                             }
@@ -226,7 +230,10 @@ class ScannerActivity : ThemedActivity(),
             try {
                 val results = parseProxies(text)
                 if (results.isNotEmpty()) {
-                    val currentGroupId = DataStore.selectedGroup
+                    val currentGroupId = DataStore.selectedGroupForImport()
+                    if (DataStore.selectedGroup != currentGroupId) {
+                        DataStore.selectedGroup = currentGroupId
+                    }
 
                     for (profile in results) {
                         ProfileManager.createProfile(currentGroupId, profile)
