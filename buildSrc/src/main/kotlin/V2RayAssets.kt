@@ -2,6 +2,9 @@ import cn.hutool.core.util.ZipUtil
 import cn.hutool.crypto.digest.DigestUtil
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
+import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream
+import org.apache.commons.compress.compressors.xz.XZUtils
 import org.gradle.api.Project
 import org.kohsuke.github.GitHubBuilder
 import java.io.File
@@ -14,6 +17,7 @@ fun Project.downloadAssets() {
     val github = GitHubBuilder().build()
     val geoip = github.getRepository("v2fly/geoip").latestRelease
     val geoipFile = File(assets, "v2ray/geoip.dat")
+    val geoipXzFile = File(assets, "v2ray/geoip.dat.xz")
     val geoipVersion = File(assets, "v2ray/geoip.version.txt")
     if (!geoipVersion.isFile || geoipVersion.readText() != geoip.tagName) {
         geoipVersion.deleteRecursively()
@@ -29,8 +33,13 @@ fun Project.downloadAssets() {
 
         val checksum = downloader.newCall(
             Request.Builder().url(sha256sum).build()
-        ).execute().let { it.body ?: error("Error when downloading $sha256sum: $it") }.string()
-            .trim().substringBefore(" ").toUpperCase(Locale.ROOT)
+        )
+            .execute()
+            .let { it.body ?: error("Error when downloading $sha256sum: $it") }
+            .string()
+            .trim()
+            .substringBefore(" ")
+            .toUpperCase(Locale.ROOT)
         var count = 0
 
         while (true) {
@@ -40,8 +49,11 @@ fun Project.downloadAssets() {
 
             downloader.newCall(
                 Request.Builder().url(geoipDat).build()
-            ).execute().let { it.body ?: error("Error when downloading $geoipDat: $it") }
-                .byteStream().use {
+            )
+                .execute()
+                .let { it.body ?: error("Error when downloading $geoipDat: $it") }
+                .byteStream()
+                .use {
                     geoipFile.outputStream().use { out -> it.copyTo(out) }
                 }
 
@@ -59,6 +71,12 @@ fun Project.downloadAssets() {
                 continue
             }
 
+            geoipFile.inputStream().use { input ->
+                XZCompressorOutputStream(geoipXzFile.outputStream(), 9).use {
+                    input.copyTo(it)
+                }
+            }
+            geoipFile.delete()
             geoipVersion.writeText(geoip.tagName)
 
             break
@@ -67,6 +85,7 @@ fun Project.downloadAssets() {
 
     val geosite = github.getRepository("v2fly/domain-list-community").latestRelease
     val geositeFile = File(assets, "v2ray/geosite.dat")
+    val geositeXzFile = File(assets, "v2ray/geosite.dat.xz")
     val geositeVersion = File(assets, "v2ray/geosite.version.txt")
     if (!geositeVersion.isFile || geositeVersion.readText() != geosite.tagName) {
         geositeVersion.deleteRecursively()
@@ -81,8 +100,13 @@ fun Project.downloadAssets() {
 
         val checksum = downloader.newCall(
             Request.Builder().url(sha256sum).build()
-        ).execute().let { it.body ?: error("Error when downloading $sha256sum: $it") }.string()
-            .trim().substringBefore(" ").toUpperCase(Locale.ROOT)
+        )
+            .execute()
+            .let { it.body ?: error("Error when downloading $sha256sum: $it") }
+            .string()
+            .trim()
+            .substringBefore(" ")
+            .toUpperCase(Locale.ROOT)
 
         var count = 0
 
@@ -93,8 +117,11 @@ fun Project.downloadAssets() {
 
             downloader.newCall(
                 Request.Builder().url(geositeDat).build()
-            ).execute().let { it.body ?: error("Error when downloading $geositeDat: $it") }
-                .byteStream().use {
+            )
+                .execute()
+                .let { it.body ?: error("Error when downloading $geositeDat: $it") }
+                .byteStream()
+                .use {
                     geositeFile.outputStream().use { out -> it.copyTo(out) }
                 }
 
@@ -112,15 +139,23 @@ fun Project.downloadAssets() {
                 continue
             }
 
+            geositeFile.inputStream().use { input ->
+                XZCompressorOutputStream(geositeXzFile.outputStream(), 9).use {
+                    input.copyTo(it)
+                }
+            }
+            geositeFile.delete()
             geositeVersion.writeText(geosite.tagName)
 
             break
         }
     }
 
-    val v2rayVersion =
-        File(rootDir, "external/v2ray-core/core.go").readText().substringAfter("version")
-            .substringAfter("\"").substringBefore("\"").let { "v$it" }
+    val v2rayVersion = File(rootDir, "external/v2ray-core/core.go").readText()
+        .substringAfter("version")
+        .substringAfter("\"")
+        .substringBefore("\"")
+        .let { "v$it" }
     val coreVersionFile = File(assets, "v2ray/core.version.txt")
     val cacheFile = File(rootProject.buildDir, "v2ray-extra.zip")
     cacheFile.parentFile.mkdirs()
@@ -137,8 +172,11 @@ fun Project.downloadAssets() {
 
         downloader.newCall(
             Request.Builder().url(v2rayExtraZip).build()
-        ).execute().let { it.body ?: error("Error when downloading $v2rayExtraZip: $it") }
-            .byteStream().use {
+        )
+            .execute()
+            .let { it.body ?: error("Error when downloading $v2rayExtraZip: $it") }
+            .byteStream()
+            .use {
                 cacheFile.outputStream().use { out -> it.copyTo(out) }
             }
 

@@ -64,6 +64,8 @@ class SagerNet : Application(),
         application = this
     }
 
+    val externalAssets by lazy { getExternalFilesDir(null) ?: filesDir }
+
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

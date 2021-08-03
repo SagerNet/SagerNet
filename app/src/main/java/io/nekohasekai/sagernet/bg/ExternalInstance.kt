@@ -23,12 +23,23 @@ package io.nekohasekai.sagernet.bg
 
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.buildCustomConfig
+import io.nekohasekai.sagernet.ktx.Logs
 import libv2ray.Libv2ray
 import libv2ray.V2RayVPNServiceSupportsSet
 
 class ExternalInstance(
     val supportSet: V2RayVPNServiceSupportsSet, profile: ProxyEntity, val port: Int
 ) : V2RayInstance(profile) {
+
+    override fun init() {
+        super.init()
+
+        Logs.d(config.config)
+        pluginConfigs.forEach { (_, plugin) ->
+            val (_, content) = plugin
+            Logs.d(content)
+        }
+    }
 
     override fun initInstance() {
         v2rayPoint = Libv2ray.newV2RayPoint(supportSet, false)
