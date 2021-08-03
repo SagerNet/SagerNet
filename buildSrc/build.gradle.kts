@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.21"
     `java-gradle-plugin`
     `kotlin-dsl`
 }
@@ -14,7 +14,7 @@ dependencies {
     implementation("com.android.tools.build:gradle-api:$androidPluginVersion")
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib"))
-    implementation("cn.hutool:hutool-crypto:5.7.5")
+    implementation("cn.hutool:hutool-crypto:5.7.7")
     implementation("org.tukaani:xz:1.9")
     implementation("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
     implementation("org.kohsuke:github-api:1.131")

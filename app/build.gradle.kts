@@ -37,11 +37,11 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
     implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.activity:activity-ktx:1.2.4")
+    implementation("androidx.activity:activity-ktx:1.3.0")
     implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation("androidx.browser:browser:1.3.0")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
@@ -55,10 +55,10 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.4.0")
-    implementation("cn.hutool:hutool-core:5.7.5")
-    implementation("cn.hutool:hutool-cache:5.7.5")
-    implementation("cn.hutool:hutool-json:5.7.5")
-    implementation("cn.hutool:hutool-crypto:5.7.5")
+    implementation("cn.hutool:hutool-core:5.7.7")
+    implementation("cn.hutool:hutool-cache:5.7.7")
+    implementation("cn.hutool:hutool-json:5.7.7")
+    implementation("cn.hutool:hutool-crypto:5.7.7")
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
@@ -85,7 +85,7 @@ dependencies {
     implementation("com.github.MatrixDev.Roomigrant:RoomigrantLib:0.3.4")
     kapt("com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4")
 
-    implementation("com.esotericsoftware:kryo:5.1.1")
+    implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("editorkit:editorkit:2.0.0")
     implementation("editorkit:feature-editor:2.0.0")
     implementation("editorkit:language-json:2.0.0")
@@ -97,7 +97,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("com.github.seancfoley:ipaddress:5.3.3")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
-    implementation("dnsjava:dnsjava:3.4.0")
+    implementation("dnsjava:dnsjava:3.4.1")
     implementation("com.github.topjohnwu.libsu:io:3.1.2")
     implementation("org.tukaani:xz:1.9")
 
