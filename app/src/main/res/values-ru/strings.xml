@@ -100,13 +100,13 @@
     <string name="project">Проект</string>
     <string name="app_desc">Универсальный набор инструментов прокси для Android, написанный на Kotlin.</string>
     <plurals name="added">
-        <item quantity="one"></item>
+        <item quantity="one"/>
         <item quantity="few">Добавлен</item>
         <item quantity="many">%d прокси добавлены</item>
         <item quantity="other">%d прокси добавлены</item>
     </plurals>
     <plurals name="removed">
-        <item quantity="one"></item>
+        <item quantity="one"/>
         <item quantity="few">Удаленный</item>
         <item quantity="many">%d элементы удалены</item>
         <item quantity="other">%d элементы удалены</item>
@@ -369,4 +369,9 @@
     <string name="protocol_param">Параметр протокола</string>
     <string name="username_opt">Имя пользователя (необязательно)</string>
     <string name="speed">%s/s</string>
+    <string name="hysteria_download_mbps">Максимальная скорость загрузки (в Мбит / с)</string>
+    <string name="hysteria_upload_mbps">Максимальная скорость загрузки (в Мбит / с)</string>
+    <string name="hysteria_auth_payload">Полезные данные аутентификации</string>
+    <string name="hysteria_auth_type">Тип аутентификации</string>
+    <string name="hysteria_obfs">Обфускация пароля</string>
 </resources>
