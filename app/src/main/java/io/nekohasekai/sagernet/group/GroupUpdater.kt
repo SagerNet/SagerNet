@@ -76,15 +76,17 @@ abstract class GroupUpdater {
         if (connected) {
             val remoteDns = DataStore.remoteDns
             when {
-                remoteDns.startsWith("https+local://") -> dohUrl =
-                    remoteDns.replace("https+local://", "https://")
+                remoteDns.startsWith("https+local://") -> dohUrl = remoteDns.replace(
+                    "https+local://", "https://"
+                )
                 remoteDns.startsWith("https://") -> dohUrl = remoteDns
             }
         } else {
             val directDns = DataStore.directDns
             when {
-                directDns.startsWith("https+local://") -> dohUrl =
-                    directDns.replace("https+local://", "https://")
+                directDns.startsWith("https+local://") -> dohUrl = directDns.replace(
+                    "https+local://", "https://"
+                )
                 directDns.startsWith("https://") -> dohUrl = directDns
             }
         }
@@ -192,9 +194,9 @@ abstract class GroupUpdater {
 
                 val timeout = Duration.ofSeconds(5)
                 val httpClient = createProxyClient().newBuilder()
-                        .connectTimeout(timeout)
-                        .readTimeout(timeout)
-                        .build()
+                    .connectTimeout(timeout)
+                    .readTimeout(timeout)
+                    .build()
                 val userInterface = GroupManager.userInterface
 
                 if (userInterface != null) {

@@ -102,16 +102,10 @@ class MainActivity : ThemedActivity(),
 
         val uri = intent.data ?: return
 
-        if (uri.scheme == "sn" && uri.host == "subscription" || uri.scheme == "clash") {
-            // import subscription
-
-            displayFragmentWithId(R.id.nav_group)
-
-            runOnDefaultDispatcher {
+        runOnDefaultDispatcher {
+            if (uri.scheme == "sn" && uri.host == "subscription" || uri.scheme == "clash") {
                 importSubscription(uri)
-            }
-        } else {
-            runOnDefaultDispatcher {
+            } else {
                 importProfile(uri)
             }
         }
@@ -141,14 +135,16 @@ class MainActivity : ThemedActivity(),
             val data = uri.encodedQuery.takeIf { !it.isNullOrBlank() } ?: return
             try {
                 group = KryoConverters.deserialize(
-                    ProxyGroup(), ZipUtil.unZlib(Base64Decoder.decode(data))
-                )
+                    ProxyGroup().apply { export = true }, ZipUtil.unZlib(Base64Decoder.decode(data))
+                ).apply {
+                    export = false
+                }
             } catch (e: Exception) {
                 onMainDispatcher {
                     MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.error_title)
-                            .setMessage(e.readableMessage)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
+                        .setMessage(e.readableMessage)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
                 }
                 return
             }
@@ -163,15 +159,17 @@ class MainActivity : ThemedActivity(),
 
         onMainDispatcher {
 
+            displayFragmentWithId(R.id.nav_group)
+
             MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.subscription_import)
-                    .setMessage(getString(R.string.subscription_import_message, name))
-                    .setPositiveButton(R.string.yes) { _, _ ->
-                        runOnDefaultDispatcher {
-                            finishImportSubscription(group)
-                        }
+                .setMessage(getString(R.string.subscription_import_message, name))
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    runOnDefaultDispatcher {
+                        finishImportSubscription(group)
                     }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
 
         }
 
@@ -188,23 +186,23 @@ class MainActivity : ThemedActivity(),
         } catch (e: Exception) {
             onMainDispatcher {
                 MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.error_title)
-                        .setMessage(e.readableMessage)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
+                    .setMessage(e.readableMessage)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
             }
             return
         }
 
         onMainDispatcher {
             MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.profile_import)
-                    .setMessage(getString(R.string.profile_import_message, profile.displayName()))
-                    .setPositiveButton(R.string.yes) { _, _ ->
-                        runOnDefaultDispatcher {
-                            finishImportProfile(profile)
-                        }
+                .setMessage(getString(R.string.profile_import_message, profile.displayName()))
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    runOnDefaultDispatcher {
+                        finishImportProfile(profile)
                     }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
 
     }
@@ -231,8 +229,8 @@ class MainActivity : ThemedActivity(),
 
     fun displayFragment(fragment: ToolbarFragment) {
         supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_holder, fragment)
-                .commitAllowingStateLoss()
+            .replace(R.id.fragment_holder, fragment)
+            .commitAllowingStateLoss()
         binding.drawerLayout.closeDrawers()
     }
 

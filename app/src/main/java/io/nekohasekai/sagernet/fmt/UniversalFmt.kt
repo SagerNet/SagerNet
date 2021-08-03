@@ -53,6 +53,8 @@ fun AbstractBean.toUniversalLink(): String {
 
 fun ProxyGroup.toUniversalLink(): String {
     var link = "sn://subscription?"
+    export = true
     link += Base64Encoder.encodeUrlSafe(ZipUtil.zlib(KryoConverters.serialize(this), 9))
+    export = false
     return link
 }

@@ -51,6 +51,7 @@ data class ProxyGroup(
         if (export) {
 
             output.writeInt(0)
+            output.writeString(name)
             output.writeInt(type)
             val subscription = subscription!!
             subscription.serializeForShare(output)
@@ -74,6 +75,7 @@ data class ProxyGroup(
             val version = input.readInt()
 
             name = input.readString()
+            type = input.readInt()
             val subscription = SubscriptionBean()
             this.subscription = subscription
 
