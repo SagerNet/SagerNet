@@ -31,6 +31,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.preference.*
+import cn.hutool.core.util.NumberUtil
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.takisoft.preferencex.PreferenceFragmentCompat
@@ -144,6 +145,9 @@ class GroupSettingsActivity(
         val subscriptionAutoUpdateDelay =
             findPreference<EditTextPreference>(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY)!!
         subscriptionAutoUpdateDelay.isEnabled = subscriptionAutoUpdate.isChecked
+        subscriptionAutoUpdateDelay.setOnPreferenceChangeListener { _, newValue ->
+            NumberUtil.isInteger(newValue as String) && newValue.toInt() >= 15
+        }
         subscriptionAutoUpdate.setOnPreferenceChangeListener { _, newValue ->
             subscriptionAutoUpdateDelay.isEnabled = (newValue as Boolean)
             true
