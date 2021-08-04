@@ -134,12 +134,18 @@ class AssetsActivity : ThemedActivity() {
             val filesDir = getExternalFilesDir(null) ?: filesDir
 
             runOnDefaultDispatcher {
-                File(filesDir, fileName).apply {
+                val outFile = File(filesDir, fileName).apply {
                     parentFile?.mkdirs()
-                }.outputStream().use { out ->
+                }
+
+                outFile.outputStream().use { out ->
                     contentResolver.openInputStream(file)?.use {
                         it.copyTo(out)
                     }
+                }
+
+                File(outFile.parentFile, outFile.nameWithoutExtension + ".version.txt").apply {
+                    if (isFile) delete()
                 }
 
                 adapter.reloadAssets()
