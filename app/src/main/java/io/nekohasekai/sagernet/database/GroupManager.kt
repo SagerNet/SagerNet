@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.database
 
+import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.utils.DirectBoot
@@ -107,12 +108,18 @@ object GroupManager {
         group.userOrder = SagerDatabase.groupDao.nextOrder() ?: 1
         group.id = SagerDatabase.groupDao.createGroup(group.applyDefaultValues())
         iterator { groupAdd(group) }
+        if (group.type == GroupType.SUBSCRIPTION) {
+            SubscriptionUpdater.reconfigureUpdater()
+        }
         return group
     }
 
     suspend fun updateGroup(group: ProxyGroup) {
         SagerDatabase.groupDao.updateGroup(group)
         iterator { groupUpdated(group) }
+        if (group.type == GroupType.SUBSCRIPTION) {
+            SubscriptionUpdater.reconfigureUpdater()
+        }
     }
 
     suspend fun deleteGroup(groupId: Long) {

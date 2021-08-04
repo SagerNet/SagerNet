@@ -42,22 +42,25 @@ object SubscriptionUpdater {
     suspend fun reconfigureUpdater() {
         RemoteWorkManager.getInstance(app).cancelUniqueWork(WORK_NAME)
 
-        val subscriptions =
-            SagerDatabase.groupDao.subscriptions().filter { it.subscription!!.autoUpdate }
+        val subscriptions = SagerDatabase.groupDao.subscriptions()
+            .filter { it.subscription!!.autoUpdate }
         if (subscriptions.isEmpty()) return
 
         // PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
-        var minDelay =
-            subscriptions.minByOrNull { it.subscription!!.autoUpdateDelay }!!.subscription!!.autoUpdateDelay.toLong()
+        var minDelay = subscriptions.minByOrNull { it.subscription!!.autoUpdateDelay }!!.subscription!!.autoUpdateDelay.toLong()
+        val now = System.currentTimeMillis() / 1000L
+        val minInitDelay = subscriptions.minOf { now - it.subscription!!.lastUpdated - (minDelay * 60) }
         if (minDelay < 15) minDelay = 15
 
         RemoteWorkManager.getInstance(app).enqueueUniquePeriodicWork(
-                WORK_NAME,
-                ExistingPeriodicWorkPolicy.REPLACE,
-                PeriodicWorkRequest.Builder(UpdateTask::class.java, minDelay, TimeUnit.MINUTES)
-                    .setInitialDelay(minDelay, TimeUnit.MINUTES)
-                    .setConstraints(DEFAULT_CONSTRAINTS)
-                    .build()
+            WORK_NAME,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            PeriodicWorkRequest.Builder(UpdateTask::class.java, minDelay, TimeUnit.MINUTES)
+                .apply {
+                    if (minInitDelay > 0) setInitialDelay(minInitDelay, TimeUnit.SECONDS)
+                }
+                .setConstraints(DEFAULT_CONSTRAINTS)
+                .build()
         )
     }
 
@@ -75,8 +78,8 @@ object SubscriptionUpdater {
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
 
         override suspend fun doWork(): Result {
-            var subscriptions =
-                SagerDatabase.groupDao.subscriptions().filter { it.subscription!!.autoUpdate }
+            var subscriptions = SagerDatabase.groupDao.subscriptions()
+                .filter { it.subscription!!.autoUpdate }
             if (DataStore.startedProfile == 0L) {
                 subscriptions = subscriptions.filter { !it.subscription!!.updateWhenConnectedOnly }
             }
@@ -90,9 +93,9 @@ object SubscriptionUpdater {
                 }
 
                 notification.setContentText(
-                        applicationContext.getString(
-                                R.string.subscription_update_message, profile.displayName()
-                        )
+                    applicationContext.getString(
+                        R.string.subscription_update_message, profile.displayName()
+                    )
                 )
                 nm.notify(2, notification.build())
 

@@ -247,7 +247,6 @@ class GroupSettingsActivity(
             GroupManager.updateGroup(entity.apply { serialize() })
         }
 
-        SubscriptionUpdater.reconfigureUpdater()
         if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
         finish()
 

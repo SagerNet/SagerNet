@@ -71,7 +71,6 @@
     <string name="group_filter">Filtrar</string>
     <string name="group_filter_tags">Etiquetas</string>
     <string name="service_subscription">Servicio actualizado</string>
-    <string name="subscription_update_message">Actualizando</string>
     <string name="clear_profiles_message">Estás seguro de borrar este grupo</string>
     <string name="install_from_play_store">Instalar de la Tienda</string>
     <string name="confirm">Confirmar</string>
