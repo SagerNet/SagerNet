@@ -67,6 +67,7 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
             android:configChanges="uiMode"
+            android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
@@ -256,6 +257,7 @@
         <service
             android:name="io.nekohasekai.sagernet.bg.TileService"
             android:directBootAware="true"
+            android:exported="true"
             android:icon="@drawable/ic_service_active"
             android:label="@string/tile_title"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
@@ -283,6 +285,7 @@
             android:name="io.nekohasekai.sagernet.BootReceiver"
             android:directBootAware="true"
             android:enabled="false"
+            android:exported="true"
             android:process=":bg">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
