@@ -84,7 +84,6 @@
     <string name="telegram">Telegram-oppdateringskanal</string>
     <string name="github">Kildekode</string>
     <string name="project">Prosjekt</string>
-    <string name="app_name">SagerNet</string>
     <string name="connecting">Kobler til …</string>
     <string name="undo">Angre</string>
     <string name="action_import_file">Importer fra fil</string>

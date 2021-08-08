@@ -74,4 +74,13 @@
     <string name="github">Code source</string>
     <string name="project">Projet</string>
     <string name="app_desc">La chaîne d\'outils proxy universelle pour Android, écrite en Kotlin.</string>
+    <string name="hysteria_upload_mbps">Vitesse maximale de téléversement (en Mb/s)</string>
+    <string name="hysteria_download_mbps">Vitesse de téléchargement maximale (en Mb/s)</string>
+    <string name="group_deleted">Supprimé :
+\n%s</string>
+    <string name="group_changed">Mis à jour :
+\n%s</string>
+    <string name="group_added">Ajouté :
+\n%s</string>
+    <string name="tile_title">Commutateur</string>
 </resources>

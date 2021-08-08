@@ -3,10 +3,10 @@
     <string name="show_stop">نمایش دکمۀ توقف</string>
     <string name="cag_misc">تنظیمات متفرقه</string>
     <string name="speed_interval">فاصله بروزرسانی اعلان سرعت</string>
-    <string name="ws_browser_forwarding_sum">WebSockets مربوطه را از طریق مرورگر هدایت کنید.</string>
+    <string name="ws_browser_forwarding_sum">هدایت وب‌سوکت مربوطه از طریق مرورگر.</string>
     <string name="ws_browser_forwarding">بازارسال مرورگر</string>
-    <string name="cag_ws">تنظیمات WebSocket</string>
-    <string name="require_http">HTTP ورودی را فعال کنید</string>
+    <string name="cag_ws">تنظیمات وب‌سوکت</string>
+    <string name="require_http">فعال کردن ورودی HTTP</string>
     <string name="general_settings">تنظیمات برنامه</string>
     <string name="inbound_settings">تنظیمات ورودی</string>
     <string name="allow_access_sum">اتصال سرورهای ورودی به 0.0.0.0</string>
@@ -50,7 +50,6 @@
     <string name="theme">قالب</string>
     <string name="menu_about">درباره</string>
     <string name="menu_group">گروه</string>
-    <string name="app_name">ساگرنت</string>
     <string name="logcat">گرفتن گزارش اشکال‌زدایی</string>
     <string name="version_x">نسخه (%s)</string>
     <string name="app_version">نسخه</string>
@@ -66,7 +65,7 @@
     <string name="port_local_dns">پورت DNS محلی</string>
     <string name="dns_hosts">بازنویسی دستی دامنه ها</string>
     <string name="fakedns_message">احتمالا نرم افزارها بعد از متوقف کردن پراکسی نیاز به اجرای دوباره جهت دسترسی به اینترنت خواهند داشت</string>
-    <string name="enable_fakedns">فعالسازی DNS تقلبی</string>
+    <string name="enable_fakedns">فعالسازی DNS جعلی</string>
     <string name="dns_routing_message">استفاده از DNS مستقیم برای مسیرهای خارج از پراکسی. احتمالا نشت DNS در این حالت وجود دارد</string>
     <string name="enable_dns_routing">فعالسازی مسیریابی DNS</string>
     <string name="remote_dns">DNS پراکسی</string>
@@ -76,11 +75,13 @@
     <string name="connection_test_fail">اینترنت در دسترس نیست</string>
     <string name="connection_test_error">عدم توانایی در اتصال به اینترنت: %s</string>
     <string name="connection_test_available_http">موفق: اتصال HTTPS طی %d میلی ثانیه انجام شد</string>
-    <string name="connection_test_available">موفقیت: دست دادن HTTPS %d میلی ثانیه طول کشید</string>
+    <string name="connection_test_available">موفقیت: ارتباط با HTTPS\t%d میلی ثانیه طول کشید</string>
     <string name="connection_test_testing">در حال بررسی…</string>
     <string name="speed">%s/s</string>
-    <string name="speed_detail">پروکسی： %1$s↑ %2$s↓
-\nمستقیم： %3$s↑ %4$s↓</string>
+    <string name="speed_detail">پروکسی:
+\n\t%1$s↑ %2$s↓
+\nمستقیم:
+\n\t%3$s↑ %4$s↓</string>
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="allow_insecure_sum">غیرفعال سازی بررسی گواهینامه امنیتی. در صورت فعال شدن این گزینه، تنظیمات فعلی امن نبوده و قابل شنود خواهند بود</string>
     <string name="allow_insecure">اجازه شکل گرفتن اتصال های غیرامن</string>
@@ -128,7 +129,7 @@
     <string name="alpn">برنامه-مذاکره پروتکل لایه کاربردی</string>
     <string name="sni">نشانه نام سرور (SNI)</string>
     <string name="tls">استفاده از TLS</string>
-    <string name="force_resolve_sum">هنگام به روزرسانی ، تمام نام دامنه ها را به آدرس های IP تبدیل کنید. میزبان و SNI در صورت امکان به طور خودکار اضافه می شوند</string>
+    <string name="force_resolve_sum">هنگام به روزرسانی، تمام نام دامنه ها را به آدرس های IP تبدیل کنید. میزبان و SNI در صورت امکان به طور خودکار اضافه می شوند</string>
     <string name="force_resolve">حل و فصل کردن</string>
     <string name="delete_group_prompt">آیا مطمئن هستید که می خواهید این گروه را حذف کنید؟</string>
     <string name="subscription_type">نوع اشتراک</string>
@@ -140,7 +141,7 @@
     <string name="ss_aead_provider">ارائه دهنده Shadowsocks AEAD</string>
     <string name="trojan_provider">ارائه دهنده Trojan</string>
     <string name="protocol_settings">تنظیمات پروتکل</string>
-    <string name="bypass_lan_in_core_only_sum">اگر Lineage\'s Allow hotspot client برای استفاده از VPN کار نمی کند ، این را امتحان کنید.</string>
+    <string name="bypass_lan_in_core_only_sum">اگر لاین هات اسپات برای استفاده کاربرها از VPN کار نمی کند، این را امتحان کنید.</string>
     <string name="bypass_lan_in_core_only">دور زدن LAN فقط در هسته</string>
     <string name="action_from_link">از اشتراک</string>
     <string name="reply">پاسخ دادن</string>
@@ -149,13 +150,13 @@
     <string name="ip_other_strategy">سایر استراتژی های پروتکل اینترنت</string>
     <string name="icmp_echo_reply_delay">تأخیر در پاسخ اکو ICMP</string>
     <string name="icmp_echo_strategy">استراتژی اکو ICMP</string>
-    <string name="multi_thread_forwarding_sum">ارسال بسته های TCP/IP با استفاده از Kotlin coroutine، که از CPU بیشتری استفاده می کند و فقط برای مواردِ با ترافیک بالا مناسب است</string>
+    <string name="multi_thread_forwarding_sum">ارسال بسته های TCP/IP با استفاده از کاتلین کوروتین، که از CPU بیشتری استفاده می کند و فقط برای مواردِ با ترافیک بالا مناسب است</string>
     <string name="multi_thread_forwarding">ارسال همزمان</string>
     <string name="vpn_mode_forwarding">ارسال محلی</string>
     <string name="vpn_mode">حالت VPN</string>
     <string name="vpn_settings">تنظیمات VPN</string>
     <string name="append_http_proxy_sum">پروکسی HTTP مستقیماً از (مرورگر/ برخی از برنامه های پشتیبانی شده)، بدون عبور از دستگاه مجازی NIC استفاده می شود (اندروید ۱۰ و بالاتر)</string>
-    <string name="append_http_proxy">پروکسی HTTP را به VPN اضافه کنید</string>
+    <string name="append_http_proxy">اضافه کردن پروکسی HTTP به VPN</string>
     <string name="connection_test_timeout">منقضی شده</string>
     <string name="connection_test_unreachable">غیر قابل دسترسی</string>
     <string name="connection_test_refused">ارتباط رد شد</string>
@@ -182,7 +183,7 @@
     <string name="follow_system">پیروی از سیستم</string>
     <string name="night_mode">حالت شب</string>
     <string name="lines">%d خطوط</string>
-    <string name="route_warn">قبل از افزودن قوانین سفارشی، مطمئن شوید که مستندات را مطالعه کرده اید، در غیر این صورت ممکن است نتوانید به اینترنت متصل شوید.</string>
+    <string name="route_warn">قبل از افزودن قوانین سفارشی فایروال، مطمئن شوید که مستندات را مطالعه کرده اید، در غیر این صورت ممکن است نتوانید به اینترنت متصل شوید.</string>
     <string name="license">مجوز</string>
     <string name="restart">سرویس پروکسی را دوباره راه اندازی کنید تا تغییرات اعمال شوند</string>
     <string name="apply">اجرا کردن</string>
@@ -199,7 +200,7 @@
     <string name="plugin">افزونه</string>
     <string name="ignore_battery_optimizations_sum">برخی محدودیت ها را بردارید</string>
     <string name="ignore_battery_optimizations">نادیده گرفتن بهینه سازی باتری</string>
-    <string name="donate_info">من عاشق پاداش هستم</string>
+    <string name="donate_info">من عاشق پول هستم</string>
     <string name="donate">حمایت مالی</string>
     <string name="deduplication">حذف داده‏ های تکراری</string>
     <string name="no_proxies_found_in_clipboard">هیچ پروکسی در کلیپ بورد یافت نشد</string>
@@ -287,7 +288,7 @@
     <string name="proxied_apps_summary">پیکربندی حالت VPN برای برنامه های انتخابی</string>
     <string name="proxied_apps">حالت VPN برای برنامه ها</string>
     <string name="tcp_keep_alive_interval">TCP نگه داشتن فاصله تحویل بسته فعال</string>
-    <string name="mux_for_all_sum">اگر سرور از Mux پشتیبانی نکند ، دیگر نمی توانیم به آن متصل شویم.</string>
+    <string name="mux_for_all_sum">اگر سرور از Mux پشتیبانی نکند، دیگر نمی توانیم به آن متصل شویم.</string>
     <string name="mux_for_all">فعالسازی Mux برای همه پروتکل های پشتیبانی شده</string>
     <string name="mux_concurrency">اتصالات همزمان Mux</string>
     <string name="mux_sum">تسهیم کننده Mux برای کاهش تأخیر TCP طراحی شده است، قادر به افزایش توان اتصال نیست. استفاده از Mux برای تماشای فیلم، بارگیری یا تست سرعت معمولاً خلاف قوانین تولید است</string>
@@ -322,8 +323,8 @@
     <string name="delete_route_prompt">آیا مطمئن هستید که می خواهید این مسیر را حذف کنید؟</string>
     <string name="route_add">ایجاد مسیر</string>
     <string name="menu_route">مسیر</string>
-    <string name="metered_summary">سیستم راهنما برای درمان VPN به عنوان متر</string>
-    <string name="metered">راهنمای متری</string>
+    <string name="metered_summary">سیستم راهنمایی برای اشاره به اندازه گیری شبکه VPN</string>
+    <string name="metered">راهنمای اندازه گیری</string>
     <string name="apps_message">%d برنامه ها</string>
     <string name="need_nf">برای پشتیبانی از مسیریابی مبتنی بر برنامه، حالت VPN باید Native Forwarding باشد.</string>
     <string name="select_apps">انتخاب برنامه ها</string>

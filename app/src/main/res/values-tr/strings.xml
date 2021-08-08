@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="version_x">Sürüm (%s)</string>
+    <string name="app_version">Sürüm</string>
+    <string name="oss_licenses">Açık kaynak lisansları</string>
+    <string name="telegram">Telgraf güncelleme kanalı</string>
+    <string name="github">Kaynak kodu</string>
+    <string name="project">Proje</string>
+    <string name="app_desc">Android için Kotlin\'de yazılmış evrensel proxy araç zinciri.</string>
+</resources>
