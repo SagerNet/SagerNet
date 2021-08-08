@@ -58,33 +58,43 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }
     }
 
-    override fun init() {
-        val geoip = File(app.externalAssets, "geoip.dat")
-        if (!geoip.isFile) {
-            XZInputStream(app.assets.open("v2ray/geoip.dat.xz")).use { input ->
-                geoip.outputStream().use {
-                    input.copyTo(it)
-                }
-            }
-            app.assets.open("v2ray/geoip.version.txt").use {  input ->
-                File(app.externalAssets, "geoip.version.txt").outputStream().use {
-                    input.copyTo(it)
-                }
-            }
-        }
+    companion object {
+        private var assetsChecked = false
+    }
 
-        val geosite = File(app.externalAssets, "geosite.dat")
-        if (!geosite.isFile) {
-            XZInputStream(app.assets.open("v2ray/geosite.dat.xz")).use { input ->
-                geosite.outputStream().use {
-                    input.copyTo(it)
+    override fun init() {
+        if (!assetsChecked) {
+            val geoip = File(app.externalAssets, "geoip.dat")
+            val geoipVersion = File(app.externalAssets, "geoip.version.txt")
+            val geoipVersionInternal = app.assets.open("v2ray/geoip.version.txt")
+                .use { it.bufferedReader().readText() }
+            if (!geoip.isFile || geoipVersion.isFile && geoipVersionInternal.toLong() > geoipVersion.readText()
+                    .toLongOrNull() ?: -1L
+            ) {
+                XZInputStream(app.assets.open("v2ray/geoip.dat.xz")).use { input ->
+                    geoip.outputStream().use {
+                        input.copyTo(it)
+                    }
                 }
+                geoipVersion.writeText(geoipVersionInternal)
             }
-            app.assets.open("v2ray/geosite.version.txt").use {  input ->
-                File(app.externalAssets, "geosite.version.txt").outputStream().use {
-                    input.copyTo(it)
+
+            val geosite = File(app.externalAssets, "geosite.dat")
+            val geositeVersion = File(app.externalAssets, "geosite.version.txt")
+            val geositeVersionInternal = app.assets.open("v2ray/geosite.version.txt")
+                .use { it.bufferedReader().readText() }
+            if (!geosite.isFile || geositeVersion.isFile && geositeVersionInternal.toLong() > geositeVersion.readText()
+                    .toLongOrNull() ?: -1L
+            ) {
+                XZInputStream(app.assets.open("v2ray/geosite.dat.xz")).use { input ->
+                    geosite.outputStream().use {
+                        input.copyTo(it)
+                    }
                 }
+                geositeVersion.writeText(geositeVersionInternal)
             }
+
+            assetsChecked = true
         }
 
         super.init()

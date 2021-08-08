@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SagerNet</string>
+    <string name="app_name" translatable="false">SagerNet</string>
     <string name="app_desc">The universal proxy toolchain for Android, written in Kotlin.</string>
     <string name="project">Project</string>
     <string name="github">Source code</string>
@@ -177,13 +177,13 @@
     <string name="bypass_apps">Bypass</string>
     <string name="show_system_apps">Show system apps</string>
     <string name="auto_connect">Auto Connect</string>
-    <string name="auto_connect_summary">Enable SagerNet on startup/app update if it was running before</string>
+    <string name="auto_connect_summary">Enable proxy on startup/app update if it was running before</string>
     <string name="direct_boot_aware">Allow Toggling in Lock Screen</string>
     <string name="direct_boot_aware_summary">Your selected profile information will be less protected</string>
     <!-- notification category -->
     <string name="service_vpn">VPN Service</string>
     <string name="service_proxy">Proxy Service</string>
-    <string name="forward_success">SagerNet started.</string>
+    <string name="forward_success">Proxy started.</string>
     <string name="invalid_server">Invalid server name</string>
     <string name="service_failed">Failed: </string>
     <string name="stop">Stop</string>
