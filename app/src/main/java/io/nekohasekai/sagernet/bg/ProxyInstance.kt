@@ -68,7 +68,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             val geoipVersion = File(app.externalAssets, "geoip.version.txt")
             val geoipVersionInternal = app.assets.open("v2ray/geoip.version.txt")
                 .use { it.bufferedReader().readText() }
-            if (!geoip.isFile || geoipVersion.isFile && geoipVersionInternal.toLong() > geoipVersion.readText()
+            if (!geoip.isFile || DataStore.rulesProvider == 0 && geoipVersion.isFile && geoipVersionInternal.toLong() > geoipVersion.readText()
                     .toLongOrNull() ?: -1L
             ) {
                 XZInputStream(app.assets.open("v2ray/geoip.dat.xz")).use { input ->
@@ -83,7 +83,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             val geositeVersion = File(app.externalAssets, "geosite.version.txt")
             val geositeVersionInternal = app.assets.open("v2ray/geosite.version.txt")
                 .use { it.bufferedReader().readText() }
-            if (!geosite.isFile || geositeVersion.isFile && geositeVersionInternal.toLong() > geositeVersion.readText()
+            if (!geosite.isFile || DataStore.rulesProvider == 0 && geositeVersion.isFile && geositeVersionInternal.toLong() > geositeVersion.readText()
                     .toLongOrNull() ?: -1L
             ) {
                 XZInputStream(app.assets.open("v2ray/geosite.dat.xz")).use { input ->
