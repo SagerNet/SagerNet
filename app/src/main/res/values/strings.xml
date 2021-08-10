@@ -401,4 +401,7 @@
     <string name="hysteria_auth_payload">Authentication Payload</string>
     <string name="hysteria_upload_mbps">Max Upload Speed (in Mbps)</string>
     <string name="hysteria_download_mbps">Max Download Speed (in Mbps)</string>
+    <string name="experimental_settings">Experimental</string>
+    <string name="experimental_authenticated_length">Make the length of each payload segment no longer malleable. This experiment requires the server and client use the same version of v2ray-core. More breaking updates on this experiment is expected.</string>
+    <string name="experimental_no_termination_signal">Do not send connection single duplex termination signal for TCP connection when transferred over VMess. This will break some application.</string>
 </resources>

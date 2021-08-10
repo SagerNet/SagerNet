@@ -29,31 +29,52 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import org.jetbrains.annotations.NotNull;
 
 import cn.hutool.core.util.StrUtil;
+import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class VMessBean extends StandardV2RayBean {
 
     public int alterId;
 
+    public Boolean experimentalAuthenticatedLength;
+    public Boolean experimentalNoTerminationSignal;
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
 
-        if (StrUtil.isBlank(encryption)) {
-            encryption = "auto";
-        }
+        encryption = StrUtil.isNotBlank(encryption) ? encryption : "auto";
+        experimentalAuthenticatedLength = experimentalAuthenticatedLength != null ? experimentalAuthenticatedLength : false;
+        experimentalNoTerminationSignal = experimentalNoTerminationSignal != null ? experimentalNoTerminationSignal : false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
         super.serialize(output);
         output.writeInt(alterId);
+
+        output.writeInt(0);
+        output.writeBoolean(experimentalAuthenticatedLength);
+        output.writeBoolean(experimentalNoTerminationSignal);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
         super.deserialize(input);
         alterId = input.readInt();
+
+        if (!input.canReadInt()) return;
+        int version = input.readInt();
+        experimentalAuthenticatedLength = input.readBoolean();
+        experimentalNoTerminationSignal = input.readBoolean();
+    }
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof VMessBean)) return;
+        VMessBean bean = ((VMessBean) other);
+        bean.experimentalAuthenticatedLength = experimentalAuthenticatedLength;
+        bean.experimentalNoTerminationSignal = experimentalNoTerminationSignal;
     }
 
     @NotNull

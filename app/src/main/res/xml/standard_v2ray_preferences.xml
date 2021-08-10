@@ -130,5 +130,19 @@
             app:title="@string/ws_browser_forwarding" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_grid_3x3_24"
+        app:key="serverVMessExperimentsCategory"
+        app:title="@string/experimental_settings">
+        <SwitchPreference
+            app:key="serverVMessExperimentalAuthenticatedLength"
+            app:summary="@string/experimental_authenticated_length"
+            app:title="AuthenticatedLength" />
+        <SwitchPreference
+            app:key="serverVMessExperimentalNoTerminationSignal"
+            app:summary="@string/experimental_no_termination_signal"
+            app:title="NoTerminationSignal" />
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

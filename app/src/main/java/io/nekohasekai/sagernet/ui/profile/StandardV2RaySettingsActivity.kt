@@ -116,6 +116,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     lateinit var securityCategory: PreferenceCategory
     lateinit var wsCategory: PreferenceCategory
+    lateinit var vmessExperimentsCategory: PreferenceCategory
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -175,6 +176,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             updateTle(newValue as String)
             true
         }
+
+        vmessExperimentsCategory = findPreference(Key.SERVER_VMESS_EXPERIMENTS_CATEGORY)!!
+        vmessExperimentsCategory.isVisible = bean is VMessBean
     }
 
     val tcpHeadersValue = app.resources.getStringArray(R.array.tcp_headers_value)
