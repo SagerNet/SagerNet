@@ -23,6 +23,9 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 
 import androidx.annotation.NonNull;
 
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
+
 import org.jetbrains.annotations.NotNull;
 
 import cn.hutool.core.util.StrUtil;
@@ -31,7 +34,7 @@ import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class VMessBean extends StandardV2RayBean {
 
-    public int alterId;
+    public Integer alterId;
 
     public Boolean experimentalAuthenticatedLength;
     public Boolean experimentalNoTerminationSignal;
@@ -40,6 +43,7 @@ public class VMessBean extends StandardV2RayBean {
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
 
+        alterId = alterId != null ? alterId : 0;
         encryption = StrUtil.isNotBlank(encryption) ? encryption : "auto";
         experimentalAuthenticatedLength = experimentalAuthenticatedLength != null ? experimentalAuthenticatedLength : false;
         experimentalNoTerminationSignal = experimentalNoTerminationSignal != null ? experimentalNoTerminationSignal : false;
