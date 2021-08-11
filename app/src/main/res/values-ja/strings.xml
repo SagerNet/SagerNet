@@ -10,7 +10,7 @@
     <string name="service_mode">サービスモード</string>
     <string name="group_duplicate">複製：
 \n%s</string>
-    <string name="group_deleted">削除：
+    <string name="group_deleted">削除しました：
 \n%s</string>
     <string name="group_changed">更新しました：
 \n%s</string>
@@ -40,14 +40,19 @@
     <string name="theme">テーマ</string>
     <string name="menu_about">アバウト</string>
     <string name="menu_group">グループ</string>
-    <string name="menu_configuration">構成</string>
+    <string name="menu_configuration">設定</string>
     <string name="logcat_summary">そのような便利な非常にすごい</string>
     <string name="logcat">デバッグ情報のエクスポート</string>
     <string name="version_x">バージョン (%s)</string>
     <string name="app_version">バージョン</string>
     <string name="oss_licenses">オープンソースライセンス</string>
-    <string name="telegram">電報更新チャネル</string>
+    <string name="telegram">Telegram 更新チャネル</string>
     <string name="github">ソースコード</string>
-    <string name="project">計画</string>
+    <string name="project">プロジェクト</string>
     <string name="app_desc">Kotlinで記述されたAndroid用のユニバーサルプロキシツールチェーン。</string>
+    <string name="cag_dns">DNS設定</string>
+    <string name="speed">%s/s</string>
+    <string name="traffic">%1$s↑ %2$s↓</string>
+    <string name="general_settings">アブリ設定</string>
+    <string name="service_mode_vpn">VPN</string>
 </resources>

@@ -195,12 +195,12 @@
     <string name="stop">قف</string>
     <string name="service_failed">باءت بالفشل:</string>
     <string name="invalid_server">اسم الخادم غير صالح</string>
-    <string name="forward_success">بدأت ساجر نت.</string>
+    <string name="forward_success">بدأت البروکسی.</string>
     <string name="service_proxy">خدمة البروکسی</string>
     <string name="service_vpn">خدمة VPN</string>
     <string name="direct_boot_aware_summary">ستكون معلومات ملف التعريف المحدد أقل حماية</string>
     <string name="direct_boot_aware">السماح بالتبديل في شاشة القفل</string>
-    <string name="auto_connect_summary">قم بتمكين ساجر نت عند تحديث بدء التشغيل/التطبيق إذا كان يعمل من قبل</string>
+    <string name="auto_connect_summary">قم بتمكين البروکسی عند تحديث بدء التشغيل/التطبيق إذا كان يعمل من قبل</string>
     <string name="auto_connect">اتصال تلقائي</string>
     <string name="show_system_apps">عرض تطبيقات النظام</string>
     <string name="bypass_apps">ضع جانبا</string>
@@ -364,15 +364,15 @@
     <plurals name="added">
         <item quantity="zero">مضاف</item>
         <item quantity="one">%d تمت إضافة البروکسیز</item>
-        <item quantity="two"></item>
-        <item quantity="few"></item>
-        <item quantity="many"></item>
-        <item quantity="other"></item>
+        <item quantity="two"/>
+        <item quantity="few"/>
+        <item quantity="many"/>
+        <item quantity="other"/>
     </plurals>
     <plurals name="removed">
         <item quantity="zero">محذوف</item>
         <item quantity="one">%d العناصر التي تمت إزالتها</item>
-        <item quantity="two">%d</item>
+        <item quantity="two"></item>
         <item quantity="few"></item>
         <item quantity="many"></item>
         <item quantity="other"></item>

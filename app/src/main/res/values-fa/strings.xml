@@ -46,7 +46,7 @@
     <string name="tile_title">تعویض کننده</string>
     <string name="quick_toggle">تغییر وضعیت</string>
     <string name="group_default">گروه‌بندی نشده</string>
-    <string name="document">سند</string>
+    <string name="document">مستندات</string>
     <string name="theme">قالب</string>
     <string name="menu_about">درباره</string>
     <string name="menu_group">گروه</string>
@@ -68,8 +68,8 @@
     <string name="enable_fakedns">فعالسازی DNS جعلی</string>
     <string name="dns_routing_message">استفاده از DNS مستقیم برای مسیرهای خارج از پراکسی. احتمالا نشت DNS در این حالت وجود دارد</string>
     <string name="enable_dns_routing">فعالسازی مسیریابی DNS</string>
-    <string name="remote_dns">DNS پراکسی</string>
-    <string name="direct_dns">DNS مسیرهای مستقیم (خارج از پراکسی)</string>
+    <string name="remote_dns">DNS پروکسی</string>
+    <string name="direct_dns">DNS مسیرهای مستقیم (خارج از پروکسی)</string>
     <string name="cag_dns">تنظیمات DNS</string>
     <string name="connection_test_error_status_code">شماره خطا: #%d</string>
     <string name="connection_test_fail">اینترنت در دسترس نیست</string>
@@ -270,12 +270,12 @@
     <string name="stop">متوقف کردن</string>
     <string name="service_failed">ناموفق:</string>
     <string name="invalid_server">نام سرور معتبر نیست</string>
-    <string name="forward_success">ساگرنت راه اندازی شد.</string>
+    <string name="forward_success">پروکسی راه اندازی شد.</string>
     <string name="service_proxy">سرویس پروکسی</string>
     <string name="service_vpn">سرویس VPN</string>
     <string name="direct_boot_aware_summary">اطلاعات نمایه انتخابی شما کمتر محافظت می شود</string>
     <string name="direct_boot_aware">اجازه به تغییر وضعیت در قفل صفحه</string>
-    <string name="auto_connect_summary">فعال کردن ساگرنت در هنگام راه اندازی/به روز رسانی برنامه اگر قبل از آن در حال اجرا بود</string>
+    <string name="auto_connect_summary">فعال کردن پروکسی در هنگام راه اندازی/به روز رسانی برنامه اگر قبل از آن در حال اجرا بود</string>
     <string name="auto_connect">اتصال خودکار</string>
     <string name="show_system_apps">نمایش برنامه‌های سیستمی</string>
     <string name="bypass_apps">کنار گذاشتن</string>

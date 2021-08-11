@@ -287,12 +287,12 @@
     <string name="stop">Останавливаться</string>
     <string name="service_failed">Не удалось:</string>
     <string name="invalid_server">Неверное имя сервера</string>
-    <string name="forward_success">SagerNet запустился.</string>
+    <string name="forward_success">Прокси запустился.</string>
     <string name="service_proxy">Прокси-сервис</string>
     <string name="service_vpn">VPN-сервис</string>
     <string name="direct_boot_aware_summary">Выбранная вами информация профиля будет менее защищена</string>
     <string name="direct_boot_aware">Разрешить переключение на экране блокировки</string>
-    <string name="auto_connect_summary">Включить SagerNet при запуске / обновлении приложения, если он был запущен раньше</string>
+    <string name="auto_connect_summary">Включить прокси при запуске/обновлении приложения, если он был запущен раньше</string>
     <string name="auto_connect">Автоматическое подключение</string>
     <string name="show_system_apps">Показать системные приложения</string>
     <string name="bypass_apps">Обход</string>
