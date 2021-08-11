@@ -17,7 +17,7 @@ The application is designed to be used whenever possible.
 
 #### Proxy
 
-* SOCKS
+* SOCKS (4/4a/5)
 * HTTP(S)
 * Shadowsocks
 * ShadowsocksR

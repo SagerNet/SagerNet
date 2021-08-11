@@ -104,6 +104,7 @@ class Socks4To5Instance(
                             )
                         )
                         ctx.close()
+                        ReferenceCountUtil.release(msg)
                         return
                     }
                     val destAddress = when (msg.dstAddrType()) {
@@ -135,6 +136,7 @@ class Socks4To5Instance(
                                 )
                             )
                             ctx.close()
+                            ReferenceCountUtil.release(msg)
                             return
                         }
                     }

@@ -75,7 +75,6 @@ public class KryoConverters {
         } catch (KryoException e) {
             Logs.INSTANCE.w(e);
         }
-        IoUtil.close(buffer);
         bean.initializeDefaultValues();
         return bean;
     }
