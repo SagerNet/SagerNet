@@ -5,11 +5,11 @@
         android:title="@string/share">
         <menu>
             <item
-                android:id="@+id/action_universal_qr"
-                android:title="@string/share_qr_nfc" />
-            <item
                 android:id="@+id/action_universal_clipboard"
                 android:title="@string/action_export_clipboard" />
+            <item
+                android:id="@+id/action_universal_qr"
+                android:title="@string/share_qr_nfc" />
         </menu>
     </item>
     <item
