@@ -30,9 +30,9 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 fun parseSOCKS(link: String): SOCKSBean {
-    if (!link.substringAfter("socks://").contains(":")) {
+    if (!link.substringAfter("://").contains(":")) {
         // v2rayN shit format
-        var url = link.substringAfter("socks://")
+        var url = link.substringAfter("://")
         if (url.contains("#")) {
             url = url.substringBeforeLast("#")
         }
@@ -48,11 +48,11 @@ fun parseSOCKS(link: String): SOCKSBean {
             }
         }
     } else {
-        val url = ("http://" + link
-            .substringAfter("://"))
-            .toHttpUrlOrNull() ?: error("Not supported: $link")
+        val url = ("http://" + link.substringAfter("://")).toHttpUrlOrNull()
+            ?: error("Not supported: $link")
 
         return SOCKSBean().apply {
+            protocol = if (link.contains("socks4://")) SOCKSBean.PROTOCOL_SOCKS4 else SOCKSBean.PROTOCOL_SOCKS5
             serverAddress = url.host
             serverPort = url.port
             username = url.username
@@ -66,10 +66,7 @@ fun parseSOCKS(link: String): SOCKSBean {
 
 fun SOCKSBean.toUri(): String {
 
-    val builder = HttpUrl.Builder()
-        .scheme("http")
-        .host(serverAddress)
-        .port(serverPort)
+    val builder = HttpUrl.Builder().scheme("http").host(serverAddress).port(serverPort)
     if (!username.isNullOrBlank()) builder.username(username)
     if (!password.isNullOrBlank()) builder.password(password)
     if (tls) {
@@ -79,7 +76,7 @@ fun SOCKSBean.toUri(): String {
         }
     }
     if (!name.isNullOrBlank()) builder.encodedFragment(name.urlSafe())
-    return builder.toLink("socks")
+    return builder.toLink("socks${protocolVersion()}")
 
 }
 

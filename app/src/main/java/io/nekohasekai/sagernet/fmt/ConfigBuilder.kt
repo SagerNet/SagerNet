@@ -841,7 +841,7 @@ fun buildV2RayConfig(
                             this,
                             DokodemoDoorInboundConfigurationObject().apply {
                                 address = bean.serverAddress
-                                network = "tcp,udp"
+                                network = bean.network()
                                 port = bean.serverPort
                             })
 
@@ -868,7 +868,7 @@ fun buildV2RayConfig(
                             this,
                             DokodemoDoorInboundConfigurationObject().apply {
                                 address = bean.serverAddress
-                                network = "tcp,udp"
+                                network = bean.network()
                                 port = bean.serverPort
                             })
                         routing.rules.add(RoutingObject.RuleObject().apply {

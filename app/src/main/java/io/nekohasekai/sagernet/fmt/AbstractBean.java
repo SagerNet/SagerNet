@@ -67,6 +67,10 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         return serverAddress + ":" + serverPort;
     }
 
+    public String network() {
+        return "tcp,udp";
+    }
+
     public boolean canICMPing() {
         return true;
     }

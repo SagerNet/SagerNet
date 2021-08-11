@@ -30,6 +30,7 @@ import android.webkit.WebViewClient
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.TrojanProvider
+import io.nekohasekai.sagernet.bg.socks.Socks4To5Instance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
@@ -49,34 +50,42 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
+import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.getValue
-import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
-import io.nekohasekai.sagernet.ktx.setValue
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
+import io.netty.channel.EventLoopGroup
+import io.netty.channel.epoll.EpollDatagramChannel
+import io.netty.resolver.ResolvedAddressTypes
+import io.netty.resolver.dns.DnsNameResolverBuilder
+import io.netty.resolver.dns.PackagePrivateBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import libv2ray.Libv2ray
 import libv2ray.V2RayPoint
 import libv2ray.V2RayVPNServiceSupportsSet
 import java.io.File
+import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicBoolean
 
-open class V2RayInstance(val profile: ProxyEntity) {
+abstract class V2RayInstance(
+    val profile: ProxyEntity
+) : AbstractInstance {
 
+    abstract val eventLoopGroup: EventLoopGroup
     lateinit var config: V2rayBuildResult
     lateinit var v2rayPoint: V2RayPoint
     private lateinit var wsForwarder: WebView
 
     val pluginPath = hashMapOf<String, PluginManager.InitResult>()
     val pluginConfigs = hashMapOf<Int, Pair<Int, String>>()
-    val externalInstances = hashMapOf<Int, V2RayInstance>()
+    val externalInstances = hashMapOf<Int, AbstractInstance>()
     open lateinit var processes: GuardedProcessPool
     private var cacheFiles = ArrayList<File>()
     var closed by AtomicBoolean()
@@ -161,12 +170,15 @@ open class V2RayInstance(val profile: ProxyEntity) {
                             }
                             else -> {
                                 externalInstances[port] = ExternalInstance(
-                                    v2rayPoint.supportSet, profile, port
+                                    v2rayPoint.supportSet, profile, port, eventLoopGroup
                                 ).apply {
                                     init()
                                 }
                             }
                         }
+                    }
+                    bean is SOCKSBean -> {
+                        externalInstances[port] = Socks4To5Instance(eventLoopGroup, bean, port, dnsResolverIPv4Only)
                     }
                 }
             }
@@ -175,7 +187,19 @@ open class V2RayInstance(val profile: ProxyEntity) {
         v2rayPoint.configureFileContent = config.config
     }
 
-    open fun launch() {
+    private val dnsResolverIPv4Only by lazy {
+        DnsNameResolverBuilder().eventLoop(eventLoopGroup.next())
+            .channelType(EpollDatagramChannel::class.java)
+            .nameServerProvider(
+                PackagePrivateBridge.mkDnsProvider(
+                    InetSocketAddress(LOCALHOST, DataStore.localDNSPort)
+                )
+            )
+            .resolvedAddressTypes(ResolvedAddressTypes.IPV4_ONLY)
+            .build()
+    }
+
+    override fun launch() {
         val context = if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
 
         for ((isBalancer, chain) in config.index) {
@@ -384,7 +408,7 @@ open class V2RayInstance(val profile: ProxyEntity) {
 
                         processes.start(commands)
                     }
-                    bean is ConfigBean -> {
+                    bean is ConfigBean || bean is SOCKSBean -> {
                         externalInstances[port]!!.launch()
                     }
                 }
@@ -428,7 +452,11 @@ open class V2RayInstance(val profile: ProxyEntity) {
 
     }
 
-    open fun destroy(scope: CoroutineScope) {
+    fun destroy() {
+        runBlocking { onMainDispatcher { destroy(this) } }
+    }
+
+    override fun destroy(scope: CoroutineScope) {
         cacheFiles.removeAll { it.delete(); true }
 
         if (::wsForwarder.isInitialized) {

@@ -67,7 +67,7 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
     val enableLog = DataStore.enableLog
     val dumpUid = enableLog || uidMap.isNotEmpty()
 
-    val eventLoop = EpollEventLoopGroup()
+    val eventLoop = service.data.proxy!!.eventLoopGroup
     val serverSocketChannelClazz = EpollServerSocketChannel::class.java
     val socketChannelClazz = EpollSocketChannel::class.java
     val datagramChannelClazz = EpollDatagramChannel::class.java

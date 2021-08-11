@@ -7,6 +7,14 @@
         app:useSimpleSummaryProvider="true" />
 
     <PreferenceCategory app:title="@string/proxy_cat">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="2"
+            app:entries="@array/socks_versions"
+            app:entryValues="@array/int_array_3"
+            app:icon="@drawable/ic_baseline_nfc_24"
+            app:key="serverProtocol"
+            app:title="@string/app_version"
+            app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
             app:icon="@drawable/ic_hardware_router"
@@ -28,7 +36,7 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password_opt" />
-        <SwitchPreferenceCompat
+        <SwitchPreference
             app:icon="@drawable/ic_baseline_https_24"
             app:key="serverTLS"
             app:title="@string/tls" />

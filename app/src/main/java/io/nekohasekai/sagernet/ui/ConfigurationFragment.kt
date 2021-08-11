@@ -73,6 +73,7 @@ import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
+import io.netty.channel.epoll.EpollEventLoopGroup
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.InetAddress
@@ -707,6 +708,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     fun urlTest(reuse: Boolean) {
         stopService()
 
+        val eventLoopGroup = EpollEventLoopGroup()
         val test = TestDialog()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
@@ -736,7 +738,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         test.insert(profile)
 
                         try {
-                            val result = TestInstance(profile).doTest(if (reuse) 2 else 1)
+                            val result = TestInstance(profile, eventLoopGroup).doTest(if (reuse) 2 else 1)
                             profile.status = 1
                             profile.ping = result
                         } catch (e: PluginManager.PluginNotFoundException) {
@@ -754,6 +756,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             testJobs.joinAll()
+            eventLoopGroup.shutdownGracefully()
 
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true

@@ -617,5 +617,10 @@
         <item>BASE64</item>
     </string-array>
 
+    <string-array name="socks_versions">
+        <item>SOCKS4</item>
+        <item>SOCKS4A</item>
+        <item>SOCKS5</item>
+    </string-array>
 
 </resources>

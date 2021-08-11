@@ -217,6 +217,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverUploadSpeed by profileCacheStore.stringToInt(Key.SERVER_UPLOAD_SPEED)
     var serverDownloadSpeed by profileCacheStore.stringToInt(Key.SERVER_DOWNLOAD_SPEED)
 
+    var serverSocksVersion by profileCacheStore.stringToInt(Key.SERVER_PROTOCOL)
+
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
     var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)

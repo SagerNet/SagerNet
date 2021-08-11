@@ -19,38 +19,15 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg
+package io.netty.resolver.dns
 
-import io.nekohasekai.sagernet.database.ProxyEntity
-import io.nekohasekai.sagernet.fmt.buildCustomConfig
-import io.nekohasekai.sagernet.ktx.Logs
-import io.netty.channel.EventLoopGroup
-import libv2ray.Libv2ray
-import libv2ray.V2RayVPNServiceSupportsSet
+import java.net.InetAddress
+import java.net.InetSocketAddress
 
-class ExternalInstance(
-    val supportSet: V2RayVPNServiceSupportsSet,
-    profile: ProxyEntity,
-    val port: Int,
-    override val eventLoopGroup: EventLoopGroup
-) : V2RayInstance(profile) {
+object PackagePrivateBridge {
 
-    override fun init() {
-        super.init()
-
-        Logs.d(config.config)
-        pluginConfigs.forEach { (_, plugin) ->
-            val (_, content) = plugin
-            Logs.d(content)
-        }
-    }
-
-    override fun initInstance() {
-        v2rayPoint = Libv2ray.newV2RayPoint(supportSet, false)
-    }
-
-    override fun buildConfig() {
-        config = buildCustomConfig(profile, port)
+    fun mkDnsProvider(address: InetSocketAddress) = DnsServerAddressStreamProvider {
+        SingletonDnsServerAddresses(address).stream()
     }
 
 }

@@ -95,8 +95,7 @@ class BaseService {
                 stopListeningForBandwidth(callback ?: return)
             }
         }
-        private val bandwidthListeners =
-            mutableMapOf<IBinder, Long>()  // the binder is the real identifier
+        private val bandwidthListeners = mutableMapOf<IBinder, Long>()  // the binder is the real identifier
         override val coroutineContext = Dispatchers.Main.immediate + Job()
         private var looper: Job? = null
 

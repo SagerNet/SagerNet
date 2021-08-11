@@ -28,7 +28,7 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.*
-import kotlinx.coroutines.runBlocking
+import io.netty.channel.EventLoopGroup
 import okhttp3.*
 import okhttp3.internal.closeQuietly
 import java.io.IOException
@@ -38,7 +38,9 @@ import java.time.Duration
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
-class TestInstance(profile: ProxyEntity) : V2RayInstance(profile) {
+class TestInstance(
+    profile: ProxyEntity, override val eventLoopGroup: EventLoopGroup
+) : V2RayInstance(profile) {
 
     private lateinit var continuation: Continuation<Int>
     private val httpPort = mkPort()
@@ -63,10 +65,6 @@ class TestInstance(profile: ProxyEntity) : V2RayInstance(profile) {
         }
     }
 
-    private fun destroy() {
-        runBlocking { onMainDispatcher { destroy(this) } }
-    }
-
     private fun doTest0(testTimes: Int) {
         init()
         launch()
@@ -79,11 +77,13 @@ class TestInstance(profile: ProxyEntity) : V2RayInstance(profile) {
             .writeTimeout(timeout)
             .build()
 
-        fun newCall(times: Int) = okHttpClient.newCall(Request.Builder()
-            .url(DataStore.connectionTestURL)
-            .addHeader("Connection", if (times > 1) "keep-alive" else "close")
-            .addHeader("User-Agent", "curl/7.74.0")
-            .build())
+        fun newCall(times: Int) = okHttpClient.newCall(
+            Request.Builder()
+                .url(DataStore.connectionTestURL)
+                .addHeader("Connection", if (times > 1) "keep-alive" else "close")
+                .addHeader("User-Agent", "curl/7.74.0")
+                .build()
+        )
 
         newCall(testTimes).enqueue(object : Callback {
 
@@ -117,7 +117,13 @@ class TestInstance(profile: ProxyEntity) : V2RayInstance(profile) {
                 if (code == 204 || code == 200) {
                     continuation.tryResume(elapsed.toInt())
                 } else {
-                    continuation.tryResumeWithException(IOException(app.getString(R.string.connection_test_error_status_code, code)))
+                    continuation.tryResumeWithException(
+                        IOException(
+                            app.getString(
+                                R.string.connection_test_error_status_code, code
+                            )
+                        )
+                    )
                 }
 
             }
