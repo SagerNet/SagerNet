@@ -46,8 +46,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.work:work-runtime-ktx:2.5.0")
-    implementation("androidx.work:work-multiprocess:2.5.0")
+    implementation("androidx.work:work-runtime-ktx:2.7.0-alpha05")
+    implementation("androidx.work:work-multiprocess:2.7.0-alpha05")
 
 
     implementation(project(":external:preferencex:preferencex"))
@@ -95,7 +95,6 @@ dependencies {
 
     implementation("io.netty:netty-all:4.1.66.Final")
     implementation("org.slf4j:slf4j-simple:1.7.32")
-    implementation("com.github.seancfoley:ipaddress:5.3.3")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
     implementation("dnsjava:dnsjava:3.4.1")
     implementation("com.github.topjohnwu.libsu:io:3.1.2")

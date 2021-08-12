@@ -294,14 +294,14 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
+
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />
-
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            tools:node="remove" />
 
         <service
             android:name="androidx.work.multiprocess.RemoteWorkManagerService"

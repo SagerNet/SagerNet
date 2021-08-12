@@ -22,21 +22,20 @@
 package io.nekohasekai.sagernet.ktx
 
 import androidx.annotation.RawRes
-import cn.hutool.core.lang.Validator
-import cn.hutool.core.net.NetUtil
+import cn.hutool.core.net.NetUtil.isInnerIP
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.group.RawUpdater
+import io.netty.util.NetUtil.isValidIpV4Address
 
 interface ValidateResult
 object ResultSecure : ValidateResult
@@ -47,7 +46,7 @@ class ResultInsecure(@RawRes val textRes: Int) : ValidateResult
 private val ssSecureList = "(gcm|poly1305)".toRegex()
 
 fun AbstractBean.isInsecure(): ValidateResult {
-    if (Validator.isIpv4(serverAddress) && NetUtil.isInnerIP(serverAddress) || serverAddress in arrayOf(
+    if (isValidIpV4Address(serverAddress) && isInnerIP(serverAddress) || serverAddress in arrayOf(
             "localhost"
         )
     ) {
