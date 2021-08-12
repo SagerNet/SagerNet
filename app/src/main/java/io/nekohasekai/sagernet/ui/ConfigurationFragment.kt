@@ -308,7 +308,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
                     val toClear = mutableListOf<ProxyEntity>()
                     if (profiles.isNotEmpty()) for (profile in profiles) {
                         if (profile.tx != 0L || profile.rx != 0L) {
@@ -324,7 +324,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_connection_test_clear_results -> {
                 runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
                     val toClear = mutableListOf<ProxyEntity>()
                     if (profiles.isNotEmpty()) for (profile in profiles) {
                         if (profile.status != 0) {
@@ -353,28 +353,29 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_connection_reorder -> {
                 runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val currentGroup =DataStore.currentGroupId()
+                    val profiles = SagerDatabase.proxyDao.getByGroup(currentGroup)
                     val sorted = profiles.sortedBy { if (it.status == 1) it.ping else 114514 }
                     for (index in sorted.indices) {
                         sorted[index].userOrder = (index + 1).toLong()
                     }
                     SagerDatabase.proxyDao.updateProxy(sorted)
-                    GroupManager.postReload(DataStore.selectedGroup)
+                    GroupManager.postReload(currentGroup)
 
                 }
             }
             R.id.action_filter_groups -> {
                 runOnDefaultDispatcher filter@{
-                    val group = SagerDatabase.groupDao.getById(DataStore.selectedGroup)!!
+                    val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
 
                     if (group.subscription?.type != SubscriptionType.OOCv1) {
-                        snackbar(getString(R.string.group_filter_groups_nf)).show()
+                        snackbar(getString(R.string.group_filter_ns)).show()
                         return@filter
                     }
 
                     val subscription = group.subscription!!
 
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
                     val groups = profiles.mapNotNull { it.requireBean().group }
                         .toSet()
                         .toTypedArray()
@@ -410,28 +411,24 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_filter_tags -> {
                 runOnDefaultDispatcher filter@{
-                    val group = SagerDatabase.groupDao.getById(DataStore.selectedGroup)!!
-
+                    val group = DataStore.currentGroup()
                     if (group.subscription?.type != SubscriptionType.OOCv1) {
-                        snackbar(getString(R.string.group_filter_tags_nf)).show()
+                        snackbar(getString(R.string.group_filter_ns)).show()
                         return@filter
                     }
 
                     val subscription = group.subscription!!
-
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+                    val profiles = SagerDatabase.proxyDao.getByGroup(group.id)
                     val groups = profiles.flatMap { it.requireBean().tags ?: listOf() }
                         .toSet()
                         .toTypedArray()
                     val checked = groups.map { it in subscription.selectedTags }.toBooleanArray()
-
                     if (groups.isEmpty()) {
                         snackbar(getString(R.string.group_filter_tags_nf)).show()
                         return@filter
                     }
 
                     onMainDispatcher {
-
                         MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_tags)
                             .setMultiChoiceItems(groups, checked) { _, which, isChecked ->
                                 val selected = groups[which]
@@ -562,8 +559,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
-            val group = SagerDatabase.groupDao.getById(DataStore.selectedGroup)!!
-            var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+            val group = DataStore.currentGroup()
+            var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
             if (group.subscription?.type == SubscriptionType.OOCv1) {
                 val subscription = group.subscription!!
                 if (subscription.selectedGroups.isNotEmpty()) {
@@ -712,8 +709,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         val test = TestDialog()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
-            val group = SagerDatabase.groupDao.getById(DataStore.selectedGroup)!!
-            var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(DataStore.selectedGroup)
+            val group = DataStore.currentGroup()
+            var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
             if (group.subscription?.type == SubscriptionType.OOCv1) {
                 val subscription = group.subscription!!
                 if (subscription.selectedGroups.isNotEmpty()) {
@@ -788,7 +785,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 if (hideUngrouped) groupList.removeAll { it.ungrouped }
 
-                val selectedGroup = selectedItem?.groupId ?: DataStore.selectedGroup
+                val selectedGroup = selectedItem?.groupId ?: DataStore.currentGroupId()
                 if (selectedGroup != 0L) {
                     val selectedIndex = groupList.indexOfFirst { it.id == selectedGroup }
                     selectedGroupIndex = selectedIndex

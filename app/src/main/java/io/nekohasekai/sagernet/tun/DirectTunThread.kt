@@ -29,22 +29,16 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.tun.ip.*
 import io.netty.buffer.ByteBuf
 import io.netty.channel.epoll.EpollDatagramChannel
-import io.netty.channel.epoll.EpollEventLoopGroup
 import io.netty.channel.epoll.EpollServerSocketChannel
 import io.netty.channel.epoll.EpollSocketChannel
 import io.netty.channel.unix.FileDescriptor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
+import java.nio.channels.ClosedChannelException
 import kotlin.random.Random
 
 class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
-
-    companion object {
-        init {
-            System.loadLibrary("netty_transport_native_epoll")
-        }
-    }
 
     private var fd = 0
 
@@ -102,14 +96,11 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
                 val length = descriptor.read(bufferNio, 0, VpnService.VPN_MTU)
                 if (length < 20) continue
                 processPacket(buffer, length)
-            } catch (e: IOException) {
-                running = false
-                interrupt()
-                break
             } catch (e: Throwable) {
                 running = false
-                Logs.w(e)
                 interrupt()
+                if (e is IOException || e is ClosedChannelException) break
+                Logs.w(e)
                 break
             }
         } while (running)
@@ -129,23 +120,18 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
                     try {
                         processPacket(buffer, length)
                         buffer.release()
-                    } catch (e: IOException) {
-                        running = false
-                        interrupt()
                     } catch (e: Throwable) {
                         running = false
-                        Logs.w(e)
                         interrupt()
+                        if (e is IOException || e is ClosedChannelException) return@runOnDefaultDispatcher
+                        Logs.w(e)
                     }
                 }
-            } catch (e: IOException) {
-                running = false
-                interrupt()
-                break
             } catch (e: Throwable) {
                 running = false
-                Logs.w(e)
                 interrupt()
+                if (e is IOException || e is ClosedChannelException) break
+                Logs.w(e)
                 break
             }
         } while (running)

@@ -42,6 +42,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
@@ -83,7 +84,7 @@ class SagerNet : Application(),
         Libv2ray.setAssetsPath(externalAssets.absolutePath, "v2ray/")
         Libv2ray.setenv("v2ray.conf.geoloader", "memconservative")
 
-        runOnMainDispatcher {
+        runOnDefaultDispatcher {
             externalAssets.mkdirs()
             checkMT()
 
@@ -94,6 +95,8 @@ class SagerNet : Application(),
         Theme.applyNightTheme()
 
         Security.insertProviderAt(Conscrypt.newProvider(), 1)
+        System.loadLibrary("netty_transport_native_epoll")
+
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
