@@ -22,7 +22,8 @@
 package io.nekohasekai.sagernet.tun
 
 import android.os.SystemClock
-import cn.hutool.cache.impl.LFUCache
+import cn.hutool.cache.impl.LFUCacheCompact
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.INET6_TUN
@@ -43,19 +44,14 @@ import io.netty.handler.proxy.Socks5ProxyHandler
 import okhttp3.internal.connection.RouteSelector.Companion.socketHost
 import java.net.InetAddress
 import java.net.InetSocketAddress
-import java.util.concurrent.ConcurrentHashMap
 
 class DirectTcpForwarder(val tun: DirectTunThread) {
 
-    private val tcpSessions = object : LFUCache<Int, TcpSession>(-1, 5 * 60 * 1000L) {
-        init {
-            if (tun.multiThreadForward) cacheMap = ConcurrentHashMap()
-        }
-
+    private val tcpSessions = object : LFUCacheCompact<Int, TcpSession>(-1, 5 * 60 * 1000L) {
         override fun onRemove(key: Int, session: TcpSession) {
             session.channel?.close()
         }
-    }
+    }.build(tun.multiThreadForward)
 
     class TcpSession(
         val localAddress: InetAddress,
@@ -172,8 +168,7 @@ class DirectTcpForwarder(val tun: DirectTunThread) {
             if (isDns) {
                 // direct for dns
 
-                channelFeature = Bootstrap().group(tun.eventLoop)
-                    .channel(tun.socketChannelClazz)
+                channelFeature = Bootstrap().group(tun.eventLoop).channel(SagerNet.socketChannel)
                     .handler(object : ChannelInitializer<Channel>() {
                         override fun initChannel(channel: Channel) {
                             channel.pipeline().addLast(ChannelForwardAdapter(ctx.channel()))
@@ -190,8 +185,7 @@ class DirectTcpForwarder(val tun: DirectTunThread) {
                     })
             } else {
                 val socksPort = tun.uidMap[session.uid] ?: tun.socksPort
-                channelFeature = Bootstrap().group(tun.eventLoop)
-                    .channel(tun.socketChannelClazz)
+                channelFeature = Bootstrap().group(tun.eventLoop).channel(SagerNet.socketChannel)
                     .handler(object : ChannelInitializer<Channel>() {
                         override fun initChannel(channel: Channel) {
                             channel.pipeline().addFirst(
@@ -264,8 +258,7 @@ class DirectTcpForwarder(val tun: DirectTunThread) {
     }
 
     fun start() {
-        channelFuture = ServerBootstrap().group(tun.eventLoop)
-            .channel(tun.serverSocketChannelClazz)
+        channelFuture = ServerBootstrap().group(tun.eventLoop).channel(SagerNet.serverSocketChannel)
             .childHandler(object : ChannelInitializer<Channel>() {
                 override fun initChannel(channel: Channel) {
                     channel.pipeline().addLast(Forwarder())

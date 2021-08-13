@@ -58,11 +58,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import sun.misc.Unsafe
 import java.io.FileDescriptor
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.Socket
-import java.nio.channels.FileChannel
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
@@ -326,10 +326,12 @@ fun <T> Continuation<T>.tryResumeWithException(exception: Throwable) {
 }
 
 operator fun <F> KProperty0<F>.getValue(thisRef: Any?, property: KProperty<*>): F = get()
-operator fun <F> KMutableProperty0<F>.setValue(thisRef: Any?, property: KProperty<*>, value: F) = set(value)
+operator fun <F> KMutableProperty0<F>.setValue(thisRef: Any?, property: KProperty<*>, value: F) =
+    set(value)
 
 operator fun AtomicBoolean.getValue(thisRef: Any?, property: KProperty<*>): Boolean = get()
-operator fun AtomicBoolean.setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) = set(value)
+operator fun AtomicBoolean.setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) =
+    set(value)
 
 operator fun AtomicInteger.getValue(thisRef: Any?, property: KProperty<*>): Int = get()
 operator fun AtomicInteger.setValue(thisRef: Any?, property: KProperty<*>, value: Int) = set(value)
@@ -338,7 +340,8 @@ operator fun AtomicLong.getValue(thisRef: Any?, property: KProperty<*>): Long = 
 operator fun AtomicLong.setValue(thisRef: Any?, property: KProperty<*>, value: Long) = set(value)
 
 operator fun <T> AtomicReference<T>.getValue(thisRef: Any?, property: KProperty<*>): T = get()
-operator fun <T> AtomicReference<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) = set(value)
+operator fun <T> AtomicReference<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) =
+    set(value)
 
 operator fun <K, V> Map<K, V>.getValue(thisRef: K, property: KProperty<*>) = get(thisRef)
 operator fun <K, V> MutableMap<K, V>.setValue(thisRef: K, property: KProperty<*>, value: V?) {
@@ -353,4 +356,11 @@ operator fun <K, V> MutableMap<K, V>.setValue(thisRef: K, property: KProperty<*>
 
     }
 
+}
+
+@SuppressLint("DiscouragedPrivateApi")
+val UNSAFE = try {
+    Unsafe::class.java.getDeclaredMethod("getUnsafe").invoke(null) as Unsafe?
+} catch (e: Throwable) {
+    null
 }

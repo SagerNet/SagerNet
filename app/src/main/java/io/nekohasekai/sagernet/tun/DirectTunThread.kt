@@ -27,11 +27,8 @@ import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.tun.ip.*
+import io.nekohasekai.sagernet.utils.unix.FileDescriptorCompact
 import io.netty.buffer.ByteBuf
-import io.netty.channel.epoll.EpollDatagramChannel
-import io.netty.channel.epoll.EpollServerSocketChannel
-import io.netty.channel.epoll.EpollSocketChannel
-import io.netty.channel.unix.FileDescriptor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
@@ -44,7 +41,7 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
 
     @Volatile
     var running = true
-    lateinit var descriptor: FileDescriptor
+    lateinit var descriptor: FileDescriptorCompact
     val closed get() = service.data.proxy?.closed == true
 
     override fun interrupt() {
@@ -62,10 +59,6 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
     val dumpUid = enableLog || uidMap.isNotEmpty()
 
     val eventLoop = service.data.proxy!!.eventLoopGroup
-    val serverSocketChannelClazz = EpollServerSocketChannel::class.java
-    val socketChannelClazz = EpollSocketChannel::class.java
-    val datagramChannelClazz = EpollDatagramChannel::class.java
-
     val tcpForwarder = DirectTcpForwarder(this)
     val udpForwarder = DirectUdpForwarder(this)
 
@@ -74,7 +67,7 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
     }
 
     override fun run() {
-        descriptor = FileDescriptor(service.conn.fd)
+        descriptor = FileDescriptorCompact(service.conn)
         tcpForwarder.start()
 
         runBlocking {

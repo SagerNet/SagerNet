@@ -24,14 +24,13 @@ package io.nekohasekai.sagernet.tun
 import android.annotation.SuppressLint
 import android.os.Build
 import android.system.OsConstants
-import cn.hutool.cache.impl.LFUCache
+import cn.hutool.cache.impl.LFUCacheCompact
 import cn.hutool.core.util.HexUtil
 import com.topjohnwu.superuser.io.SuFileInputStream
 import io.nekohasekai.sagernet.SagerNet
 import java.io.File
 import java.net.InetAddress
 import java.net.InetSocketAddress
-import java.util.concurrent.ConcurrentHashMap
 
 class UidDumper(val multiThread: Boolean) {
 
@@ -45,16 +44,13 @@ class UidDumper(val multiThread: Boolean) {
     }
 
     private data class ProcStats constructor(val remoteAddress: InetSocketAddress, val uid: Int)
-    private inner class TunMap : LFUCache<Int, ProcStats>(-1, 5 * 60 * 1000L) {
-        init {
-            if (multiThread) cacheMap = ConcurrentHashMap()
-        }
-    }
 
-    private val uidCacheMapTcp = TunMap()
-    private val uidCacheMapTcp6 = TunMap()
-    private val uidCacheMapUdp = TunMap()
-    private val uidCacheMapUdp6 = TunMap()
+    private fun mkMap() = LFUCacheCompact<Int, ProcStats>(-1, 5 * 60 * 1000L).build(multiThread)
+
+    private val uidCacheMapTcp = mkMap()
+    private val uidCacheMapTcp6 = mkMap()
+    private val uidCacheMapUdp = mkMap()
+    private val uidCacheMapUdp6 = mkMap()
 
     private val canReadProc = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
     private val useApi = !canReadProc/* || BuildConfig.DEBUG && tun.enableLog)*/

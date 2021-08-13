@@ -44,8 +44,7 @@ import kotlinx.coroutines.launch
 class StatsBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.bottomAppBarStyle,
-) :
-    BottomAppBar(context, attrs, defStyleAttr) {
+) : BottomAppBar(context, attrs, defStyleAttr) {
     private lateinit var statusText: TextView
     private lateinit var txText: TextView
     private lateinit var rxText: TextView

@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.bg.socks
 
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.AbstractInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -29,9 +30,6 @@ import io.nekohasekai.sagernet.ktx.readableMessage
 import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.*
-import io.netty.channel.epoll.EpollChannelOption
-import io.netty.channel.epoll.EpollServerSocketChannel
-import io.netty.channel.epoll.EpollSocketChannel
 import io.netty.handler.codec.socksx.v5.*
 import io.netty.handler.proxy.Socks4ProxyHandler
 import io.netty.resolver.dns.DnsNameResolver
@@ -47,16 +45,16 @@ class Socks4To5Instance(
 ) : AbstractInstance,
     ChannelInitializer<Channel>() {
 
-    lateinit var channel: EpollServerSocketChannel
-    val localPort get() = channel.localAddress().port
+    lateinit var channel: Channel
+    val localPort get() = (channel.localAddress() as InetSocketAddress).port
 
     override fun launch() {
         channel = ServerBootstrap().group(eventLoopGroup)
-            .channel(EpollServerSocketChannel::class.java)
+            .channel(SagerNet.serverSocketChannel)
             .childHandler(this)
             .bind(port)
             .sync()
-            .channel() as EpollServerSocketChannel
+            .channel()
     }
 
     override fun destroy(scope: CoroutineScope) {
@@ -152,8 +150,8 @@ class Socks4To5Instance(
                         .remove(Socks5ServerEncoder.DEFAULT)
 
                     serverConnection = Bootstrap().group(eventLoopGroup)
-                        .channel(EpollSocketChannel::class.java)
-                        .option(EpollChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
+                        .channel(SagerNet.socketChannel)
+                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
                         .handler(object : ChannelInboundHandlerAdapter() {
                             override fun channelRegistered(ctx: ChannelHandlerContext) {
                                 ctx.channel().pipeline().addFirst(serverHandler)

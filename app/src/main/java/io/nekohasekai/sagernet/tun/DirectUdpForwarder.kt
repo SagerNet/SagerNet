@@ -22,8 +22,8 @@
 package io.nekohasekai.sagernet.tun
 
 import android.os.SystemClock
-import cn.hutool.cache.impl.LFUCache
-import com.esotericsoftware.kryo.util.Pool
+import cn.hutool.cache.impl.LFUCacheCompact
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.LAUNCH_DELAY
@@ -39,41 +39,24 @@ import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessageEncoder
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.ByteBuf
-import io.netty.channel.*
+import io.netty.channel.ChannelFuture
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.ChannelInboundHandlerAdapter
 import io.netty.channel.socket.DatagramPacket
 import io.netty.handler.codec.socksx.v5.Socks5AddressType
 import io.netty.util.IllegalReferenceCountException
 import io.netty.util.ReferenceCountUtil
 import io.netty.util.concurrent.Future
 import io.netty.util.concurrent.GenericFutureListener
-import org.xbill.DNS.Message
 import java.net.InetSocketAddress
-import java.util.concurrent.ConcurrentHashMap
 
 class DirectUdpForwarder(val tun: DirectTunThread) {
 
-    private val udpSessions = object : LFUCache<Int, UdpSession>(-1, 5 * 60 * 1000L) {
-        init {
-            if (tun.multiThreadForward) cacheMap = ConcurrentHashMap()
-        }
-
+    private val udpSessions = object : LFUCacheCompact<Int, UdpSession>(-1, 5 * 60 * 1000L) {
         override fun onRemove(key: Int, session: UdpSession) {
             session.destroy()
         }
-    }
-
-    val dnsPool = object : Pool<ChannelFuture>(true, false) {
-        override fun create(): ChannelFuture {
-            return Bootstrap().group(tun.eventLoop)
-                .channel(tun.datagramChannelClazz)
-                .handler(object : ChannelInitializer<Channel>() {
-                    override fun initChannel(channel: Channel) {
-                        channel.pipeline().remove(this)
-                    }
-                })
-                .connect(LOCALHOST, tun.dnsPort)
-        }
-    }
+    }.build(tun.multiThreadForward)
 
     fun processUdp(packet: ByteBuf, ipHeader: DirectIPHeader) {
         val udpHeader = DirectUdpHeader(ipHeader)
@@ -141,7 +124,11 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
         if (session.channelFuture.isSuccess) {
             session.channelFuture.channel().writeAndFlush(message)
         } else session.channelFuture.addListener(object : GenericFutureListener<Future<Void>> {
-            override fun operationComplete(future: Future<Void>?) {
+            override fun operationComplete(future: Future<Void>) {
+                if (!future.isSuccess && tun.enableLog) {
+                    Logs.w(future.cause())
+                    return
+                }
                 session.channelFuture.removeListener(this)
                 session.channelFuture.channel().writeAndFlush(message)
             }
@@ -173,44 +160,33 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
         }
 
         fun connect() {
-            if (calIsDns()) {
+            channelFuture = if (calIsDns()) {
                 isDns = true
-                dnsPool.obtain()
+                Bootstrap().group(tun.eventLoop)
+                    .channel(SagerNet.datagramChannel)
+                    .handler(this)
+                    .connect(LOCALHOST, tun.dnsPort)
             } else {
                 Bootstrap().group(tun.eventLoop)
-                    .channel(tun.datagramChannelClazz)
-                    .handler(object : ChannelInitializer<Channel>() {
-                        override fun initChannel(channel: Channel) {
-                            channel.pipeline().apply {
-                                addFirst(
-                                    Socks5UdpMessageEncoder.DEFAULT, Socks5UdpMessageDecoder()
-                                )
-                            }
-                        }
-                    })
+                    .channel(SagerNet.datagramChannel)
+                    .handler(this)
                     .connect(LOCALHOST, tun.uidMap[uid] ?: tun.socksPort)
-            }.also {
-                channelFuture = it
-            }.addListener(object : ChannelFutureListener {
-                override fun operationComplete(future: ChannelFuture) {
-                    future.channel().pipeline().addLast(this@UdpSession)
-                    future.removeListener(this)
-                }
-            })
+            }
+        }
+
+        override fun channelRegistered(ctx: ChannelHandlerContext) {
+            if (!isDns) {
+                ctx.pipeline().addFirst(
+                    Socks5UdpMessageEncoder.DEFAULT, Socks5UdpMessageDecoder()
+                )
+            }
         }
 
         fun destroy() {
             runCatching {
                 template.release()
             }
-            if (!isDns || dnsPool.free > 5) {
-                channelFuture.channel().close()
-            } else {
-                if (channelFuture.channel().isActive) {
-                    channelFuture.channel().pipeline().remove(this)
-                    dnsPool.free(channelFuture)
-                }
-            }
+            channelFuture.channel().close()
         }
 
         private fun createTemplate(udpHeader: DirectUdpHeader): ByteBuf {
@@ -224,17 +200,18 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
             when (msg) {
                 is Socks5UdpMessage -> sendResponse(msg.data())
                 is DatagramPacket -> sendResponse(msg.content())
+                is ByteBuf -> sendResponse(msg)
             }
             ReferenceCountUtil.release(msg)
         }
 
         fun sendResponse(rawData: ByteBuf) {
-           /* val data = if (isDns) {
-                Logs.d("DNS Response ${rawData.readableBytes()}B")
-                rawData.slice(
-                    0, Message(rawData.internalNioBuffer(0, rawData.readableBytes())).numBytes()
-                )
-            } else rawData*/
+            /* val data = if (isDns) {
+                 Logs.d("DNS Response ${rawData.readableBytes()}B")
+                 rawData.slice(
+                     0, Message(rawData.internalNioBuffer(0, rawData.readableBytes())).numBytes()
+                 )
+             } else rawData*/
 
             val template = try {
                 template.slice()
@@ -265,7 +242,7 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
             udpHeader.totalLength = packetSize - ipHeader.headerLength
             udpHeader.updateChecksum()
 
-            tun.write(packet, ipHeader.packetLength)
+            tun.write(packet, packetSize)
             packet.release()
 
             if (isDns) udpSessions.remove(localPort)
@@ -281,9 +258,6 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
     fun destroy() {
         for (session in udpSessions) {
             session.destroy()
-        }
-        repeat(dnsPool.free) {
-            dnsPool.obtain().channel()?.close()
         }
     }
 

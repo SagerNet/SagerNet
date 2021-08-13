@@ -60,7 +60,6 @@ import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.netty.channel.EventLoopGroup
-import io.netty.channel.epoll.EpollDatagramChannel
 import io.netty.resolver.ResolvedAddressTypes
 import io.netty.resolver.dns.DnsNameResolverBuilder
 import io.netty.resolver.dns.PackagePrivateBridge
@@ -178,7 +177,9 @@ abstract class V2RayInstance(
                         }
                     }
                     bean is SOCKSBean -> {
-                        externalInstances[port] = Socks4To5Instance(eventLoopGroup, bean, port, dnsResolverIPv4Only)
+                        externalInstances[port] = Socks4To5Instance(
+                            eventLoopGroup, bean, port, dnsResolverIPv4Only
+                        )
                     }
                 }
             }
@@ -189,7 +190,7 @@ abstract class V2RayInstance(
 
     private val dnsResolverIPv4Only by lazy {
         DnsNameResolverBuilder().eventLoop(eventLoopGroup.next())
-            .channelType(EpollDatagramChannel::class.java)
+            .channelType(SagerNet.datagramChannel)
             .nameServerProvider(
                 PackagePrivateBridge.mkDnsProvider(
                     InetSocketAddress(LOCALHOST, DataStore.localDNSPort)

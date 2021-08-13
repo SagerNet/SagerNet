@@ -28,29 +28,23 @@ import com.v2ray.core.app.stats.command.GetStatsRequest
 import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
-import io.netty.channel.EventLoopGroup
-import io.netty.channel.epoll.EpollDatagramChannel
-import io.netty.channel.epoll.EpollEventLoopGroup
-import io.netty.resolver.dns.DnsNameResolverBuilder
-import io.netty.resolver.dns.PackagePrivateBridge
 import kotlinx.coroutines.*
 import libv2ray.Libv2ray
 import org.tukaani.xz.XZInputStream
 import java.io.File
 import java.io.IOException
-import java.net.InetSocketAddress
 
 class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : V2RayInstance(
     profile
 ) {
 
-    override val eventLoopGroup by lazy { EpollEventLoopGroup() }
+    override val eventLoopGroup by lazy { SagerNet.eventLoopGroup() }
     lateinit var managedChannel: ManagedChannel
     val statsService by lazy { StatsServiceGrpcKt.StatsServiceCoroutineStub(managedChannel) }
     val observatoryService by lazy {
