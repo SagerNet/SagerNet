@@ -169,7 +169,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         val vpnMode = findPreference<SimpleMenuPreference>(Key.VPN_MODE)!!
-        val multiThreadForward = findPreference<SwitchPreference>(Key.MULTI_THREAD_FORWARD)!!
         val icmpEchoStrategy = findPreference<SimpleMenuPreference>(Key.ICMP_ECHO_STRATEGY)!!
         val icmpEchoReplyDelay = findPreference<EditTextPreference>(Key.ICMP_ECHO_REPLY_DELAY)!!
         val ipOtherStrategy = findPreference<SimpleMenuPreference>(Key.IP_OTHER_STRATEGY)!!
@@ -177,7 +176,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         fun updateVpnMode(newMode: Int) {
             val isForwarding = newMode == VpnMode.EXPERIMENTAL_FORWARDING
 
-            multiThreadForward.isVisible = isForwarding
             icmpEchoStrategy.isVisible = isForwarding
             icmpEchoReplyDelay.isVisible = isForwarding
             if (isForwarding) {
@@ -260,7 +258,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         probeIndival.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         probeIndival.onPreferenceChangeListener = reloadListener
 
-        multiThreadForward.onPreferenceChangeListener = reloadListener
         icmpEchoReplyDelay.onPreferenceChangeListener = reloadListener
         icmpEchoReplyDelay.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         ipOtherStrategy.onPreferenceChangeListener = reloadListener

@@ -383,7 +383,7 @@ fun buildV2RayConfig(
 
             rules.addAll(wsRules.values)
 
-            if (DataStore.bypassLan && DataStore.bypassLanInCoreOnly) {
+            if (DataStore.bypassLan && (requireHttp || DataStore.bypassLanInCoreOnly)) {
                 rules.add(RoutingObject.RuleObject().apply {
                     type = "field"
                     outboundTag = TAG_BYPASS
@@ -1052,7 +1052,7 @@ fun buildV2RayConfig(
 
         inbounds.add(InboundObject().apply {
             tag = TAG_DNS_IN
-            listen = LOCALHOST
+            listen = bind
             port = DataStore.localDNSPort
             protocol = "dokodemo-door"
             settings = LazyInboundConfigurationObject(

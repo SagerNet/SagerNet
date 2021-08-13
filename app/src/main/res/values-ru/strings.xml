@@ -174,8 +174,6 @@
     <string name="ip_other_strategy">Другая стратегия интернет-протокола</string>
     <string name="icmp_echo_reply_delay">Задержка эхо-ответа ICMP</string>
     <string name="icmp_echo_strategy">Эхо-стратегия ICMP</string>
-    <string name="multi_thread_forwarding_sum">Пересылка пакетов TCP/IP с помощью сопрограммы Kotlin, которая использует больше ЦП и подходит только для случаев с высоким трафиком</string>
-    <string name="multi_thread_forwarding">Параллельная пересылка</string>
     <string name="vpn_mode_forwarding">Собственная переадресация</string>
     <string name="vpn_mode">Режим VPN</string>
     <string name="vpn_settings">Настройки VPN</string>

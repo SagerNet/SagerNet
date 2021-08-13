@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.tun
 
-import android.system.ErrnoException
 import io.nekohasekai.sagernet.PacketStrategy
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
@@ -52,7 +51,7 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
 
     val socksPort = DataStore.socksPort
     val dnsPort = DataStore.localDNSPort
-    val multiThreadForward = DataStore.multiThreadForward
+    val multiThreadForward = true
     val uidDumper = UidDumper(multiThreadForward)
     val uidMap = service.data.proxy?.config?.uidMap ?: emptyMap()
     val enableLog = DataStore.enableLog
@@ -131,49 +130,35 @@ class DirectTunThread(val service: VpnService) : Thread("TUN Thread") {
     }
 
     suspend fun processPacket(buffer: ByteBuf, length: Int) {
-        try {
-
-            val ipHeader = when (val ipVersion = buffer.getUnsignedByte(0).toInt() ushr 4) {
-                4 -> DirectIPv4Header(buffer, length)
-                6 -> DirectIPv6Header(buffer, length)
-                else -> {
-                    processOther(buffer, length)
-                    return
-                }
+        val ipHeader = when (val ipVersion = buffer.getUnsignedByte(0).toInt() ushr 4) {
+            4 -> DirectIPv4Header(buffer, length)
+            6 -> DirectIPv6Header(buffer, length)
+            else -> {
+                processOther(buffer, length)
+                return
             }
+        }
 
-            when (val protocol = ipHeader.protocol) {
-                IPPROTO_TCP -> {
-                    tcpForwarder.processTcp(buffer, ipHeader)
-                }
-                IPPROTO_UDP -> {
-                    udpForwarder.processUdp(buffer, ipHeader)
-                }
-                IPPROTO_ICMP -> {
-                    processICMP(buffer, ipHeader)
-                }
-                IPPROTO_ICMPv6 -> {
-                    processICMPv6(buffer, ipHeader)
-                }
-                else -> {
-                    processOther(buffer, length)
-                }
+        when (val protocol = ipHeader.protocol) {
+            IPPROTO_TCP -> {
+                tcpForwarder.processTcp(buffer, ipHeader)
             }
-        } catch (e: SecurityException) {
-            interrupt()
-            running = false
-            return
-        } catch (e: InterruptedException) {
-            interrupt()
-            running = false
-            return
-        } catch (e: ErrnoException) {
-            Logs.w(e)
-            interrupt()
-            running = false
-            return
-        } catch (e: Throwable) {
-            Logs.w(e)
+            IPPROTO_UDP -> {
+                udpForwarder.processUdp(buffer, ipHeader)
+            }
+            IPPROTO_ICMP -> {
+                processICMP(buffer, ipHeader)
+            }
+            IPPROTO_ICMPv6 -> {
+                processICMPv6(buffer, ipHeader)
+            }
+            else -> {
+                processOther(buffer, length)
+            }
+        }
+
+        if (buffer.refCnt() > 2) {
+            Logs.d("Leaked ${buffer.refCnt()}: $ipHeader (${ipHeader.protocol})")
         }
     }
 

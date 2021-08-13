@@ -331,8 +331,6 @@
     <string name="vpn_settings">VPN Settings</string>
     <string name="vpn_mode">VPN Mode</string>
     <string name="vpn_mode_forwarding">Native Forwarding</string>
-    <string name="multi_thread_forwarding">Concurrent Forwarding</string>
-    <string name="multi_thread_forwarding_sum">Forward TCP/IP packets using Kotlin coroutine, which uses more CPU and is only suitable for high traffic cases</string>
     <string name="icmp_echo_strategy">ICMP Echo Strategy</string>
     <string name="icmp_echo_reply_delay">ICMP Echo Reply Delay</string>
     <string name="ip_other_strategy">Other Internet Protocol Strategy</string>

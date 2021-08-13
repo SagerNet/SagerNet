@@ -36,6 +36,7 @@ import io.nekohasekai.sagernet.tun.netty.DefaultSocks5UdpMessage
 import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessage
 import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessageDecoder
 import io.nekohasekai.sagernet.tun.netty.Socks5UdpMessageEncoder
+import io.nekohasekai.sagernet.utils.DnsParser
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.ByteBuf
@@ -46,8 +47,6 @@ import io.netty.channel.socket.DatagramPacket
 import io.netty.handler.codec.socksx.v5.Socks5AddressType
 import io.netty.util.IllegalReferenceCountException
 import io.netty.util.ReferenceCountUtil
-import io.netty.util.concurrent.Future
-import io.netty.util.concurrent.GenericFutureListener
 import java.net.InetSocketAddress
 
 class DirectUdpForwarder(val tun: DirectTunThread) {
@@ -58,61 +57,66 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
         }
     }.build(tun.multiThreadForward)
 
-    fun processUdp(packet: ByteBuf, ipHeader: DirectIPHeader) {
+    val localDnsAddress = InetSocketAddress(
+        LOCALHOST, tun.dnsPort
+    )
+
+    suspend fun processUdp(packet: ByteBuf, ipHeader: DirectIPHeader) {
         val udpHeader = DirectUdpHeader(ipHeader)
         val localIp = ipHeader.sourceInetAddress
         val localPort = udpHeader.sourcePort
         val remoteIp = ipHeader.destinationInetAddress
         val remotePort = udpHeader.destinationPort
 
-        var session = udpSessions[localPort]
-        if (session != null && (session.remotePort != remotePort || session.remoteIp != remoteIp || session.channelFuture.channel()?.isActive == false)) {
-            udpSessions.remove(localPort)
-            session.destroy()
-            session = null
-        }
-
-        if (session == null) {
-            session = UdpSession(udpHeader)
-            udpSessions.put(localPort, session)
-
-            if (tun.dumpUid) {
-
-                session.uid = tun.uidDumper.dumpUid(
-                    ipHeader is DirectIPv6Header,
-                    true,
-                    InetSocketAddress(localIp, localPort),
-                    InetSocketAddress(remoteIp, remotePort)
-                )
-
-                if (tun.enableLog) {
-
-                    if (session.uid > 0) {
-                        session.packages = PackageCache[session.uid]
-                    } else if (session.uid == 0) {
-                        session.packages = listOf("root")
-                    }
-
-                    Logs.d(
-                        "Accepted udp connection from ${session.packages?.joinToString() ?: "unknown"} (${session.uid}): ${localIp.hostAddress}:$localPort ==> ${remoteIp.hostAddress}:$remotePort"
-                    )
-
-                }
-            } else if (tun.enableLog) {
-                Logs.d(
-                    "Accepted udp connection ${localIp.hostAddress}:$localPort ==> ${remoteIp.hostAddress}:$remotePort"
-                )
+        val session = synchronized(udpSessions) {
+            var session = udpSessions[localPort]
+            if (session != null && (session.remotePort != remotePort || session.remoteIp != remoteIp)) {
+                udpSessions.remove(localPort)
+                session.destroy()
+                session = null
             }
 
-            session.connect()
+            if (session == null) {
+                session = UdpSession(udpHeader)
+                session.connect()
+
+                udpSessions.put(localPort, session)
+
+                if (tun.dumpUid) {
+
+                    session.uid = tun.uidDumper.dumpUid(
+                        ipHeader is DirectIPv6Header,
+                        true,
+                        InetSocketAddress(localIp, localPort),
+                        InetSocketAddress(remoteIp, remotePort)
+                    )
+
+                    if (tun.enableLog) {
+
+                        if (session.uid > 0) {
+                            session.packages = PackageCache[session.uid]
+                        } else if (session.uid == 0) {
+                            session.packages = listOf("root")
+                        }
+
+                        Logs.d(
+                            "Accepted udp connection from ${session.packages?.joinToString() ?: "unknown"} (${session.uid}): ${localIp.hostAddress}:$localPort ==> ${remoteIp.hostAddress}:$remotePort"
+                        )
+
+                    }
+                } else if (tun.enableLog) {
+                    Logs.d(
+                        "Accepted udp connection ${localIp.hostAddress}:$localPort ==> ${remoteIp.hostAddress}:$remotePort"
+                    )
+                }
+            }
+            session
         }
 
 
         val data = udpHeader.data().retain()
         val message: Any = if (session.isDns) DatagramPacket(
-            data, InetSocketAddress(
-                LOCALHOST, tun.dnsPort
-            )
+            data, localDnsAddress
         ) else DefaultSocks5UdpMessage(
             (0).toByte(),
             if (ipHeader is DirectIPv4Header) Socks5AddressType.IPv4 else Socks5AddressType.IPv6,
@@ -121,18 +125,20 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
             data
         )
 
-        if (session.channelFuture.isSuccess) {
-            session.channelFuture.channel().writeAndFlush(message)
-        } else session.channelFuture.addListener(object : GenericFutureListener<Future<Void>> {
-            override fun operationComplete(future: Future<Void>) {
-                if (!future.isSuccess && tun.enableLog) {
-                    Logs.w(future.cause())
-                    return
-                }
-                session.channelFuture.removeListener(this)
-                session.channelFuture.channel().writeAndFlush(message)
+        if (tun.enableLog) if (session.isDns) {
+            val dnsMessage = data.duplicate()
+            val query = DnsParser.parseDnsQuery(localDnsAddress, dnsMessage)
+
+            try {
+                Logs.d("DNS send: ${DnsParser.formatDnsMessage(query)}")
+            } catch (e: Exception) {
+                Logs.d("Parse dns failed", e)
             }
-        })
+        } else {
+            Logs.d("UDP send ${data.readableBytes()}")
+        }
+
+        session.channelFuture.sync().channel().writeAndFlush(message)
     }
 
     inner class UdpSession(val udpHeader: DirectUdpHeader) : ChannelInboundHandlerAdapter() {
@@ -198,14 +204,23 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
 
         override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
             when (msg) {
-                is Socks5UdpMessage -> sendResponse(msg.data())
-                is DatagramPacket -> sendResponse(msg.content())
-                is ByteBuf -> sendResponse(msg)
+                is Socks5UdpMessage -> sendResponse(ctx, msg.data())
+                is DatagramPacket -> sendResponse(ctx, msg.content())
+                is ByteBuf -> sendResponse(ctx, msg)
             }
             ReferenceCountUtil.release(msg)
         }
 
-        fun sendResponse(rawData: ByteBuf) {
+        fun sendResponse(ctx: ChannelHandlerContext, rawData: ByteBuf) {
+
+            if (tun.enableLog) if (isDns) {
+                val dnsMessage = rawData.duplicate()
+                val response = DnsParser.parseDnsResponse(localDnsAddress, dnsMessage)
+                Logs.d("DNS received $response")
+            } else {
+                Logs.d("UDP received ${rawData.readableBytes()}")
+            }
+
             /* val data = if (isDns) {
                  Logs.d("DNS Response ${rawData.readableBytes()}B")
                  rawData.slice(
@@ -245,7 +260,7 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
             tun.write(packet, packetSize)
             packet.release()
 
-            if (isDns) udpSessions.remove(localPort)
+            //if (isDns) udpSessions.remove(localPort)
         }
 
         override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {

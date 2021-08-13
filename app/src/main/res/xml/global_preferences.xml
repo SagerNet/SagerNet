@@ -89,11 +89,6 @@
             app:key="vpnMode"
             app:title="@string/vpn_mode"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_fast_forward_24"
-            app:key="multiThreadForward"
-            app:summary="@string/multi_thread_forwarding_sum"
-            app:title="@string/multi_thread_forwarding" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/icmp_echo_strategy"

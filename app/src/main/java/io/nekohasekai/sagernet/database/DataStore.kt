@@ -194,7 +194,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var vpnMode by configurationStore.stringToInt(Key.VPN_MODE)
-    var multiThreadForward by configurationStore.boolean(Key.MULTI_THREAD_FORWARD)
     var icmpEchoStrategy by configurationStore.stringToInt(Key.ICMP_ECHO_STRATEGY)
     var icmpEchoReplyDelay by configurationStore.stringToLong(Key.ICMP_ECHO_REPLY_DELAY) { 50 }
     var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY) { PacketStrategy.DIRECT }

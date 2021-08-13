@@ -161,8 +161,6 @@
     <string name="ip_other_strategy">Annen internettprotokollstrategi</string>
     <string name="icmp_echo_reply_delay">ICMP Echo- svarforsinkelse</string>
     <string name="icmp_echo_strategy">ICMP Echo Strategi</string>
-    <string name="multi_thread_forwarding_sum">Videresend TCP/IP -pakker med Kotlin coroutine, som bruker mer CPU og bare er egnet for tilfeller med høy trafikk</string>
-    <string name="multi_thread_forwarding">Samtidig videresending</string>
     <string name="vpn_mode_forwarding">Innfødt videresending</string>
     <string name="append_http_proxy_sum">HTTP -proxy brukes direkte fra (nettleser/ noen støttede apper), uten å gå gjennom den virtuelle NIC -enheten (Android 10+)</string>
     <string name="append_http_proxy">Legg til HTTP -proxy til VPN</string>

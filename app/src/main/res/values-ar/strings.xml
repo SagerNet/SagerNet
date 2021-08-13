@@ -293,8 +293,6 @@
     <string name="ip_other_strategy">إستراتيجية بروتوكول الإنترنت الأخرى</string>
     <string name="icmp_echo_reply_delay">ICMP صدى تأخير الرد</string>
     <string name="icmp_echo_strategy">إستراتيجية صدى ICMP</string>
-    <string name="multi_thread_forwarding_sum">حزم TCP/IP للأمام باستخدام كوروتين Kotlin، والذي يستخدم المزيد من وحدة المعالجة المركزية وهو مناسب فقط لحالات المرور المرتفعة</string>
-    <string name="multi_thread_forwarding">الإرسال المتزامن</string>
     <string name="vpn_mode_forwarding">أرسل محليًا</string>
     <string name="vpn_mode">وضع VPN</string>
     <string name="vpn_settings">إعدادات VPN</string>

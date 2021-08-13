@@ -311,8 +311,6 @@
     <string name="vpn_settings">VPN 設定</string>
     <string name="vpn_mode">VPN 模式</string>
     <string name="vpn_mode_forwarding">原生轉傳</string>
-    <string name="multi_thread_forwarding">並行轉傳</string>
-    <string name="multi_thread_forwarding_sum">使用 Kotlin 協程轉傳 TCP/IP 封包，使用更多 CPU 並僅適用於大流量場景</string>
     <string name="icmp_echo_strategy">ICMP Echo 策略</string>
     <string name="icmp_echo_reply_delay">ICMP Echo 回應延時</string>
     <string name="ip_other_strategy">其他網路協議策略</string>

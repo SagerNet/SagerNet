@@ -150,8 +150,6 @@
     <string name="ip_other_strategy">سایر استراتژی های پروتکل اینترنت</string>
     <string name="icmp_echo_reply_delay">تأخیر در پاسخ اکو ICMP</string>
     <string name="icmp_echo_strategy">استراتژی اکو ICMP</string>
-    <string name="multi_thread_forwarding_sum">ارسال بسته های TCP/IP با استفاده از کاتلین کوروتین، که از CPU بیشتری استفاده می کند و فقط برای مواردِ با ترافیک بالا مناسب است</string>
-    <string name="multi_thread_forwarding">ارسال همزمان</string>
     <string name="vpn_mode_forwarding">ارسال محلی</string>
     <string name="vpn_mode">حالت VPN</string>
     <string name="vpn_settings">تنظیمات VPN</string>
