@@ -560,6 +560,7 @@
     <string-array name="vpn_mode">
         <item>Tun2socks</item>
         <item>@string/vpn_mode_forwarding</item>
+        <item>go-tun2socks</item>
     </string-array>
 
     <string-array name="icmp_echo_strategy">

@@ -397,7 +397,6 @@ fun buildV2RayConfig(
 
         var rootBalancer: RoutingObject.RuleObject? = null
 
-        val utlsFingerprint = DataStore.utlsFingerprint
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
@@ -496,12 +495,9 @@ fun buildV2RayConfig(
                                     network = "tcp"
                                     if (bean.tls) {
                                         security = "tls"
-                                        tlsSettings = TLSObject().apply {
-                                            if (bean.sni.isNotBlank()) {
+                                        if (bean.sni.isNotBlank()) {
+                                            tlsSettings = TLSObject().apply {
                                                 serverName = bean.sni
-                                            }
-                                            if (utlsFingerprint.isNotBlank()) {
-                                                fingerprint = utlsFingerprint
                                             }
                                         }
                                     }
@@ -535,12 +531,9 @@ fun buildV2RayConfig(
                                     network = "tcp"
                                     if (bean.tls) {
                                         security = "tls"
-                                        tlsSettings = TLSObject().apply {
-                                            if (bean.sni.isNotBlank()) {
+                                        if (bean.sni.isNotBlank()) {
+                                            tlsSettings = TLSObject().apply {
                                                 serverName = bean.sni
-                                            }
-                                            if (utlsFingerprint.isNotBlank()) {
-                                                fingerprint = utlsFingerprint
                                             }
                                         }
                                     }
@@ -632,10 +625,6 @@ fun buildV2RayConfig(
 
                                         if (bean.allowInsecure) {
                                             allowInsecure = true
-                                        }
-
-                                        if (utlsFingerprint.isNotBlank()) {
-                                            fingerprint = utlsFingerprint
                                         }
                                     }
                                 }
@@ -785,9 +774,6 @@ fun buildV2RayConfig(
                                     }
                                     if (bean.alpn.isNotBlank()) {
                                         alpn = bean.alpn.split("\n")
-                                    }
-                                    if (utlsFingerprint.isNotBlank()) {
-                                        fingerprint = utlsFingerprint
                                     }
                                 }
                                 if (needKeepAliveInterval) {

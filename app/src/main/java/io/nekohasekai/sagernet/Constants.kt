@@ -210,6 +210,7 @@ object IPv6Mode {
 object VpnMode {
     const val TUN2SOCKS = 0
     const val EXPERIMENTAL_FORWARDING = 1
+    const val GO_TUN2SOCKS = 2
 }
 
 object PacketStrategy {
