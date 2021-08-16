@@ -369,6 +369,9 @@ data class ProxyEntity(
         if (bean.plugin.isNotBlank()) {
             val plugin = PluginConfiguration(bean.plugin)
             if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
+            if (plugin.selected == "v2ray-plugin") {
+                if (plugin.getOptions()["mode"] != "websocket") return false
+            }
             try {
                 PluginManager.init(plugin)
             } catch (e: Exception) {

@@ -33,19 +33,28 @@ class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : Abstract
     lateinit var point: ShadowsocksInstance
 
     override fun launch() {
-        val plugin = PluginConfiguration(server.plugin)
-        val options = plugin.getOptions()
+        var pluginName = ""
         val pluginOpts = JSONObject()
-        when (plugin.selected) {
-            "obfs-local" -> {
-                pluginOpts["mode"] = options["obfs"]
-                pluginOpts["host"] = options["obfs-host"]
-            }
-            "v2ray-plugin" -> {
-                pluginOpts["mode"] = options["mode"]
-                pluginOpts["host"] = options["host"]
-                pluginOpts["tls"] = options["tls"]
-                pluginOpts["mux"] = options["mux"]
+
+        if (server.plugin.isNotBlank()) {
+            val plugin = PluginConfiguration(server.plugin)
+            pluginName = plugin.selected
+            val options = plugin.getOptions()
+            when (pluginName) {
+                "obfs-local" -> {
+                    pluginOpts["mode"] = options["obfs"]
+                    pluginOpts["host"] = options["obfs-host"]
+                }
+                "v2ray-plugin" -> {
+                    pluginOpts["mode"] = options["mode"]
+                    pluginOpts["host"] = options["host"]
+                    if (options.containsKey("tls")) {
+                        pluginOpts["tls"] = true
+                    }
+                    if (options.containsKey("mux")) {
+                        pluginOpts["mux"] = true
+                    }
+                }
             }
         }
 
@@ -55,7 +64,7 @@ class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : Abstract
             server.finalPort.toLong(),
             server.password,
             server.method,
-            plugin.selected,
+            pluginName,
             pluginOpts.toStringPretty()
         )
         point.start()
