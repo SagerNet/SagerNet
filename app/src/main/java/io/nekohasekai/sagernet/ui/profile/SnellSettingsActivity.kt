@@ -23,69 +23,49 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
-import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
-import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.snell.SnellBean
 
-class SocksSettingsActivity : ProfileSettingsActivity<SOCKSBean>() {
+class SnellSettingsActivity : ProfileSettingsActivity<SnellBean>() {
 
-    override fun createEntity() = SOCKSBean()
+    override fun createEntity() = SnellBean()
 
-    override fun SOCKSBean.init() {
+    override fun SnellBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
-
-        DataStore.serverProtocolVersion = protocol
-        DataStore.serverUsername = username
-        DataStore.serverPassword = password
-        DataStore.serverTLS = tls
-        DataStore.serverSNI = sni
+        DataStore.serverPassword = psk
+        DataStore.serverProtocolVersion = version
+        DataStore.serverObfs = obfsMode
+        DataStore.serverProtocolParam = obfsHost
     }
 
-    override fun SOCKSBean.serialize() {
+    override fun SnellBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
-
-        protocol = DataStore.serverProtocolVersion
-        username = DataStore.serverUsername
-        password = DataStore.serverPassword
-        tls = DataStore.serverTLS
-        sni = DataStore.serverSNI
+        psk = DataStore.serverPassword
+        version = DataStore.serverProtocolVersion
+        obfsMode = DataStore.serverObfs
+        obfsHost = DataStore.serverObfsParam
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.socks_preferences)
+        addPreferencesFromResource(R.xml.snell_preferences)
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
-        val password = findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
+        findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
-        val protocol = findPreference<SimpleMenuPreference>(Key.SERVER_PROTOCOL)!!
-        val useTls = findPreference<SwitchPreference>(Key.SERVER_TLS)!!
-        val sni = findPreference<EditTextPreference>(Key.SERVER_SNI)!!
 
-        fun updateProtocol(version: Int) {
-            password.isVisible = version == SOCKSBean.PROTOCOL_SOCKS5
-            useTls.isVisible = version == SOCKSBean.PROTOCOL_SOCKS5
-            sni.isVisible = version == SOCKSBean.PROTOCOL_SOCKS5
-        }
-
-        updateProtocol(DataStore.serverProtocolVersion)
-        protocol.setOnPreferenceChangeListener { _, newValue ->
-            updateProtocol((newValue as String).toInt())
-            true
-        }
     }
 
 }

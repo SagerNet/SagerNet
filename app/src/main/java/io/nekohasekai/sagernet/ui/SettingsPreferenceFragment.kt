@@ -199,6 +199,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val providerTrojan = findPreference<SimpleMenuPreference>(Key.PROVIDER_TROJAN)!!
         val providerShadowsocksAEAD = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_AEAD)!!
+        val providerShadowsocksStream = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_STREAM)!!
 
         if (!isExpert) {
             providerTrojan.setEntries(R.array.trojan_provider)
@@ -268,6 +269,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
+        providerShadowsocksStream.onPreferenceChangeListener = reloadListener
         utlsFingerprint.onPreferenceChangeListener = reloadListener
 
     }

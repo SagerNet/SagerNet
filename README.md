@@ -24,6 +24,7 @@ The application is designed to be used whenever possible.
 * VMess
 * VLESS
 * Trojan
+* Snell
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy ( naive-plugin )
 * relaybaton ( relaybaton-plugin )

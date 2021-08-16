@@ -19,36 +19,31 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.github.shadowsocks.plugin
+package io.nekohasekai.sagernet.bg.proto
 
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.widget.Toast
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.fmt.snell.SnellBean
+import kotlinx.coroutines.CoroutineScope
+import libcore.SnellInstance
 
-class PluginList : ArrayList<Plugin>() {
-    init {
-        add(NoPlugin)
-        add(InternalPlugin.SIMPLE_OBFS)
-        add(InternalPlugin.V2RAY_PLUGIN)
-        addAll(SagerNet.application.packageManager.queryIntentContentProviders(
-                Intent(PluginContract.ACTION_NATIVE_PLUGIN), PackageManager.GET_META_DATA)
-                .filter { it.providerInfo.exported }.map { NativePlugin(it) })
+class SnellInstance(val server: SnellBean, val port: Int) : AbstractInstance {
+
+    lateinit var point: SnellInstance
+
+    override fun launch() {
+        point = SnellInstance(
+            port.toLong(),
+            server.finalAddress,
+            server.finalPort.toLong(),
+            server.psk,
+            server.obfsMode,
+            server.obfsHost,
+            server.version.toLong()
+        )
+        point.start()
     }
 
-    val lookup = mutableMapOf<String, Plugin>().apply {
-        for (plugin in this@PluginList) {
-            fun check(old: Plugin?) {
-                // skip check
-                /*if (old != null && old !== plugin) {
-                    val packages = this@PluginList.filter { it.id == plugin.id }.joinToString { it.packageName }
-                    val message = "Conflicting plugins found from: $packages"
-                    Toast.makeText(SagerNet.application, message, Toast.LENGTH_LONG).show()
-                    throw IllegalStateException(message)
-                }*/
-            }
-            check(put(plugin.id, plugin))
-            for (alias in plugin.idAliases) check(put(alias, plugin))
-        }
+    override fun destroy(scope: CoroutineScope) {
+        if (::point.isInitialized) point.close()
     }
 }

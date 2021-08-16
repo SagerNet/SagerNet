@@ -95,6 +95,7 @@ object Key {
 
     const val PROVIDER_TROJAN = "providerTrojan"
     const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
+    const val PROVIDER_SS_STREAM = "providerShadowsocksStream"
 
     const val UTLS_FINGERPRINT = "utlsFingerprint"
     const val TUN_IMPLEMENTATION = "tunImplementation"
@@ -199,6 +200,12 @@ object TrojanProvider {
 object ShadowsocksAEADProvider {
     const val V2RAY = 0
     const val SHADOWSOCKS_RUST = 1
+    const val CLASH = 2
+}
+
+object ShadowsocksStreamProvider {
+    const val SHADOWSOCKS_RUST = 0
+    const val CLASH = 1
 }
 
 object IPv6Mode {

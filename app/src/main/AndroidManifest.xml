@@ -172,6 +172,9 @@
             android:name="io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity"
             android:configChanges="uiMode" />
         <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.SnellSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity"
             android:configChanges="uiMode" />
         <activity

@@ -26,8 +26,11 @@ import android.content.Intent
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
+import com.github.shadowsocks.plugin.PluginConfiguration
+import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ShadowsocksAEADProvider
+import io.nekohasekai.sagernet.ShadowsocksStreamProvider
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -48,13 +51,11 @@ import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
 import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
-import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
-import io.nekohasekai.sagernet.fmt.shadowsocks.methodsV2fly
-import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
+import io.nekohasekai.sagernet.fmt.shadowsocks.*
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
+import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.toUniversalLink
@@ -99,6 +100,7 @@ data class ProxyEntity(
     var rbBean: RelayBatonBean? = null,
     var brookBean: BrookBean? = null,
     var hysteriaBean: HysteriaBean? = null,
+    var snellBean: SnellBean? = null,
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
     var balancerBean: BalancerBean? = null
@@ -118,6 +120,7 @@ data class ProxyEntity(
         const val TYPE_RELAY_BATON = 11
         const val TYPE_BROOK = 12
         const val TYPE_HYSTERIA = 15
+        const val TYPE_SNELL = 16
 
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14
@@ -178,6 +181,7 @@ data class ProxyEntity(
             TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
             TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
+            TYPE_SNELL -> snellBean = KryoConverters.snellDeserialize(byteArray)
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_BALANCER -> balancerBean = KryoConverters.balancerBeanDeserialize(byteArray)
@@ -211,6 +215,7 @@ data class ProxyEntity(
         TYPE_RELAY_BATON -> "relaybaton"
         TYPE_BROOK -> "Brook"
         TYPE_HYSTERIA -> "Hysteria"
+        TYPE_SNELL -> "Snell"
         TYPE_CHAIN -> chainName
         TYPE_CONFIG -> configName
         TYPE_BALANCER -> balancerName
@@ -235,6 +240,7 @@ data class ProxyEntity(
             TYPE_RELAY_BATON -> rbBean
             TYPE_BROOK -> brookBean
             TYPE_HYSTERIA -> hysteriaBean
+            TYPE_SNELL -> snellBean
 
             TYPE_CONFIG -> configBean
             TYPE_CHAIN -> chainBean
@@ -268,6 +274,7 @@ data class ProxyEntity(
             is BrookBean -> toUniversalLink()
             is ConfigBean -> toUniversalLink()
             is HysteriaBean -> toUniversalLink()
+            is SnellBean -> toUniversalLink()
             else -> null
         }
     }
@@ -357,6 +364,24 @@ data class ProxyEntity(
         }
     }
 
+    fun useClashShadowsocks(): Boolean {
+        val bean = ssBean ?: return false
+        if (bean.method in methodsClash && DataStore.providerShadowsocksAEAD != ShadowsocksAEADProvider.CLASH) {
+            return false
+        }
+        if (DataStore.providerShadowsocksStream == ShadowsocksStreamProvider.CLASH) {
+            return true
+        }
+        val plugin = PluginConfiguration(bean.plugin)
+        if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
+        try {
+            PluginManager.init(plugin)
+            return false
+        } catch (e: Exception) {
+        }
+        return true
+    }
+
     fun useExternalShadowsocks(): Boolean {
         val bean = ssBean ?: return false
         if (DataStore.providerShadowsocksAEAD == ShadowsocksAEADProvider.SHADOWSOCKS_RUST) return true
@@ -440,6 +465,10 @@ data class ProxyEntity(
                 type = TYPE_HYSTERIA
                 hysteriaBean = bean
             }
+            is SnellBean -> {
+                type = TYPE_SNELL
+                snellBean = bean
+            }
             is ConfigBean -> {
                 type = TYPE_CONFIG
                 configBean = bean
@@ -473,6 +502,7 @@ data class ProxyEntity(
                 TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
                 TYPE_BROOK -> BrookSettingsActivity::class.java
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
+                TYPE_SNELL -> SnellSettingsActivity::class.java
 
                 TYPE_CONFIG -> ConfigSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java

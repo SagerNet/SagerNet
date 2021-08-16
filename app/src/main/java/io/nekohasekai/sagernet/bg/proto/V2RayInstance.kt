@@ -72,6 +72,7 @@ import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
@@ -134,6 +135,9 @@ abstract class V2RayInstance(
                 val bean = profile.requireBean()
 
                 when {
+                    profile.useClashShadowsocks() -> {
+                        externalInstances[port] = ShadowsocksInstance(bean as ShadowsocksBean, port)
+                    }
                     profile.useExternalShadowsocks() -> {
                         bean as ShadowsocksBean
                         pluginConfigs[port] = profile.type to bean.buildShadowsocksConfig(port)
@@ -200,6 +204,9 @@ abstract class V2RayInstance(
                             eventLoopGroup, bean, port, dnsResolverIPv4Only
                         )
                     }
+                    bean is SnellBean -> {
+                        externalInstances[port] = SnellInstance(bean, port)
+                    }
                 }
             }
         }
@@ -229,6 +236,9 @@ abstract class V2RayInstance(
                 val config = pluginConfigs[port]?.second ?: ""
 
                 when {
+                    externalInstances.containsKey(port) -> {
+                        externalInstances[port]!!.launch()
+                    }
                     profile.useExternalShadowsocks() -> {
                         val configFile = File(
                             context.noBackupFilesDir,
@@ -248,9 +258,6 @@ abstract class V2RayInstance(
                         if (DataStore.enableLog) commands.add("-v")
 
                         processes.start(commands)
-                    }
-                    bean is ShadowsocksRBean -> {
-                        externalInstances[port]!!.launch()
                     }
                     bean is TrojanBean -> {
                         val configFile = File(
@@ -404,9 +411,6 @@ abstract class V2RayInstance(
                         )
 
                         processes.start(commands)
-                    }
-                    bean is ConfigBean || bean is SOCKSBean -> {
-                        externalInstances[port]!!.launch()
                     }
                 }
             }

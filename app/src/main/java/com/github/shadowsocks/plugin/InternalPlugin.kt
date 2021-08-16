@@ -21,34 +21,9 @@
 
 package com.github.shadowsocks.plugin
 
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.widget.Toast
-import io.nekohasekai.sagernet.SagerNet
-
-class PluginList : ArrayList<Plugin>() {
-    init {
-        add(NoPlugin)
-        add(InternalPlugin.SIMPLE_OBFS)
-        add(InternalPlugin.V2RAY_PLUGIN)
-        addAll(SagerNet.application.packageManager.queryIntentContentProviders(
-                Intent(PluginContract.ACTION_NATIVE_PLUGIN), PackageManager.GET_META_DATA)
-                .filter { it.providerInfo.exported }.map { NativePlugin(it) })
-    }
-
-    val lookup = mutableMapOf<String, Plugin>().apply {
-        for (plugin in this@PluginList) {
-            fun check(old: Plugin?) {
-                // skip check
-                /*if (old != null && old !== plugin) {
-                    val packages = this@PluginList.filter { it.id == plugin.id }.joinToString { it.packageName }
-                    val message = "Conflicting plugins found from: $packages"
-                    Toast.makeText(SagerNet.application, message, Toast.LENGTH_LONG).show()
-                    throw IllegalStateException(message)
-                }*/
-            }
-            check(put(plugin.id, plugin))
-            for (alias in plugin.idAliases) check(put(alias, plugin))
-        }
+class InternalPlugin(override val id: String, override val label: CharSequence) : Plugin() {
+    companion object {
+        val SIMPLE_OBFS = InternalPlugin("obfs-local", "Simple Obfs (Internal)")
+        val V2RAY_PLUGIN = InternalPlugin("v2ray-plugin", "V2Ray Plugin (Internal)")
     }
 }

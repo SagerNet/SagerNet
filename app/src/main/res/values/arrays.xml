@@ -598,6 +598,12 @@
     <string-array name="ss_aead_provider">
         <item>V2Ray</item>
         <item>shadowsocks-rust</item>
+        <item>Clash</item>
+    </string-array>
+
+    <string-array name="ss_stream_provider">
+        <item>shadowsocks-rust</item>
+        <item>Clash</item>
     </string-array>
 
     <string-array name="group_types">
@@ -643,6 +649,16 @@
         <item>BADVPN</item>
         <item>LWIP</item>
         <item>GVISOR</item>
+    </string-array>
+
+    <string-array name="snell_versions">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="simple_obfs">
+        <item>http</item>
+        <item>tls</item>
     </string-array>
 
 </resources>

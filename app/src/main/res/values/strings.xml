@@ -214,6 +214,7 @@
     <string name="action_relay_baton" translatable="false">RelayBaton</string>
     <string name="action_brook" translatable="false">Brook</string>
     <string name="action_hysteria" translatable="false">Hysteria</string>
+    <string name="action_snell" translatable="false">Snell</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -342,6 +343,7 @@
     <string name="protocol_settings">Protocol Settings</string>
     <string name="trojan_provider">Trojan Provider</string>
     <string name="ss_aead_provider">Shadowsocks AEAD Provider</string>
+    <string name="ss_stream_provider">Shadowsocks Stream Provider</string>
     <string name="group_basic">Basic</string>
     <string name="group_settings">Group Settings</string>
     <string name="subscription">Subscription</string>

@@ -28,7 +28,7 @@ import libcore.ShadowsocksRInstance
 
 class ShadowsocksRInstance(val server: ShadowsocksRBean, val port: Int) : AbstractInstance {
 
-    lateinit var point: libcore.ShadowsocksRInstance
+    lateinit var point: ShadowsocksRInstance
 
     override fun launch() {
         point = ShadowsocksRInstance(

@@ -205,6 +205,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var providerTrojan by configurationStore.stringToInt(Key.PROVIDER_TROJAN)
     var providerShadowsocksAEAD by configurationStore.stringToInt(Key.PROVIDER_SS_AEAD)
+    var providerShadowsocksStream by configurationStore.stringToInt(Key.PROVIDER_SS_STREAM)
 
     // cache
 
@@ -252,7 +253,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverUploadSpeed by profileCacheStore.stringToInt(Key.SERVER_UPLOAD_SPEED)
     var serverDownloadSpeed by profileCacheStore.stringToInt(Key.SERVER_DOWNLOAD_SPEED)
 
-    var serverSocksVersion by profileCacheStore.stringToInt(Key.SERVER_PROTOCOL)
+    var serverProtocolVersion by profileCacheStore.stringToInt(Key.SERVER_PROTOCOL)
 
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
