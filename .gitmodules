@@ -4,9 +4,6 @@
 [submodule "library/core/src/main/jni/libancillary"]
 	path = library/core/src/main/jni/libancillary
 	url = https://github.com/shadowsocks/libancillary
-[submodule "library/v2ray"]
-	path = library/v2ray
-	url = https://github.com/SagerNet/AndroidLibV2rayLite
 [submodule "library/shadowsocks/src/main/rust/shadowsocks-rust"]
 	path = library/shadowsocks/src/main/rust/shadowsocks-rust
 	url = https://github.com/shadowsocks/shadowsocks-rust.git
@@ -67,3 +64,6 @@
 [submodule "plugin/hysteria/src/main/go/hysteria"]
 	path = plugin/hysteria/src/main/go/hysteria
 	url = https://github.com/HyNetwork/hysteria
+[submodule "library/libcore"]
+	path = library/libcore
+	url = https://github.com/SagerNet/LibSagerNetCore

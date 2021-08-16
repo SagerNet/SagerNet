@@ -35,9 +35,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.*
-import libv2ray.Libv2ray
-import org.tukaani.xz.XZInputStream
-import java.io.File
+import libcore.Libcore
 import java.io.IOException
 
 class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : V2RayInstance(
@@ -54,51 +52,12 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
     override fun initInstance() {
         if (service is VpnService) {
-            v2rayPoint = Libv2ray.newV2RayPoint(SagerSupportSet(service), false)
-        } else {
-            super.initInstance()
+            Libcore.setProtector { service.protect(it.toInt()) }
         }
-    }
-
-    companion object {
-        private var assetsChecked = false
+        super.initInstance()
     }
 
     override fun init() {
-        if (!assetsChecked) {
-            val geoip = File(app.externalAssets, "geoip.dat")
-            val geoipVersion = File(app.externalAssets, "geoip.version.txt")
-            val geoipVersionInternal = app.assets.open("v2ray/geoip.version.txt")
-                .use { it.bufferedReader().readText() }
-            if (!geoip.isFile || DataStore.rulesProvider == 0 && geoipVersion.isFile && geoipVersionInternal.toLong() > geoipVersion.readText()
-                    .toLongOrNull() ?: -1L
-            ) {
-                XZInputStream(app.assets.open("v2ray/geoip.dat.xz")).use { input ->
-                    geoip.outputStream().use {
-                        input.copyTo(it)
-                    }
-                }
-                geoipVersion.writeText(geoipVersionInternal)
-            }
-
-            val geosite = File(app.externalAssets, "geosite.dat")
-            val geositeVersion = File(app.externalAssets, "geosite.version.txt")
-            val geositeVersionInternal = app.assets.open("v2ray/geosite.version.txt")
-                .use { it.bufferedReader().readText() }
-            if (!geosite.isFile || DataStore.rulesProvider == 0 && geositeVersion.isFile && geositeVersionInternal.toLong() > geositeVersion.readText()
-                    .toLongOrNull() ?: -1L
-            ) {
-                XZInputStream(app.assets.open("v2ray/geosite.dat.xz")).use { input ->
-                    geosite.outputStream().use {
-                        input.copyTo(it)
-                    }
-                }
-                geositeVersion.writeText(geositeVersionInternal)
-            }
-
-            assetsChecked = true
-        }
-
         super.init()
 
         Logs.d(config.config)

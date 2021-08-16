@@ -13,21 +13,21 @@ on:
       - dev
 
 jobs:
-  v2ray:
-    name: Native Build (V2Ray)
+  libcore:
+    name: Native Build (LibCore)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status library/v2ray > v2ray_status
-      - name: V2Ray Cache
+        run: git submodule status library/libcore > libcore_status
+      - name: LibCore Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: |
-            app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
+            app/libs/libcore.aar
+          key: ${{ hashFiles('bin/lib/core/*', 'libcore_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -35,7 +35,7 @@ jobs:
           go-version: 1.16
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run lib v2ray
+        run: ./run lib core
   trojan-go:
     name: Native Build (Trojan-Go)
     runs-on: ubuntu-latest
@@ -247,7 +247,7 @@ jobs:
     name: Gradle Build
     runs-on: ubuntu-latest
     needs:
-      - v2ray
+      - libcore
       - shadowsocks
       - shadowsocksr
     steps:
@@ -257,13 +257,13 @@ jobs:
         run: |
           git submodule status 'library/shadowsocks/*' > shadowsocks_status
           git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
-          git submodule status library/v2ray > v2ray_status
-      - name: V2Ray Cache
+          git submodule status library/libcore > libcore_status
+      - name: LibCore Cache
         uses: actions/cache@v2
         with:
           path: |
-            app/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/lib/v2ray/*', 'v2ray_status') }}
+            app/libs/libcore.aar
+          key: ${{ hashFiles('bin/lib/core/*', 'libcore_status') }}
       - name: Shadowsocks Cache
         uses: actions/cache@v2
         with:

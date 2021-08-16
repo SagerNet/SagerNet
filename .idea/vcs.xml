@@ -14,6 +14,7 @@
     <mapping directory="$PROJECT_DIR$/external/v2ray-core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/badvpn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/libancillary" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/library/libcore" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/libsodium" vcs="Git" />
@@ -21,13 +22,11 @@
     <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/pcre" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/re2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/shadowsocks-libev" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/v2ray" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/brook/src/main/go/brook" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/hysteria/src/main/go/hysteria" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/naive/src/main/jni/naiveproxy" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/pingtunnel/src/main/go/pingtunnel" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/relaybaton/src/main/go/relaybaton" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/plugin/trojan-go/src/main/go/trojan-go" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan/src/main/cpp/igniter-libs" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan/src/main/cpp/trojan" vcs="Git" />
   </component>

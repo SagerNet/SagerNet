@@ -27,7 +27,6 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.bg.socks.Socks4To5Instance
@@ -66,9 +65,7 @@ import io.netty.resolver.dns.PackagePrivateBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import libv2ray.Libv2ray
-import libv2ray.V2RayPoint
-import libv2ray.V2RayVPNServiceSupportsSet
+import libcore.V2RayInstance
 import java.io.File
 import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicBoolean
@@ -79,7 +76,7 @@ abstract class V2RayInstance(
 
     abstract val eventLoopGroup: EventLoopGroup
     lateinit var config: V2rayBuildResult
-    lateinit var v2rayPoint: V2RayPoint
+    lateinit var v2rayPoint: V2RayInstance
     private lateinit var wsForwarder: WebView
 
     val pluginPath = hashMapOf<String, PluginManager.InitResult>()
@@ -97,7 +94,7 @@ abstract class V2RayInstance(
     }
 
     protected open fun initInstance() {
-        v2rayPoint = Libv2ray.newV2RayPoint(NoSupportSet(), false)
+        v2rayPoint = V2RayInstance()
     }
 
     protected open fun buildConfig() {
@@ -107,7 +104,6 @@ abstract class V2RayInstance(
     open fun init() {
         initInstance()
         buildConfig()
-        v2rayPoint.domainName = "$LOCALHOST:11451"
         for ((isBalancer, chain) in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val needChain = !isBalancer && index != chain.size - 1
@@ -169,7 +165,7 @@ abstract class V2RayInstance(
                             }
                             else -> {
                                 externalInstances[port] = ExternalInstance(
-                                    v2rayPoint.supportSet, profile, port, eventLoopGroup
+                                    profile, port, eventLoopGroup
                                 ).apply {
                                     init()
                                 }
@@ -185,7 +181,7 @@ abstract class V2RayInstance(
             }
         }
 
-        v2rayPoint.configureFileContent = config.config
+        v2rayPoint.loadConfig(config.config)
     }
 
     private val dnsResolverIPv4Only by lazy {
@@ -416,7 +412,7 @@ abstract class V2RayInstance(
             }
         }
 
-        v2rayPoint.runLoop(DataStore.ipv6Mode >= IPv6Mode.PREFER)
+        v2rayPoint.start()
 
         if (config.requireWs) {
             val url = "http://$LOCALHOST:" + (config.wsPort) + "/"
@@ -470,31 +466,12 @@ abstract class V2RayInstance(
         }
 
         if (::v2rayPoint.isInitialized) {
-            v2rayPoint.stopLoop()
+            v2rayPoint.close()
         }
 
         for (instance in externalInstances.values) {
             instance.destroy(scope)
         }
     }
-
-    private class NoSupportSet : V2RayVPNServiceSupportsSet {
-        override fun onEmitStatus(status: String) {
-            Logs.i("onEmitStatus $status")
-        }
-
-        override fun protect(fd: Long) = true
-    }
-
-    class SagerSupportSet(val service: VpnService) : V2RayVPNServiceSupportsSet {
-        override fun onEmitStatus(status: String) {
-            Logs.i("onEmitStatus $status")
-        }
-
-        override fun protect(fd: Long): Boolean {
-            return service.protect(fd.toInt())
-        }
-    }
-
 
 }
