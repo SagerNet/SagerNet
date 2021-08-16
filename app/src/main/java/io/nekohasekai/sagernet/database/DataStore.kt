@@ -198,6 +198,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var icmpEchoReplyDelay by configurationStore.stringToLong(Key.ICMP_ECHO_REPLY_DELAY) { 50 }
     var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY) { PacketStrategy.DIRECT }
 
+    var utlsFingerprint by configurationStore.string(Key.UTLS_FINGERPRINT)
+
     // protocol
 
     var providerTrojan by configurationStore.stringToInt(Key.PROVIDER_TROJAN)

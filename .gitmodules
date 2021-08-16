@@ -48,7 +48,7 @@
 	url = https://github.com/SagerNet/preferencex-android
 [submodule "external/v2ray-core"]
 	path = external/v2ray-core
-	url = https://github.com/v2fly/v2ray-core
+	url = https://github.com/SagerNet/v2ray-core
 [submodule "plugin/trojan/src/main/cpp/igniter-libs"]
 	path = plugin/trojan/src/main/cpp/igniter-libs
 	url = https://github.com/trojan-gfw/igniter-libs

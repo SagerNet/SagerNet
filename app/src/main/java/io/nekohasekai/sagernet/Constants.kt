@@ -96,6 +96,8 @@ object Key {
     const val PROVIDER_TROJAN = "providerTrojan"
     const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
 
+    const val UTLS_FINGERPRINT = "utlsFingerprint"
+
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
     const val PROFILE_NAME = "profileName"

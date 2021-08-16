@@ -33,7 +33,7 @@ import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 val methodsV2fly = arrayOf(
-    "none", "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305"
+    "none", "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305", "xchacha20-ietf-poly1305"
 )
 
 fun PluginConfiguration.fixInvalidParams() {

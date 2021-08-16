@@ -36,6 +36,7 @@
       <w>tproxy</w>
       <w>transproxy</w>
       <w>uplink</w>
+      <w>utls</w>
       <w>vless</w>
       <w>vmess</w>
       <w>websocket</w>

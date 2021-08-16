@@ -660,6 +660,7 @@ public class V2RayConfig {
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
         public List<String> pinnedPeerCertificateChainSha256;
+        public String fingerprint;
 
         public static class CertificateObject {
 

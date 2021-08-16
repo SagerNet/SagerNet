@@ -623,4 +623,19 @@
         <item>SOCKS5</item>
     </string-array>
 
+    <string-array name="utls_entry">
+        <item>DISABLED</item>
+        <item>CHROME</item>
+        <item>FIREFOX</item>
+        <item>SAFARI</item>
+        <item>RANDOMIZED</item>
+    </string-array>
+    <string-array name="utls_value">
+        <item />
+        <item>chrome</item>
+        <item>firefox</item>
+        <item>safari</item>
+        <item>randomized</item>
+    </string-array>
+
 </resources>
