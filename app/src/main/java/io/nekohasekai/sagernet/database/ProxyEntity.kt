@@ -366,18 +366,20 @@ data class ProxyEntity(
 
     fun useClashShadowsocks(): Boolean {
         val bean = ssBean ?: return false
-        if (bean.method in methodsClash && DataStore.providerShadowsocksAEAD != ShadowsocksAEADProvider.CLASH) {
+        if (bean.plugin.isNotBlank()) {
+            val plugin = PluginConfiguration(bean.plugin)
+            if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
+            try {
+                PluginManager.init(plugin)
+            } catch (e: Exception) {
+                return true
+            }
+        }
+        if (bean.method in methodsClash && bean.method in methodsV2fly && bean.plugin.isBlank() && DataStore.providerShadowsocksAEAD != ShadowsocksAEADProvider.CLASH) {
             return false
         }
-        if (DataStore.providerShadowsocksStream == ShadowsocksStreamProvider.CLASH) {
-            return true
-        }
-        val plugin = PluginConfiguration(bean.plugin)
-        if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
-        try {
-            PluginManager.init(plugin)
+        if (DataStore.providerShadowsocksStream != ShadowsocksStreamProvider.CLASH) {
             return false
-        } catch (e: Exception) {
         }
         return true
     }

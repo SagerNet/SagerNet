@@ -215,48 +215,18 @@ jobs:
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run init action library
           ./run lib shadowsocks
-  shadowsocksr:
-    name: Native Build (ShadowsocksR)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Fetch Status
-        run: git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
-      - name: ShadowsocksR Cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            app/libs/shadowsocksr-release.aar
-          key: ${{ hashFiles('shadowsocksr_status') }}
-      - name: Gradle cache
-        uses: actions/cache@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          path: ~/.gradle
-          key: native-${{ hashFiles('**/*.gradle') }}
-      - name: Native Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run init action library
-          ./run lib shadowsocksr
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
     needs:
       - libcore
       - shadowsocks
-      - shadowsocksr
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
         run: |
           git submodule status 'library/shadowsocks/*' > shadowsocks_status
-          git submodule status 'library/shadowsocksr/*' > shadowsocksr_status
           git submodule status library/libcore > libcore_status
       - name: LibCore Cache
         uses: actions/cache@v2
@@ -270,12 +240,6 @@ jobs:
           path: |
             app/libs/shadowsocks-release.aar
           key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
-      - name: ShadowsocksR Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            app/libs/shadowsocksr-release.aar
-          key: ${{ hashFiles('shadowsocksr_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
