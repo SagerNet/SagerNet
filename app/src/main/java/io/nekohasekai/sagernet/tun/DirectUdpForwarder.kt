@@ -161,8 +161,7 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
                     VpnService.PRIVATE_VLAN4_ROUTER, VpnService.PRIVATE_VLAN6_ROUTER
                 )
             ) return true
-            if (udpHeader.destinationPort == 53) return true
-            return false
+            return DnsParser.calIsDnsQuery(udpHeader.data())
         }
 
         fun connect() {
@@ -220,13 +219,6 @@ class DirectUdpForwarder(val tun: DirectTunThread) {
             } else {
                 Logs.d("UDP received ${rawData.readableBytes()}")
             }
-
-            /* val data = if (isDns) {
-                 Logs.d("DNS Response ${rawData.readableBytes()}B")
-                 rawData.slice(
-                     0, Message(rawData.internalNioBuffer(0, rawData.readableBytes())).numBytes()
-                 )
-             } else rawData*/
 
             val template = try {
                 template.slice()

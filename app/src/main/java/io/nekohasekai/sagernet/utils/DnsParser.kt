@@ -28,6 +28,17 @@ import java.net.InetSocketAddress
 
 object DnsParser {
 
+    fun calIsDnsQuery(buf: ByteBuf): Boolean {
+        buf.readUnsignedShort()
+        val flags = buf.readUnsignedShort()
+        if (flags shr 15 != 0) {
+            return false
+        }
+        val questionCount = buf.readUnsignedShort()
+        val answerCount = buf.readUnsignedShort()
+        return questionCount > 0 && answerCount == 0
+    }
+
     fun parseDnsQuery(recipient: InetSocketAddress, buf: ByteBuf): DnsQuery {
         val id = buf.readUnsignedShort()
 
@@ -61,7 +72,7 @@ object DnsParser {
             throw CorruptedFrameException("not a response")
         }
         val response = DatagramDnsResponse(
-            null, recipient, id, DnsOpCode.IQUERY, DnsResponseCode.valueOf(flags and 0xf)
+            null, recipient, id, DnsOpCode.QUERY, DnsResponseCode.valueOf(flags and 0xf)
         )
         response.isRecursionDesired = flags shr 8 and 1 == 1
         response.isAuthoritativeAnswer = flags shr 10 and 1 == 1
