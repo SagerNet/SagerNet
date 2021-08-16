@@ -403,4 +403,5 @@
     <string name="experimental_authenticated_length">Make the length of each payload segment no longer malleable. This experiment requires the server and client use the same version of v2ray-core. More breaking updates on this experiment is expected.</string>
     <string name="experimental_no_termination_signal">Do not send connection single duplex termination signal for TCP connection when transferred over VMess. This will break some application.</string>
     <string name="utls_fingerprint">uTLS Fingerprint</string>
+    <string name="tun_implementation">Tun Implementation</string>
 </resources>

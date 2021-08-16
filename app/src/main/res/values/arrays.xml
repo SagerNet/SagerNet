@@ -560,7 +560,6 @@
     <string-array name="vpn_mode">
         <item>Tun2socks</item>
         <item>@string/vpn_mode_forwarding</item>
-        <item>go-tun2socks</item>
     </string-array>
 
     <string-array name="icmp_echo_strategy">
@@ -631,12 +630,19 @@
         <item>SAFARI</item>
         <item>RANDOMIZED</item>
     </string-array>
+
     <string-array name="utls_value">
         <item />
         <item>chrome</item>
         <item>firefox</item>
         <item>safari</item>
         <item>randomized</item>
+    </string-array>
+
+    <string-array name="tun2socks">
+        <item>BADVPN</item>
+        <item>LWIP</item>
+        <item>GVISOR</item>
     </string-array>
 
 </resources>

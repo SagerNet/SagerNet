@@ -46,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import libcore.Tun2socks
+import libcore.Tun2socksG
 import java.io.File
 import java.io.FileDescriptor
 import java.io.IOException
@@ -78,6 +79,7 @@ class VpnService : BaseVpnService(),
     lateinit var conn: ParcelFileDescriptor
     lateinit var tun: DirectTunThread
     lateinit var tun2socks: Tun2socks
+    lateinit var tun2socksG: Tun2socksG
 
     private var active = false
     private var metered = false
@@ -108,8 +110,8 @@ class VpnService : BaseVpnService(),
         if (::conn.isInitialized) conn.close()
         if (::tun.isInitialized) tun.interrupt()
         if (::tun2socks.isInitialized) tun2socks.close()
+        if (::tun2socksG.isInitialized) tun2socksG.close()
     }
-
 
     override fun onBind(intent: Intent) = when (intent.action) {
         SERVICE_INTERFACE -> super<BaseVpnService>.onBind(intent)
@@ -253,10 +255,12 @@ class VpnService : BaseVpnService(),
         if (useNativeForwarding) builder.setBlocking(true)
         conn = builder.establish() ?: throw NullConnectionException()
 
-        if (!useNativeForwarding) {
-            if (vpnMode == VpnMode.TUN2SOCKS) {
+        if (!useNativeForwarding) when (DataStore.tunImplementation) {
+            TunImplementation.BADVPN -> {
                 val cmd = arrayListOf(
-                    File(applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS).canonicalPath,
+                    File(
+                        applicationInfo.nativeLibraryDir, Executable.TUN2SOCKS
+                    ).canonicalPath,
                     "--netif-ipaddr",
                     PRIVATE_VLAN4_ROUTER,
                     "--socks-server-addr",
@@ -264,7 +268,9 @@ class VpnService : BaseVpnService(),
                     "--tunmtu",
                     VPN_MTU.toString(),
                     "--sock-path",
-                    File(SagerNet.deviceStorage.noBackupFilesDir, "sock_path").canonicalPath,
+                    File(
+                        SagerNet.deviceStorage.noBackupFilesDir, "sock_path"
+                    ).canonicalPath,
                     "--loglevel",
                     "warning"
                 )
@@ -283,7 +289,8 @@ class VpnService : BaseVpnService(),
                     }
                 })
                 sendFd(conn.fileDescriptor)
-            } else {
+            }
+            TunImplementation.LWIP -> {
                 tun2socks = Tun2socks(
                     conn.fd.toLong(),
                     VPN_MTU.toLong(),
@@ -294,6 +301,18 @@ class VpnService : BaseVpnService(),
                     DataStore.enableLog
                 )
                 tun2socks.start()
+            }
+            TunImplementation.GVISOR -> {
+                tun2socksG = Tun2socksG(
+                    conn.fd.toLong(),
+                    VPN_MTU.toLong(),
+                    DataStore.socksPort.toLong(),
+                    PRIVATE_VLAN4_ROUTER,
+                    DataStore.localDNSPort.toLong(),
+                    true,
+                    DataStore.enableLog
+                )
+                tun2socksG.start()
             }
         } else {
             tun = DirectTunThread(this)

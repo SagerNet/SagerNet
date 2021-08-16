@@ -84,10 +84,18 @@
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/vpn_mode"
-            app:entryValues="@array/int_array_3"
+            app:entryValues="@array/int_array_2"
             app:icon="@drawable/ic_baseline_vpn_key_24"
             app:key="vpnMode"
             app:title="@string/vpn_mode"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/tun2socks"
+            app:entryValues="@array/int_array_3"
+            app:icon="@drawable/ic_baseline_transform_24"
+            app:key="tunImplementation"
+            app:title="@string/tun_implementation"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"

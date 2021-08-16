@@ -199,6 +199,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var ipOtherStrategy by configurationStore.stringToInt(Key.IP_OTHER_STRATEGY) { PacketStrategy.DIRECT }
 
     var utlsFingerprint by configurationStore.string(Key.UTLS_FINGERPRINT)
+    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.BADVPN }
 
     // protocol
 

@@ -97,6 +97,7 @@ object Key {
     const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
 
     const val UTLS_FINGERPRINT = "utlsFingerprint"
+    const val TUN_IMPLEMENTATION = "tunImplementation"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
@@ -210,7 +211,6 @@ object IPv6Mode {
 object VpnMode {
     const val TUN2SOCKS = 0
     const val EXPERIMENTAL_FORWARDING = 1
-    const val GO_TUN2SOCKS = 2
 }
 
 object PacketStrategy {
@@ -234,6 +234,12 @@ object ExtraType {
     const val NONE = 0
     const val OOCv1 = 1
     const val SIP008 = 2
+}
+
+object TunImplementation {
+    const val BADVPN = 0
+    const val LWIP = 1
+    const val GVISOR = 2
 }
 
 object Action {
