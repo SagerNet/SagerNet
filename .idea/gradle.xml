@@ -69,7 +69,6 @@
             <option value="$PROJECT_DIR$/library/proto" />
             <option value="$PROJECT_DIR$/library/proto-stub" />
             <option value="$PROJECT_DIR$/library/shadowsocks" />
-            <option value="$PROJECT_DIR$/library/shadowsocksr" />
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/plugin/api" />
             <option value="$PROJECT_DIR$/plugin/brook" />

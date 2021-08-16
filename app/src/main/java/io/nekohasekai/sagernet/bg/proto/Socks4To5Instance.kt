@@ -19,7 +19,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg.socks
+package io.nekohasekai.sagernet.bg.proto
 
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.AbstractInstance

@@ -2,7 +2,6 @@ include(":library:core")
 include(":library:epoll")
 include(":library:include")
 include(":library:shadowsocks")
-include(":library:shadowsocksr")
 include(":library:proto")
 include(":library:proto-stub")
 

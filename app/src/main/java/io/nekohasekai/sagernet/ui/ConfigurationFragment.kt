@@ -59,7 +59,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.bg.TestInstance
+import io.nekohasekai.sagernet.bg.proto.TestInstance
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding

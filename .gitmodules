@@ -7,24 +7,6 @@
 [submodule "library/shadowsocks/src/main/rust/shadowsocks-rust"]
 	path = library/shadowsocks/src/main/rust/shadowsocks-rust
 	url = https://github.com/shadowsocks/shadowsocks-rust.git
-[submodule "library/shadowsocksr/src/main/jni/shadowsocks-libev"]
-	path = library/shadowsocksr/src/main/jni/shadowsocks-libev
-	url = https://github.com/shadowsocksRb/shadowsocksr-libev
-[submodule "library/shadowsocksr/src/main/jni/mbedtls"]
-	path = library/shadowsocksr/src/main/jni/mbedtls
-	url = https://github.com/ARMmbed/mbedtls
-[submodule "library/shadowsocksr/src/main/jni/libancillary"]
-	path = library/shadowsocksr/src/main/jni/libancillary
-	url = https://github.com/shadowsocks/libancillary
-[submodule "library/shadowsocksr/src/main/jni/pcre"]
-	path = library/shadowsocksr/src/main/jni/pcre
-	url = https://android.googlesource.com/platform/external/pcre
-[submodule "library/shadowsocksr/src/main/jni/libsodium"]
-	path = library/shadowsocksr/src/main/jni/libsodium
-	url = https://github.com/jedisct1/libsodium
-[submodule "library/shadowsocksr/src/main/jni/re2"]
-	path = library/shadowsocksr/src/main/jni/re2
-	url = https://github.com/google/re2
 [submodule "plugin/trojan-go/src/main/go/trojan-go"]
 	path = plugin/trojan-go/src/main/go/trojan-go
 	url = https://github.com/p4gefau1t/trojan-go

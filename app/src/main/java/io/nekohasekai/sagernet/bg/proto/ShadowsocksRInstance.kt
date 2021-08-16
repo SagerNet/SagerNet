@@ -19,34 +19,33 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg
+package io.nekohasekai.sagernet.bg.proto
 
-import io.nekohasekai.sagernet.bg.proto.V2RayInstance
-import io.nekohasekai.sagernet.database.ProxyEntity
-import io.nekohasekai.sagernet.fmt.buildCustomConfig
-import io.nekohasekai.sagernet.ktx.Logs
-import io.netty.channel.EventLoopGroup
+import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import kotlinx.coroutines.CoroutineScope
+import libcore.ShadowsocksRInstance
 
-class ExternalInstance(
-    profile: ProxyEntity, val port: Int, override val eventLoopGroup: EventLoopGroup
-) : V2RayInstance(profile) {
+class ShadowsocksRInstance(val server: ShadowsocksRBean, val port: Int) : AbstractInstance {
 
-    override fun init() {
-        super.init()
+    lateinit var point: libcore.ShadowsocksRInstance
 
-        Logs.d(config.config)
-        pluginConfigs.forEach { (_, plugin) ->
-            val (_, content) = plugin
-            Logs.d(content)
-        }
+    override fun launch() {
+        point = ShadowsocksRInstance(
+            port.toLong(),
+            server.finalAddress,
+            server.finalPort.toLong(),
+            server.password,
+            server.method,
+            server.obfs,
+            server.obfsParam,
+            server.protocol,
+            server.protocolParam
+        )
+        point.start()
     }
 
-    override fun initInstance() {
-        v2rayPoint = libcore.V2RayInstance()
+    override fun destroy(scope: CoroutineScope) {
+        if (::point.isInitialized) point.close()
     }
-
-    override fun buildConfig() {
-        config = buildCustomConfig(profile, port)
-    }
-
 }
