@@ -90,7 +90,7 @@
             app:title="@string/vpn_mode"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
+            app:defaultValue="2"
             app:entries="@array/tun2socks"
             app:entryValues="@array/int_array_3"
             app:icon="@drawable/ic_baseline_transform_24"
