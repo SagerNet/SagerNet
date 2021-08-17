@@ -48,6 +48,8 @@ class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : Abstract
                 "v2ray-plugin" -> {
                     pluginOpts["mode"] = options["mode"]
                     pluginOpts["host"] = options["host"]
+                    pluginOpts["path"] = options["path"]
+
                     if (options.containsKey("tls")) {
                         pluginOpts["tls"] = true
                     }

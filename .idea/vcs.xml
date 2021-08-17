@@ -16,12 +16,6 @@
     <mapping directory="$PROJECT_DIR$/library/core/src/main/jni/libancillary" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/libcore" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/libancillary" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/libsodium" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/mbedtls" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/pcre" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/re2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocksr/src/main/jni/shadowsocks-libev" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/brook/src/main/go/brook" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/hysteria/src/main/go/hysteria" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/naive/src/main/jni/naiveproxy" vcs="Git" />
