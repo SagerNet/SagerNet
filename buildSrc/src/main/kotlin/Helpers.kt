@@ -115,6 +115,8 @@ fun Project.setupCommon() {
             exclude("/META-INF/native-image/**")
             exclude("/META-INF/INDEX.LIST")
             exclude("DebugProbesKt.bin")
+            exclude("com/**")
+            exclude("org/**")
             exclude("**/*.java")
             exclude("**/*.proto")
         }
