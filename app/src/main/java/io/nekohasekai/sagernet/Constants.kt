@@ -85,20 +85,12 @@ object Key {
 
     const val API_PORT = "apiPort"
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
-    const val ENABLE_EXPERIMENTAL_TUN = "enableExperimentalTun"
-
-    const val VPN_MODE = "vpnMode"
-    const val MULTI_THREAD_FORWARD = "multiThreadForward"
-    const val ICMP_ECHO_STRATEGY = "icmpEchoStrategy"
-    const val ICMP_ECHO_REPLY_DELAY = "icmpEchoReplyDelay"
-    const val IP_OTHER_STRATEGY = "ipOtherStrategy"
 
     const val PROVIDER_TROJAN = "providerTrojan"
     const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
     const val PROVIDER_SS_STREAM = "providerShadowsocksStream"
 
     const val UTLS_FINGERPRINT = "utlsFingerprint"
-    const val TUN_IMPLEMENTATION = "tunImplementation"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
@@ -215,11 +207,6 @@ object IPv6Mode {
     const val ONLY = 3
 }
 
-object VpnMode {
-    const val TUN2SOCKS = 0
-    const val EXPERIMENTAL_FORWARDING = 1
-}
-
 object PacketStrategy {
     const val DIRECT = 0
     const val DROP = 1
@@ -241,12 +228,6 @@ object ExtraType {
     const val NONE = 0
     const val OOCv1 = 1
     const val SIP008 = 2
-}
-
-object TunImplementation {
-    const val BADVPN = 0
-    const val LWIP = 1
-    const val GVISOR = 2
 }
 
 object Action {

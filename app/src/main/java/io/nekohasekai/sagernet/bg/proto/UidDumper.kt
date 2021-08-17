@@ -19,7 +19,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.tun
+package io.nekohasekai.sagernet.bg.proto
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -32,20 +32,16 @@ import java.io.File
 import java.net.InetAddress
 import java.net.InetSocketAddress
 
-class UidDumper(val multiThread: Boolean) {
+object UidDumper : libcore.UidDumper {
 
-    private companion object {
-
-        val TCP_IPV4_PROC = File("/proc/net/tcp")
-        val TCP_IPV6_PROC = File("/proc/net/tcp6")
-        val UDP_IPV4_PROC = File("/proc/net/udp")
-        val UDP_IPV6_PROC = File("/proc/net/udp6")
-
-    }
+    private val TCP_IPV4_PROC = File("/proc/net/tcp")
+    private val TCP_IPV6_PROC = File("/proc/net/tcp6")
+    private val UDP_IPV4_PROC = File("/proc/net/udp")
+    private val UDP_IPV6_PROC = File("/proc/net/udp6")
 
     private data class ProcStats constructor(val remoteAddress: InetSocketAddress, val uid: Int)
 
-    private fun mkMap() = LFUCacheCompact<Int, ProcStats>(-1, 5 * 60 * 1000L).build(multiThread)
+    private fun mkMap() = LFUCacheCompact<Int, ProcStats>(-1, 5 * 60 * 1000L).build(false)
 
     private val uidCacheMapTcp = mkMap()
     private val uidCacheMapTcp6 = mkMap()
@@ -54,6 +50,17 @@ class UidDumper(val multiThread: Boolean) {
 
     private val canReadProc = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
     private val useApi = !canReadProc/* || BuildConfig.DEBUG && tun.enableLog)*/
+
+    override fun dumpUid(
+        ipv6: Boolean, udp: Boolean, srcIp: String, srcPort: Long, destIp: String, destPort: Long
+    ): Long {
+        return dumpUid(
+            ipv6,
+            udp,
+            InetSocketAddress(srcIp, srcPort.toUInt().toInt()),
+            InetSocketAddress(destIp, destPort.toUInt().toInt())
+        ).toLong()
+    }
 
     @SuppressLint("NewApi")
     fun dumpUid(

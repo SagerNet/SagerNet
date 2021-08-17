@@ -18,22 +18,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  *                                                                            *
  ******************************************************************************/
-package io.nekohasekai.sagernet.tun.netty;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.socksx.v5.Socks5AddressType;
-import io.netty.handler.codec.socksx.v5.Socks5Message;
+package io.nekohasekai.sagernet.bg.proto
 
-public interface Socks5UdpMessage extends Socks5Message {
+import android.os.Build
+import android.provider.Settings
+import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.app
+import kotlinx.coroutines.CoroutineScope
+import libcore.ApiInstance
 
-    byte frag();
+class ApiInstance : AbstractInstance {
 
-    Socks5AddressType dstAddrType();
+    lateinit var point: ApiInstance
 
-    String dstAddr();
+    override fun launch() {
+        var deviceName = Settings.Secure.getString(app.contentResolver, "bluetooth_name")
+        if (deviceName.isBlank()) {
+            deviceName = Build.DEVICE
+            if (!deviceName.startsWith(Build.MANUFACTURER)) {
+                deviceName = Build.MANUFACTURER + " " + deviceName
+            }
+        }
+        point = ApiInstance(
+            deviceName,
+            DataStore.socksPort.toLong(),
+            DataStore.localDNSPort.toLong(),
+            DataStore.enableLog,
+            DataStore.bypassLan
+        )
+        point.start()
+    }
 
-    int dstPort();
-
-    ByteBuf data();
-
+    override fun destroy(scope: CoroutineScope) {
+        if (::point.isInitialized) point.close()
+    }
 }

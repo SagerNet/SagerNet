@@ -35,7 +35,6 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.group.RawUpdater
-import io.netty.util.NetUtil.isValidIpV4Address
 
 interface ValidateResult
 object ResultSecure : ValidateResult
@@ -46,7 +45,7 @@ class ResultInsecure(@RawRes val textRes: Int) : ValidateResult
 private val ssSecureList = "(gcm|poly1305)".toRegex()
 
 fun AbstractBean.isInsecure(): ValidateResult {
-    if (isValidIpV4Address(serverAddress) && isInnerIP(serverAddress) || serverAddress in arrayOf(
+    if (serverAddress.isIpAddress() && isInnerIP(serverAddress) || serverAddress in arrayOf(
             "localhost"
         )
     ) {

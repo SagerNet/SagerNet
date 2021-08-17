@@ -19,27 +19,6 @@
  *                                                                            *
  ******************************************************************************/
 
-/******************************************************************************
- *                                                                            *
- * Copyright (C) 2021 by nekohasekai <sekai@neko.services>                    *
- * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
- * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
- *                                                                            *
- * This program is free software: you can redistribute it and/or modify       *
- * it under the terms of the GNU General Public License as published by       *
- * the Free Software Foundation, either version 3 of the License, or          *
- *  (at your option) any later version.                                       *
- *                                                                            *
- * This program is distributed in the hope that it will be useful,            *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
- * GNU General Public License for more details.                               *
- *                                                                            *
- * You should have received a copy of the GNU General Public License          *
- * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
- *                                                                            *
- ******************************************************************************/
-
 package io.nekohasekai.sagernet.bg.proto
 
 import android.os.Build
@@ -82,10 +61,6 @@ import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
-import io.netty.channel.EventLoopGroup
-import io.netty.resolver.ResolvedAddressTypes
-import io.netty.resolver.dns.DnsNameResolverBuilder
-import io.netty.resolver.dns.PackagePrivateBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -98,7 +73,6 @@ abstract class V2RayInstance(
     val profile: ProxyEntity
 ) : AbstractInstance {
 
-    abstract val eventLoopGroup: EventLoopGroup
     lateinit var config: V2rayBuildResult
     lateinit var v2rayPoint: V2RayInstance
     private lateinit var wsForwarder: WebView
@@ -192,7 +166,7 @@ abstract class V2RayInstance(
                             }
                             else -> {
                                 externalInstances[port] = ExternalInstance(
-                                    profile, port, eventLoopGroup
+                                    profile, port
                                 ).apply {
                                     init()
                                 }
@@ -200,9 +174,7 @@ abstract class V2RayInstance(
                         }
                     }
                     bean is SOCKSBean -> {
-                        externalInstances[port] = Socks4To5Instance(
-                            eventLoopGroup, bean, port, dnsResolverIPv4Only
-                        )
+                        externalInstances[port] = Socks4To5Instance(bean, port)
                     }
                     bean is SnellBean -> {
                         externalInstances[port] = SnellInstance(bean, port)
@@ -212,18 +184,6 @@ abstract class V2RayInstance(
         }
 
         v2rayPoint.loadConfig(config.config)
-    }
-
-    private val dnsResolverIPv4Only by lazy {
-        DnsNameResolverBuilder().eventLoop(eventLoopGroup.next())
-            .channelType(SagerNet.datagramChannel)
-            .nameServerProvider(
-                PackagePrivateBridge.mkDnsProvider(
-                    InetSocketAddress(LOCALHOST, DataStore.localDNSPort)
-                )
-            )
-            .resolvedAddressTypes(ResolvedAddressTypes.IPV4_ONLY)
-            .build()
     }
 
     override fun launch() {
@@ -458,6 +418,10 @@ abstract class V2RayInstance(
     }
 
     override fun destroy(scope: CoroutineScope) {
+        for (instance in externalInstances.values) {
+            instance.destroy(scope)
+        }
+
         cacheFiles.removeAll { it.delete(); true }
 
         if (::wsForwarder.isInitialized) {
@@ -471,10 +435,6 @@ abstract class V2RayInstance(
 
         if (::v2rayPoint.isInitialized) {
             v2rayPoint.close()
-        }
-
-        for (instance in externalInstances.values) {
-            instance.destroy(scope)
         }
     }
 

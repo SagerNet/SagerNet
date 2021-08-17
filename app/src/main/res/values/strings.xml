@@ -329,15 +329,6 @@
     <string name="connection_test_timeout">Timeout</string>
     <string name="append_http_proxy">Append HTTP Proxy to VPN</string>
     <string name="append_http_proxy_sum">HTTP proxy will be used directly from (browser/ some supported apps), without going through the virtual NIC device (Android 10+)</string>
-    <string name="vpn_settings">VPN Settings</string>
-    <string name="vpn_mode">VPN Mode</string>
-    <string name="vpn_mode_forwarding">Native Forwarding</string>
-    <string name="icmp_echo_strategy">ICMP Echo Strategy</string>
-    <string name="icmp_echo_reply_delay">ICMP Echo Reply Delay</string>
-    <string name="ip_other_strategy">Other Internet Protocol Strategy</string>
-    <string name="drop">Drop</string>
-    <string name="direct">Direct</string>
-    <string name="reply">Reply</string>
     <string name="bypass_lan_in_core_only">Bypass LAN in Core Only</string>
     <string name="bypass_lan_in_core_only_sum">If Lineage\'s "Allow hotspot clients to use VPNs" does not work, try this.</string>
     <string name="protocol_settings">Protocol Settings</string>
@@ -395,7 +386,6 @@
     <string name="apps">Applications</string>
     <string name="select_apps">Select Applications</string>
     <string name="apps_message">%d Applications</string>
-    <string name="need_nf">To support application-based routing, the VPN Mode must be Native Forwarding.</string>
     <string name="hysteria_obfs">Obfuscation Password</string>
     <string name="hysteria_auth_type">Authentication Type</string>
     <string name="hysteria_auth_payload">Authentication Payload</string>
@@ -405,5 +395,4 @@
     <string name="experimental_authenticated_length">Make the length of each payload segment no longer malleable. This experiment requires the server and client use the same version of v2ray-core. More breaking updates on this experiment is expected.</string>
     <string name="experimental_no_termination_signal">Do not send connection single duplex termination signal for TCP connection when transferred over VMess. This will break some application.</string>
     <string name="utls_fingerprint">uTLS Fingerprint</string>
-    <string name="tun_implementation">Tun Implementation</string>
 </resources>

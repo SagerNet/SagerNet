@@ -80,47 +80,6 @@
             app:title="@string/enable_log" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/vpn_settings">
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
-            app:entries="@array/vpn_mode"
-            app:entryValues="@array/int_array_2"
-            app:icon="@drawable/ic_baseline_vpn_key_24"
-            app:key="vpnMode"
-            app:title="@string/vpn_mode"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="2"
-            app:entries="@array/tun2socks"
-            app:entryValues="@array/int_array_3"
-            app:icon="@drawable/ic_baseline_transform_24"
-            app:key="tunImplementation"
-            app:title="@string/tun_implementation"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
-            app:entries="@array/icmp_echo_strategy"
-            app:entryValues="@array/int_array_3"
-            app:icon="@drawable/ic_baseline_emoji_emotions_24"
-            app:key="icmpEchoStrategy"
-            app:title="@string/icmp_echo_strategy"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:defaultValue="50"
-            app:icon="@drawable/ic_baseline_timelapse_24"
-            app:key="icmpEchoReplyDelay"
-            app:title="@string/icmp_echo_reply_delay"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
-            app:entries="@array/ip_other_strategy"
-            app:entryValues="@array/int_array_2"
-            app:icon="@drawable/ic_baseline_import_contacts_24"
-            app:key="ipOtherStrategy"
-            app:title="@string/ip_other_strategy"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
     <PreferenceCategory app:title="@string/cag_route">
         <SwitchPreference
             app:icon="@drawable/ic_navigation_apps"

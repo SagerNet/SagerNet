@@ -31,9 +31,8 @@ import java.io.IOException
 
 object Executable {
     const val SS_LOCAL = "libsslocal.so"
-    const val TUN2SOCKS = "libtun2socks.so"
 
-    private val EXECUTABLES = setOf(SS_LOCAL, TUN2SOCKS)
+    private val EXECUTABLES = setOf(SS_LOCAL)
 
     fun killAll() {
         for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }

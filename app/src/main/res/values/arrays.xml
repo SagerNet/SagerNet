@@ -557,26 +557,10 @@
         <item>leastPing</item>
     </string-array>
 
-    <string-array name="vpn_mode">
-        <item>Tun2socks</item>
-        <item>@string/vpn_mode_forwarding</item>
-    </string-array>
-
-    <string-array name="icmp_echo_strategy">
-        <item>@string/drop</item>
-        <item>@string/direct</item>
-        <item>@string/reply</item>
-    </string-array>
-
     <string-array name="int_array_3">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </string-array>
-
-    <string-array name="ip_other_strategy">
-        <item>@string/drop</item>
-        <item>@string/direct</item>
     </string-array>
 
     <string-array name="trojan_provider">
@@ -643,12 +627,6 @@
         <item>firefox</item>
         <item>safari</item>
         <item>randomized</item>
-    </string-array>
-
-    <string-array name="tun2socks">
-        <item>BADVPN</item>
-        <item>LWIP</item>
-        <item>GVISOR</item>
     </string-array>
 
     <string-array name="snell_versions">

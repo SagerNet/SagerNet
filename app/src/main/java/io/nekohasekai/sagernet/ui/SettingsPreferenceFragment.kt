@@ -168,35 +168,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
-        val vpnMode = findPreference<SimpleMenuPreference>(Key.VPN_MODE)!!
-        val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
-        val icmpEchoStrategy = findPreference<SimpleMenuPreference>(Key.ICMP_ECHO_STRATEGY)!!
-        val icmpEchoReplyDelay = findPreference<EditTextPreference>(Key.ICMP_ECHO_REPLY_DELAY)!!
-        val ipOtherStrategy = findPreference<SimpleMenuPreference>(Key.IP_OTHER_STRATEGY)!!
-
-        fun updateVpnMode(newMode: Int) {
-            val isForwarding = newMode == VpnMode.EXPERIMENTAL_FORWARDING
-            tunImplementation.isVisible = !isForwarding
-            icmpEchoStrategy.isVisible = isForwarding
-            icmpEchoReplyDelay.isVisible = isForwarding
-            if (isForwarding) {
-                icmpEchoReplyDelay.isEnabled = icmpEchoStrategy.value == "${PacketStrategy.REPLY}"
-            }
-            ipOtherStrategy.isVisible = isForwarding
-        }
-
-        updateVpnMode(DataStore.vpnMode)
-        vpnMode.setOnPreferenceChangeListener { _, newValue ->
-            updateVpnMode((newValue as String).toInt())
-            needReload()
-            true
-        }
-        icmpEchoStrategy.setOnPreferenceChangeListener { _, newValue ->
-            icmpEchoReplyDelay.isEnabled = newValue == "${PacketStrategy.REPLY}"
-            needReload()
-            true
-        }
-
         val providerTrojan = findPreference<SimpleMenuPreference>(Key.PROVIDER_TROJAN)!!
         val providerShadowsocksAEAD = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_AEAD)!!
         val providerShadowsocksStream = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_STREAM)!!
@@ -261,11 +232,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         probeIndival.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         probeIndival.onPreferenceChangeListener = reloadListener
-
-        tunImplementation.onPreferenceChangeListener = reloadListener
-        icmpEchoReplyDelay.onPreferenceChangeListener = reloadListener
-        icmpEchoReplyDelay.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        ipOtherStrategy.onPreferenceChangeListener = reloadListener
 
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener

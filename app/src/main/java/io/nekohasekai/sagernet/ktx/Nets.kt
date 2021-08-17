@@ -24,14 +24,12 @@
 package io.nekohasekai.sagernet.ktx
 
 import android.os.Build
+import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.Unpooled
-import io.netty.util.NetUtil
 import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -85,7 +83,7 @@ fun HttpUrl.Builder.toLink(scheme: String, appendDefaultPort: Boolean = true): S
 }
 
 fun String.isIpAddress(): Boolean {
-    return NetUtil.isValidIpV4Address(this) || NetUtil.isValidIpV6Address(this)
+    return Validator.isIpv4(this) || Validator.isIpv6(this)
 }
 
 fun String.unwrapHost(): String {
@@ -96,7 +94,7 @@ fun String.unwrapHost(): String {
 }
 
 fun AbstractBean.wrapUri(): String {
-    return if (NetUtil.isValidIpV6Address(finalAddress)) {
+    return if (Validator.isIpv6(finalAddress)) {
         "[$finalAddress]:$finalPort"
     } else {
         "$finalAddress:$finalPort"
@@ -114,13 +112,6 @@ fun mkPort(): Int {
     val port = socket.localPort
     socket.close()
     return port
-}
-
-fun ByteBuf.toByteArray(): ByteArray {
-    if (!hasArray()) {
-        return Unpooled.copiedBuffer(this).array()
-    }
-    return array()
 }
 
 const val IPPROTO_ICMP = 1

@@ -19,27 +19,6 @@
  *                                                                            *
  ******************************************************************************/
 
-/******************************************************************************
- *                                                                            *
- * Copyright (C) 2021 by nekohasekai <sekai@neko.services>                    *
- * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
- * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
- *                                                                            *
- * This program is free software: you can redistribute it and/or modify       *
- * it under the terms of the GNU General Public License as published by       *
- * the Free Software Foundation, either version 3 of the License, or          *
- *  (at your option) any later version.                                       *
- *                                                                            *
- * This program is distributed in the hope that it will be useful,            *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
- * GNU General Public License for more details.                               *
- *                                                                            *
- * You should have received a copy of the GNU General Public License          *
- * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
- *                                                                            *
- ******************************************************************************/
-
 package io.nekohasekai.sagernet.bg.proto
 
 import cn.hutool.core.util.NumberUtil
@@ -49,7 +28,7 @@ import com.v2ray.core.app.stats.command.GetStatsRequest
 import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
@@ -65,7 +44,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     profile
 ) {
 
-    override val eventLoopGroup by lazy { SagerNet.eventLoopGroup() }
     lateinit var managedChannel: ManagedChannel
     val statsService by lazy { StatsServiceGrpcKt.StatsServiceCoroutineStub(managedChannel) }
     val observatoryService by lazy {
@@ -142,6 +120,12 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 }
             }
         }
+
+        if (DataStore.allowAccess) {
+            externalInstances[11451] = ApiInstance().apply {
+                launch()
+            }
+        }
     }
 
     override fun destroy(scope: CoroutineScope) {
@@ -155,8 +139,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         if (::managedChannel.isInitialized) {
             managedChannel.shutdownNow()
         }
-
-        eventLoopGroup.shutdownGracefully()
     }
 
     // ------------- stats -------------
