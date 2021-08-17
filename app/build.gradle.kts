@@ -55,10 +55,10 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.4.0")
-    implementation("cn.hutool:hutool-core:5.7.7")
-    implementation("cn.hutool:hutool-cache:5.7.7")
-    implementation("cn.hutool:hutool-json:5.7.7")
-    implementation("cn.hutool:hutool-crypto:5.7.7")
+    implementation("cn.hutool:hutool-core:5.7.9")
+    implementation("cn.hutool:hutool-cache:5.7.9")
+    implementation("cn.hutool:hutool-json:5.7.9")
+    implementation("cn.hutool:hutool-crypto:5.7.9")
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
@@ -93,7 +93,7 @@ dependencies {
     implementation(project(":library:proto-stub"))
     implementation("io.grpc:grpc-okhttp:1.39.0")
 
-    implementation("io.netty:netty-all:4.1.66.Final")
+    implementation("io.netty:netty-all:4.1.67.Final")
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
     implementation("dnsjava:dnsjava:3.4.1")
