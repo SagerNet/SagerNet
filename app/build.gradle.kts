@@ -58,7 +58,7 @@ dependencies {
     implementation("cn.hutool:hutool-cache:5.7.9")
     implementation("cn.hutool:hutool-json:5.7.9")
     implementation("cn.hutool:hutool-crypto:5.7.9")
-    implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
     implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:5.0.0-alpha.2")

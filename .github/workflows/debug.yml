@@ -198,7 +198,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks-release.aar
-          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('gradle/**', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
