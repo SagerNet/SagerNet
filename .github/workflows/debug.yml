@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.16
+          go-version: 1.17
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core

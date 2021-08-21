@@ -74,6 +74,7 @@ import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
+import libcore.Libcore
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -577,9 +578,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            val icmpTestMethod by lazy {
-                InetAddress::class.java.getDeclaredMethod("isReachableByICMP", Int::class.java)
-            }
             repeat(5) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
@@ -623,14 +621,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
                         try {
                             if (icmpPing) {
-                                val start = SystemClock.elapsedRealtime()
-                                val result = icmpTestMethod.invoke(
-                                    InetAddress.getByName(address), 5000
-                                ) as Boolean
+                                val result = Libcore.icmpPing(
+                                    address, 5000
+                                )
                                 if (!isActive) break
-                                if (result) {
+                                if (result != -1L) {
                                     profile.status = 1
-                                    profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
+                                    profile.ping = result.toInt()
                                 } else {
                                     profile.status = 2
                                     profile.error = getString(R.string.connection_test_unreachable)
@@ -643,7 +640,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 val start = SystemClock.elapsedRealtime()
                                 socket.connect(
                                     InetSocketAddress(
-                                        address, profile.requireBean().serverPort
+                                        address, 7
                                     ), 5000
                                 )
                                 if (!isActive) break
@@ -652,7 +649,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 test.update(profile)
                                 socket.close()
                             }
-                        } catch (e: IOException) {
+                        } catch (e: Exception) {
                             if (!isActive) break
                             val message = e.readableMessage
 
