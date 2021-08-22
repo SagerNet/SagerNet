@@ -626,12 +626,14 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 test.update(profile)
                             } else {
                                 val socket = Socket()
+                                socket.tcpNoDelay = true
+                                socket.soTimeout = 5000
                                 socket.bind(InetSocketAddress(0))
                                 protectFromVpn(socket.fileDescriptor.int)
                                 val start = SystemClock.elapsedRealtime()
                                 socket.connect(
                                     InetSocketAddress(
-                                        address, 7
+                                        address, profile.requireBean().serverPort
                                     ), 5000
                                 )
                                 if (!isActive) break

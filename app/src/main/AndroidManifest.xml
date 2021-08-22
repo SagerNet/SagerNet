@@ -112,6 +112,9 @@
                 <data android:scheme="ss" />
                 <data android:scheme="ssr" />
                 <data android:scheme="socks" />
+                <data android:scheme="socks4" />
+                <data android:scheme="socksa" />
+                <data android:scheme="sock5" />
                 <data android:scheme="vmess" />
                 <data android:scheme="vless" />
                 <data android:scheme="trojan" />

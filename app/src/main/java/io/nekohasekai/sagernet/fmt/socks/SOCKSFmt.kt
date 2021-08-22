@@ -52,7 +52,11 @@ fun parseSOCKS(link: String): SOCKSBean {
             ?: error("Not supported: $link")
 
         return SOCKSBean().apply {
-            protocol = if (link.contains("socks4://")) SOCKSBean.PROTOCOL_SOCKS4 else SOCKSBean.PROTOCOL_SOCKS5
+            protocol = when {
+                link.startsWith("socks4://") -> SOCKSBean.PROTOCOL_SOCKS4
+                link.startsWith("socks4a://") -> SOCKSBean.PROTOCOL_SOCKS4A
+                else -> SOCKSBean.PROTOCOL_SOCKS5
+            }
             serverAddress = url.host
             serverPort = url.port
             username = url.username
