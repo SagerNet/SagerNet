@@ -19,26 +19,35 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg.proto
+package io.nekohasekai.sagernet.bg.test
 
-import io.nekohasekai.sagernet.bg.ClashBasedInstance
-import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.bg.proto.ShadowsocksInstance
+import io.nekohasekai.sagernet.bg.proto.ShadowsocksRInstance
+import io.nekohasekai.sagernet.bg.proto.SnellInstance
+import io.nekohasekai.sagernet.bg.proto.Socks4To5Instance
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProxyEntity
 import libcore.Libcore
 
-class ShadowsocksRInstance(val server: ShadowsocksRBean, val port: Int) : ClashBasedInstance() {
+class UrlTest {
 
-    override fun createInstance() {
-        instance = Libcore.newShadowsocksRInstance(
-            port.toLong(),
-            server.finalAddress,
-            server.finalPort.toLong(),
-            server.password,
-            server.method,
-            server.obfs,
-            server.obfsParam,
-            server.protocol,
-            server.protocolParam
-        )
+    val link = DataStore.connectionTestURL
+    val timeout = 5000L
+
+    suspend fun doTest(profile: ProxyEntity): Int {
+        if (profile.useClashBased()) {
+            val instance = when (profile.type) {
+                ProxyEntity.TYPE_SOCKS -> Socks4To5Instance(profile.socksBean!!, 0)
+                ProxyEntity.TYPE_SS -> ShadowsocksInstance(profile.ssBean!!, 0)
+                ProxyEntity.TYPE_SSR -> ShadowsocksRInstance(profile.ssrBean!!, 0)
+                ProxyEntity.TYPE_SNELL -> SnellInstance(profile.snellBean!!, 0)
+                else -> error("unexpected")
+            }
+            instance.createInstance()
+            return Libcore.urlTestClashBased(instance.instance, link, timeout).toInt()
+        }
+
+        return V2RayTestInstance(profile, link, timeout).doTest()
     }
 
 }

@@ -44,6 +44,7 @@ import io.nekohasekai.sagernet.ktx.broadcastReceiver
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import kotlinx.coroutines.*
+import libcore.Libcore
 import java.net.UnknownHostException
 
 class BaseService {
@@ -198,6 +199,19 @@ class BaseService {
 
         override fun protect(fd: Int) {
             (data?.proxy?.service as VpnService?)?.protect(fd)
+        }
+
+        override fun urlTest(): Int {
+            if (data?.proxy?.v2rayPoint == null) {
+                error("core not started")
+            }
+            try {
+                return Libcore.urlTestV2ray(
+                    data!!.proxy!!.v2rayPoint, DataStore.connectionTestURL, 5000
+                ).toInt()
+            } catch (e: Exception) {
+                error(e.readableMessage)
+            }
         }
 
         fun stateChanged(s: State, msg: String?) = launch {

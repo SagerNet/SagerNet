@@ -22,16 +22,15 @@
 package io.nekohasekai.sagernet.bg.proto
 
 import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.bg.ClashBasedInstance
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
-import kotlinx.coroutines.CoroutineScope
-import libcore.SnellInstance
+import libcore.Libcore
 
-class SnellInstance(val server: SnellBean, val port: Int) : AbstractInstance {
+class SnellInstance(val server: SnellBean, val port: Int) : ClashBasedInstance() {
 
-    lateinit var point: SnellInstance
+    override fun createInstance() {
 
-    override fun launch() {
-        point = SnellInstance(
+        instance = Libcore.newSnellInstance(
             port.toLong(),
             server.finalAddress,
             server.finalPort.toLong(),
@@ -40,10 +39,7 @@ class SnellInstance(val server: SnellBean, val port: Int) : AbstractInstance {
             server.obfsHost,
             server.version.toLong()
         )
-        point.start()
+
     }
 
-    override fun destroy(scope: CoroutineScope) {
-        if (::point.isInitialized) point.close()
-    }
 }

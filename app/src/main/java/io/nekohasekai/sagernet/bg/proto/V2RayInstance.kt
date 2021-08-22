@@ -91,16 +91,16 @@ abstract class V2RayInstance(
         return pluginPath.getOrPut(name) { PluginManager.init(name)!! }
     }
 
-    protected open fun initInstance() {
-        v2rayPoint = V2RayInstance()
-    }
-
     protected open fun buildConfig() {
         config = buildV2RayConfig(profile)
     }
 
+    protected open fun loadConfig() {
+        v2rayPoint.loadConfig(config.config, false)
+    }
+
     open fun init() {
-        initInstance()
+        v2rayPoint = V2RayInstance()
         buildConfig()
         for ((isBalancer, chain) in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
@@ -182,8 +182,7 @@ abstract class V2RayInstance(
                 }
             }
         }
-
-        v2rayPoint.loadConfig(config.config)
+        loadConfig()
     }
 
     override fun launch() {

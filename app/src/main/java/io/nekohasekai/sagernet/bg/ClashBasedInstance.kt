@@ -19,26 +19,24 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg.proto
+package io.nekohasekai.sagernet.bg
 
-import io.nekohasekai.sagernet.bg.ClashBasedInstance
-import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import libcore.Libcore
+import kotlinx.coroutines.CoroutineScope
+import libcore.ClashBasedInstance
 
-class ShadowsocksRInstance(val server: ShadowsocksRBean, val port: Int) : ClashBasedInstance() {
+abstract class ClashBasedInstance : AbstractInstance {
 
-    override fun createInstance() {
-        instance = Libcore.newShadowsocksRInstance(
-            port.toLong(),
-            server.finalAddress,
-            server.finalPort.toLong(),
-            server.password,
-            server.method,
-            server.obfs,
-            server.obfsParam,
-            server.protocol,
-            server.protocolParam
-        )
+    lateinit var instance: ClashBasedInstance
+
+    abstract fun createInstance()
+
+    override fun launch() {
+        createInstance()
+        instance.start()
+    }
+
+    override fun destroy(scope: CoroutineScope) {
+        if (::instance.isInitialized) instance.close()
     }
 
 }

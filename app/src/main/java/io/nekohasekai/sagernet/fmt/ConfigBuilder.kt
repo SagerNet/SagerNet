@@ -46,7 +46,9 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.USE_STATS_SERVICE
+import io.nekohasekai.sagernet.ktx.isIpAddress
+import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
 
 const val TAG_SOCKS = "socks"
@@ -84,7 +86,7 @@ class V2rayBuildResult(
 }
 
 fun buildV2RayConfig(
-    proxy: ProxyEntity, forTest: Boolean = false, testPort: Int = 0
+    proxy: ProxyEntity, forTest: Boolean = false
 ): V2rayBuildResult {
 
     val outboundTags = ArrayList<String>()
@@ -149,7 +151,7 @@ fun buildV2RayConfig(
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = ArrayList<IndexEntity>()
     var requireWs = false
-    val requireHttp = forTest || Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp
+    val requireHttp = !forTest && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp)
     val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
     val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
     val uidTag = hashMapOf<Int, String>()
@@ -168,7 +170,7 @@ fun buildV2RayConfig(
                     tags.add(tagVal)
                     continue
                 }
-                val tagName = "uid-$uid"
+                val tagName = "uid-in-$uid"
                 val uidPort = mkPort()
                 uidMap[uid] = uidPort
                 uidTag[uid] = tagName
@@ -241,7 +243,7 @@ fun buildV2RayConfig(
         }
 
         log = LogObject().apply {
-            loglevel = if (DataStore.enableLog) "debug" else "error"
+            loglevel = if (!forTest && DataStore.enableLog) "debug" else "error"
         }
 
         policy = PolicyObject().apply {
@@ -288,7 +290,7 @@ fun buildV2RayConfig(
             inbounds.add(InboundObject().apply {
                 tag = TAG_HTTP
                 listen = bind
-                port = if (forTest) testPort else DataStore.httpPort
+                port = DataStore.httpPort
                 protocol = "http"
                 settings = LazyInboundConfigurationObject(
                     this,
@@ -413,9 +415,6 @@ fun buildV2RayConfig(
             var chainOutbound = ""
 
             profileList.forEachIndexed { index, proxyEntity ->
-                Logs.d("Index $index, proxyEntity: ")
-                Logs.d(formatObject(proxyEntity))
-
                 val bean = proxyEntity.requireBean()
                 currentOutbound = OutboundObject()
 
@@ -1150,6 +1149,17 @@ fun buildV2RayConfig(
         if (useFakeDns) {
             dns.servers.add(0, DnsObject.StringOrServerObject().apply {
                 valueX = "fakedns"
+            })
+        }
+
+        for ((uid, uTag) in uidTag) {
+            outbounds.add(OutboundObject().apply {
+                tag = "uid-$uid"
+                protocol = "loopback"
+                settings = LazyOutboundConfigurationObject(this,
+                    LoopbackOutboundConfigurationObject().apply {
+                        inboundTag = uTag
+                    })
             })
         }
 

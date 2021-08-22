@@ -59,7 +59,7 @@
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">測試中……</string>
     <string name="connection_test_available">成功：HTTPS 握手花費 %dms</string>
-    <string name="connection_test_error">檢查網路連線失敗：%s</string>
+    <string name="connection_test_error">失敗：%s</string>
     <string name="connection_test_fail">網路不可用</string>
     <string name="connection_test_error_status_code">錯誤碼：#%d</string>
     <!-- proxy category -->

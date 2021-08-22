@@ -28,7 +28,9 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
 import kotlinx.coroutines.delay
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.internal.closeQuietly
 import java.io.IOException
 
@@ -51,11 +53,13 @@ class HttpsTest : ViewModel() {
 
         class Success(private val elapsed: Long) : Status() {
             override val status
-                get() = app.getString(if (DataStore.connectionTestURL.startsWith("https://")) {
-                    R.string.connection_test_available
-                } else {
-                    R.string.connection_test_available_http
-                }, elapsed)
+                get() = app.getString(
+                    if (DataStore.connectionTestURL.startsWith("https://")) {
+                        R.string.connection_test_available
+                    } else {
+                        R.string.connection_test_available_http
+                    }, elapsed
+                )
         }
 
         sealed class Error : Status() {
@@ -74,8 +78,9 @@ class HttpsTest : ViewModel() {
 
             class UnexpectedResponseCode(private val code: Int) : Error() {
                 override val error
-                    get() = app.getString(R.string.connection_test_error_status_code,
-                        code)
+                    get() = app.getString(
+                        R.string.connection_test_error_status_code, code
+                    )
             }
 
             class IOFailure(private val e: IOException) : Error() {
@@ -105,7 +110,10 @@ class HttpsTest : ViewModel() {
                 val response = try {
                     execute()
                 } catch (e: IOException) {
-                    if (e.readableMessage.contains("failed to connect to /127.0.0.1") && e.readableMessage.contains("ECONNREFUSED")) {
+                    if (e.readableMessage.contains("failed to connect to /127.0.0.1") && e.readableMessage.contains(
+                            "ECONNREFUSED"
+                        )
+                    ) {
                         delay(1000L)
                         onMainDispatcher {
                             testConnection()
@@ -129,12 +137,11 @@ class HttpsTest : ViewModel() {
                 val elapsed = SystemClock.elapsedRealtime() - start
                 response.closeQuietly()
                 runOnMainDispatcher {
-                    status.value =
-                        if (code == 204 || code == 200) {
-                            Status.Success(elapsed)
-                        } else {
-                            Status.Error.UnexpectedResponseCode(code)
-                        }
+                    status.value = if (code == 204 || code == 200) {
+                        Status.Success(elapsed)
+                    } else {
+                        Status.Error.UnexpectedResponseCode(code)
+                    }
                     running = null
                 }
             }

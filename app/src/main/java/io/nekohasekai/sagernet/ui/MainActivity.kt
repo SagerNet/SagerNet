@@ -111,6 +111,13 @@ class MainActivity : ThemedActivity(),
         }
     }
 
+    fun urlTest(): Int {
+        if (state != BaseService.State.Connected || connection.service == null) {
+            error("not started")
+        }
+        return connection.service!!.urlTest()
+    }
+
     suspend fun importSubscription(uri: Uri) {
         val group: ProxyGroup
 

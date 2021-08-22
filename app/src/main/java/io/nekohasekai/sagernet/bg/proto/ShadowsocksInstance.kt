@@ -23,16 +23,13 @@ package io.nekohasekai.sagernet.bg.proto
 
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
-import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.bg.ClashBasedInstance
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import kotlinx.coroutines.CoroutineScope
-import libcore.ShadowsocksInstance
+import libcore.Libcore
 
-class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : AbstractInstance {
+class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : ClashBasedInstance() {
 
-    lateinit var point: ShadowsocksInstance
-
-    override fun launch() {
+    override fun createInstance() {
         var pluginName = ""
         val pluginOpts = JSONObject()
 
@@ -60,7 +57,7 @@ class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : Abstract
             }
         }
 
-        point = ShadowsocksInstance(
+        instance = Libcore.newShadowsocksInstance(
             port.toLong(),
             server.finalAddress,
             server.finalPort.toLong(),
@@ -69,11 +66,6 @@ class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : Abstract
             pluginName,
             pluginOpts.toStringPretty()
         )
-        point.start()
-    }
-
-    override fun destroy(scope: CoroutineScope) {
-        if (::point.isInitialized) point.close()
     }
 
 }

@@ -347,6 +347,17 @@ data class ProxyEntity(
         }
     }
 
+    fun useClashBased(): Boolean {
+        if (!needExternal()) return false
+        return when (type) {
+            TYPE_SOCKS -> socksBean!!.protocol != SOCKSBean.PROTOCOL_SOCKS5
+            TYPE_SS -> useClashShadowsocks()
+            TYPE_SSR -> true
+            TYPE_SNELL -> true
+            else -> false
+        }
+    }
+
     fun isV2RayNetworkTcp(): Boolean {
         val bean = requireBean() as StandardV2RayBean
         return when (bean.type) {
@@ -389,7 +400,7 @@ data class ProxyEntity(
 
     fun useExternalShadowsocks(): Boolean {
         val bean = ssBean ?: return false
-        if (DataStore.providerShadowsocksAEAD == ShadowsocksAEADProvider.SHADOWSOCKS_RUST) return true
+        if (DataStore.providerShadowsocksAEAD != ShadowsocksAEADProvider.V2RAY) return true
         if (bean.plugin.isNotBlank()) {
             Logs.d("Requiring plugin ${bean.plugin}")
             return true

@@ -11,4 +11,6 @@ interface ISagerNetService {
   oneway void stopListeningForBandwidth(in ISagerNetServiceCallback cb);
   oneway void unregisterCallback(in ISagerNetServiceCallback cb);
   oneway void protect(int fd);
+  int urlTest();
+
 }

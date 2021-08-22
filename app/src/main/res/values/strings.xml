@@ -72,7 +72,7 @@
     <string name="connection_test_testing">Testing…</string>
     <string name="connection_test_available">Success: HTTPS handshake took %dms</string>
     <string name="connection_test_available_http">Success: HTTP handshake took %dms</string>
-    <string name="connection_test_error">Fail to detect internet connection: %s</string>
+    <string name="connection_test_error">Failed: %s</string>
     <string name="connection_test_fail">Internet Unavailable</string>
     <string name="connection_test_error_status_code">Error code: #%d</string>
     <string name="cag_dns">DNS Settings</string>
@@ -321,7 +321,6 @@
     <string name="connection_test_icmp_ping" translatable="false">ICMPing</string>
     <string name="connection_test_icmp_ping_unavailable">ICMPing unavailable</string>
     <string name="connection_test_url_test" translatable="false">URL Test</string>
-    <string name="connection_test_url_test_reuse_mode" translatable="false">URL Reuse</string>
     <string name="connection_test_reorder">Reorder by delay</string>
     <string name="connection_test_domain_not_found">Domain not found</string>
     <string name="connection_test_refused">Connection refused</string>

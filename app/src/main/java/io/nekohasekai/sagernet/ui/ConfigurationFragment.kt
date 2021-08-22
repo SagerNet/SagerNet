@@ -59,7 +59,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.bg.proto.TestInstance
+import io.nekohasekai.sagernet.bg.test.UrlTest
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
@@ -75,7 +75,6 @@ import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
 import libcore.Libcore
-import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -100,11 +99,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         super.onViewCreated(view, savedInstanceState)
         if (!select) {
             toolbar.inflateMenu(R.menu.add_profile_menu)
-
-            if (!isExpert) {
-                toolbar.menu.findItem(R.id.action_connection_test).subMenu.removeItem(R.id.action_connection_url_reuse)
-            }
-
             toolbar.setOnMenuItemClickListener(this)
         } else {
             toolbar.setTitle(R.string.select_profile)
@@ -348,10 +342,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 pingTest(false)
             }
             R.id.action_connection_url_test -> {
-                urlTest(false)
-            }
-            R.id.action_connection_url_reuse -> {
-                urlTest(true)
+                urlTest()
             }
             R.id.action_connection_reorder -> {
                 runOnDefaultDispatcher {
@@ -700,7 +691,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    fun urlTest(reuse: Boolean) {
+    fun urlTest() {
         stopService()
 
         val test = TestDialog()
@@ -723,6 +714,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
             val testJobs = mutableListOf<Job>()
+            val urlTest = UrlTest()
 
             repeat(5) {
                 testJobs.add(launch {
@@ -732,7 +724,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         test.insert(profile)
 
                         try {
-                            val result = TestInstance(profile).doTest(if (reuse) 2 else 1)
+                            val result = urlTest.doTest(profile)
                             profile.status = 1
                             profile.ping = result
                         } catch (e: PluginManager.PluginNotFoundException) {

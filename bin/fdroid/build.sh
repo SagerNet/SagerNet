@@ -2,4 +2,4 @@
 
 source "bin/init/env.sh"
 
-bin/lib/v2ray/build.sh
+bin/lib/core/build.sh

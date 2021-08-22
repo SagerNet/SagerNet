@@ -40,10 +40,6 @@ class ExternalInstance(
         }
     }
 
-    override fun initInstance() {
-        v2rayPoint = libcore.V2RayInstance()
-    }
-
     override fun buildConfig() {
         config = buildCustomConfig(profile, port)
     }

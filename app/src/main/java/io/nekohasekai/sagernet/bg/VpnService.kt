@@ -33,7 +33,10 @@ import android.system.ErrnoException
 import android.system.Os
 import androidx.annotation.RequiresApi
 import cn.hutool.json.JSONObject
-import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.IPv6Mode
+import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.Logs
@@ -181,7 +184,7 @@ class VpnService : BaseVpnService(),
 
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
-        val needBypassRootUid =  data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
+        val needBypassRootUid = data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
         val needIncludeSelf = data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
@@ -249,9 +252,8 @@ class VpnService : BaseVpnService(),
         tun2socks = Tun2socks(
             conn.fd.toLong(),
             VPN_MTU.toLong(),
-            DataStore.socksPort.toLong(),
+            data.proxy!!.v2rayPoint,
             PRIVATE_VLAN4_ROUTER,
-            DataStore.localDNSPort.toLong(),
             true,
             DataStore.enableLog,
             uidRules.toStringPretty()

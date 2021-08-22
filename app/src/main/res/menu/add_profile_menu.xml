@@ -91,9 +91,6 @@
                 android:id="@+id/action_connection_url_test"
                 android:title="@string/connection_test_url_test" />
             <item
-                android:id="@+id/action_connection_url_reuse"
-                android:title="@string/connection_test_url_test_reuse_mode" />
-            <item
                 android:id="@+id/action_connection_reorder"
                 android:title="@string/connection_test_reorder" />
             <item

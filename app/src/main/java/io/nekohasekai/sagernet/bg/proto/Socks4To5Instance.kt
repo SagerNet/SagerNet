@@ -21,27 +21,22 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
-import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.bg.ClashBasedInstance
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import kotlinx.coroutines.CoroutineScope
-import libcore.Socks4To5Instance
+import libcore.Libcore
 
-class Socks4To5Instance(val server: SOCKSBean, val port: Int) : AbstractInstance {
+class Socks4To5Instance(val server: SOCKSBean, val port: Int) : ClashBasedInstance() {
 
-    lateinit var point: Socks4To5Instance
+    override fun createInstance() {
 
-    override fun launch() {
-        point = Socks4To5Instance(
+        instance = Libcore.newSocks4To5Instance(
             port.toLong(),
             server.finalAddress,
             server.finalPort.toLong(),
             server.username,
             server.protocol == SOCKSBean.PROTOCOL_SOCKS4A
         )
-        point.start()
+
     }
 
-    override fun destroy(scope: CoroutineScope) {
-        if (::point.isInitialized) point.close()
-    }
 }

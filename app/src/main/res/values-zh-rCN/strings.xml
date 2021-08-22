@@ -60,7 +60,7 @@
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">测试中…</string>
     <string name="connection_test_available">连接成功: HTTPS 握手耗时 %dms</string>
-    <string name="connection_test_error">连接失败: %s</string>
+    <string name="connection_test_error">失败: %s</string>
     <string name="connection_test_fail">网络不可用</string>
     <string name="connection_test_error_status_code">错误代码: #%d</string>
     <!-- proxy category -->
