@@ -44,7 +44,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle') }}
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -74,7 +74,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle') }}
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Release Build
         env:
           SKIP_BUILD: on
@@ -181,7 +181,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle') }}
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Release Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties

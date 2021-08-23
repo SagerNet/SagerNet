@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle') }}
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Release Build
         env:
           SKIP_BUILD: on
@@ -176,7 +176,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle') }}
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Release Build
         env:
           SKIP_BUILD: on

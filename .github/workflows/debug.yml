@@ -207,7 +207,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           path: ~/.gradle
-          key: native-${{ hashFiles('**/*.gradle') }}
+          key: native-${{ hashFiles('**/*.gradle.kts') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -244,7 +244,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle') }}
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Debug Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
