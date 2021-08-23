@@ -26,18 +26,24 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 object PackageCache {
 
     lateinit var installPackages: Map<String, PackageInfo>
     lateinit var packageMap: Map<String, Int>
+    lateinit var labelMap: Map<String, String>
     val uidMap = HashMap<Int, HashSet<String>>()
+    val loaded = Mutex(true)
 
     fun register() {
         reload()
         app.listenForPackageChanges(false) {
             reload()
         }
+        loaded.unlock()
     }
 
     fun reload() {
@@ -52,6 +58,9 @@ object PackageCache {
 
         val installed = app.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
         packageMap = installed.associate { it.packageName to it.uid }
+        labelMap = installed.associate {
+            it.packageName to it.loadLabel(app.packageManager).toString()
+        }
         uidMap.clear()
         for (info in installed) {
             val uid = info.uid
@@ -61,5 +70,25 @@ object PackageCache {
 
     operator fun get(uid: Int) = uidMap[uid]
     operator fun get(packageName: String) = packageMap[packageName]
+
+    suspend fun awaitLoad() {
+        if (::labelMap.isInitialized) {
+            return
+        }
+        loaded.withLock {
+            // just await
+        }
+    }
+
+    fun awaitLoadSync() {
+        if (::labelMap.isInitialized) {
+            return
+        }
+        runBlocking {
+            loaded.withLock {
+                // just await
+            }
+        }
+    }
 
 }

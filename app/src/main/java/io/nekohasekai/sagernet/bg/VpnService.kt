@@ -255,10 +255,11 @@ class VpnService : BaseVpnService(),
             data.proxy!!.v2rayPoint,
             PRIVATE_VLAN4_ROUTER,
             true,
+            DataStore.trafficSniffing,
+            DataStore.enableFakeDns,
             DataStore.enableLog,
             uidRules.toStringPretty()
         )
-        tun2socks.start()
     }
 
     override fun onRevoke() = stopRunner()

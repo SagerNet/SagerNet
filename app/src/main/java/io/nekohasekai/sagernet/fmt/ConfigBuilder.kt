@@ -161,7 +161,7 @@ fun buildV2RayConfig(
     return V2RayConfig().apply {
 
         fun RuleEntity.uidTags(): Collection<String> {
-
+            PackageCache.awaitLoadSync()
             val uids = packages.mapNotNull { PackageCache[it] }
             val tags = hashSetOf<String>()
             for (uid in uids) {
@@ -170,7 +170,7 @@ fun buildV2RayConfig(
                     tags.add(tagVal)
                     continue
                 }
-                val tagName = "uid-in-$uid"
+                val tagName = "uid-$uid"
                 val uidPort = mkPort()
                 uidMap[uid] = uidPort
                 uidTag[uid] = tagName
@@ -1149,17 +1149,6 @@ fun buildV2RayConfig(
         if (useFakeDns) {
             dns.servers.add(0, DnsObject.StringOrServerObject().apply {
                 valueX = "fakedns"
-            })
-        }
-
-        for ((uid, uTag) in uidTag) {
-            outbounds.add(OutboundObject().apply {
-                tag = "uid-$uid"
-                protocol = "loopback"
-                settings = LazyOutboundConfigurationObject(this,
-                    LoopbackOutboundConfigurationObject().apply {
-                        inboundTag = uTag
-                    })
             })
         }
 

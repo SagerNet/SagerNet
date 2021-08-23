@@ -28,11 +28,14 @@ import cn.hutool.cache.impl.LFUCacheCompact
 import cn.hutool.core.util.HexUtil
 import com.topjohnwu.superuser.io.SuFileInputStream
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.utils.PackageCache
+import libcore.UidDumper
+import libcore.UidInfo
 import java.io.File
 import java.net.InetAddress
 import java.net.InetSocketAddress
 
-object UidDumper : libcore.UidDumper {
+object UidDumper : UidDumper {
 
     private val TCP_IPV4_PROC = File("/proc/net/tcp")
     private val TCP_IPV6_PROC = File("/proc/net/tcp6")
@@ -60,6 +63,20 @@ object UidDumper : libcore.UidDumper {
             InetSocketAddress(srcIp, srcPort.toUInt().toInt()),
             InetSocketAddress(destIp, destPort.toUInt().toInt())
         ).toLong()
+    }
+
+    override fun getUidInfo(uid: Long): UidInfo {
+        PackageCache.awaitLoadSync()
+
+        val packageNames = PackageCache.uidMap[uid.toInt()]
+        if (!packageNames.isNullOrEmpty()) for (packageName in packageNames) {
+            val uidInfo = UidInfo()
+            uidInfo.label = PackageCache.labelMap[packageName] ?: continue
+            uidInfo.packageName = packageName
+            return uidInfo
+        }
+
+        error("unknown uid $uid")
     }
 
     @SuppressLint("NewApi")

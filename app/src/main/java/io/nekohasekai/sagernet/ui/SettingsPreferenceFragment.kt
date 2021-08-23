@@ -199,7 +199,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val utlsFingerprint = findPreference<SimpleMenuPreference>(Key.UTLS_FINGERPRINT)!!
 
-        serviceMode.onPreferenceChangeListener = reloadListener
+        serviceMode.setOnPreferenceChangeListener { _, _ ->
+            if (serviceStarted()) SagerNet.stopService()
+            true
+        }
+
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
