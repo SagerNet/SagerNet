@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
-        run: git submodule status library/libcore > libcore_status
+        run: git submodule status library/core > libcore_status
       - name: LibCore Cache
         id: cache
         uses: actions/cache@v2
@@ -102,7 +102,7 @@ jobs:
       - name: Fetch Status
         run: |
           git submodule status 'library/shadowsocks/*' > shadowsocks_status
-          git submodule status library/libcore > libcore_status
+          git submodule status library/core > libcore_status
       - name: LibCore Cache
         uses: actions/cache@v2
         with:
@@ -215,7 +215,7 @@ jobs:
       - name: Fetch Status
         run: |
           git submodule status 'library/shadowsocks/*' > shadowsocks_status
-          git submodule status library/libcore > libcore_status
+          git submodule status library/core > libcore_status
       - name: LibCore Cache
         uses: actions/cache@v2
         with:

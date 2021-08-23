@@ -4,7 +4,7 @@ source "bin/init/env.sh"
 export CGO_ENABLED=1
 export GO386=softfloat
 
-cd library/libcore
+cd library/core
 ./build.sh || exit 1
 
 mkdir -p "$PROJECT/app/libs"

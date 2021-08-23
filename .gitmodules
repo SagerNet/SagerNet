@@ -1,9 +1,3 @@
-[submodule "library/core/src/main/jni/badvpn"]
-	path = library/core/src/main/jni/badvpn
-	url = https://github.com/SagerNet/badvpn
-[submodule "library/core/src/main/jni/libancillary"]
-	path = library/core/src/main/jni/libancillary
-	url = https://github.com/shadowsocks/libancillary
 [submodule "library/shadowsocks/src/main/rust/shadowsocks-rust"]
 	path = library/shadowsocks/src/main/rust/shadowsocks-rust
 	url = https://github.com/shadowsocks/shadowsocks-rust.git
@@ -40,6 +34,6 @@
 [submodule "plugin/hysteria/src/main/go/hysteria"]
 	path = plugin/hysteria/src/main/go/hysteria
 	url = https://github.com/HyNetwork/hysteria
-[submodule "library/libcore"]
-	path = library/libcore
+[submodule "library/core"]
+	path = library/core
 	url = https://github.com/SagerNet/LibSagerNetCore
