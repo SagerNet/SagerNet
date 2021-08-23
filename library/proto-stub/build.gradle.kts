@@ -8,7 +8,7 @@ plugins {
 
 setupKotlinCommon()
 
-val grpcVersion = "1.39.0"
+val grpcVersion = "1.40.0"
 val grpcKotlinVersion = "1.1.0"
 val protobufVersion = "3.17.3"
 
@@ -18,6 +18,7 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
     api("io.grpc:grpc-protobuf-lite:$grpcVersion")
     api("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
+    api("io.grpc:grpc-stub:$grpcVersion")
     api("com.google.protobuf:protobuf-javalite:$protobufVersion")
 }
 

@@ -90,7 +90,7 @@ dependencies {
     implementation("editorkit:language-json:2.0.0")
 
     implementation(project(":library:proto-stub"))
-    implementation("io.grpc:grpc-okhttp:1.39.0")
+    implementation("io.grpc:grpc-okhttp:1.40.0")
 
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
