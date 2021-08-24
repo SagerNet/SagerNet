@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.fmt.hysteria
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import java.io.File
 
 fun JSONObject.parseHysteria(): HysteriaBean {
     return HysteriaBean().apply {
@@ -44,10 +45,14 @@ fun JSONObject.parseHysteria(): HysteriaBean {
         }
         sni = getStr("server_name")
         allowInsecure = getBool("insecure")
+
+        streamReceiveWindow = getInt("recv_window_conn")
+        connectionReceiveWindow = getInt("recv_window")
+        disableMtuDiscovery = getBool("disable_mtu_discovery")
     }
 }
 
-fun HysteriaBean.buildHysteriaConfig(port: Int): String {
+fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): String {
     return JSONObject().also {
         it["server"] = "$serverAddress:$serverPort"
         it["up_mbps"] = uploadMbps
@@ -59,6 +64,15 @@ fun HysteriaBean.buildHysteriaConfig(port: Int): String {
             HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload
         }
         if (sni.isNotBlank()) it["server_name"] = sni
+        if (caText.isNotBlank() && cacheFile != null) {
+            val caFile = cacheFile()
+            caFile.writeText(caText)
+            it["ca"] = caFile.absolutePath
+        }
+
         if (allowInsecure) it["insecure"] = true
+        if (streamReceiveWindow > 0) it["recv_window_conn"] = streamReceiveWindow
+        if (connectionReceiveWindow > 0) it["recv_window"] = connectionReceiveWindow
+        if (disableMtuDiscovery) it["disable_mtu_discovery"] = true
     }.toStringPretty()
 }

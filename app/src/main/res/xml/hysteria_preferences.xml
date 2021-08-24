@@ -41,6 +41,11 @@
             app:key="serverSNI"
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="serverCertificates"
+            app:title="@string/certificates"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverAllowInsecure"
@@ -56,7 +61,20 @@
             app:key="serverDownloadSpeed"
             app:title="@string/hysteria_download_mbps"
             app:useSimpleSummaryProvider="true" />
-
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="serverStreamReceiveWindow"
+            app:title="@string/hysteria_stream_receive_window"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_transform_24"
+            app:key="serverConnectionReceiveWindow"
+            app:title="@string/hysteria_connection_receive_window"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_multiple_stop_24"
+            app:key="serverDisableMtuDiscovery"
+            app:title="@string/hysteria_disable_mtu_discovery" />
     </PreferenceCategory>
 
 </PreferenceScreen>

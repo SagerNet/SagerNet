@@ -44,9 +44,13 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         DataStore.serverAuthType = authPayloadType
         DataStore.serverPassword = authPayload
         DataStore.serverSNI = sni
+        DataStore.serverCertificates = caText
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverUploadSpeed = uploadMbps
         DataStore.serverDownloadSpeed = downloadMbps
+        DataStore.serverStreamReceiveWindow = streamReceiveWindow
+        DataStore.serverConnectionReceiveWindow = connectionReceiveWindow
+        DataStore.serverDisableMtuDiscovery = disableMtuDiscovery
     }
 
     override fun HysteriaBean.serialize() {
@@ -57,9 +61,13 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         authPayloadType = DataStore.serverAuthType
         authPayload = DataStore.serverPassword
         sni = DataStore.serverSNI
+        caText = DataStore.serverCertificates
         allowInsecure = DataStore.serverAllowInsecure
         uploadMbps = DataStore.serverUploadSpeed
         downloadMbps = DataStore.serverDownloadSpeed
+        streamReceiveWindow = DataStore.serverStreamReceiveWindow
+        connectionReceiveWindow = DataStore.serverConnectionReceiveWindow
+        disableMtuDiscovery = DataStore.serverDisableMtuDiscovery
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -77,10 +85,16 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         }
 
         findPreference<EditTextPreference>(Key.SERVER_UPLOAD_SPEED)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
         findPreference<EditTextPreference>(Key.SERVER_DOWNLOAD_SPEED)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_STREAM_RECEIVE_WINDOW)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_CONNECTION_RECEIVE_WINDOW)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
 
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {

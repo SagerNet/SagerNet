@@ -154,7 +154,15 @@ abstract class V2RayInstance(
                     }
                     bean is HysteriaBean -> {
                         initPlugin("hysteria-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildHysteriaConfig(port)
+                        pluginConfigs[port] = profile.type to bean.buildHysteriaConfig(port) {
+                            File(
+                                app.noBackupFilesDir,
+                                "hysteria_" + SystemClock.elapsedRealtime() + ".ca"
+                            ).apply {
+                                parentFile?.mkdirs()
+                                cacheFiles.add(this)
+                            }
+                        }
                     }
                     bean is ConfigBean -> {
                         when (bean.type) {
