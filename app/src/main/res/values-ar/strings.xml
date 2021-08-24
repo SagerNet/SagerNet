@@ -376,4 +376,6 @@
         <item quantity="other"></item>
     </plurals>
     <string name="add_profile_methods_manual_settings">الإعدادات اليدوية</string>
+    <string name="ss_stream_provider">Shadowsocks 流式密码提供程序</string>
+    <string name="hysteria_connection_receive_window">"QUIC "</string>
 </resources>

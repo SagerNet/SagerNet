@@ -43,10 +43,16 @@ fun PreferenceDataStore.int(
 fun PreferenceDataStore.stringToInt(
     name: String,
     defaultValue: () -> Int = { 0 },
-) = PreferenceProxy(name,
-    defaultValue,
-    { key, default -> getString(key, "$default")?.takeIf { NumberUtil.isInteger(it) }?.toInt() ?: default },
-    { key, value -> putString(key, "$value") })
+) = PreferenceProxy(name, defaultValue, { key, default ->
+    getString(key, "$default")?.takeIf { NumberUtil.isInteger(it) }?.toInt() ?: default
+}, { key, value -> putString(key, "$value") })
+
+fun PreferenceDataStore.stringToIntIfExists(
+    name: String,
+    defaultValue: () -> Int = { 0 },
+) = PreferenceProxy(name, defaultValue, { key, default ->
+    getString(key, "$default")?.takeIf { NumberUtil.isInteger(it) }?.toInt() ?: default
+}, { key, value -> putString(key, value.takeIf { it > 0 }?.toString() ?: "") })
 
 fun PreferenceDataStore.long(
     name: String,
@@ -56,10 +62,9 @@ fun PreferenceDataStore.long(
 fun PreferenceDataStore.stringToLong(
     name: String,
     defaultValue: () -> Long = { 0L },
-) = PreferenceProxy(name,
-    defaultValue,
-    { key, default -> getString(key, "$default")?.takeIf { NumberUtil.isLong(it) }?.toLong() ?: default },
-    { key, value -> putString(key, "$value") })
+) = PreferenceProxy(name, defaultValue, { key, default ->
+    getString(key, "$default")?.takeIf { NumberUtil.isLong(it) }?.toLong() ?: default
+}, { key, value -> putString(key, "$value") })
 
 class PreferenceProxy<T>(
     val name: String,

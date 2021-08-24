@@ -380,4 +380,9 @@
     <string name="hysteria_upload_mbps">最大上行 (Mbps)</string>
     <string name="hysteria_download_mbps">最大下行 (Mbps)</string>
     <string name="experimental_settings">实验性</string>
+    <string name="utls_fingerprint">uTLS 指纹</string>
+    <string name="ss_stream_provider">Shadowsocks 流式密码提供程序</string>
+    <string name="hysteria_stream_receive_window">QUIC 流接收窗口</string>
+    <string name="hysteria_connection_receive_window">QUIC 连接接收窗口</string>
+    <string name="hysteria_disable_mtu_discovery">禁用路径最大传输单元发现</string>
 </resources>
