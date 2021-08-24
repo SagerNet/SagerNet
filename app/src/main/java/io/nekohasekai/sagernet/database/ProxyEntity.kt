@@ -417,7 +417,6 @@ data class ProxyEntity(
 
     fun ssPluginSupportedByClash(): Boolean {
         val bean = ssBean ?: return false
-        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust
         if (bean.plugin.isNotBlank()) {
             val plugin = PluginConfiguration(bean.plugin)
             if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
@@ -426,7 +425,7 @@ data class ProxyEntity(
             }
             try {
                 PluginManager.init(plugin)
-                return onlyClash
+                return false
             } catch (e: Exception) {
             }
         }
