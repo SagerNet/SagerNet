@@ -41,9 +41,11 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.TAG_SOCKS
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.*
 import libcore.Libcore
 import java.net.UnknownHostException
+import com.github.shadowsocks.plugin.PluginManager as ShadowsocksPluginPluginManager
 
 class BaseService {
 
@@ -229,6 +231,11 @@ class BaseService {
             }
         }
 
+        fun missingPlugin(pluginName: String) = launch {
+            val profileName = profileName
+            broadcast { it.missingPlugin(profileName, pluginName) }
+        }
+
         override fun close() {
             callbacks.kill()
             cancel()
@@ -358,9 +365,16 @@ class BaseService {
                 } catch (_: CancellationException) { // if the job was cancelled, it is canceller's responsibility to call stopRunner
                 } catch (_: UnknownHostException) {
                     stopRunner(false, getString(R.string.invalid_server))
+                } catch (e: PluginManager.PluginNotFoundException) {
+                    Logs.d(e.readableMessage)
+                    data.binder.missingPlugin(e.plugin)
+                    stopRunner(false, null)
+                } catch (e: ShadowsocksPluginPluginManager.PluginNotFoundException) {
+                    Logs.d(e.readableMessage)
+                    data.binder.missingPlugin("shadowsocks-" + e.plugin)
+                    stopRunner(false, null)
                 } catch (exc: Throwable) {
                     if (exc is ExpectedException) Logs.d(exc.readableMessage) else Logs.w(exc)
-                    Logs.w(exc)
                     stopRunner(
                         false, "${getString(R.string.service_failed)}: ${exc.readableMessage}"
                     )

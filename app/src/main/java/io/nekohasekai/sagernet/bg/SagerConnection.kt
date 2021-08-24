@@ -34,9 +34,6 @@ import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConnection,
     IBinder.DeathRecipient {
@@ -53,6 +50,7 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
         fun stateChanged(state: BaseService.State, profileName: String?, msg: String?)
         fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {}
         fun profilePersisted(profileId: Long) {}
+        fun missingPlugin(profileName: String, pluginName: String) {}
 
         fun onServiceConnected(service: ISagerNetService)
 
@@ -84,6 +82,13 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
         override fun profilePersisted(profileId: Long) {
             val callback = callback ?: return
             runOnMainDispatcher { callback.profilePersisted(profileId) }
+        }
+
+        override fun missingPlugin(profileName: String, pluginName: String) {
+            val callback = callback ?: return
+            runOnMainDispatcher {
+                callback.missingPlugin(profileName, pluginName)
+            }
         }
     }
 

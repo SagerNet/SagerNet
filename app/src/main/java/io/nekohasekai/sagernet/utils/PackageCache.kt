@@ -26,6 +26,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
+import io.nekohasekai.sagernet.ktx.readableMessage
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -59,7 +60,11 @@ object PackageCache {
         val installed = app.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
         packageMap = installed.associate { it.packageName to it.uid }
         labelMap = installed.associate {
-            it.packageName to it.loadLabel(app.packageManager).toString()
+            it.packageName to try {
+                it.loadLabel(app.packageManager).toString()
+            } catch (e: Exception) {
+                "[Load label error: ${e.readableMessage}]"
+            }
         }
         uidMap.clear()
         for (info in installed) {

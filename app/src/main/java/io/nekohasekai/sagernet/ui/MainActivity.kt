@@ -44,10 +44,13 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
+import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.widget.ListHolderListener
+import com.github.shadowsocks.plugin.PluginManager as ShadowsocksPluginPluginManager
 
 class MainActivity : ThemedActivity(),
     SagerConnection.Callback,
@@ -226,6 +229,78 @@ class MainActivity : ThemedActivity(),
         }
     }
 
+    override fun missingPlugin(profileName: String, pluginName: String) {
+        val pluginEntity = PluginEntry.find(pluginName)
+        if (pluginEntity == null) {
+            snackbar(getString(R.string.plugin_unknown, pluginName)).show()
+            return
+        }
+
+        val existsButOnShitSystem = if (!pluginName.startsWith("shadowsocks-")) {
+            PluginManager.fetchPlugins().map { it.id }.contains(pluginName)
+        } else {
+            ShadowsocksPluginPluginManager.fetchPlugins()
+                .map { it.id }
+                .contains(pluginName.substringAfter("shadowsocks-"))
+        }
+        if (existsButOnShitSystem) {
+            MaterialAlertDialogBuilder(this).setTitle(R.string.missing_plugin).setMessage(
+                getString(
+                    R.string.plugin_exists_but_on_shit_system,
+                    profileName,
+                    getString(pluginEntity.nameId)
+                )
+            ).setPositiveButton(R.string.action_learn_more) { _, _ ->
+                launchCustomTab("https://sagernet.org/plugin/")
+            }.show()
+            return
+        }
+
+        MaterialAlertDialogBuilder(this).setTitle(R.string.missing_plugin)
+            .setMessage(
+                getString(
+                    R.string.profile_requiring_plugin, profileName, getString(pluginEntity.nameId)
+                )
+            )
+            .setPositiveButton(R.string.action_download) { _, _ ->
+                showDownloadDialog(pluginEntity)
+            }
+            .setNeutralButton(android.R.string.cancel, null)
+            .setNeutralButton(R.string.action_learn_more) { _, _ ->
+                launchCustomTab("https://sagernet.org/plugin/")
+            }
+            .show()
+    }
+
+    private fun showDownloadDialog(pluginEntry: PluginEntry) {
+        var index = 0
+        var playIndex = -1
+        var fdroidIndex = -1
+        var downloadIndex = -1
+
+        val items = mutableListOf<String>()
+        if (pluginEntry.downloadSource.playStore) {
+            items.add(getString(R.string.install_from_play_store))
+            playIndex = index++
+        }
+        if (pluginEntry.downloadSource.fdroid) {
+            items.add(getString(R.string.install_from_fdroid))
+            fdroidIndex = index++
+        }
+
+        items.add(getString(R.string.download))
+        downloadIndex = index
+
+        MaterialAlertDialogBuilder(this).setTitle(pluginEntry.name)
+            .setItems(items.toTypedArray()) { _, which ->
+                when (which) {
+                    playIndex -> launchCustomTab("https://play.google.com/store/apps/details?id=${pluginEntry.packageName}")
+                    fdroidIndex -> launchCustomTab("https://f-droid.org/packages/${pluginEntry.packageName}/")
+                    downloadIndex -> launchCustomTab(pluginEntry.downloadSource.downloadLink)
+                }
+            }
+            .show()
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.isChecked) binding.drawerLayout.closeDrawers() else {

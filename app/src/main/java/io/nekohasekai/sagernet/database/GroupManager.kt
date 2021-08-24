@@ -50,8 +50,6 @@ object GroupManager {
         )
 
         suspend fun onUpdateFailure(group: ProxyGroup, message: String)
-        suspend fun onRequiringPlugin(group: ProxyGroup, issuer: String, plugin: String)
-        suspend fun onRequiringShadowsocksPlugin(group: ProxyGroup, plugin: String)
     }
 
     private val listeners = ArrayList<Listener>()

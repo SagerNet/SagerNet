@@ -102,6 +102,7 @@ class ServiceNotification(
             }
 
             override fun profilePersisted(profileId: Long) {}
+            override fun missingPlugin(profileName: String?, pluginName: String?) {}
         }
     }
     private var callbackRegistered = false

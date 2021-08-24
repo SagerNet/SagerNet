@@ -274,6 +274,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var groupName by profileCacheStore.string(Key.GROUP_NAME)
     var groupType by profileCacheStore.stringToInt(Key.GROUP_TYPE)
+    var groupOrder by profileCacheStore.stringToInt(Key.GROUP_ORDER)
 
     var subscriptionType by profileCacheStore.stringToInt(Key.SUBSCRIPTION_TYPE)
     var subscriptionLink by profileCacheStore.string(Key.SUBSCRIPTION_LINK)

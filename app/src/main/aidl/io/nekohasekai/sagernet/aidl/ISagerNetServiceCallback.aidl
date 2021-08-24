@@ -7,4 +7,5 @@ oneway interface ISagerNetServiceCallback {
   void trafficUpdated(long profileId, in TrafficStats stats, boolean isCurrent);
   // Traffic data has persisted to database, listener should refetch their data from database
   void profilePersisted(long profileId);
+  void missingPlugin(String profileName, String pluginName);
 }

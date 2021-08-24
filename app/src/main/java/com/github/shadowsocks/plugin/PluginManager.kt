@@ -46,7 +46,7 @@ import java.io.File
 import java.io.FileNotFoundException
 
 object PluginManager {
-    class PluginNotFoundException(private val plugin: String) : FileNotFoundException(plugin),
+    class PluginNotFoundException(val plugin: String) : FileNotFoundException(plugin),
             BaseService.ExpectedException {
         override fun getLocalizedMessage() = SagerNet.application.getString(R.string.plugin_unknown, plugin)
     }
