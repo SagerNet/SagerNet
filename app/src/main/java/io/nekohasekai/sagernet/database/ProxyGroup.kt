@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.database
 import androidx.room.*
 import com.esotericsoftware.kryo.io.ByteBufferInput
 import com.esotericsoftware.kryo.io.ByteBufferOutput
+import io.nekohasekai.sagernet.GroupOrder
 import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.fmt.Serializable
@@ -37,14 +38,9 @@ data class ProxyGroup(
     var ungrouped: Boolean = false,
     var name: String? = null,
     var type: Int = GroupType.BASIC,
-    var subscription: SubscriptionBean? = null
+    var subscription: SubscriptionBean? = null,
+    var order: Int = GroupOrder.ORIGIN,
 ) : Serializable() {
-
-    companion object {
-        const val ORDER_ORIGIN = 0
-        const val ORDER_BY_NAME = 1
-        const val ORDER_BY_DELAY = 2
-    }
 
     @Transient
     var export = false
@@ -141,6 +137,7 @@ data class ProxyGroup(
     }
 
     companion object CREATOR : Serializable.CREATOR<ProxyGroup>() {
+
         override fun newInstance(): ProxyGroup {
             return ProxyGroup()
         }

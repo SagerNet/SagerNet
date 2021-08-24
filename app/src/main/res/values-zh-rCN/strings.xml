@@ -385,4 +385,9 @@
     <string name="hysteria_stream_receive_window">QUIC 流接收窗口</string>
     <string name="hysteria_connection_receive_window">QUIC 连接接收窗口</string>
     <string name="hysteria_disable_mtu_discovery">禁用路径最大传输单元发现</string>
+    <string name="group_order">排序</string>
+    <string name="group_order_origin">原始</string>
+    <string name="group_order_by_name">以名称</string>
+    <string name="group_order_by_delay">以延时</string>
+    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s plugin，但你的专有设备供应商（通常也是监控资本主义巨头和恶意软件制造商）篡改了你的安卓系统，使该插件无法使用。</string>
 </resources>

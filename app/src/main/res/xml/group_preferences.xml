@@ -14,6 +14,14 @@
         app:key="groupType"
         app:title="@string/group_type"
         app:useSimpleSummaryProvider="true" />
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:defaultValue="0"
+        app:entries="@array/group_orders"
+        app:entryValues="@array/int_array_3"
+        app:icon="@drawable/ic_baseline_low_priority_24"
+        app:key="groupOrder"
+        app:title="@string/group_order"
+        app:useSimpleSummaryProvider="true" />
 
     <PreferenceCategory
         app:key="groupSubscription"

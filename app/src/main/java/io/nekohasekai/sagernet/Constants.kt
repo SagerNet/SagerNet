@@ -170,6 +170,7 @@ object Key {
 
     const val GROUP_NAME = "groupName"
     const val GROUP_TYPE = "groupType"
+    const val GROUP_ORDER = "groupOrder"
 
     const val GROUP_SUBSCRIPTION = "groupSubscription"
     const val SUBSCRIPTION_TYPE = "subscriptionType"
@@ -231,6 +232,12 @@ object ExtraType {
     const val NONE = 0
     const val OOCv1 = 1
     const val SIP008 = 2
+}
+
+object GroupOrder {
+    const val ORIGIN = 0
+    const val BY_NAME = 1
+    const val BY_DELAY = 2
 }
 
 object Action {

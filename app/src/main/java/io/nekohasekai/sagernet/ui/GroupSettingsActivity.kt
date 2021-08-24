@@ -40,7 +40,6 @@ import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SubscriptionType
-import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
@@ -59,6 +58,7 @@ class GroupSettingsActivity(
     fun ProxyGroup.init() {
         DataStore.groupName = name ?: ""
         DataStore.groupType = type
+        DataStore.groupOrder = order
         val subscription = subscription ?: SubscriptionBean().applyDefaultValues()
         DataStore.subscriptionType = subscription.type
         DataStore.subscriptionLink = subscription.link
@@ -76,6 +76,7 @@ class GroupSettingsActivity(
         name = DataStore.groupName.takeIf { it.isNotBlank() }
             ?: "My group " + System.currentTimeMillis() / 1000
         type = DataStore.groupType
+        order = DataStore.groupOrder
 
         val isSubscription = type == GroupType.SUBSCRIPTION
         if (isSubscription) {
@@ -123,8 +124,7 @@ class GroupSettingsActivity(
         val subscriptionType = findPreference<SimpleMenuPreference>(Key.SUBSCRIPTION_TYPE)!!
         val subscriptionLink = findPreference<EditTextPreference>(Key.SUBSCRIPTION_LINK)!!
         val subscriptionToken = findPreference<EditTextPreference>(Key.SUBSCRIPTION_TOKEN)!!
-        val subscriptionForceVMessAEAD =
-            findPreference<SwitchPreference>(Key.SUBSCRIPTION_FORCE_VMESS_AEAD)!!
+        val subscriptionForceVMessAEAD = findPreference<SwitchPreference>(Key.SUBSCRIPTION_FORCE_VMESS_AEAD)!!
 
         fun updateSubscriptionType(subscriptionType: Int = DataStore.subscriptionType) {
             val isRaw = subscriptionType == SubscriptionType.RAW
@@ -140,10 +140,8 @@ class GroupSettingsActivity(
             true
         }
 
-        val subscriptionAutoUpdate =
-            findPreference<SwitchPreference>(Key.SUBSCRIPTION_AUTO_UPDATE)!!
-        val subscriptionAutoUpdateDelay =
-            findPreference<EditTextPreference>(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY)!!
+        val subscriptionAutoUpdate = findPreference<SwitchPreference>(Key.SUBSCRIPTION_AUTO_UPDATE)!!
+        val subscriptionAutoUpdateDelay = findPreference<EditTextPreference>(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY)!!
         subscriptionAutoUpdateDelay.isEnabled = subscriptionAutoUpdate.isChecked
         subscriptionAutoUpdateDelay.setOnPreferenceChangeListener { _, newValue ->
             NumberUtil.isInteger(newValue as String) && newValue.toInt() >= 15

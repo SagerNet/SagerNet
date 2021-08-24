@@ -701,4 +701,10 @@
         <item>tls</item>
     </string-array>
 
+    <string-array name="group_orders">
+        <item>@string/group_order_origin</item>
+        <item>@string/group_order_by_name</item>
+        <item>@string/group_order_by_delay</item>
+    </string-array>
+
 </resources>

@@ -53,10 +53,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import io.nekohasekai.sagernet.GroupType
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.SubscriptionType
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.test.UrlTest
@@ -344,19 +341,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_connection_url_test -> {
                 urlTest()
             }
-            R.id.action_connection_reorder -> {
-                runOnDefaultDispatcher {
-                    val currentGroup = DataStore.currentGroupId()
-                    val profiles = SagerDatabase.proxyDao.getByGroup(currentGroup)
-                    val sorted = profiles.sortedBy { if (it.status == 1) it.ping else 114514 }
-                    for (index in sorted.indices) {
-                        sorted[index].userOrder = (index + 1).toLong()
-                    }
-                    SagerDatabase.proxyDao.updateProxy(sorted)
-                    GroupManager.postReload(currentGroup)
-
-                }
-            }
             R.id.action_filter_groups -> {
                 runOnDefaultDispatcher filter@{
                     val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
@@ -450,7 +434,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     inner class TestDialog {
         val binding = LayoutProgressBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
-            .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { _, _ ->
+            .setNegativeButton(android.R.string.cancel, { _, _ ->
                 cancel()
             })
             .setCancelable(false)
@@ -751,6 +735,9 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
         test.cancel = {
             mainJob.cancel()
+            runOnDefaultDispatcher {
+                GroupManager.postReload(DataStore.currentGroupId())
+            }
         }
     }
 
@@ -1189,6 +1176,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
                     }
                 }
+                when (proxyGroup.order) {
+                    GroupOrder.BY_NAME -> {
+                        newProfiles = newProfiles.sortedBy { it.displayName() }
+                    }
+                    GroupOrder.BY_DELAY -> {
+                        newProfiles = newProfiles.sortedBy { if (it.status == 1) it.ping else 114514 }
+                    }
+                }
+
                 configurationList.clear()
                 configurationList.putAll(newProfiles.associateBy { it.id })
                 val newProfileIds = newProfiles.map { it.id }
