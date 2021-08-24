@@ -39,10 +39,8 @@ import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.proto.ProxyInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.broadcastReceiver
-import io.nekohasekai.sagernet.ktx.readableMessage
-import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
+import io.nekohasekai.sagernet.fmt.TAG_SOCKS
+import io.nekohasekai.sagernet.ktx.*
 import kotlinx.coroutines.*
 import libcore.Libcore
 import java.net.UnknownHostException
@@ -207,10 +205,16 @@ class BaseService {
             }
             try {
                 return Libcore.urlTestV2ray(
-                    data!!.proxy!!.v2rayPoint, DataStore.connectionTestURL, 5000
+                    data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 5000
                 ).toInt()
             } catch (e: Exception) {
-                error(e.readableMessage)
+                var msg = e.readableMessage
+                if (msg.lowercase().contains("timeout")) {
+                   msg = app.getString(R.string.connection_test_timeout)
+                } else if (msg.lowercase().contains("refused")) {
+                    msg = app.getString(R.string.connection_test_refused)
+                }
+                error(msg)
             }
         }
 
