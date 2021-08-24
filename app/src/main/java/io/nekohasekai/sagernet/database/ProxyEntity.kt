@@ -29,7 +29,7 @@ import androidx.room.*
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ShadowsocksAEADProvider
+import io.nekohasekai.sagernet.ShadowsocksProvider
 import io.nekohasekai.sagernet.ShadowsocksStreamProvider
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -68,9 +68,9 @@ import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.ssSecureList
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(
@@ -296,7 +296,7 @@ data class ProxyEntity(
                         val needChain = !isBalancer && index != chain.size - 1
                         val bean = profile.requireBean()
                         when {
-                            profile.useExternalShadowsocks() -> {
+                            pickShadowsocksProvider() == ShadowsocksProvider.SHADOWSOCKS_RUST -> {
                                 bean as ShadowsocksBean
                                 append("\n\n")
                                 append(bean.buildShadowsocksConfig(port))
@@ -337,7 +337,7 @@ data class ProxyEntity(
         return when (type) {
             TYPE_SOCKS -> socksBean!!.protocol != SOCKSBean.PROTOCOL_SOCKS5
             TYPE_HTTP -> false
-            TYPE_SS -> useExternalShadowsocks()
+            TYPE_SS -> pickShadowsocksProvider() != ShadowsocksProvider.V2RAY
             TYPE_VMESS -> false
             TYPE_VLESS -> false
             TYPE_TROJAN -> DataStore.providerTrojan != TrojanProvider.V2RAY
@@ -351,7 +351,7 @@ data class ProxyEntity(
         if (!needExternal()) return false
         return when (type) {
             TYPE_SOCKS -> socksBean!!.protocol != SOCKSBean.PROTOCOL_SOCKS5
-            TYPE_SS -> useClashShadowsocks()
+            TYPE_SS -> pickShadowsocksProvider() == ShadowsocksProvider.CLASH
             TYPE_SSR -> true
             TYPE_SNELL -> true
             else -> false
@@ -375,8 +375,49 @@ data class ProxyEntity(
         }
     }
 
-    fun useClashShadowsocks(): Boolean {
+    fun pickShadowsocksProvider(): Int {
+        val bean = ssBean ?: return -1
+        if (bean.method.contains(ssSecureList)) {
+            val prefer = DataStore.providerShadowsocksAEAD
+            when {
+                prefer == ShadowsocksProvider.V2RAY && bean.method in methodsV2fly && bean.plugin.isBlank() -> {
+                    return ShadowsocksProvider.V2RAY
+                }
+                prefer == ShadowsocksProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash() -> {
+                    return ShadowsocksProvider.CLASH
+                }
+                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust -> {
+                    return ShadowsocksProvider.SHADOWSOCKS_RUST
+                }
+            }
+            return if (ssPreferClash()) {
+                ShadowsocksProvider.CLASH
+            } else if (bean.method in methodsV2fly && bean.plugin.isBlank()) {
+                ShadowsocksProvider.V2RAY
+            } else {
+                ShadowsocksProvider.SHADOWSOCKS_RUST
+            }
+        } else {
+            val prefer = DataStore.providerShadowsocksStream
+            when {
+                prefer == ShadowsocksStreamProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash() -> {
+                    return ShadowsocksProvider.CLASH
+                }
+                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust -> {
+                    return ShadowsocksProvider.SHADOWSOCKS_RUST
+                }
+            }
+            return if (ssPreferClash()) {
+                ShadowsocksProvider.CLASH
+            } else {
+                ShadowsocksProvider.SHADOWSOCKS_RUST
+            }
+        }
+    }
+
+    fun ssPluginSupportedByClash(): Boolean {
         val bean = ssBean ?: return false
+        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust
         if (bean.plugin.isNotBlank()) {
             val plugin = PluginConfiguration(bean.plugin)
             if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
@@ -385,28 +426,18 @@ data class ProxyEntity(
             }
             try {
                 PluginManager.init(plugin)
+                return onlyClash
             } catch (e: Exception) {
-                return true
             }
         }
-        if (bean.method in methodsClash && bean.method in methodsV2fly && bean.plugin.isBlank() && DataStore.providerShadowsocksAEAD != ShadowsocksAEADProvider.CLASH) {
-            return false
-        }
-        if (DataStore.providerShadowsocksStream != ShadowsocksStreamProvider.CLASH) {
-            return false
-        }
+
         return true
     }
 
-    fun useExternalShadowsocks(): Boolean {
+    fun ssPreferClash(): Boolean {
         val bean = ssBean ?: return false
-        if (DataStore.providerShadowsocksAEAD != ShadowsocksAEADProvider.V2RAY) return true
-        if (bean.plugin.isNotBlank()) {
-            Logs.d("Requiring plugin ${bean.plugin}")
-            return true
-        }
-        if (bean.method !in methodsV2fly) return true
-        return false
+        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust
+        return onlyClash || ssPluginSupportedByClash()
     }
 
     fun putBean(bean: AbstractBean): ProxyEntity {

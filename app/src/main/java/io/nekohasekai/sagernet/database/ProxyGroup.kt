@@ -40,6 +40,12 @@ data class ProxyGroup(
     var subscription: SubscriptionBean? = null
 ) : Serializable() {
 
+    companion object {
+        const val ORDER_ORIGIN = 0
+        const val ORDER_BY_NAME = 1
+        const val ORDER_BY_DELAY = 2
+    }
+
     @Transient
     var export = false
 

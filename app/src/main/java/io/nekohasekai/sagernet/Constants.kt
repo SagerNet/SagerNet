@@ -192,7 +192,7 @@ object TrojanProvider {
     const val TROJAN_GO = 2
 }
 
-object ShadowsocksAEADProvider {
+object ShadowsocksProvider {
     const val V2RAY = 0
     const val SHADOWSOCKS_RUST = 1
     const val CLASH = 2

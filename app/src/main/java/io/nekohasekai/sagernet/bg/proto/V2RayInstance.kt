@@ -28,6 +28,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.ShadowsocksProvider
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.bg.AbstractInstance
 import io.nekohasekai.sagernet.bg.Executable
@@ -66,7 +67,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import libcore.V2RayInstance
 import java.io.File
-import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class V2RayInstance(
@@ -109,12 +109,15 @@ abstract class V2RayInstance(
                 val bean = profile.requireBean()
 
                 when {
-                    profile.useClashShadowsocks() -> {
-                        externalInstances[port] = ShadowsocksInstance(bean as ShadowsocksBean, port)
-                    }
-                    profile.useExternalShadowsocks() -> {
-                        bean as ShadowsocksBean
-                        pluginConfigs[port] = profile.type to bean.buildShadowsocksConfig(port)
+                    bean is ShadowsocksBean -> when (profile.pickShadowsocksProvider()) {
+                        ShadowsocksProvider.CLASH -> {
+                            externalInstances[port] = ShadowsocksInstance(bean, port)
+                        }
+                        else -> {
+                            pluginConfigs[port] = profile.type to bean.buildShadowsocksConfig(
+                                port
+                            )
+                        }
                     }
                     bean is ShadowsocksRBean -> {
                         externalInstances[port] = ShadowsocksRInstance(bean, port)
@@ -123,7 +126,9 @@ abstract class V2RayInstance(
                         when (DataStore.providerTrojan) {
                             TrojanProvider.TROJAN -> {
                                 initPlugin("trojan-plugin")
-                                pluginConfigs[port] = profile.type to bean.buildTrojanConfig(port)
+                                pluginConfigs[port] = profile.type to bean.buildTrojanConfig(
+                                    port
+                                )
                             }
                             TrojanProvider.TROJAN_GO -> {
                                 initPlugin("trojan-go-plugin")
@@ -135,7 +140,9 @@ abstract class V2RayInstance(
                     }
                     bean is TrojanGoBean -> {
                         initPlugin("trojan-go-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(port, mux)
+                        pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
+                            port, mux
+                        )
                     }
                     bean is NaiveBean -> {
                         initPlugin("naive-plugin")
@@ -206,7 +213,7 @@ abstract class V2RayInstance(
                     externalInstances.containsKey(port) -> {
                         externalInstances[port]!!.launch()
                     }
-                    profile.useExternalShadowsocks() -> {
+                    bean is ShadowsocksBean -> {
                         val configFile = File(
                             context.noBackupFilesDir,
                             "shadowsocks_" + SystemClock.elapsedRealtime() + ".json"
@@ -236,20 +243,12 @@ abstract class V2RayInstance(
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val commands = mutableListOf<String>()
-
-                        when (DataStore.providerTrojan) {
-                            TrojanProvider.TROJAN -> {
-                                commands.add(initPlugin("trojan-plugin").path)
-                            }
-                            TrojanProvider.TROJAN_GO -> {
-                                commands.add(initPlugin("trojan-go-plugin").path)
-                                //commands.add("-config") // but why?
-                            }
-                        }
-
-                        commands.add("--config")
-                        commands.add(configFile.absolutePath)
+                        val commands = listOf(
+                            when (DataStore.providerTrojan) {
+                                TrojanProvider.TROJAN -> initPlugin("trojan-plugin")
+                                else -> initPlugin("trojan-go-plugin")
+                            }.path, "--config", configFile.absolutePath
+                        )
 
                         processes.start(commands)
                     }

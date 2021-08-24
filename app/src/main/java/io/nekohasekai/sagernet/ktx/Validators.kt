@@ -43,7 +43,7 @@ object ResultLocal : ValidateResult
 class ResultDeprecated(@RawRes val textRes: Int) : ValidateResult
 class ResultInsecure(@RawRes val textRes: Int) : ValidateResult
 
-private val ssSecureList = "(gcm|poly1305)".toRegex()
+val ssSecureList = "(gcm|poly1305)".toRegex()
 
 fun AbstractBean.isInsecure(): ValidateResult {
     if (Validator.isIpv4(serverAddress) && isInnerIP(serverAddress) || serverAddress in arrayOf(
