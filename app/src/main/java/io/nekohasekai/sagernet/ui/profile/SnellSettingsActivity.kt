@@ -41,7 +41,7 @@ class SnellSettingsActivity : ProfileSettingsActivity<SnellBean>() {
         DataStore.serverPassword = psk
         DataStore.serverProtocolVersion = version
         DataStore.serverObfs = obfsMode
-        DataStore.serverProtocolParam = obfsHost
+        DataStore.serverObfsParam = obfsHost
     }
 
     override fun SnellBean.serialize() {
