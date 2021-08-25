@@ -230,18 +230,19 @@ class MainActivity : ThemedActivity(),
     }
 
     override fun missingPlugin(profileName: String, pluginName: String) {
+        val pluginId = if (pluginName.startsWith("shadowsocks-")) pluginName.substringAfter("shadowsocks-") else pluginName
         val pluginEntity = PluginEntry.find(pluginName)
         if (pluginEntity == null) {
             snackbar(getString(R.string.plugin_unknown, pluginName)).show()
             return
         }
 
-        val existsButOnShitSystem = if (!pluginName.startsWith("shadowsocks-")) {
+        val existsButOnShitSystem = if (pluginName == pluginId) {
             PluginManager.fetchPlugins().map { it.id }.contains(pluginName)
         } else {
             ShadowsocksPluginPluginManager.fetchPlugins()
                 .map { it.id }
-                .contains(pluginName.substringAfter("shadowsocks-"))
+                .contains(pluginId)
         }
         if (existsButOnShitSystem) {
             MaterialAlertDialogBuilder(this).setTitle(R.string.missing_plugin).setMessage(

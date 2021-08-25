@@ -386,7 +386,7 @@ data class ProxyEntity(
                 prefer == ShadowsocksProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash() -> {
                     return ShadowsocksProvider.CLASH
                 }
-                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust -> {
+                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust && !ssPluginSupportedByClash() -> {
                     return ShadowsocksProvider.SHADOWSOCKS_RUST
                 }
             }

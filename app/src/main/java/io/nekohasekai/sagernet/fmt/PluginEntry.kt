@@ -40,12 +40,12 @@ enum class PluginEntry(
 
     // shadowsocks plugins
 
-    ObfsLocal("obfs-local", R.string.shadowsocks_plugin_simple_obfs, "com.github.shadowsocks.plugin.obfs_local", DownloadSource(
+    ObfsLocal("shadowsocks-obfs-local", R.string.shadowsocks_plugin_simple_obfs, "com.github.shadowsocks.plugin.obfs_local", DownloadSource(
         fdroid = false,
         downloadLink = "https://github.com/shadowsocks/simple-obfs-android/releases"
     )),
 
-    V2RayPlugin("obfs-local", R.string.shadowsocks_plugin_simple_obfs, "com.github.shadowsocks.plugin.v2ray", DownloadSource(
+    V2RayPlugin("shadowsocks-v2ray-plugin", R.string.shadowsocks_plugin_v2ray, "com.github.shadowsocks.plugin.v2ray", DownloadSource(
         downloadLink = "https://github.com/shadowsocks/v2ray-plugin-android/releases"
     ));
 
