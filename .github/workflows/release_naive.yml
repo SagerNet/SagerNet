@@ -109,6 +109,7 @@ jobs:
       - name: Native Build
         env:
           SKIP_BUILD: on
+          BUILD_PLUGIN: naive
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
@@ -234,6 +235,7 @@ jobs:
       - name: Native Build
         env:
           SKIP_BUILD: on
+          BUILD_PLUGIN: naive
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties

@@ -4,12 +4,25 @@ include(":library:proto")
 include(":library:proto-stub")
 
 include(":plugin:api")
-include(":plugin:naive")
-include(":plugin:pingtunnel")
-include(":plugin:relaybaton")
-include(":plugin:brook")
-include(":plugin:trojan")
-include(":plugin:hysteria")
+
+val buildPlugin = System.getenv("BUILD_PLUGIN")
+when {
+    buildPlugin.isNullOrBlank() -> {
+        include(":plugin:naive")
+        include(":plugin:pingtunnel")
+        include(":plugin:relaybaton")
+        include(":plugin:brook")
+        include(":plugin:trojan")
+        include(":plugin:trojan-go")
+        include(":plugin:hysteria")
+    }
+    buildPlugin == "none" -> {
+    }
+    else -> {
+        include(":plugin:$buildPlugin")
+    }
+}
+
 
 include(":external:preferencex:preferencex")
 include(":external:preferencex:preferencex-simplemenu")
