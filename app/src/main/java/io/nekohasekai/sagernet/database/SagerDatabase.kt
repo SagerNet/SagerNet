@@ -25,6 +25,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dev.matrix.roomigrant.GenerateRoomMigrations
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.SagerNet
@@ -35,8 +37,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, KeyValuePair::class],
-    version = 5
+    entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, StatsEntity::class, KeyValuePair::class],
+    version = 7
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
 @GenerateRoomMigrations
@@ -47,7 +49,7 @@ abstract class SagerDatabase : RoomDatabase() {
         private val instance by lazy {
             SagerNet.application.getDatabasePath(Key.DB_PROFILE).parentFile?.mkdirs()
             Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build())
+                .addMigrations(*buildMigrations())
                 .allowMainThreadQueries()
                 .enableMultiInstanceInvalidation()
                 .fallbackToDestructiveMigration()
@@ -55,10 +57,21 @@ abstract class SagerDatabase : RoomDatabase() {
                 .build()
         }
 
+        fun buildMigrations(): Array<Migration> {
+            val migrations = SagerDatabase_Migrations.build().toMutableList()
+            migrations.add(object : Migration(5, 7) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL(SagerDatabase_Migrations.buildScheme()[7]!!.tables["stats"]!!.createSql)
+                }
+            })
+            return migrations.toTypedArray()
+        }
+
         val profileCacheDao get() = instance.profileCacheDao()
         val groupDao get() = instance.groupDao()
         val proxyDao get() = instance.proxyDao()
         val rulesDao get() = instance.rulesDao()
+        val statsDao get() = instance.statsDao()
 
     }
 
@@ -66,5 +79,6 @@ abstract class SagerDatabase : RoomDatabase() {
     abstract fun groupDao(): ProxyGroup.Dao
     abstract fun proxyDao(): ProxyEntity.Dao
     abstract fun rulesDao(): RuleEntity.Dao
+    abstract fun statsDao(): StatsEntity.Dao
 
 }

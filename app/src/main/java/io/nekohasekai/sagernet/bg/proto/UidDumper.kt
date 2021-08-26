@@ -68,10 +68,17 @@ object UidDumper : UidDumper {
     override fun getUidInfo(uid: Long): UidInfo {
         PackageCache.awaitLoadSync()
 
+        if (uid <= 1000L) {
+            val uidInfo = UidInfo()
+            uidInfo.label = PackageCache.loadLabel("android")
+            uidInfo.packageName = "android"
+            return uidInfo
+        }
+
         val packageNames = PackageCache.uidMap[uid.toInt()]
         if (!packageNames.isNullOrEmpty()) for (packageName in packageNames) {
             val uidInfo = UidInfo()
-            uidInfo.label = PackageCache.labelMap[packageName] ?: continue
+            uidInfo.label = PackageCache.loadLabel(packageName)
             uidInfo.packageName = packageName
             return uidInfo
         }

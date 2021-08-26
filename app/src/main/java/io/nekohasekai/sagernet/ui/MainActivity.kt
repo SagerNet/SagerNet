@@ -35,6 +35,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.aidl.AppStats
 import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
@@ -240,9 +241,7 @@ class MainActivity : ThemedActivity(),
         val existsButOnShitSystem = if (pluginName == pluginId) {
             PluginManager.fetchPlugins().map { it.id }.contains(pluginName)
         } else {
-            ShadowsocksPluginPluginManager.fetchPlugins()
-                .map { it.id }
-                .contains(pluginId)
+            ShadowsocksPluginPluginManager.fetchPlugins().map { it.id }.contains(pluginId)
         }
         if (existsButOnShitSystem) {
             MaterialAlertDialogBuilder(this).setTitle(R.string.missing_plugin).setMessage(
@@ -310,6 +309,7 @@ class MainActivity : ThemedActivity(),
         return true
     }
 
+
     fun displayFragment(fragment: ToolbarFragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
@@ -320,8 +320,12 @@ class MainActivity : ThemedActivity(),
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
         when (id) {
             R.id.nav_configuration -> {
-                displayFragment(ConfigurationFragment()) // request stats update
+                displayFragment(ConfigurationFragment())
                 connection.bandwidthTimeout = connection.bandwidthTimeout
+            }
+            R.id.nav_traffic -> {
+                displayFragment(TrafficFragment())
+                connection.trafficTimeout = connection.trafficTimeout
             }
             R.id.nav_group -> displayFragment(GroupFragment())
             R.id.nav_route -> displayFragment(RouteFragment())
@@ -337,6 +341,24 @@ class MainActivity : ThemedActivity(),
         return true
     }
 
+    fun ruleCreated() {
+        navigation.menu.findItem(R.id.nav_route).isChecked = true
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_holder, RouteFragment())
+            .commitAllowingStateLoss()
+        needReload()
+    }
+
+    fun serviceStarted() = state.canStop
+
+    fun needReload() {
+        if (serviceStarted()) {
+            snackbar(getString(R.string.restart)).setAction(R.string.apply) {
+                SagerNet.reloadService()
+            }.show()
+        }
+    }
+
     var state = BaseService.State.Idle
     var doStop = false
 
@@ -346,6 +368,10 @@ class MainActivity : ThemedActivity(),
         animate: Boolean = false,
     ) {
         SagerNet.started = state == BaseService.State.Connected
+
+        if (!SagerNet.started) {
+            statsUpdated(emptyList())
+        }
 
         binding.fab.changeState(state, this.state, animate)
         binding.stats.changeState(state)
@@ -363,6 +389,12 @@ class MainActivity : ThemedActivity(),
 
     override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) {
         changeState(state, msg, true)
+    }
+
+    override fun statsUpdated(stats: List<AppStats>) {
+        (supportFragmentManager.findFragmentById(R.id.fragment_holder) as? TrafficFragment)?.emitStats(
+            stats
+        )
     }
 
     val connection = SagerConnection(true)

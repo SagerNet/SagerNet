@@ -23,6 +23,8 @@
         <entry key="app/src/main/res/drawable/ic_social_share.xml" value="0.283" />
         <entry key="app/src/main/res/drawable/navigation_icon.xml" value="0.1715" />
         <entry key="app/src/main/res/layout/layout_about.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/layout_active_item.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_active_list.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_app_list.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_appbar.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_apps.xml" value="0.2490740740740741" />
@@ -53,6 +55,9 @@
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_settings_activity.xml" value="0.17844202898550723" />
+        <entry key="app/src/main/res/layout/layout_traffic.xml" value="0.13333333333333333" />
+        <entry key="app/src/main/res/layout/layout_traffic_item.xml" value="0.22192028985507245" />
+        <entry key="app/src/main/res/layout/layout_traffic_list.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_group_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/add_profile_menu.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/menu/add_route_menu.xml" value="0.2636752136752137" />
@@ -67,6 +72,8 @@
         <entry key="app/src/main/res/menu/profile_share_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/scanner_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/socks_share_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/traffic_item_menu.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/menu/traffic_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/menu/vmess_share_menu.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.186" />
         <entry key="app/src/main/res/xml/balancer_preferences.xml" value="0.2636752136752137" />

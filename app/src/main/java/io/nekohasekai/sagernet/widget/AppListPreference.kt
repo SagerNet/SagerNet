@@ -43,7 +43,7 @@ class AppListPreference : Preference {
 
     override fun getSummary(): CharSequence {
         val packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }.map {
-            PackageCache.installPackages[it]?.applicationInfo?.loadLabel(app.packageManager) ?: it
+            PackageCache.installedPackages[it]?.applicationInfo?.loadLabel(app.packageManager) ?: it
         }
         if (packages.isEmpty()) {
             return context.getString(androidx.preference.R.string.not_set)

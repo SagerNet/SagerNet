@@ -50,9 +50,11 @@ import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.widget.AppListPreference
 import io.nekohasekai.sagernet.widget.ListListener
 import io.nekohasekai.sagernet.widget.OutboundPreference
@@ -64,8 +66,13 @@ class RouteSettingsActivity(
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
-    fun init() {
-        RuleEntity().init()
+    fun init(packageName: String?) {
+        RuleEntity().apply {
+            if (!packageName.isNullOrBlank()) {
+                packages = listOf(packageName)
+                name = app.getString(R.string.route_for, PackageCache.loadLabel(packageName))
+            }
+        }.init()
     }
 
     fun RuleEntity.init() {
@@ -109,6 +116,9 @@ class RouteSettingsActivity(
         reverse = DataStore.routeReverse
         redirect = DataStore.routeRedirect
         packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }
+        if (DataStore.editingId == 0L) {
+            enabled = true
+        }
     }
 
     fun needSave(): Boolean {
@@ -233,6 +243,7 @@ class RouteSettingsActivity(
 
     companion object {
         const val EXTRA_ROUTE_ID = "id"
+        const val EXTRA_PACKAGE_NAME = "pkg"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -249,7 +260,7 @@ class RouteSettingsActivity(
             DataStore.editingId = editingId
             runOnDefaultDispatcher {
                 if (editingId == 0L) {
-                    init()
+                    init(intent.getStringExtra(EXTRA_PACKAGE_NAME))
                 } else {
                     val ruleEntity = SagerDatabase.rulesDao.getById(editingId)
                     if (ruleEntity == null) {
@@ -292,6 +303,10 @@ class RouteSettingsActivity(
 
         val editingId = DataStore.editingId
         if (editingId == 0L) {
+            if (intent.hasExtra(EXTRA_PACKAGE_NAME)) {
+                setResult(RESULT_OK, Intent())
+            }
+
             ProfileManager.createRule(RuleEntity().apply { serialize() })
         } else {
             val entity = SagerDatabase.rulesDao.getById(DataStore.editingId)

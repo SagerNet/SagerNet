@@ -18,6 +18,7 @@
     <string name="group_default">Ungrouped</string>
     <string name="quick_toggle">Toggle</string>
     <string name="tile_title">Switcher</string>
+    <string name="menu_traffic">Traffic</string>
     <!-- group -->
     <string name="group_name">Group name</string>
     <string name="group_update">Update</string>
@@ -404,5 +405,30 @@
 
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Shadowsocks Android Plugin)</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Plugin)</string>
+
+    <string name="traffic_uplink">%s | %s/s ↑</string>
+    <string name="traffic_downlink">%s | %s/s ↓</string>
+
+    <string name="traffic_uplink_total">%s ↑</string>
+    <string name="traffic_downlink_total">%s ↓</string>
+    <string name="traffic_active">Active</string>
+    <string name="traffic_stats">Statistics</string>
+
+    <string name="tcp_connections">%d TCP connections</string>
+    <string name="udp_connections">%d UDP connections</string>
+
+    <string name="traffic_holder">Open VPN to record traffic statistics</string>
+
+    <string name="copy_label">Copy Name</string>
+    <string name="copy_package_name">Copy Package Name</string>
+    <string name="open_app">Open App</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="open_market">Open Market</string>
+    <string name="create_rule">Create Rule</string>
+
+    <string name="copy_success">Copy success!</string>
+    <string name="copy_failed">Copy failed.</string>
+    <string name="app_no_launcher">The app has no interface.</string>
+    <string name="route_for">Rule for %s</string>
 
 </resources>

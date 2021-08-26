@@ -19,40 +19,32 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg
+package io.nekohasekai.sagernet.aidl
 
-import android.system.ErrnoException
-import android.system.Os
-import android.system.OsConstants
-import android.text.TextUtils
-import io.nekohasekai.sagernet.ktx.Logs
-import java.io.File
-import java.io.IOException
+import android.os.Parcelable
+import io.nekohasekai.sagernet.database.StatsEntity
+import kotlinx.parcelize.Parcelize
 
-object Executable {
-    const val SS_LOCAL = "libsslocal.so"
+@Parcelize
+data class AppStats(
+    var packageName: String,
+    var uid: Int,
+    var tcpConnections: Int,
+    var udpConnections: Int,
+    var tcpConnectionsTotal: Int,
+    var udpConnectionsTotal: Int,
+    var uplink: Long,
+    var downlink: Long,
+    var uplinkTotal: Long,
+    var downlinkTotal: Long,
+    var deactivateAt: Long
+) : Parcelable {
 
-    private val EXECUTABLES = setOf(SS_LOCAL)
+   operator fun plusAssign(stats: StatsEntity) {
+       tcpConnectionsTotal += stats.tcpConnections
+       udpConnectionsTotal += stats.udpConnections
+       uplinkTotal += stats.uplink
+       downlinkTotal += stats.downlink
+   }
 
-    fun killAll() {
-        for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }
-            ?: return) {
-            val exe = File(try {
-                File(process, "cmdline").inputStream().bufferedReader().use {
-                    it.readText()
-                }
-            } catch (_: IOException) {
-                continue
-            }.split(Character.MIN_VALUE, limit = 2).first())
-            if (EXECUTABLES.contains(exe.name)) try {
-                Os.kill(process.name.toInt(), OsConstants.SIGKILL)
-                Logs.w("SIGKILL ${exe.nameWithoutExtension} (${process.name}) succeed")
-            } catch (e: ErrnoException) {
-                if (e.errno != OsConstants.ESRCH) {
-                    Logs.w("SIGKILL ${exe.absolutePath} (${process.name}) failed")
-                    Logs.w(e)
-                }
-            }
-        }
-    }
 }

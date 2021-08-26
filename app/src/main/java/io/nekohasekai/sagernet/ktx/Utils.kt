@@ -241,6 +241,7 @@ fun View.crossFadeFrom(other: View) {
 }
 
 
+fun Fragment.snackbar(textId: Int) = (requireActivity() as MainActivity).snackbar(textId)
 fun Fragment.snackbar(text: CharSequence) = (requireActivity() as MainActivity).snackbar(text)
 
 fun ThemedActivity.startFilesForResult(
@@ -266,15 +267,11 @@ fun Fragment.startFilesForResult(
 }
 
 fun Fragment.serviceStarted(): Boolean {
-    return ((activity as? MainActivity) ?: return false).state.canStop
+    return ((activity as? MainActivity) ?: return false).serviceStarted()
 }
 
 fun Fragment.needReload() {
-    if (serviceStarted()) {
-        snackbar(getString(R.string.restart)).setAction(R.string.apply) {
-            SagerNet.reloadService()
-        }.show()
-    }
+    ((activity as? MainActivity) ?: return).needReload()
 }
 
 fun Context.getColour(@ColorRes colorRes: Int): Int {

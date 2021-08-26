@@ -32,6 +32,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Build
+import android.os.StrictMode
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -41,6 +42,7 @@ import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.bg.proto.UidDumper
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -126,6 +128,15 @@ class SagerNet : Application(),
         Theme.applyNightTheme()
 
         Security.insertProviderAt(Conscrypt.newProvider(), 1)
+
+        StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .detectLeakedRegistrationObjects()
+                .penaltyLog()
+                .build()
+        )
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
@@ -187,6 +198,7 @@ class SagerNet : Application(),
             clipboard.setPrimaryClip(ClipData.newPlainText(null, clip))
             true
         } catch (e: RuntimeException) {
+            Logs.w(e)
             false
         }
 

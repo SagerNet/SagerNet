@@ -46,11 +46,7 @@ val okHttpClient = OkHttpClient.Builder()
 
 private lateinit var proxyClient: OkHttpClient
 fun createProxyClient(): OkHttpClient {
-    if (!SagerNet.started) {
-        if (DataStore.startedProfile == 0L) {
-            return okHttpClient
-        }
-    }
+    if (!SagerNet.started) return okHttpClient
 
     if (!::proxyClient.isInitialized) {
         proxyClient = okHttpClient.newBuilder().proxy(requireProxy()).build()

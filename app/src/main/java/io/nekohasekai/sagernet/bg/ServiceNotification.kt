@@ -35,6 +35,7 @@ import androidx.core.content.getSystemService
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.aidl.AppStatsList
 import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.database.DataStore
@@ -103,6 +104,7 @@ class ServiceNotification(
 
             override fun profilePersisted(profileId: Long) {}
             override fun missingPlugin(profileName: String?, pluginName: String?) {}
+            override fun statsUpdated(statsList: AppStatsList?) {}
         }
     }
     private var callbackRegistered = false

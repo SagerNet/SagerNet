@@ -5,6 +5,7 @@
       <w>aead</w>
       <w>alpn</w>
       <w>blackhole</w>
+      <w>conns</w>
       <w>conscrypt</w>
       <w>dokodemo</w>
       <w>downlink</w>

@@ -38,19 +38,26 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import libcore.AppStats
+import libcore.TrafficListener
 import libcore.Tun2socks
 import java.io.FileDescriptor
 import android.net.VpnService as BaseVpnService
 
 class VpnService : BaseVpnService(),
-    BaseService.Interface {
+    BaseService.Interface,
+    TrafficListener {
 
     companion object {
         var instance: VpnService? = null
@@ -103,7 +110,11 @@ class VpnService : BaseVpnService(),
         active = false
         scope.launch { DefaultNetworkListener.stop(this) }
         if (::conn.isInitialized) conn.close()
-        if (::tun2socks.isInitialized) tun2socks.close()
+        if (::tun2socks.isInitialized) {
+            tun2socks.close()
+
+            persistAppStats()
+        }
     }
 
     override fun onBind(intent: Intent) = when (intent.action) {
@@ -262,11 +273,56 @@ class VpnService : BaseVpnService(),
         )
     }
 
+    val appStats = mutableListOf<AppStats>()
+
+    override fun updateStats(stats: AppStats) {
+        appStats.add(stats)
+    }
+
+    fun persistAppStats() {
+        appStats.clear()
+        tun2socks.readAppTraffics(this)
+        val toUpdate = mutableListOf<StatsEntity>()
+        val all = SagerDatabase.statsDao.all().associateBy { it.packageName }
+        for (stats in appStats) {
+            val packageName = if (stats.uid >= 10000) {
+                PackageCache.uidMap[stats.uid.toInt()]?.iterator()?.next() ?: "android"
+            } else {
+                "android"
+            }
+            if (!all.containsKey(packageName)) {
+                Logs.d("insert $packageName")
+                SagerDatabase.statsDao.create(
+                    StatsEntity(
+                        packageName = packageName,
+                        tcpConnections = stats.tcpConnTotal.toInt(),
+                        udpConnections = stats.udpConnTotal.toInt(),
+                        uplink = stats.uplinkTotal,
+                        downlink = stats.downlinkTotal
+                    )
+                )
+            } else {
+                val entity = all[packageName]!!
+                entity.tcpConnections += stats.tcpConnTotal.toInt()
+                entity.udpConnections += stats.udpConnTotal.toInt()
+                entity.uplink += stats.uplinkTotal
+                entity.downlink += stats.downlinkTotal
+                toUpdate.add(entity)
+                Logs.d("update $packageName")
+            }
+            if (toUpdate.isNotEmpty()) {
+                SagerDatabase.statsDao.update(toUpdate)
+            }
+
+        }
+    }
+
     override fun onRevoke() = stopRunner()
 
     override fun onDestroy() {
         super.onDestroy()
         data.binder.close()
     }
+
 
 }

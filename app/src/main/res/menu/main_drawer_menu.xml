@@ -8,6 +8,11 @@
             android:title="@string/menu_configuration" />
 
         <item
+            android:id="@+id/nav_traffic"
+            android:icon="@drawable/ic_baseline_transform_24"
+            android:title="@string/menu_traffic" />
+
+        <item
             android:id="@+id/nav_group"
             android:icon="@drawable/ic_baseline_view_list_24"
             android:title="@string/menu_group" />

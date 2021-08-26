@@ -28,7 +28,7 @@ import com.v2ray.core.app.stats.command.GetStatsRequest
 import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
-import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
@@ -125,6 +125,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 launch()
             }
         }
+
+        SagerNet.started = true
     }
 
     override fun destroy(scope: CoroutineScope) {
@@ -138,6 +140,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         if (::managedChannel.isInitialized) {
             managedChannel.shutdownNow()
         }
+
+        SagerNet.started = false
     }
 
     // ------------- stats -------------

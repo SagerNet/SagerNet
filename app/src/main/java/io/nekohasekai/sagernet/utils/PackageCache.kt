@@ -22,20 +22,20 @@
 package io.nekohasekai.sagernet.utils
 
 import android.Manifest
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
-import io.nekohasekai.sagernet.ktx.readableMessage
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 object PackageCache {
 
-    lateinit var installPackages: Map<String, PackageInfo>
+    lateinit var installedPackages: Map<String, PackageInfo>
+    lateinit var installedApps: Map<String, ApplicationInfo>
     lateinit var packageMap: Map<String, Int>
-    lateinit var labelMap: Map<String, String>
     val uidMap = HashMap<Int, HashSet<String>>()
     val loaded = Mutex(true)
 
@@ -43,12 +43,13 @@ object PackageCache {
         reload()
         app.listenForPackageChanges(false) {
             reload()
+            labelMap.clear()
         }
         loaded.unlock()
     }
 
     fun reload() {
-        installPackages = app.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
+        installedPackages = app.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
             .filter {
                 when (it.packageName) {
                     "android" -> true
@@ -58,14 +59,8 @@ object PackageCache {
             .associateBy { it.packageName }
 
         val installed = app.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        installedApps = installed.associateBy { it.packageName }
         packageMap = installed.associate { it.packageName to it.uid }
-        labelMap = installed.associate {
-            it.packageName to try {
-                it.loadLabel(app.packageManager).toString()
-            } catch (e: Exception) {
-                "[Load label error: ${e.readableMessage}]"
-            }
-        }
         uidMap.clear()
         for (info in installed) {
             val uid = info.uid
@@ -77,7 +72,7 @@ object PackageCache {
     operator fun get(packageName: String) = packageMap[packageName]
 
     suspend fun awaitLoad() {
-        if (::labelMap.isInitialized) {
+        if (::packageMap.isInitialized) {
             return
         }
         loaded.withLock {
@@ -86,7 +81,7 @@ object PackageCache {
     }
 
     fun awaitLoadSync() {
-        if (::labelMap.isInitialized) {
+        if (::packageMap.isInitialized) {
             return
         }
         runBlocking {
@@ -94,6 +89,16 @@ object PackageCache {
                 // just await
             }
         }
+    }
+
+    private val labelMap = mutableMapOf<String, String>()
+    fun loadLabel(packageName: String): String {
+        var label = labelMap[packageName]
+        if (label != null) return label
+        val info = installedApps[packageName] ?: return packageName
+        label = info.loadLabel(app.packageManager).toString()
+        labelMap[packageName] = label
+        return label
     }
 
 }

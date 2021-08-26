@@ -19,40 +19,66 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg
+package io.nekohasekai.sagernet.database
 
-import android.system.ErrnoException
-import android.system.Os
-import android.system.OsConstants
-import android.text.TextUtils
-import io.nekohasekai.sagernet.ktx.Logs
-import java.io.File
-import java.io.IOException
+import android.os.Parcelable
+import androidx.room.*
+import io.nekohasekai.sagernet.aidl.AppStats
+import io.nekohasekai.sagernet.utils.PackageCache
+import kotlinx.parcelize.Parcelize
 
-object Executable {
-    const val SS_LOCAL = "libsslocal.so"
+@Entity(
+    tableName = "stats", indices = [Index(
+        "packageName", unique = true
+    )]
+)
+@Parcelize
+class StatsEntity(
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    var packageName: String = "",
+    var tcpConnections: Int = 0,
+    var udpConnections: Int = 0,
+    var uplink: Long = 0L,
+    var downlink: Long = 0L
+) : Parcelable {
 
-    private val EXECUTABLES = setOf(SS_LOCAL)
-
-    fun killAll() {
-        for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }
-            ?: return) {
-            val exe = File(try {
-                File(process, "cmdline").inputStream().bufferedReader().use {
-                    it.readText()
-                }
-            } catch (_: IOException) {
-                continue
-            }.split(Character.MIN_VALUE, limit = 2).first())
-            if (EXECUTABLES.contains(exe.name)) try {
-                Os.kill(process.name.toInt(), OsConstants.SIGKILL)
-                Logs.w("SIGKILL ${exe.nameWithoutExtension} (${process.name}) succeed")
-            } catch (e: ErrnoException) {
-                if (e.errno != OsConstants.ESRCH) {
-                    Logs.w("SIGKILL ${exe.absolutePath} (${process.name}) failed")
-                    Logs.w(e)
-                }
-            }
-        }
+    fun toStats(): AppStats {
+        return AppStats(
+            packageName,
+            PackageCache[packageName] ?: 1000,
+            0,
+            0,
+            tcpConnections,
+            udpConnections,
+            0,
+            0,
+            uplink,
+            downlink,
+            0
+        )
     }
+
+    @androidx.room.Dao
+    interface Dao {
+
+        @Query("SELECT * FROM stats")
+        fun all(): List<StatsEntity>
+
+        @Query("SELECT * FROM stats WHERE packageName = :packageName")
+        operator fun get(packageName: String): StatsEntity?
+
+        @Query("DELETE FROM stats WHERE packageName = :packageName")
+        fun delete(packageName: String): Int
+
+        @Insert
+        fun create(stats: StatsEntity)
+
+        @Update
+        fun update(stats: List<StatsEntity>)
+
+        @Query("DELETE FROM stats")
+        fun deleteAll()
+
+    }
+
 }

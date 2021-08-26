@@ -78,7 +78,7 @@ class AppManagerActivity : ThemedActivity() {
         private const val SWITCH = "switch"
 
         private val cachedApps
-            get() = PackageCache.installPackages.toMutableMap().apply {
+            get() = PackageCache.installedPackages.toMutableMap().apply {
                 remove(BuildConfig.APPLICATION_ID)
             }
     }
