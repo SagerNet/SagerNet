@@ -179,18 +179,13 @@ class BaseService {
 
         private suspend fun loopStats() {
             var lastQueryTime = 0L
+            val tun = (data?.proxy?.service as? VpnService)?.tun2socks ?: return
             while (true) {
                 val delayMs = statsListeners.values.minOrNull()
                 if (delayMs == 0L) return
                 val queryTime = System.currentTimeMillis()
                 val sinceLastQueryInSeconds = ((queryTime - lastQueryTime).toDouble() / 1000).toLong()
                 lastQueryTime = queryTime
-
-                val tun = (data?.proxy?.service as VpnService?)?.tun2socks
-                if (tun == null) {
-                    delay(delayMs ?: return)
-                    continue
-                }
 
                 appStats.clear()
                 tun.readAppTraffics(this)
