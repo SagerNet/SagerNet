@@ -232,10 +232,10 @@
     <string name="stopping">Slår av…</string>
     <string name="stop">Stoppe</string>
     <string name="service_failed">Mislyktes:</string>
-    <string name="forward_success">SagerNet startet.</string>
+    <string name="forward_success">Mellomtjener startet.</string>
     <string name="direct_boot_aware_summary">Den valgte profilinformasjonen din blir mindre beskyttet</string>
     <string name="direct_boot_aware">Tillat veksling i låseskjerm</string>
-    <string name="auto_connect_summary">Aktiver SagerNet ved oppstart/appoppdatering hvis den kjørte før</string>
+    <string name="auto_connect_summary">Aktiver mellomtjener ved oppstart/programoppgradering hvis den kjørte før</string>
     <string name="auto_connect">Automatisk tilkobling</string>
     <string name="bypass_apps">Omgå</string>
     <string name="clear_selections">Fjern markeringene</string>
@@ -363,4 +363,11 @@
     <string name="obfs">Obfs</string>
     <string name="speed">%s/s</string>
     <string name="traffic">%1$s↑ %2$s↓</string>
+    <string name="hysteria_obfs">Tilsløringspassord</string>
+    <string name="hysteria_auth_payload">Identitetbekreftelses-nyttelast</string>
+    <string name="experimental_authenticated_length">Uenderlig lengde for hver nyttelastssegment. Dette eksperimentet krever at tjener og klient bruker samme versjon av v2ray-core. Flere ødeleggende oppdateringer ved dette eksperimentet er forventet.</string>
+    <string name="experimental_settings">Eksperimentelt</string>
+    <string name="hysteria_download_mbps">Maks. nedlastingshastighet (i Mbps)</string>
+    <string name="hysteria_upload_mbps">Maks. opplastingshastighet (i Mbps)</string>
+    <string name="hysteria_auth_type">Identitetbekreftelsestype</string>
 </resources>

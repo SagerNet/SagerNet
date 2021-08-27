@@ -104,7 +104,7 @@
     <string name="alter_id">شماره تغییر</string>
     <string name="uuid">شناسه کاربر</string>
     <string name="obfs_param">پارامترهای Obfs</string>
-    <string name="obfs">Obfs(اُ بی اِف اِس)</string>
+    <string name="obfs">پروتکل Obfs</string>
     <string name="header_type">نوع سربرگ</string>
     <string name="network">شبکه</string>
     <string name="security">رمزنگاری لایه انتقال</string>
@@ -141,8 +141,8 @@
     <string name="ss_aead_provider">ارائه دهنده Shadowsocks AEAD</string>
     <string name="trojan_provider">ارائه دهنده Trojan</string>
     <string name="protocol_settings">تنظیمات پروتکل</string>
-    <string name="bypass_lan_in_core_only_sum">اگر لاین هات اسپات برای استفاده کاربرها از VPN کار نمی کند، این را امتحان کنید.</string>
-    <string name="bypass_lan_in_core_only">دور زدن LAN فقط در هسته</string>
+    <string name="bypass_lan_in_core_only_sum">اگر لاین هات‌اسپات برای استفاده کاربرها از VPN کار نمی کند، این را امتحان کنید.</string>
+    <string name="bypass_lan_in_core_only">بای‌پس LAN فقط در هسته</string>
     <string name="action_from_link">از اشتراک</string>
     <string name="reply">پاسخ دادن</string>
     <string name="direct">مستقیم</string>
@@ -276,7 +276,7 @@
     <string name="auto_connect_summary">فعال کردن پروکسی در هنگام راه اندازی/به روز رسانی برنامه اگر قبل از آن در حال اجرا بود</string>
     <string name="auto_connect">اتصال خودکار</string>
     <string name="show_system_apps">نمایش برنامه‌های سیستمی</string>
-    <string name="bypass_apps">کنار گذاشتن</string>
+    <string name="bypass_apps">بای‌پس(گذرگاه فرعی)</string>
     <string name="clear_selections">پاک کردن برگزیده ها</string>
     <string name="invert_selections">وارونه کردن برگزیده ها</string>
     <string name="scanning">درحال اسکن…</string>
@@ -297,7 +297,7 @@
     <string name="domain_matcher">الگوریتم همسان سازی دامنه</string>
     <string name="domain_strategy">استراتژی حل دامنه</string>
     <string name="route_opt_block_ads">مسدود کردن تبلیغات</string>
-    <string name="route_opt_bypass_lan">کنار گذاشتن LAN</string>
+    <string name="route_opt_bypass_lan">بای‌پس LAN</string>
     <string name="route_not_asset">پرونده دارایی نیست: به استثنای .dat ، اما %s</string>
     <string name="route_asset_updated">به روز شده</string>
     <string name="route_asset_no_update">بدون بروزرسانی</string>
@@ -315,7 +315,7 @@
     <string name="empty_route">مسیر خالی</string>
     <string name="route_profile">انتخاب نمایه…</string>
     <string name="route_block">مسدود کردن</string>
-    <string name="route_bypass">کنار گذاشتن</string>
+    <string name="route_bypass">بای‌پس(گذرگاه فرعی)</string>
     <string name="route_proxy">پروکسی</string>
     <string name="route_name">نام مسیر</string>
     <string name="delete_route_prompt">آیا مطمئن هستید که می خواهید این مسیر را حذف کنید؟</string>
@@ -370,4 +370,7 @@
     <string name="hysteria_auth_payload">ظرفیت بار احراز هویت</string>
     <string name="hysteria_auth_type">نوع احراز هویت</string>
     <string name="hysteria_obfs">رمز عبور مبهم</string>
+    <string name="experimental_no_termination_signal">هنگام انتقال از طریق VMess، سیگنال خاتمه دو طرفه اتصال را برای اتصال TCP ارسال نکنید. این باعث خرابی برخی از برنامه ها می شود.</string>
+    <string name="experimental_authenticated_length">طول هر بخش محموله دیگر قابل انعطاف نیست. این آزمایش نیاز به سرور دارد و سرویس گیرنده از نسخه مشابه v2ray-core استفاده می کند. انتظار می رود بروزرسانی های فوری بیشتری در مورد این آزمایش ارائه شود.</string>
+    <string name="experimental_settings">آزمایشی</string>
 </resources>

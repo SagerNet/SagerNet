@@ -80,7 +80,7 @@
     <string name="oss_licenses">Ліцензії з відкритим кодом</string>
     <string name="telegram">Канал оновлення Telegram</string>
     <string name="github">Вихідний код</string>
-    <string name="project">Проект</string>
+    <string name="project">Проєкт</string>
     <string name="app_desc">Універсальний набір інструментів проксі для Android, написаний на Kotlin.</string>
     <string name="route_name">Назва маршруту</string>
     <string name="delete_route_prompt">Ви впевнені, що хочете видалити цей маршрут\?</string>

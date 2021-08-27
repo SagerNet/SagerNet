@@ -100,16 +100,16 @@
     <string name="project">Проект</string>
     <string name="app_desc">Универсальный набор инструментов прокси для Android, написанный на Kotlin.</string>
     <plurals name="added">
-        <item quantity="one"/>
-        <item quantity="few">Добавлен</item>
+        <item quantity="one">Добавлено</item>
+        <item quantity="few">Добавлено %d прокси</item>
         <item quantity="many">%d прокси добавлены</item>
         <item quantity="other">%d прокси добавлены</item>
     </plurals>
     <plurals name="removed">
-        <item quantity="one"/>
-        <item quantity="few">Удаленный</item>
-        <item quantity="many">%d элементы удалены</item>
-        <item quantity="other">%d элементы удалены</item>
+        <item quantity="one">Удалено</item>
+        <item quantity="few">%d элемента удалены</item>
+        <item quantity="many">%d элементов удалено</item>
+        <item quantity="other">%d элементов удалено</item>
     </plurals>
     <string name="mux_sum">Mux разработан для уменьшения задержки установления связи TCP, а не для увеличения пропускной способности соединения. Использование Mux для просмотра видео, загрузки или проверки скорости обычно контрпродуктивно</string>
     <string name="need_nf">Для поддержки маршрутизации на основе приложений режим VPN должен быть Собственная переадресация.</string>
@@ -372,4 +372,7 @@
     <string name="hysteria_auth_payload">Полезные данные аутентификации</string>
     <string name="hysteria_auth_type">Тип аутентификации</string>
     <string name="hysteria_obfs">Обфускация пароля</string>
+    <string name="experimental_no_termination_signal">Не отправлять одинарный дуплексный сигнал завершения соединения для TCP-соединения при передаче через VMess. Это нарушает работу некоторых приложений.</string>
+    <string name="experimental_authenticated_length">Сделайте длину каждого сегмента полезной нагрузки больше не податливой. Этот эксперимент требует, чтобы сервер и клиент использовали одну и ту же версию v2ray-core. Ожидаются новые важные обновления по этому эксперименту.</string>
+    <string name="experimental_settings">Экспериментальный</string>
 </resources>

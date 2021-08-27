@@ -83,4 +83,9 @@
     <string name="group_added">Ajouté :
 \n%s</string>
     <string name="tile_title">Commutateur</string>
+    <string name="service_mode_vpn">VPN</string>
+    <string name="service_mode_proxy">Agent seulement</string>
+    <string name="group_duplicate">Reproduction:
+\n%s</string>
+    <string name="logcat_summary">Ça marche</string>
 </resources>
