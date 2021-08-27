@@ -44,6 +44,7 @@ import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
+import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.widget.ListHolderListener
@@ -166,7 +167,9 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .setOnClickAction { }
                         .build())
                     .apply {
+                        val m = enumValues<PluginEntry>().associateBy { it.pluginId }
                         for (plugin in PluginManager.fetchPlugins()) {
+                            if (!m.containsKey(plugin.id)) continue
                             try {
                                 addItem(MaterialAboutActionItem.Builder()
                                     .icon(R.drawable.ic_baseline_nfc_24)
