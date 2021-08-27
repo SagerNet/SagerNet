@@ -49,28 +49,12 @@ abstract class SagerDatabase : RoomDatabase() {
         private val instance by lazy {
             SagerNet.application.getDatabasePath(Key.DB_PROFILE).parentFile?.mkdirs()
             Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*buildMigrations())
+                .addMigrations(*SagerDatabase_Migrations.build())
                 .allowMainThreadQueries()
                 .enableMultiInstanceInvalidation()
                 .fallbackToDestructiveMigration()
                 .setQueryExecutor { GlobalScope.launch { it.run() } }
                 .build()
-        }
-
-        fun buildMigrations(): Array<Migration> {
-            val migrations = SagerDatabase_Migrations.build().toMutableList()
-            migrations.add(object : Migration(5, 8) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    SagerDatabase_Migrations.buildScheme()[8]!!.tables["stats"]!!.apply {
-                        database.execSQL(createSql)
-                        for (index in indices.values) {
-                            database.execSQL(index.createSql)
-                        }
-                    }
-                    SagerDatabase_Migration_7_8.migrate(database)
-                }
-            })
-            return migrations.toTypedArray()
         }
 
         val profileCacheDao get() = instance.profileCacheDao()
