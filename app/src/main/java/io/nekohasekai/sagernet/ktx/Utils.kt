@@ -31,7 +31,6 @@ import android.content.*
 import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.net.NetworkUtils
-import android.net.VpnService
 import android.os.Build
 import android.os.SystemClock
 import android.system.Os
@@ -55,6 +54,7 @@ import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.ProxyService
+import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import kotlinx.coroutines.Dispatchers
