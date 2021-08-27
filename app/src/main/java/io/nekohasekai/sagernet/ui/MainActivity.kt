@@ -25,7 +25,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.RemoteException
+import android.provider.Settings
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.preference.PreferenceDataStore
@@ -367,9 +369,9 @@ class MainActivity : ThemedActivity(),
         msg: String? = null,
         animate: Boolean = false,
     ) {
-        SagerNet.started = state == BaseService.State.Connected
+        val started = state == BaseService.State.Connected
 
-        if (!SagerNet.started) {
+        if (!started) {
             statsUpdated(emptyList())
         }
 
@@ -395,6 +397,29 @@ class MainActivity : ThemedActivity(),
         (supportFragmentManager.findFragmentById(R.id.fragment_holder) as? TrafficFragment)?.emitStats(
             stats
         )
+    }
+
+    override fun routeAlert(type: Int, routeName: String) {
+        when (type) {
+            0 -> {
+                // need vpn
+
+                Toast.makeText(
+                    this, getString(R.string.route_need_vpn, routeName), Toast.LENGTH_SHORT
+                ).show()
+            }
+            1 -> {
+                // need fds
+
+                MaterialAlertDialogBuilder(this).setTitle(R.string.foreground_detector)
+                    .setMessage(getString(R.string.route_need_fds, routeName))
+                    .setPositiveButton(R.string.enable) { _, _ ->
+                        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+        }
     }
 
     val connection = SagerConnection(true)

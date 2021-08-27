@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string-array name="bypass_private_route">
         <item>1.0.0.0/8</item>
         <item>2.0.0.0/7</item>
@@ -705,6 +705,18 @@
         <item>@string/group_order_origin</item>
         <item>@string/group_order_by_name</item>
         <item>@string/group_order_by_delay</item>
+    </string-array>
+
+    <string-array name="foreground_status">
+        <item tools:ignore="PrivateResource">@string/not_set</item>
+        <item>@string/foreground</item>
+        <item>@string/background</item>
+    </string-array>
+
+    <string-array name="foreground_status_value">
+        <item />
+        <item>foreground</item>
+        <item>background</item>
     </string-array>
 
 </resources>

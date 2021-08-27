@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:canRetrieveWindowContent="false"
+    android:summary="@string/foreground_detector"
+    android:isAccessibilityTool="true"
+    android:settingsActivity="io.nekohasekai.sagernet.ui.MainActivity"
+    android:description="@string/foreground_detector_summary" />

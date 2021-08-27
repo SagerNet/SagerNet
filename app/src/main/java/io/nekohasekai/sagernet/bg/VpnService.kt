@@ -32,7 +32,6 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import androidx.annotation.RequiresApi
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -42,7 +41,6 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.PackageCache
@@ -255,11 +253,6 @@ class VpnService : BaseVpnService(),
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
         conn = builder.establish() ?: throw NullConnectionException()
 
-        val uidRules = JSONObject()
-        for ((uid, port) in data.proxy!!.config.uidMap) {
-            uidRules["$uid"] = port
-        }
-
         tun2socks = Tun2socks(
             conn.fd.toLong(),
             VPN_MTU.toLong(),
@@ -268,8 +261,7 @@ class VpnService : BaseVpnService(),
             true,
             DataStore.trafficSniffing,
             DataStore.enableFakeDns,
-            DataStore.enableLog,
-            uidRules.toStringPretty()
+            DataStore.enableLog
         )
     }
 
@@ -291,7 +283,6 @@ class VpnService : BaseVpnService(),
                 "android"
             }
             if (!all.containsKey(packageName)) {
-                Logs.d("insert $packageName")
                 SagerDatabase.statsDao.create(
                     StatsEntity(
                         packageName = packageName,
@@ -308,7 +299,6 @@ class VpnService : BaseVpnService(),
                 entity.uplink += stats.uplinkTotal
                 entity.downlink += stats.downlinkTotal
                 toUpdate.add(entity)
-                Logs.d("update $packageName")
             }
             if (toUpdate.isNotEmpty()) {
                 SagerDatabase.statsDao.update(toUpdate)

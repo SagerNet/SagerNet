@@ -26,10 +26,12 @@ package io.nekohasekai.sagernet.ktx
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.Service
 import android.content.*
 import android.content.pm.PackageInfo
 import android.content.res.Resources
 import android.net.NetworkUtils
+import android.net.VpnService
 import android.os.Build
 import android.os.SystemClock
 import android.system.Os
@@ -52,6 +54,7 @@ import cn.hutool.core.util.CharsetUtil
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.bg.ProxyService
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +73,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
@@ -266,13 +270,34 @@ fun Fragment.startFilesForResult(
     (requireActivity() as ThemedActivity).snackbar(getString(R.string.file_manager_missing)).show()
 }
 
-fun Fragment.serviceStarted(): Boolean {
-    return ((activity as? MainActivity) ?: return false).serviceStarted()
+fun serviceStarted(): Boolean {
+    val name = listOf(ProxyService::class.qualifiedName, VpnService::class.qualifiedName)
+    var myServices = SagerNet.activity.getRunningServices(5) ?: return false
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        val myUid = Os.getuid()
+        myServices = myServices.filter { it.uid == myUid }
+    }
+    return myServices.any { it.service.className in name }
 }
 
 fun Fragment.needReload() {
     ((activity as? MainActivity) ?: return).needReload()
 }
+
+@Suppress("DEPRECATION")
+fun <T : Service> KClass<T>.isRunning(): Boolean {
+    val name = qualifiedName
+    var myServices = SagerNet.activity.getRunningServices(5) ?: return false
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        val myUid = Os.getuid()
+        myServices = myServices.filter { it.uid == myUid }
+    }
+    for (myService in myServices) if (myService.service.className == name) {
+        return true
+    }
+    return false
+}
+
 
 fun Context.getColour(@ColorRes colorRes: Int): Int {
     return ContextCompat.getColor(this, colorRes)
@@ -323,8 +348,9 @@ fun <T> Continuation<T>.tryResumeWithException(exception: Throwable) {
 }
 
 operator fun <F> KProperty0<F>.getValue(thisRef: Any?, property: KProperty<*>): F = get()
-operator fun <F> KMutableProperty0<F>.setValue(thisRef: Any?, property: KProperty<*>, value: F) =
-    set(value)
+operator fun <F> KMutableProperty0<F>.setValue(
+    thisRef: Any?, property: KProperty<*>, value: F
+) = set(value)
 
 operator fun AtomicBoolean.getValue(thisRef: Any?, property: KProperty<*>): Boolean = get()
 operator fun AtomicBoolean.setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) =

@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, StatsEntity::class, KeyValuePair::class],
-    version = 7
+    version = 8
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
 @GenerateRoomMigrations
@@ -59,9 +59,15 @@ abstract class SagerDatabase : RoomDatabase() {
 
         fun buildMigrations(): Array<Migration> {
             val migrations = SagerDatabase_Migrations.build().toMutableList()
-            migrations.add(object : Migration(5, 7) {
+            migrations.add(object : Migration(5, 8) {
                 override fun migrate(database: SupportSQLiteDatabase) {
-                    database.execSQL(SagerDatabase_Migrations.buildScheme()[7]!!.tables["stats"]!!.createSql)
+                    SagerDatabase_Migrations.buildScheme()[8]!!.tables["stats"]!!.apply {
+                        database.execSQL(createSql)
+                        for (index in indices.values) {
+                            database.execSQL(index.createSql)
+                        }
+                    }
+                    SagerDatabase_Migration_7_8.migrate(database)
                 }
             })
             return migrations.toTypedArray()

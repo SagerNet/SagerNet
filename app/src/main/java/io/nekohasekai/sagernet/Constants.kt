@@ -167,6 +167,7 @@ object Key {
     const val ROUTE_REVERSE = "routeReverse"
     const val ROUTE_REDIRECT = "routeRedirect"
     const val ROUTE_PACKAGES = "routePackages"
+    const val ROUTE_FOREGROUND_STATUS = "routeForegroundStatus"
 
     const val GROUP_NAME = "groupName"
     const val GROUP_TYPE = "groupType"
@@ -238,6 +239,11 @@ object GroupOrder {
     const val ORIGIN = 0
     const val BY_NAME = 1
     const val BY_DELAY = 2
+}
+
+object AppStatus {
+    const val FOREGROUND = "foreground"
+    const val BACKGROUND = "background"
 }
 
 object Action {

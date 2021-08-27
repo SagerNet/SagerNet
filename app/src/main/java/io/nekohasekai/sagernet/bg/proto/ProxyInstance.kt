@@ -125,8 +125,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 launch()
             }
         }
-
-        SagerNet.started = true
     }
 
     override fun destroy(scope: CoroutineScope) {
@@ -140,8 +138,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         if (::managedChannel.isInitialized) {
             managedChannel.shutdownNow()
         }
-
-        SagerNet.started = false
     }
 
     // ------------- stats -------------

@@ -10,6 +10,13 @@
         app:icon="@drawable/ic_baseline_legend_toggle_24"
         app:key="routePackages"
         app:title="@string/apps" />
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:entries="@array/foreground_status"
+        app:entryValues="@array/foreground_status_value"
+        app:icon="@drawable/ic_baseline_low_priority_24"
+        app:key="routeForegroundStatus"
+        app:title="@string/foreground_status"
+        app:useSimpleSummaryProvider="true" />
     <PreferenceCategory app:title="@string/cag_route">
         <EditTextPreference
             app:icon="@drawable/ic_baseline_domain_24"

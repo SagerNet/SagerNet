@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.fmt.gson;
 
 import androidx.room.TypeConverter;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,9 @@ public class GsonConverters {
 
     @TypeConverter
     public static String toJson(Object value) {
+        if (value instanceof Collection) {
+            if (((Collection<?>) value).isEmpty()) return "";
+        }
         return GsonsKt.getGson().toJson(value);
     }
 

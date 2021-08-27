@@ -113,6 +113,11 @@ public class V2RayConfig {
             public String outboundTag;
             public String balancerTag;
 
+            // SagerNet private
+
+            public List<Integer> uidList;
+            public List<String> appStatus;
+
         }
 
         public List<BalancerObject> balancers;

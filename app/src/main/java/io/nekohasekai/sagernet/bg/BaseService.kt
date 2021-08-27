@@ -461,6 +461,12 @@ class BaseService {
                     DataStore.startedProfile = profile.id
                     startProcesses()
                     data.changeState(State.Connected)
+
+                    for ((type, routeName) in proxy.config.alerts) {
+                        data.binder.broadcast {
+                            it.routeAlert(type, routeName)
+                        }
+                    }
                 } catch (_: CancellationException) { // if the job was cancelled, it is canceller's responsibility to call stopRunner
                 } catch (_: UnknownHostException) {
                     stopRunner(false, getString(R.string.invalid_server))

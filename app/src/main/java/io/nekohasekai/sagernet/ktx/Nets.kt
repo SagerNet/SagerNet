@@ -25,7 +25,6 @@ package io.nekohasekai.sagernet.ktx
 
 import android.os.Build
 import cn.hutool.core.lang.Validator
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -46,7 +45,7 @@ val okHttpClient = OkHttpClient.Builder()
 
 private lateinit var proxyClient: OkHttpClient
 fun createProxyClient(): OkHttpClient {
-    if (!SagerNet.started) return okHttpClient
+    if (!serviceStarted()) return okHttpClient
 
     if (!::proxyClient.isInitialized) {
         proxyClient = okHttpClient.newBuilder().proxy(requireProxy()).build()
