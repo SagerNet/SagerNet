@@ -65,7 +65,6 @@
     <string name="always_show_address">Mostrar siempre la dirección</string>
     <string name="auto_update">Actualización automática</string>
     <string name="auto_connect">Auto conectar</string>
-    <string name="need_nf">Para admitir el enrutamiento basado en aplicaciones, el modo VPN debe ser el reenvío nativo.</string>
     <string name="subscription_import_message">%s</string>
     <string name="subscription_import">Importar subscripción</string>
     <string name="group_filter">Filtrar</string>

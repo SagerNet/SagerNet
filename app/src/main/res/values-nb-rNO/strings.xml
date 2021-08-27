@@ -11,8 +11,6 @@
     <string name="action_download">Last ned</string>
     <string name="action_learn_more">Lær mer</string>
     <string name="confirm">Bekreft</string>
-    <string name="vpn_mode">VPN-modus</string>
-    <string name="vpn_settings">VPN-innstillinger</string>
     <string name="connection_test_timeout">Tidsavbrudd</string>
     <string name="connection_test_clear_results">Tøm testresultater</string>
     <string name="connection_test">Tilkoblingstest</string>
@@ -111,7 +109,6 @@
     <string name="port_proxy">SOCKS5-mellomtjenerport</string>
     <string name="service_mode_vpn">VPN</string>
     <string name="service_mode_proxy">Kun mellomtjener</string>
-    <string name="need_nf">For å støtte applikasjonsbasert ruting må VPN-modusen være Native Forwarding.</string>
     <string name="clear_profiles_message">Er du sikker på at du vil slette denne gruppen\?</string>
     <string name="profile_import_message">Bekreft at du vil importere profilen %s\?</string>
     <string name="profile_import">Importer profil</string>
@@ -155,19 +152,11 @@
     <string name="protocol_settings">Protokollinnstillinger</string>
     <string name="bypass_lan_in_core_only_sum">Hvis Lineage\'s Tillat hotspot -klienter å bruke VPN -er ikke fungerer, kan du prøve dette.</string>
     <string name="bypass_lan_in_core_only">Omgå LAN i Core bare</string>
-    <string name="reply">Svare</string>
-    <string name="direct">Direkte</string>
-    <string name="drop">Miste</string>
-    <string name="ip_other_strategy">Annen internettprotokollstrategi</string>
-    <string name="icmp_echo_reply_delay">ICMP Echo- svarforsinkelse</string>
-    <string name="icmp_echo_strategy">ICMP Echo Strategi</string>
-    <string name="vpn_mode_forwarding">Innfødt videresending</string>
     <string name="append_http_proxy_sum">HTTP -proxy brukes direkte fra (nettleser/ noen støttede apper), uten å gå gjennom den virtuelle NIC -enheten (Android 10+)</string>
     <string name="append_http_proxy">Legg til HTTP -proxy til VPN</string>
     <string name="connection_test_unreachable">Uoppnåelig</string>
     <string name="connection_test_refused">Tilkobling nektet</string>
     <string name="connection_test_domain_not_found">Domenet ble ikke funnet</string>
-    <string name="connection_test_reorder">Ombestill med forsinkelse</string>
     <string name="connection_test_icmp_ping_unavailable">ICMPing er ikke tilgjengelig</string>
     <string name="connection_test_tcp_ping_unavailable">TCPing utilgjengelig</string>
     <string name="clear_traffic_statistics">Slett trafikkstatistikk</string>

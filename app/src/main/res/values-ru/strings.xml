@@ -112,7 +112,6 @@
         <item quantity="other">%d элементов удалено</item>
     </plurals>
     <string name="mux_sum">Mux разработан для уменьшения задержки установления связи TCP, а не для увеличения пропускной способности соединения. Использование Mux для просмотра видео, загрузки или проверки скорости обычно контрпродуктивно</string>
-    <string name="need_nf">Для поддержки маршрутизации на основе приложений режим VPN должен быть Собственная переадресация.</string>
     <string name="apps_message">%d приложений</string>
     <string name="select_apps">Выберите приложения</string>
     <string name="apps">Приложения</string>
@@ -168,22 +167,13 @@
     <string name="protocol_settings">Настройки протокола</string>
     <string name="bypass_lan_in_core_only_sum">Если Lineage Разрешить клиентам точки доступа использовать VPN не работает, попробуйте это.</string>
     <string name="bypass_lan_in_core_only">Обход LAN только в ядре</string>
-    <string name="reply">Отвечать</string>
-    <string name="direct">Прямой</string>
-    <string name="drop">Уронить</string>
-    <string name="ip_other_strategy">Другая стратегия интернет-протокола</string>
-    <string name="icmp_echo_reply_delay">Задержка эхо-ответа ICMP</string>
-    <string name="icmp_echo_strategy">Эхо-стратегия ICMP</string>
-    <string name="vpn_mode_forwarding">Собственная переадресация</string>
     <string name="vpn_mode">Режим VPN</string>
-    <string name="vpn_settings">Настройки VPN</string>
     <string name="append_http_proxy_sum">HTTP-прокси будет использоваться напрямую из (браузера / некоторых поддерживаемых приложений), без использования виртуального сетевого адаптера (Android 10+)</string>
     <string name="append_http_proxy">Добавить HTTP-прокси к VPN</string>
     <string name="connection_test_timeout">Тайм-аут</string>
     <string name="connection_test_unreachable">Недоступен</string>
     <string name="connection_test_refused">В соединении отказано</string>
     <string name="connection_test_domain_not_found">Домен не найден</string>
-    <string name="connection_test_reorder">Заказать с задержкой</string>
     <string name="connection_test_icmp_ping_unavailable">ICMPing недоступен</string>
     <string name="connection_test_tcp_ping_unavailable">TCPing недоступен</string>
     <string name="connection_test_clear_results">Четкие результаты теста</string>
