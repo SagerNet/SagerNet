@@ -525,7 +525,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     fun stopService() {
-        if (serviceStarted()) SagerNet.stopService()
+        if (SagerNet.started) SagerNet.stopService()
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
@@ -1332,7 +1332,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 runOnDefaultDispatcher {
                     val selected = (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
-                    val started = serviceStarted() && DataStore.currentProfile == proxyEntity.id
+                    val started = SagerNet.started && DataStore.currentProfile == proxyEntity.id
                     onMainDispatcher {
                         editButton.isEnabled = !started
                         selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE

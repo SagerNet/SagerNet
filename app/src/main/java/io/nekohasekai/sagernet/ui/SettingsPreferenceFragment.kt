@@ -31,7 +31,9 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
-import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
@@ -62,7 +64,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             appTheme.remove()
         } else {
             appTheme.setOnPreferenceChangeListener { _, newTheme ->
-                if (serviceStarted()) {
+                if (SagerNet.started) {
                     SagerNet.reloadService()
                 }
                 val theme = Theme.getTheme(newTheme as Int)
@@ -200,7 +202,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val utlsFingerprint = findPreference<SimpleMenuPreference>(Key.UTLS_FINGERPRINT)!!
 
         serviceMode.setOnPreferenceChangeListener { _, _ ->
-            if (serviceStarted()) SagerNet.stopService()
+            if (SagerNet.started) SagerNet.stopService()
             true
         }
 

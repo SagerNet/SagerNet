@@ -53,8 +53,6 @@ import cn.hutool.core.util.CharsetUtil
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.bg.ProxyService
-import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import kotlinx.coroutines.Dispatchers
@@ -270,18 +268,12 @@ fun Fragment.startFilesForResult(
     (requireActivity() as ThemedActivity).snackbar(getString(R.string.file_manager_missing)).show()
 }
 
-fun serviceStarted(): Boolean {
-    val name = listOf(ProxyService::class.qualifiedName, VpnService::class.qualifiedName)
-    var myServices = SagerNet.activity.getRunningServices(5) ?: return false
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-        val myUid = Os.getuid()
-        myServices = myServices.filter { it.uid == myUid }
-    }
-    return myServices.any { it.service.className in name }
-}
-
 fun Fragment.needReload() {
-    ((activity as? MainActivity) ?: return).needReload()
+    if (SagerNet.started) {
+        snackbar(getString(R.string.restart)).setAction(R.string.apply) {
+            SagerNet.reloadService()
+        }.show()
+    }
 }
 
 @Suppress("DEPRECATION")

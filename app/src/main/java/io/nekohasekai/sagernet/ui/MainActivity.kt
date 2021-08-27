@@ -348,13 +348,7 @@ class MainActivity : ThemedActivity(),
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, RouteFragment())
             .commitAllowingStateLoss()
-        needReload()
-    }
-
-    fun serviceStarted() = state.canStop
-
-    fun needReload() {
-        if (serviceStarted()) {
+        if (SagerNet.started) {
             snackbar(getString(R.string.restart)).setAction(R.string.apply) {
                 SagerNet.reloadService()
             }.show()

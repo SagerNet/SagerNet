@@ -29,6 +29,7 @@ import android.os.IBinder
 import android.os.RemoteException
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
@@ -66,9 +67,11 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
     private var callback: Callback? = null
     private val serviceCallback = object : ISagerNetServiceCallback.Stub() {
         override fun stateChanged(state: Int, profileName: String?, msg: String?) {
+            val s = BaseService.State.values()[state]
+            SagerNet.started = s.canStop
             val callback = callback ?: return
             runOnMainDispatcher {
-                callback.stateChanged(BaseService.State.values()[state], profileName, msg)
+                callback.stateChanged(s, profileName, msg)
             }
         }
 

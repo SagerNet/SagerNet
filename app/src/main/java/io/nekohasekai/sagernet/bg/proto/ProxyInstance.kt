@@ -125,9 +125,13 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 launch()
             }
         }
+
+        SagerNet.started = true
     }
 
     override fun destroy(scope: CoroutineScope) {
+        SagerNet.started = false
+
         persistStats()
         super.destroy(scope)
 

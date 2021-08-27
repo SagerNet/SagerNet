@@ -157,7 +157,11 @@ class SagerNet : Application(),
 
     companion object {
 
+        @Volatile
+        var started = false
+
         lateinit var application: SagerNet
+
         val deviceStorage by lazy {
             if (Build.VERSION.SDK_INT < 24) application else DeviceStorageApp(application)
         }
