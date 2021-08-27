@@ -383,10 +383,10 @@ data class ProxyEntity(
                 prefer == ShadowsocksProvider.V2RAY && bean.method in methodsV2fly && bean.plugin.isBlank() -> {
                     return ShadowsocksProvider.V2RAY
                 }
-                prefer == ShadowsocksProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash() -> {
+                prefer == ShadowsocksProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash(true) -> {
                     return ShadowsocksProvider.CLASH
                 }
-                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust && !ssPluginSupportedByClash() -> {
+                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust && !ssPluginSupportedByClash(false) -> {
                     return ShadowsocksProvider.SHADOWSOCKS_RUST
                 }
             }
@@ -400,10 +400,10 @@ data class ProxyEntity(
         } else {
             val prefer = DataStore.providerShadowsocksStream
             when {
-                prefer == ShadowsocksStreamProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash() -> {
+                prefer == ShadowsocksStreamProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash(true) -> {
                     return ShadowsocksProvider.CLASH
                 }
-                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust -> {
+                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust && !ssPluginSupportedByClash(false) -> {
                     return ShadowsocksProvider.SHADOWSOCKS_RUST
                 }
             }
@@ -415,7 +415,7 @@ data class ProxyEntity(
         }
     }
 
-    fun ssPluginSupportedByClash(): Boolean {
+    fun ssPluginSupportedByClash(prefer: Boolean): Boolean {
         val bean = ssBean ?: return false
         if (bean.plugin.isNotBlank()) {
             val plugin = PluginConfiguration(bean.plugin)
@@ -425,7 +425,7 @@ data class ProxyEntity(
             }
             try {
                 PluginManager.init(plugin)
-                return false
+                return prefer
             } catch (e: Exception) {
             }
         }
@@ -436,7 +436,7 @@ data class ProxyEntity(
     fun ssPreferClash(): Boolean {
         val bean = ssBean ?: return false
         val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust
-        return onlyClash || ssPluginSupportedByClash()
+        return onlyClash || ssPluginSupportedByClash(false)
     }
 
     fun putBean(bean: AbstractBean): ProxyEntity {
