@@ -67,7 +67,7 @@
     <string name="security_settings">Security Settings</string>
     <string name="allow_insecure">Allow Insecure</string>
     <string name="allow_insecure_sum">Disable certificate checking. When enabled, this configuration is as secure as plaintext</string>
-    <string name="traffic">%1$s↑ %2$s↓</string>
+    <string name="traffic" translatable="false">%1$s↑ %2$s↓</string>
     <string name="speed_detail">Proxy： %1$s↑ %2$s↓\nDirect： %3$s↑ %4$s↓</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">Testing…</string>
@@ -406,11 +406,11 @@
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Shadowsocks Android Plugin)</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Plugin)</string>
 
-    <string name="traffic_uplink">%s | %s/s ↑</string>
-    <string name="traffic_downlink">%s | %s/s ↓</string>
+    <string name="traffic_uplink" translatable="false">%s | %s/s ↑</string>
+    <string name="traffic_downlink" translatable="false">%s | %s/s ↓</string>
 
-    <string name="traffic_uplink_total">%s ↑</string>
-    <string name="traffic_downlink_total">%s ↓</string>
+    <string name="traffic_uplink_total" translatable="false">%s ↑</string>
+    <string name="traffic_downlink_total" translatable="false">%s ↓</string>
     <string name="traffic_active">Active</string>
     <string name="traffic_stats">Statistics</string>
 
