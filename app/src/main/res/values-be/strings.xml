@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logcat">Экспартаваць інфармацыю пра адладку</string>
+    <string name="version_x">Версія (%s)</string>
+    <string name="app_version">Версія</string>
+    <string name="oss_licenses">Ліцэнзіі з адкрытым зыходным кодам</string>
+    <string name="telegram">Канал абнаўлення тэлеграм</string>
+    <string name="github">Зыходны код</string>
+    <string name="project">Праект</string>
+    <string name="app_desc">Універсальны набор інструментаў проксі для Android, напісаны на Kotlin.</string>
+</resources>
