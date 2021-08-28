@@ -82,7 +82,7 @@ class V2rayBuildResult(
     var bypassTag: String,
     var enableApi: Boolean,
     var observatoryTags: Set<String>,
-    val alerts: List<Pair<Int,String>>,
+    val alerts: List<Pair<Int, String>>,
 ) {
     data class IndexEntity(var isBalancer: Boolean, var chain: LinkedHashMap<Int, ProxyEntity>)
 }
@@ -157,7 +157,7 @@ fun buildV2RayConfig(
     val requireHttp = !forTest && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp)
     val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
     val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
-    val alerts = mutableListOf<Pair<Int,String>>()
+    val alerts = mutableListOf<Pair<Int, String>>()
 
     return V2RayConfig().apply {
 
@@ -352,6 +352,7 @@ fun buildV2RayConfig(
 
         var rootBalancer: RoutingObject.RuleObject? = null
 
+        val utlsFingerprint = DataStore.utlsFingerprint
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
@@ -447,9 +448,12 @@ fun buildV2RayConfig(
                                     network = "tcp"
                                     if (bean.tls) {
                                         security = "tls"
-                                        if (bean.sni.isNotBlank()) {
-                                            tlsSettings = TLSObject().apply {
+                                        tlsSettings = TLSObject().apply {
+                                            if (bean.sni.isNotBlank()) {
                                                 serverName = bean.sni
+                                            }
+                                            if (utlsFingerprint.isNotBlank()) {
+                                                fingerprint = utlsFingerprint
                                             }
                                         }
                                     }
@@ -483,9 +487,12 @@ fun buildV2RayConfig(
                                     network = "tcp"
                                     if (bean.tls) {
                                         security = "tls"
-                                        if (bean.sni.isNotBlank()) {
-                                            tlsSettings = TLSObject().apply {
+                                        tlsSettings = TLSObject().apply {
+                                            if (bean.sni.isNotBlank()) {
                                                 serverName = bean.sni
+                                            }
+                                            if (utlsFingerprint.isNotBlank()) {
+                                                fingerprint = utlsFingerprint
                                             }
                                         }
                                     }
@@ -577,6 +584,10 @@ fun buildV2RayConfig(
 
                                         if (bean.allowInsecure) {
                                             allowInsecure = true
+                                        }
+
+                                        if (utlsFingerprint.isNotBlank()) {
+                                            fingerprint = utlsFingerprint
                                         }
                                     }
                                 }
@@ -726,6 +737,9 @@ fun buildV2RayConfig(
                                     }
                                     if (bean.alpn.isNotBlank()) {
                                         alpn = bean.alpn.split("\n")
+                                    }
+                                    if (utlsFingerprint.isNotBlank()) {
+                                        fingerprint = utlsFingerprint
                                     }
                                 }
                                 if (needKeepAliveInterval) {
