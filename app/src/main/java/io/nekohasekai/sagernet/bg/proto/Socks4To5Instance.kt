@@ -30,9 +30,9 @@ class Socks4To5Instance(val server: SOCKSBean, val port: Int) : ClashBasedInstan
     override fun createInstance() {
 
         instance = Libcore.newSocks4To5Instance(
-            port.toLong(),
+            port,
             server.finalAddress,
-            server.finalPort.toLong(),
+            server.finalPort,
             server.username,
             server.protocol == SOCKSBean.PROTOCOL_SOCKS4A
         )

@@ -37,7 +37,7 @@ data class AppStats(
     var downlink: Long,
     var uplinkTotal: Long,
     var downlinkTotal: Long,
-    var deactivateAt: Long
+    var deactivateAt: Int
 ) : Parcelable {
 
    operator fun plusAssign(stats: StatsEntity) {

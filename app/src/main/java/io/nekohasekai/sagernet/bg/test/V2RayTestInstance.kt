@@ -32,7 +32,7 @@ import io.nekohasekai.sagernet.ktx.tryResumeWithException
 import libcore.Libcore
 import kotlin.coroutines.suspendCoroutine
 
-class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Long) : V2RayInstance(
+class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int) : V2RayInstance(
     profile
 ) {
 
@@ -46,7 +46,7 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Lon
                 try {
                     init()
                     launch()
-                    c.tryResume(Libcore.urlTestV2ray(v2rayPoint, "", link, timeout).toInt())
+                    c.tryResume(Libcore.urlTestV2ray(v2rayPoint, "", link, timeout))
                 } catch (e: Exception) {
                     c.tryResumeWithException(e)
                 } finally {

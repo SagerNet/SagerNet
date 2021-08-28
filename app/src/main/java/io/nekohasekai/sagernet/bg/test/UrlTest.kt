@@ -32,7 +32,7 @@ import libcore.Libcore
 class UrlTest {
 
     val link = DataStore.connectionTestURL
-    val timeout = 5000L
+    val timeout = 5000
 
     suspend fun doTest(profile: ProxyEntity): Int {
         if (profile.useClashBased()) {

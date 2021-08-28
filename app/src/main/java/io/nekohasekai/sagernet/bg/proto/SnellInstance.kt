@@ -31,13 +31,13 @@ class SnellInstance(val server: SnellBean, val port: Int) : ClashBasedInstance()
     override fun createInstance() {
 
         instance = Libcore.newSnellInstance(
-            port.toLong(),
+            port,
             server.finalAddress,
-            server.finalPort.toLong(),
+            server.finalPort,
             server.psk,
             server.obfsMode,
             server.obfsHost,
-            server.version.toLong()
+            server.version
         )
 
     }

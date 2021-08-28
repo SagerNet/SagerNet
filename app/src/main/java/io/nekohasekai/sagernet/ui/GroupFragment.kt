@@ -176,6 +176,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         }
 
         init {
+            setHasStableIds(true)
+
             runOnDefaultDispatcher {
                 reload()
             }

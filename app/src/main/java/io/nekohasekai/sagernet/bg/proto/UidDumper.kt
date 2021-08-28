@@ -55,17 +55,14 @@ object UidDumper : UidDumper {
     private val useApi = !canReadProc/* || BuildConfig.DEBUG && tun.enableLog)*/
 
     override fun dumpUid(
-        ipv6: Boolean, udp: Boolean, srcIp: String, srcPort: Long, destIp: String, destPort: Long
-    ): Long {
+        ipv6: Boolean, udp: Boolean, srcIp: String, srcPort: Int, destIp: String, destPort: Int
+    ): Int {
         return dumpUid(
-            ipv6,
-            udp,
-            InetSocketAddress(srcIp, srcPort.toUInt().toInt()),
-            InetSocketAddress(destIp, destPort.toUInt().toInt())
-        ).toLong()
+            ipv6, udp, InetSocketAddress(srcIp, srcPort), InetSocketAddress(destIp, destPort)
+        )
     }
 
-    override fun getUidInfo(uid: Long): UidInfo {
+    override fun getUidInfo(uid: Int): UidInfo {
         PackageCache.awaitLoadSync()
 
         if (uid <= 1000L) {

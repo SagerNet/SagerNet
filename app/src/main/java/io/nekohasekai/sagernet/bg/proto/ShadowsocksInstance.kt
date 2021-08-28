@@ -58,9 +58,9 @@ class ShadowsocksInstance(val server: ShadowsocksBean, val port: Int) : ClashBas
         }
 
         instance = Libcore.newShadowsocksInstance(
-            port.toLong(),
+            port,
             server.finalAddress,
-            server.finalPort.toLong(),
+            server.finalPort,
             server.password,
             server.method,
             pluginName,

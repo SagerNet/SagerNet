@@ -254,8 +254,8 @@ class VpnService : BaseVpnService(),
         conn = builder.establish() ?: throw NullConnectionException()
 
         tun2socks = Tun2socks(
-            conn.fd.toLong(),
-            VPN_MTU.toLong(),
+            conn.fd,
+            VPN_MTU,
             data.proxy!!.v2rayPoint,
             PRIVATE_VLAN4_ROUTER,
             true,

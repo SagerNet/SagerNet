@@ -1001,6 +1001,10 @@ class ConfigurationFragment @JvmOverloads constructor(
             GroupManager.Listener,
             UndoSnackbarManager.Interface<ProxyEntity> {
 
+            init {
+                setHasStableIds(true)
+            }
+
             var configurationIdList: MutableList<Long> = mutableListOf()
             val configurationList = HashMap<Long, ProxyEntity>()
 

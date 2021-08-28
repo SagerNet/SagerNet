@@ -29,9 +29,9 @@ class ShadowsocksRInstance(val server: ShadowsocksRBean, val port: Int) : ClashB
 
     override fun createInstance() {
         instance = Libcore.newShadowsocksRInstance(
-            port.toLong(),
+            port,
             server.finalAddress,
-            server.finalPort.toLong(),
+            server.finalPort,
             server.password,
             server.method,
             server.obfs,

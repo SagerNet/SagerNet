@@ -66,7 +66,7 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
             }
 
             val now = System.currentTimeMillis() / 1000
-            val list = statsList.filter { it.deactivateAt == 0L || now - it.deactivateAt < 5000L }
+            val list = statsList.filter { it.deactivateAt == 0 || now - it.deactivateAt < 5 }
                 .toSortedSet { a, b ->
                     val dataA = a.uplink + a.downlink
                     val dataB = b.uplink + b.downlink

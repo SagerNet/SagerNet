@@ -53,7 +53,7 @@ class ForegroundDetectorService : AccessibilityService() {
         if (packageName in imeApps) {
             val uid = PackageCache[packageName] ?: return
             PackageCache.awaitLoadSync()
-            Libcore.setForegroundImeUid(uid.toLong())
+            Libcore.setForegroundImeUid(uid)
             fromIme = true
 
             Logs.d("Foreground IME changed to ${event.packageName}/${event.className}: uid $uid")
@@ -66,7 +66,7 @@ class ForegroundDetectorService : AccessibilityService() {
             uid = 1000
         }
 
-        Libcore.setForegroundUid(uid.toLong())
+        Libcore.setForegroundUid(uid)
         if (fromIme) {
             Libcore.setForegroundImeUid(0)
             fromIme = false

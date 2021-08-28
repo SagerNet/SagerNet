@@ -43,8 +43,8 @@ class ApiInstance : AbstractInstance {
         }
         point = ApiInstance(
             deviceName,
-            DataStore.socksPort.toLong(),
-            DataStore.localDNSPort.toLong(),
+            DataStore.socksPort,
+            DataStore.localDNSPort,
             DataStore.enableLog,
             DataStore.bypassLan
         )

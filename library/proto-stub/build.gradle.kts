@@ -8,7 +8,7 @@ plugins {
 
 setupKotlinCommon()
 
-val grpcVersion = "1.40.0"
+val grpcVersion = "1.40.1"
 val grpcKotlinVersion = "1.1.0"
 val protobufVersion = "3.17.3"
 
