@@ -87,7 +87,7 @@ Anyone can create a new language via Weblate.
 ## License
 
 ```
-Copyright (C) 2021 by nekohasekai <sekai@neko.services>
+Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
 Copyright (C) 2017-2021 by Max Lv <max.c.lv@gmail.com>
 Copyright (C) 2017-2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>
 

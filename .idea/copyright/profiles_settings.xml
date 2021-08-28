@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="nekohasekai">
+  <settings default="sagernet">
     <module2copyright>
-      <element module="Project Files" copyright="nekohasekai" />
+      <element module="Project Files" copyright="sagernet" />
     </module2copyright>
     <LanguageOptions name="JAVA">
       <option name="fileTypeOverride" value="3" />
