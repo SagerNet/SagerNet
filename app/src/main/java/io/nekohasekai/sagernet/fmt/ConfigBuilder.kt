@@ -82,6 +82,7 @@ class V2rayBuildResult(
     var bypassTag: String,
     var enableApi: Boolean,
     var observatoryTags: Set<String>,
+    val dumpUid: Boolean,
     val alerts: List<Pair<Int, String>>,
 ) {
     data class IndexEntity(var isBalancer: Boolean, var chain: LinkedHashMap<Int, ProxyEntity>)
@@ -157,6 +158,7 @@ fun buildV2RayConfig(
     val requireHttp = !forTest && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp)
     val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
     val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
+    var dumpUid = false
     val alerts = mutableListOf<Pair<Int, String>>()
 
     return V2RayConfig().apply {
@@ -907,9 +909,12 @@ fun buildV2RayConfig(
         val foregroundDetectorServiceStarted = ForegroundDetectorService::class.isRunning()
 
         for (rule in extraRules) {
-            if ((rule.packages.isNotEmpty() || rule.appStatus.isNotEmpty()) && notVpn) {
-                alerts.add(0 to rule.displayName())
-                continue
+            if (rule.packages.isNotEmpty() || rule.appStatus.isNotEmpty()) {
+                dumpUid = true
+                if (notVpn) {
+                    alerts.add(0 to rule.displayName())
+                    continue
+                }
             }
             if (rule.appStatus.isNotEmpty() && !foregroundDetectorServiceStarted) {
                 alerts.add(1 to rule.displayName())
@@ -1190,6 +1195,7 @@ fun buildV2RayConfig(
             TAG_BYPASS,
             !it.api?.services.isNullOrEmpty(),
             it.observatory?.subjectSelector ?: HashSet(),
+            dumpUid,
             alerts
         )
     }
@@ -1327,6 +1333,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         directTag,
         false,
         emptySet(),
+        false,
         emptyList()
     )
 

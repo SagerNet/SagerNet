@@ -194,6 +194,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var utlsFingerprint by configurationStore.string(Key.UTLS_FINGERPRINT)
+    var trafficStatistics by configurationStore.boolean(Key.TRAFFIC_STATISTICS)
 
     // protocol
 

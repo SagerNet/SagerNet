@@ -261,7 +261,9 @@ class VpnService : BaseVpnService(),
             true,
             DataStore.trafficSniffing,
             DataStore.enableFakeDns,
-            DataStore.enableLog
+            DataStore.enableLog,
+            data.proxy!!.config.dumpUid,
+            DataStore.trafficStatistics
         )
     }
 
@@ -272,6 +274,8 @@ class VpnService : BaseVpnService(),
     }
 
     fun persistAppStats() {
+        if (!DataStore.trafficStatistics) return
+
         appStats.clear()
         tun2socks.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()

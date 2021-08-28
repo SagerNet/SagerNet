@@ -200,6 +200,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         val utlsFingerprint = findPreference<SimpleMenuPreference>(Key.UTLS_FINGERPRINT)!!
+        val trafficStatistics = findPreference<SwitchPreference>(Key.TRAFFIC_STATISTICS)!!
 
         serviceMode.setOnPreferenceChangeListener { _, _ ->
             if (SagerNet.started) SagerNet.stopService()
@@ -243,6 +244,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
         utlsFingerprint.onPreferenceChangeListener = reloadListener
+        trafficStatistics.onPreferenceChangeListener = reloadListener
 
     }
 

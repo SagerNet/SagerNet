@@ -91,6 +91,7 @@ object Key {
     const val PROVIDER_SS_STREAM = "providerShadowsocksStream"
 
     const val UTLS_FINGERPRINT = "utlsFingerprint"
+    const val TRAFFIC_STATISTICS = "trafficStatistics"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"

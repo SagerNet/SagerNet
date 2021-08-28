@@ -180,6 +180,8 @@ class BaseService {
         private suspend fun loopStats() {
             var lastQueryTime = 0L
             val tun = (data?.proxy?.service as? VpnService)?.tun2socks ?: return
+            if (!tun.trafficStatsEnabled) return
+
             while (true) {
                 val delayMs = statsListeners.values.minOrNull()
                 if (delayMs == 0L) return
@@ -191,19 +193,15 @@ class BaseService {
                 tun.readAppTraffics(this)
 
                 val statsList = AppStatsList(appStats.map {
-                    val uid = if (it.uid >= 10000) it.uid.toInt() else 1000
+                    val uid = if (it.uid >= 10000) it.uid else 1000
                     val packageName = if (uid != 1000) {
-                        PackageCache.uidMap[it.uid.toInt()]?.iterator()?.next() ?: "android"
+                        PackageCache.uidMap[it.uid]?.iterator()?.next() ?: "android"
                     } else {
                         "android"
                     }
                     AidlAppStats(
                         packageName,
-                        uid,
-                        it.tcpConn.toInt(),
-                        it.udpConn.toInt(),
-                        it.tcpConnTotal.toInt(),
-                        it.udpConnTotal.toInt(),
+                        uid, it.tcpConn, it.udpConn, it.tcpConnTotal, it.udpConnTotal,
                         it.uplink / sinceLastQueryInSeconds,
                         it.downlink / sinceLastQueryInSeconds,
                         it.uplinkTotal,
@@ -269,7 +267,7 @@ class BaseService {
             try {
                 return Libcore.urlTestV2ray(
                     data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 5000
-                ).toInt()
+                )
             } catch (e: Exception) {
                 var msg = e.readableMessage
                 if (msg.lowercase().contains("timeout")) {
@@ -329,6 +327,10 @@ class BaseService {
         fun missingPlugin(pluginName: String) = launch {
             val profileName = profileName
             broadcast { it.missingPlugin(profileName, pluginName) }
+        }
+
+        override fun getTrafficStatsEnabled(): Boolean {
+            return (data?.proxy?.service as? VpnService)?.tun2socks?.trafficStatsEnabled ?: false
         }
 
         override fun close() {

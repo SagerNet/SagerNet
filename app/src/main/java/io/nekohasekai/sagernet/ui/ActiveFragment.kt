@@ -29,8 +29,11 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.aidl.AppStats
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutTrafficItemBinding
 import io.nekohasekai.sagernet.databinding.LayoutTrafficListBinding
 import io.nekohasekai.sagernet.ktx.*
@@ -47,6 +50,7 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
         binding.trafficList.layoutManager = FixedLinearLayoutManager(binding.trafficList)
         binding.trafficList.adapter = adapter
         (parentFragment as TrafficFragment).listeners.add(::emitStats)
+        emitStats(emptyList())
     }
 
     fun emitStats(statsList: List<AppStats>) {
@@ -54,6 +58,14 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
             runOnMainDispatcher {
                 binding.holder.isVisible = true
                 binding.trafficList.isVisible = false
+
+                if (!SagerNet.started || DataStore.serviceMode != Key.MODE_VPN) {
+                    binding.holder.text = getString(R.string.traffic_holder)
+                } else if ((activity as MainActivity).connection.service?.trafficStatsEnabled != true) {
+                    binding.holder.text = getString(R.string.statistics_disabled)
+                } else {
+                    binding.holder.text = getString(R.string.no_statistics)
+                }
             }
             binding.trafficList.post {
                 adapter.data = emptyList()

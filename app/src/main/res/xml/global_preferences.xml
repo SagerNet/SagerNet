@@ -33,6 +33,13 @@
             app:key="serviceMode"
             app:title="@string/service_mode"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_manage_search_24"
+            app:key="trafficStatistics"
+            app:summary="@string/traffic_statistics_summary"
+            app:title="@string/traffic_statistics" />
+
         <SwitchPreference
             app:icon="@drawable/ic_baseline_center_focus_weak_24"
             app:key="alwaysShowAddress"

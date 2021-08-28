@@ -375,6 +375,12 @@ class MainActivity : ThemedActivity(),
         binding.stats.changeState(state)
         if (msg != null) snackbar(getString(R.string.vpn_error, msg)).show()
         this.state = state
+
+        when (state) {
+            BaseService.State.Connected, BaseService.State.Stopped -> {
+                statsUpdated(emptyList())
+            }
+        }
     }
 
     override fun snackbarInternal(text: CharSequence): Snackbar {
