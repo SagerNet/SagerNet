@@ -75,9 +75,33 @@ Anyone can create a new language via Weblate.
 
 ## Credits
 
+#### shadowsocks-android
+
+`The first professional proxy application on native android.`
+
+Licensed under [GPLv3 or later][shadowsocks-android]
+
+[shadowsocks-android]: https://github.com/shadowsocks/shadowsocks-android/blob/master/LICENSE
+
+#### v2ray-core
+
+`A unified platform for anti-censorship, as the core, providing routing, DNS, and more for SN.`
+
+Licensed under [MIT][v2ray-core]
+
+[v2ray-core]: https://github.com/shadowsocks/shadowsocks-android/blob/master/LICENSE
+
+#### clash (OPEN SOURCE version)
+
+`Provides built-in shadowsocks plugins, SSR and Snell support for SN.`
+
+Licensed under [GPLv3][clash]
+
+[clash]: https://github.com/Dreamacro/clash/blob/master/LICENSE
+
+#### Plugins
+
 <ul>
-    <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: <code>GPL 3.0</code></li>
-    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksRb/shadowsocksr-libev</a>: <code>GPL 3.0</code></li>
     <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">p4gefau1t/Trojan-Go</a>: <code>GPL 3.0</code></li>
     <li><a href="https://github.com/klzgrad/naiveproxy/blob/master/LICENSE">klzgrad/naiveproxy</a>:  <code>BSD-3-Clause License</code></li>
     <li><a href="https://github.com/esrrhs/pingtunnel/blob/master/LICENSE">esrrhs/pingtunnel</a>:  <code>MIT</code></li>
