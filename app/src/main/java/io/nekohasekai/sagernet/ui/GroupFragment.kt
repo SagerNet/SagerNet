@@ -132,7 +132,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
             if (data != null) {
                 runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
+                    val profiles = SagerDatabase.proxyDao.getByGroup(selectedGroup.id)
                     val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
                     try {
                         (requireActivity() as MainActivity).contentResolver.openOutputStream(
@@ -351,8 +351,8 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                     runOnDefaultDispatcher {
                         val profiles = SagerDatabase.proxyDao.getByGroup(selectedGroup.id)
                         val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
-                        SagerNet.trySetPrimaryClip(links)
                         onMainDispatcher {
+                            SagerNet.trySetPrimaryClip(links)
                             snackbar(getString(R.string.copy_toast_msg)).show()
                         }
                     }
