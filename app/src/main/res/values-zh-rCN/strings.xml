@@ -406,4 +406,8 @@
     <string name="foreground_detector_summary">本服务用于支持基于前台状态的路由规则，如果未启用，则结果永远为后台。</string>
     <string name="foreground_status">前台状态</string>
     <string name="foreground_detector">前台检测器</string>
+    <string name="statistics_disabled">流量统计已禁用</string>
+    <string name="no_statistics">暂无数据</string>
+    <string name="traffic_statistics_summary">可能增加电量使用</string>
+    <string name="traffic_statistics">启用流量统计</string>
 </resources>
