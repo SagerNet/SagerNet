@@ -318,6 +318,14 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
+        <activity
+            android:name="com.mikepenz.aboutlibraries.ui.LibsActivity"
+            tools:node="remove"/>
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            tools:node="remove"/>
+
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:process=":bg" />
