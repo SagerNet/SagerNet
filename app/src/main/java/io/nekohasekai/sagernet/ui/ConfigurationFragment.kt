@@ -598,7 +598,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     address, 5000
                                 )
                                 if (!isActive) break
-                                if (result != -1L) {
+                                if (result != -1) {
                                     profile.status = 1
                                     profile.ping = result.toInt()
                                 } else {
