@@ -160,7 +160,6 @@
 
     <string-array name="enc_method_entry">
         <item>NONE</item>
-        <item>DUMMY</item>
         <item>AES-128-GCM</item>
         <item>AES-192-GCM</item>
         <item>AES-256-GCM</item>
@@ -200,7 +199,6 @@
 
     <string-array name="enc_method_value">
         <item>none</item>
-        <item>dummy</item>
         <item>aes-128-gcm</item>
         <item>aes-192-gcm</item>
         <item>aes-256-gcm</item>
@@ -276,7 +274,7 @@
         <item>3</item>
     </string-array>
     <string-array name="enc_method_entry_ssr">
-        <item>DUMMY</item>
+        <item>NONE</item>
         <item>RC4</item>
         <item>RC4-MD5</item>
         <item>AES-128-CTR</item>
@@ -310,7 +308,7 @@
     </string-array>
 
     <string-array name="enc_method_value_ssr">
-        <item>dummy</item>
+        <item>none</item>
         <item>rc4</item>
         <item>rc4-md5</item>
         <item>aes-128-ctr</item>

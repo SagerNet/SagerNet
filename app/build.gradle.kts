@@ -94,7 +94,6 @@ dependencies {
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
     implementation("dnsjava:dnsjava:3.4.1")
     implementation("com.github.topjohnwu.libsu:io:3.1.2")
-    implementation("org.tukaani:xz:1.9")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }

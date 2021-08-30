@@ -490,7 +490,7 @@ fun Project.setupApp() {
 
         tasks.register("downloadAssets") {
             outputs.upToDateWhen {
-                !requireFlavor().endsWith("Release")
+                requireFlavor().endsWith("Debug")
             }
             doLast {
                 downloadAssets()

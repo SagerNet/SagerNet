@@ -38,12 +38,12 @@ import io.nekohasekai.sagernet.databinding.LayoutAssetItemBinding
 import io.nekohasekai.sagernet.databinding.LayoutAssetsBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
+import libcore.Libcore
 import okhttp3.Request
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.ArrayList
 
 class AssetsActivity : ThemedActivity() {
 
@@ -120,13 +120,15 @@ class AssetsActivity : ThemedActivity() {
             val fileName = contentResolver.query(file, null, null, null, null)?.use { cursor ->
                 cursor.moveToFirst()
                 cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME).let(cursor::getString)
-            }?.takeIf { it.isNotBlank() } ?: file.pathSegments.last().substringAfterLast('/')
+            }?.takeIf { it.isNotBlank() } ?: file.pathSegments.last()
+                .substringAfterLast('/')
                 .substringAfter(':')
 
             if (!fileName.endsWith(".dat")) {
                 MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
                     .setMessage(getString(R.string.route_not_asset, fileName))
-                    .setPositiveButton(android.R.string.ok, null).show()
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
                 return@registerForActivityResult
             }
             val filesDir = getExternalFilesDir(null) ?: filesDir
@@ -224,8 +226,7 @@ class AssetsActivity : ThemedActivity() {
 
     val updating = AtomicInteger()
 
-    inner class AssetHolder(val binding: LayoutAssetItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class AssetHolder(val binding: LayoutAssetItemBinding) : RecyclerView.ViewHolder(binding.root) {
         lateinit var file: File
 
         fun bind(file: File) {
@@ -266,7 +267,8 @@ class AssetsActivity : ThemedActivity() {
                         onMainDispatcher {
                             MaterialAlertDialogBuilder(this@AssetsActivity).setTitle(R.string.error_title)
                                 .setMessage(it.readableMessage)
-                                .setPositiveButton(android.R.string.ok, null).show()
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
                         }
                     }
 
@@ -291,11 +293,12 @@ class AssetsActivity : ThemedActivity() {
         var fileName = file.name
         if (DataStore.rulesProvider == 0) {
             if (file.name == internalFiles[0]) {
-                repo = "v2fly/geoip"
+                repo = "SagerNet/geoip"
             } else {
                 repo = "v2fly/domain-list-community"
                 fileName = "dlc.dat"
             }
+            fileName = "$fileName.xz"
         } else {
             repo = "Loyalsoldier/v2ray-rules-dat"
         }
@@ -331,10 +334,15 @@ class AssetsActivity : ThemedActivity() {
             error("Error when downloading $browserDownloadUrl : HTTP ${response.code}")
         }
 
-        file.outputStream().use { out ->
-            response.body!!.byteStream().use {
-                it.copyTo(out)
+        response.body!!.use { body ->
+            file.outputStream().use { out ->
+                body.byteStream().use {
+                    it.copyTo(out)
+                }
             }
+        }
+        if (fileName.endsWith(".xz")) {
+            Libcore.unxz(file.absolutePath)
         }
 
         versionFile.writeText(tagName)

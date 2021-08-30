@@ -2,9 +2,7 @@ import cn.hutool.core.util.ZipUtil
 import cn.hutool.crypto.digest.DigestUtil
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream
-import org.apache.commons.compress.compressors.xz.XZUtils
 import org.gradle.api.Project
 import org.kohsuke.github.GitHubBuilder
 import java.io.File
@@ -15,9 +13,8 @@ fun Project.downloadAssets() {
     val downloader = OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build()
 
     val github = GitHubBuilder().build()
-    val geoip = github.getRepository("v2fly/geoip").latestRelease
-    val geoipFile = File(assets, "v2ray/geoip.dat")
-    val geoipXzFile = File(assets, "v2ray/geoip.dat.xz")
+    val geoip = github.getRepository("SagerNet/geoip").latestRelease
+    val geoipFile = File(assets, "v2ray/geoip.dat.xz")
     val geoipVersion = File(assets, "v2ray/geoip.version.txt")
     if (!geoipVersion.isFile || geoipVersion.readText() != geoip.tagName) {
         geoipVersion.deleteRecursively()
@@ -26,8 +23,10 @@ fun Project.downloadAssets() {
         val geoipDat = (geoip.listAssets().toSet().find { it.name == geoipFile.name }
             ?: error("${geoipFile.name} not found in ${geoip.assetsUrl}")).browserDownloadUrl
 
-        val sha256sum = (geoip.listAssets().toSet().find { it.name == "geoip.dat.sha256sum" }
-            ?: error("geoip.dat.sha256sum not found in ${geoip.assetsUrl}")).browserDownloadUrl
+        val sha256sum = (geoip.listAssets()
+            .toSet()
+            .find { it.name == "${geoipFile.name}.sha256sum" }
+            ?: error("${geoipFile.name}.sha256sum not found in ${geoip.assetsUrl}")).browserDownloadUrl
 
         println("Downloading $sha256sum ...")
 
@@ -71,12 +70,6 @@ fun Project.downloadAssets() {
                 continue
             }
 
-            geoipFile.inputStream().use { input ->
-                XZCompressorOutputStream(geoipXzFile.outputStream(), 9).use {
-                    input.copyTo(it)
-                }
-            }
-            geoipFile.delete()
             geoipVersion.writeText(geoip.tagName)
 
             break
@@ -84,17 +77,16 @@ fun Project.downloadAssets() {
     }
 
     val geosite = github.getRepository("v2fly/domain-list-community").latestRelease
-    val geositeFile = File(assets, "v2ray/geosite.dat")
-    val geositeXzFile = File(assets, "v2ray/geosite.dat.xz")
+    val geositeFile = File(assets, "v2ray/geosite.dat.xz")
     val geositeVersion = File(assets, "v2ray/geosite.version.txt")
     if (!geositeVersion.isFile || geositeVersion.readText() != geosite.tagName) {
         geositeVersion.deleteRecursively()
 
-        val geositeDat = (geosite.listAssets().toSet().find { it.name == "dlc.dat" }
-            ?: error("dlc.dat not found in ${geosite.assetsUrl}")).browserDownloadUrl
+        val geositeDat = (geosite.listAssets().toSet().find { it.name == "dlc.dat.xz" }
+            ?: error("dlc.dat.xz not found in ${geosite.assetsUrl}")).browserDownloadUrl
 
-        val sha256sum = (geosite.listAssets().toSet().find { it.name == "dlc.dat.sha256sum" }
-            ?: error("dlc.dat.sha256sum not found in ${geosite.assetsUrl}")).browserDownloadUrl
+        val sha256sum = (geosite.listAssets().toSet().find { it.name == "dlc.dat.xz.sha256sum" }
+            ?: error("dlc.dat.xz.sha256sum not found in ${geosite.assetsUrl}")).browserDownloadUrl
 
         println("Downloading $sha256sum ...")
 
@@ -139,12 +131,6 @@ fun Project.downloadAssets() {
                 continue
             }
 
-            geositeFile.inputStream().use { input ->
-                XZCompressorOutputStream(geositeXzFile.outputStream(), 9).use {
-                    input.copyTo(it)
-                }
-            }
-            geositeFile.delete()
             geositeVersion.writeText(geosite.tagName)
 
             break
@@ -180,9 +166,11 @@ fun Project.downloadAssets() {
                 cacheFile.outputStream().use { out -> it.copyTo(out) }
             }
 
-        ZipUtil.get(cacheFile, null, "browserforwarder/index.js").use {
-            File(assets, "v2ray/index.js").outputStream().use { out ->
-                it.copyTo(out)
+        ZipUtil.get(cacheFile, null, "browserforwarder/index.js").use { input ->
+            File(assets, "v2ray/index.js.xz").outputStream().use { out ->
+                XZCompressorOutputStream(out, 9).use {
+                    input.copyTo(it)
+                }
             }
         }
 

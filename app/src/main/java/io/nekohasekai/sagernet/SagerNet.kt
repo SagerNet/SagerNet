@@ -55,7 +55,6 @@ import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
 import org.conscrypt.Conscrypt
 import org.lsposed.hiddenapibypass.HiddenApiBypass
-import org.tukaani.xz.XZInputStream
 import java.io.File
 import java.security.Security
 import androidx.work.Configuration as WorkConfiguration
@@ -83,45 +82,17 @@ class SagerNet : Application(),
 
         Seq.setContext(this)
 
-        val externalAssets = getExternalFilesDir(null) ?: filesDir
-        Libcore.initializeV2Ray(externalAssets.absolutePath + "/", "v2ray/", true)
+        val internalAssets = filesDir
+        val externalAssets = getExternalFilesDir(null) ?: internalAssets
+        Libcore.initializeV2Ray(
+            internalAssets.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
+        )
         Libcore.setenv("v2ray.conf.geoloader", "memconservative")
         Libcore.setUidDumper(UidDumper)
 
         runOnDefaultDispatcher {
-            externalAssets.mkdirs()
-            val geoip = File(externalAssets, "geoip.dat")
-            val geoipVersion = File(externalAssets, "geoip.version.txt")
-            val geoipVersionInternal = assets.open("v2ray/geoip.version.txt")
-                .use { it.bufferedReader().readText() }
-            if (!geoip.isFile || DataStore.rulesProvider == 0 && geoipVersion.isFile && geoipVersionInternal.toLong() > geoipVersion.readText()
-                    .toLongOrNull() ?: -1L
-            ) {
-                XZInputStream(assets.open("v2ray/geoip.dat.xz")).use { input ->
-                    geoip.outputStream().use {
-                        input.copyTo(it)
-                    }
-                }
-                geoipVersion.writeText(geoipVersionInternal)
-            }
-
-            val geosite = File(externalAssets, "geosite.dat")
-            val geositeVersion = File(externalAssets, "geosite.version.txt")
-            val geositeVersionInternal = assets.open("v2ray/geosite.version.txt")
-                .use { it.bufferedReader().readText() }
-            if (!geosite.isFile || DataStore.rulesProvider == 0 && geositeVersion.isFile && geositeVersionInternal.toLong() > geositeVersion.readText()
-                    .toLongOrNull() ?: -1L
-            ) {
-                XZInputStream(assets.open("v2ray/geosite.dat.xz")).use { input ->
-                    geosite.outputStream().use {
-                        input.copyTo(it)
-                    }
-                }
-                geositeVersion.writeText(geositeVersionInternal)
-            }
-
-            checkMT()
             PackageCache.register()
+            checkMT()
         }
 
         Theme.apply(this)
