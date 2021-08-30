@@ -20,29 +20,13 @@
 package io.nekohasekai.sagernet.database
 
 import android.database.sqlite.SQLiteCantOpenDatabaseException
-import cn.hutool.json.*
-import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.gson.gson
-import io.nekohasekai.sagernet.fmt.http.HttpBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
-import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
-import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
-import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
-import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
-import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.utils.DirectBoot
-import org.yaml.snakeyaml.TypeDescription
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.error.YAMLException
 import java.io.IOException
 import java.sql.SQLException
 import java.util.*
@@ -222,10 +206,18 @@ object ProfileManager {
             )
             var country = Locale.getDefault().country.lowercase()
             var displayCountry = Locale.getDefault().displayCountry
-            if (country !in arrayOf(
+            if (country in arrayOf(
                     "ir"
                 )
             ) {
+                createRule(
+                    RuleEntity(
+                        name = app.getString(R.string.route_bypass_domain, displayCountry),
+                        domains = "domain:$country",
+                        outbound = -1
+                    ), false
+                )
+            } else {
                 country = Locale.CHINA.country.lowercase()
                 displayCountry = Locale.CHINA.displayCountry
                 createRule(
