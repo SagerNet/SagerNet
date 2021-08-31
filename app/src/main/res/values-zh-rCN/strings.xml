@@ -409,4 +409,8 @@
     <string name="no_statistics">暂无数据</string>
     <string name="traffic_statistics_summary">可能增加电量使用</string>
     <string name="traffic_statistics">启用流量统计</string>
+    <string name="ssh_private_key_passphrase">私钥密码句</string>
+    <string name="ssh_private_key">私钥</string>
+    <string name="ssh_public_key">公钥</string>
+    <string name="ssh_auth_type_none">无</string>
 </resources>
