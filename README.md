@@ -19,6 +19,7 @@ The application is designed to be used whenever possible.
 
 * SOCKS (4/4a/5)
 * HTTP(S)
+* SSH
 * Shadowsocks
 * ShadowsocksR
 * VMess
