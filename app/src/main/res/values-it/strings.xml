@@ -8,4 +8,5 @@
     <string name="github">Codice sorgente</string>
     <string name="project">Progetto</string>
     <string name="app_desc">La toolchain proxy universale per Android, scritta in Kotlin.</string>
+    <string name="service_mode_vpn">VPN</string>
 </resources>

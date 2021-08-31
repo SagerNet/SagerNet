@@ -18,4 +18,5 @@
     <string name="app_desc">Um conjunto de ferramentas de proxy universal para Android, escrito em Kotlin.</string>
     <string name="group_subscription_link">Link de inscrição</string>
     <string name="group_update">Atualizar</string>
+    <string name="service_mode_vpn">VPN</string>
 </resources>

@@ -307,7 +307,6 @@
     <string name="connection_test_timeout">逾時</string>
     <string name="append_http_proxy">為 VPN 附加 HTTP 代理</string>
     <string name="append_http_proxy_sum">HTTP 代理將直接被支援的瀏覽器/應用程式使用，而無需經過虛擬網路卡（Android 10+）</string>
-    <string name="direct">直連</string>
     <string name="bypass_lan_in_core_only">僅在 Core 中繞過區域網路</string>
     <string name="bypass_lan_in_core_only_sum">如果 LineageOS 的“允許熱點客戶端使用此裝置的 VPN”無法使用，嘗試啟用此選項。</string>
     <string name="ss_aead_provider">Shadowsocks AEAD 提供程式</string>
@@ -364,4 +363,5 @@
     <string name="select_apps">選擇應用程式</string>
     <string name="apps_message">%d 個應用程式</string>
     <string name="file_manager_missing">您的裝置缺少 Android 標準檔案選擇器, 請安裝一個, 如 Material Files.</string>
+    <string name="menu_traffic">流量</string>
 </resources>

@@ -8,4 +8,5 @@
     <string name="github">Broncode</string>
     <string name="project">Project</string>
     <string name="app_desc">De universele proxy-toolchain voor Android, geschreven in Kotlin.</string>
+    <string name="service_mode_vpn">VPN</string>
 </resources>

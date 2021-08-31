@@ -394,7 +394,10 @@
     <string name="hysteria_disable_mtu_discovery">غیر فعال کردن مسیر کشف MTU</string>
     <string name="hysteria_connection_receive_window">پنجره دریافت اتصال سریع</string>
     <string name="hysteria_stream_receive_window">پنجره دریافت جریان QUIC</string>
-    <string name="utls_fingerprint">اثر انگشت uTLS</string>
     <string name="ss_stream_provider">ارائه دهنده جریان شادوساکس</string>
     <string name="menu_traffic">ترافیک</string>
+    <string name="statistics_disabled">آمار ترافیک غیرفعال شد</string>
+    <string name="no_statistics">هنوز آماری در دسترس نیست</string>
+    <string name="traffic_statistics_summary">ممکن است مصرف برق را افزایش دهد</string>
+    <string name="traffic_statistics">فعال کردن آمار ترافیک</string>
 </resources>

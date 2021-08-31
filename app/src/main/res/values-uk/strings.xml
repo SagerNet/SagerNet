@@ -11,7 +11,7 @@
     <string name="cag_dns">Налаштування DNS</string>
     <string name="connection_test_error_status_code">Код помилки: #%d</string>
     <string name="connection_test_fail">Інтернет недоступний</string>
-    <string name="connection_test_error">Не вдалося виявити підключення до Інтернету: %s</string>
+    <string name="connection_test_error">Не вдалося: %s</string>
     <string name="connection_test_available_http">Успішно: рукостискання HTTP зайняло %dms</string>
     <string name="connection_test_available">Успіх: рукостискання HTTPS зайняло %dms</string>
     <string name="connection_test_testing">Тестування…</string>
@@ -128,4 +128,9 @@
     <string name="connection_test_url">URL -адреса перевірки з\'єднання</string>
     <string name="transproxy_mode">Режим Transproxy</string>
     <string name="require_transproxy">Увімкнути вхідний сигнал Transproxy</string>
+    <string name="obfs_param">Obfs Парам</string>
+    <string name="obfs">Obfs</string>
+    <string name="speed">%s/s</string>
+    <string name="menu_traffic">трафіку</string>
+    <string name="service_mode_vpn">VPN</string>
 </resources>

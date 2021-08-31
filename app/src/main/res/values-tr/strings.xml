@@ -6,7 +6,7 @@
     <string name="telegram">Telegram güncelleme kanalı</string>
     <string name="github">Kaynak kodu</string>
     <string name="project">Proje</string>
-    <string name="app_desc">Android için Kotlin\'de yazılmış evrensel vekil sunucu araç zinciri.</string>
+    <string name="app_desc">Android için Kotlin ile yazılmış evrensel vekil sunucu araç zinciri.</string>
     <string name="enable_dns_routing">DNS Yönlendirmesini Etkinleştir</string>
     <string name="direct_dns">Direkt DNS</string>
     <string name="remote_dns">Uzak DNS</string>
@@ -36,7 +36,7 @@
     <string name="require_http">HTTP üzerinden istekleri etkinleştir</string>
     <string name="general_settings">Uygulama Ayarları</string>
     <string name="inbound_settings">Geliş Ayarları</string>
-    <string name="allow_access_sum">Gelen sunucuları 0.0.0.0 üzerine bağla</string>
+    <string name="allow_access_sum">Gelen sunucu isteklerini 0.0.0.0 üzerine bağla</string>
     <string name="allow_access">Yerel ağdan bağlantılara izin ver</string>
     <string name="cag_route">Rota Ayarları</string>
     <string name="port_transproxy">Transproxy Portu</string>
@@ -93,7 +93,7 @@
     <string name="enable_fakedns">Sahte DNS aktivasyonu</string>
     <string name="dns_routing_message">Doğrudan DNS ile geçiş yollarındaki etki alanlarını çözümleyin. Potansiyel DNS sızıntılarının farkında olun</string>
     <string name="certificates">Sertifikalar</string>
-    <string name="sni">Sunucu Adı Gösterimi</string>
+    <string name="sni">Görünecek Sunucu Adı</string>
     <string name="tls">TLS kullan</string>
     <string name="quic_key">Quic Anahtarı</string>
     <string name="quic_security">QUIC Güvenliği</string>
@@ -105,7 +105,7 @@
     <string name="network">Ağ</string>
     <string name="security">Taşıma katmanı şifrelemesi</string>
     <string name="uuid">Kullanıcı ID</string>
-    <string name="obfs_param">Obfs Parametresi</string>
+    <string name="obfs_param">Şaşırtmaca Parametresi</string>
     <string name="protocol_param">Protokol Parametresi</string>
     <string name="protocol">Protokol</string>
     <string name="enc_method">Şifreleme Metodu</string>
@@ -150,7 +150,7 @@
     <string name="foreground_detector_summary">Bu servis uygulamaların önplan durumuna göre rota kuralları desteği sağlar. Eğer başlatılmadıysa sonuç her zaman arkaplandadır.</string>
     <string name="foreground_detector">Önplan algılayıcısı</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Eklentisi)</string>
-    <string name="shadowsocks_plugin_simple_obfs">Basit Obfs (Shadowsocks Android Eklentisi)</string>
+    <string name="shadowsocks_plugin_simple_obfs">Basit Şaşırtmaca (Shadowsocks Android Eklentisi)</string>
     <string name="hysteria_connection_receive_window">QUIC Bağlantı Alım Penceresi</string>
     <string name="hysteria_stream_receive_window">QUIC Akış Alım Penceresi</string>
     <string name="experimental_no_termination_signal">Duplex sonlandırma sinyalini VMess kullanırken TCP bağlantısı için yollama. Bu bazı uygulamaları bozacaktır.</string>
@@ -162,7 +162,7 @@
     <string name="probe_interval">Dengeleyici gözlem aralığı</string>
     <string name="insecure_warn_sum">Qv2ray Geliştirici Topluluğu Tarafından Sağlanmıştır</string>
     <string name="insecure_warn">Güvenlik Danışmanlığı</string>
-    <string name="add_profile_methods_manual_settings">Elle Ayarlar</string>
+    <string name="add_profile_methods_manual_settings">Elle Ayar Ekle</string>
     <string name="profile_config">Profil yapılandırması</string>
     <string name="file_manager_missing">Cihazınızda dosya yöneticisi bulunamadı, lütfen bir tane kurun, örneğin Material Files.</string>
     <string name="action_from_link">Abonelikten</string>
@@ -193,7 +193,6 @@
     <string name="group_order_by_name">İsim</string>
     <string name="group_order_origin">Köken</string>
     <string name="group_order">Sıralama</string>
-    <string name="utls_fingerprint">UTLS Parmak İzi</string>
     <string name="experimental_settings">Deneysel</string>
     <string name="hysteria_download_mbps">En Fazla İndirme Hızı (Mbps cinsinden)</string>
     <string name="hysteria_upload_mbps">En Fazla Yükleme Hızı (Mbps cinsinden)</string>
@@ -291,7 +290,7 @@
     <string name="ignore_battery_optimizations_sum">Bazı kısıtlamaları kaldır</string>
     <string name="ignore_battery_optimizations">Pil optimizasyonlarını devre dışı bırak</string>
     <string name="donate_info">Paraya aşığım</string>
-    <string name="donate">Bağış Yap</string>
+    <string name="donate">Bağış yap</string>
     <string name="deduplication">Tekilleştirme</string>
     <string name="no_proxies_found_in_clipboard">Kopyalama panosunda vekil sunucu bulunamadı</string>
     <string name="no_proxies_found_in_file">Dosya içinde vekil sunucu bulunamadı</string>
@@ -314,7 +313,7 @@
         <item quantity="one">Kaldırıldı</item>
         <item quantity="other">%d öğe kaldırıldı</item>
     </plurals>
-    <string name="add_profile_methods_scan_qr_code">QR kodu tara</string>
+    <string name="add_profile_methods_scan_qr_code">QR Kodu Tara</string>
     <string name="share_qr_nfc">QR kodu</string>
     <string name="delete_confirm_prompt">Bu profili kaldırmak istediğinize emin misiniz\?</string>
     <string name="delete">Kaldır</string>
@@ -379,4 +378,24 @@
     <string name="route_asset_no_update">Güncelleme yok</string>
     <string name="route_asset_status">Yerel sürüm: %s</string>
     <string name="route_rules_official">Resmi</string>
+    <string name="alter_id">Alternatif ID</string>
+    <string name="obfs">Şaşırtmaca</string>
+    <string name="tcp_keep_alive_interval">TCP aktif paket teslim koruma aralığı</string>
+    <string name="dm_mph">Ufak mükemmel şifreleme</string>
+    <string name="route_not_asset">Varlık dosyası değil: .dat beklendi ama %s</string>
+    <string name="route_rules_provider">Rota Varlıkları Sağlayıcısı</string>
+    <string name="route_assets">Varlıklar</string>
+    <string name="route_manage_assets">Rota Varlıklarını Yönet</string>
+    <string name="alpn">Uygulama Katmanı Protokol Aşımı</string>
+    <string name="grpc_service_name">gRPC ServisAdı</string>
+    <string name="kcp_seed">mKCP Tohumu</string>
+    <string name="hysteria_disable_mtu_discovery">Yol MTU Keşfini Devre Dışı Bırak</string>
+    <string name="experimental_authenticated_length">Her yük bölümünun uzunluğunu artık biçimlendirilebilir yapma. Bu deneysel özellik istemci ve sunucunun aynı v2ray-core sürümünü kullanmasını gerektirir. Bu deneysel özellik için daha fazla bozucu güncelleme bekleniyor.</string>
+    <string name="hysteria_auth_payload">Doğrulama Yükü</string>
+    <string name="hysteria_obfs">Şaşırtmaca Parolası</string>
+    <string name="force_vmess_aead_sum">VMess yapılandırmasını güvenliksiz doğrulama metoduyla AEAD\'ye yeniden yaz (alterId 0)</string>
+    <string name="no_statistics">Henüz istatistik yok</string>
+    <string name="traffic_statistics_summary">Güç tüketimini arttırabilir</string>
+    <string name="traffic_statistics">Trafik İstatistiklerini Etkinleştir</string>
+    <string name="statistics_disabled">Trafik istatistikleri devre dışı</string>
 </resources>

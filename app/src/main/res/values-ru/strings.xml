@@ -80,7 +80,7 @@
     <string name="group_default">Разгруппирован</string>
     <string name="document">Документ</string>
     <string name="theme">Тема</string>
-    <string name="menu_about">О</string>
+    <string name="menu_about">об</string>
     <string name="menu_group">Группа</string>
     <string name="menu_configuration">Конфигурация</string>
     <string name="logcat_summary">Такой полезный очень вау</string>
@@ -92,7 +92,7 @@
     <string name="connection_test_url">URL-адрес проверки подключения</string>
     <string name="port_transproxy">Транспрокси-порт</string>
     <string name="port_proxy">Порт прокси SOCKS5</string>
-    <string name="service_mode_vpn">фактивная специальная сеть</string>
+    <string name="service_mode_vpn">VPN</string>
     <string name="app_version">Версия</string>
     <string name="oss_licenses">Лицензии с открытым исходным кодом</string>
     <string name="telegram">Канал обновления Telegram</string>
@@ -396,7 +396,10 @@
     <string name="hysteria_disable_mtu_discovery">Отключить обнаружение MTU пути</string>
     <string name="hysteria_connection_receive_window">Окно получения соединения QUIC</string>
     <string name="hysteria_stream_receive_window">Окно приема потока QUIC</string>
-    <string name="utls_fingerprint">Отпечаток uTLS</string>
     <string name="ss_stream_provider">Провайдер потока Shadowsocks</string>
     <string name="menu_traffic">Движение</string>
+    <string name="statistics_disabled">Статистика трафика отключена</string>
+    <string name="no_statistics">Статистики пока нет</string>
+    <string name="traffic_statistics_summary">Может увеличить потребление энергии</string>
+    <string name="traffic_statistics">Включить статистику трафика</string>
 </resources>

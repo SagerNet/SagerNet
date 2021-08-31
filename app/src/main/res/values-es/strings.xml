@@ -161,4 +161,5 @@
     <string name="group_status_empty_subscription">Aún no está actualizado</string>
     <string name="group_status_empty">Grupo vacio</string>
     <string name="logcat_summary">Tan útil xd</string>
+    <string name="service_mode_vpn">VPN</string>
 </resources>

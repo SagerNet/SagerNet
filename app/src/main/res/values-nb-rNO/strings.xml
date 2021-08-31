@@ -126,7 +126,7 @@
     <string name="ooc_missing_protocol">Abonnementet krever støtte for protokoll %s, men det kan ikke bli funnet. Profiler som ikke støttes, blir ignorert.</string>
     <string name="update_subscription_warning">Proxy er ikke tilkoblet. Er du sikker på at du vil fortsette å oppdatere\?</string>
     <string name="ooc_subscription_token_invalid">Ugyldig OOCv1 -token</string>
-    <string name="profile_requiring_plugin">%s krever at %s plugin er installert, men det ble ikke funnet.</string>
+    <string name="profile_requiring_plugin">Profil %s krever at %s plugin er installert, men det ble ikke funnet.</string>
     <string name="missing_plugin">Plugin mangler</string>
     <string name="subscription_user_agent">Bruker agent</string>
     <string name="update_when_connected_only_sum">Forhindre lekkasje av IP -adresse</string>
@@ -306,7 +306,7 @@
     <string name="cag_dns">DNS innstillinger</string>
     <string name="connection_test_error_status_code">Feilkode: #%d</string>
     <string name="connection_test_fail">Internett utilgjengelig</string>
-    <string name="connection_test_error">Kunne ikke oppdage internettforbindelse: %s</string>
+    <string name="connection_test_error">Mislyktes: %s</string>
     <string name="connection_test_available_http">Suksess: HTTP håndtrykk tok %dms</string>
     <string name="connection_test_available">Suksess: HTTPS håndtrykk tok %dms</string>
     <string name="connection_test_testing">Tester…</string>
@@ -359,4 +359,6 @@
     <string name="hysteria_download_mbps">Maks. nedlastingshastighet (i Mbps)</string>
     <string name="hysteria_upload_mbps">Maks. opplastingshastighet (i Mbps)</string>
     <string name="hysteria_auth_type">Identitetbekreftelsestype</string>
+    <string name="ss_stream_provider">Shadowsocks Stream Provider</string>
+    <string name="menu_traffic">Trafikk</string>
 </resources>
