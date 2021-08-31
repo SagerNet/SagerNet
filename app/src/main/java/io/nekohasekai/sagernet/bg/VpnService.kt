@@ -104,15 +104,11 @@ class VpnService : BaseVpnService(),
     }
 
     override fun killProcesses(scope: CoroutineScope) {
+        if (::tun2socks.isInitialized) tun2socks.close()
+        if (::conn.isInitialized) conn.close()
         super.killProcesses(scope)
         active = false
         scope.launch { DefaultNetworkListener.stop(this) }
-        if (::conn.isInitialized) conn.close()
-        if (::tun2socks.isInitialized) {
-            tun2socks.close()
-
-            persistAppStats()
-        }
     }
 
     override fun onBind(intent: Intent) = when (intent.action) {

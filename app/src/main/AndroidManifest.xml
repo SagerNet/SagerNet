@@ -178,6 +178,9 @@
             android:name="io.nekohasekai.sagernet.ui.profile.SnellSettingsActivity"
             android:configChanges="uiMode" />
         <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.SSHSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity"
             android:configChanges="uiMode" />
         <activity

@@ -216,6 +216,7 @@
     <string name="action_brook" translatable="false">Brook</string>
     <string name="action_hysteria" translatable="false">Hysteria</string>
     <string name="action_snell" translatable="false">Snell</string>
+    <string name="action_ssh" translatable="false">SSH</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -444,5 +445,9 @@
     <string name="traffic_statistics_summary">May increase power consumption</string>
     <string name="no_statistics">No statistics yet</string>
     <string name="statistics_disabled">Traffic statistics disabled</string>
+    <string name="ssh_auth_type_none">None</string>
+    <string name="ssh_public_key">Public Key</string>
+    <string name="ssh_private_key">Private Key</string>
+    <string name="ssh_private_key_passphrase">Private Key Passphrase</string>
 
 </resources>

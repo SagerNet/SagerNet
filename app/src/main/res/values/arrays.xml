@@ -701,4 +701,10 @@
         <item>background</item>
     </string-array>
 
+    <string-array name="ssh_auth_type">
+        <item>@string/ssh_auth_type_none</item>
+        <item>@string/password</item>
+        <item>@string/ssh_public_key</item>
+    </string-array>
+
 </resources>

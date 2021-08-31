@@ -52,6 +52,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
@@ -191,6 +192,9 @@ abstract class V2RayInstance(
                     }
                     bean is SnellBean -> {
                         externalInstances[port] = SnellInstance(bean, port)
+                    }
+                    bean is SSHBean -> {
+                        externalInstances[port] = SSHInstance(bean, port)
                     }
                 }
             }

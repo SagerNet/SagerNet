@@ -251,6 +251,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverDisableMtuDiscovery by profileCacheStore.boolean(Key.SERVER_DISABLE_MTU_DISCOVERY)
 
     var serverProtocolVersion by profileCacheStore.stringToInt(Key.SERVER_PROTOCOL)
+    var serverPrivateKey by profileCacheStore.string(Key.SERVER_PRIVATE_KEY)
 
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)

@@ -90,6 +90,7 @@
         <entry key="app/src/main/res/xml/relaybaton_preferences.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/xml/route_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/socks_preferences.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/xml/ssh_preferences.xml" value="0.14565826330532214" />
         <entry key="app/src/main/res/xml/standard_v2ray_preferences.xml" value="0.33" />
         <entry key="app/src/main/res/xml/trojan_go_preferences.xml" value="0.14316239316239315" />
         <entry key="app/src/main/res/xml/trojan_preferences.xml" value="0.192481884057971" />

@@ -60,7 +60,9 @@
                     <item
                         android:id="@+id/action_new_snell"
                         android:title="@string/action_snell" />
-
+                    <item
+                        android:id="@+id/action_new_ssh"
+                        android:title="@string/action_ssh" />
                     <item
                         android:id="@+id/action_new_config"
                         android:title="@string/custom_config" />

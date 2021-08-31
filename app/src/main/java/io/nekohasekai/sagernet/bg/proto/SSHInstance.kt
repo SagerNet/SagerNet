@@ -1,6 +1,5 @@
 /******************************************************************************
- *                                                                            *
- * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
+ * Copyright (C) 2021 by nekohasekai <contact-git@sekai.icu>                  *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -20,21 +19,23 @@
 package io.nekohasekai.sagernet.bg.proto
 
 import io.nekohasekai.sagernet.bg.ClashBasedInstance
-import io.nekohasekai.sagernet.fmt.snell.SnellBean
+import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import libcore.Libcore
 
-class SnellInstance(val server: SnellBean, val port: Int) : ClashBasedInstance() {
+class SSHInstance(val server: SSHBean, val socksPort: Int) : ClashBasedInstance() {
 
     override fun createInstance() {
 
-        instance = Libcore.newSnellInstance(
-            port,
+        instance = Libcore.newSSHInstance(
+            socksPort,
             server.finalAddress,
             server.finalPort,
-            server.psk,
-            server.obfsMode,
-            server.obfsHost,
-            server.version
+            server.username,
+            server.authType,
+            server.password,
+            server.privateKey,
+            server.privateKeyPassphrase,
+            server.publicKey
         )
 
     }
