@@ -138,7 +138,6 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
 
         conf["ssl"] = JSONObject().also {
             if (sni.isNotBlank()) it["sni"] = sni
-            it["fingerprint"] = mkTrojanGoFingerprint()
         }
 
         when {
@@ -225,13 +224,5 @@ fun JSONObject.parseTrojanGo(): TrojanGoBean {
                 }
             }
         }
-    }
-}
-
-fun mkTrojanGoFingerprint(): String {
-    return when (val it = DataStore.utlsFingerprint) {
-        "firefox" -> it
-        "safari" -> "ios"
-        else -> "chrome"
     }
 }

@@ -352,7 +352,6 @@ fun buildV2RayConfig(
 
         var rootBalancer: RoutingObject.RuleObject? = null
 
-        val utlsFingerprint = DataStore.utlsFingerprint
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
@@ -452,9 +451,6 @@ fun buildV2RayConfig(
                                             if (bean.sni.isNotBlank()) {
                                                 serverName = bean.sni
                                             }
-                                            if (utlsFingerprint.isNotBlank()) {
-                                                fingerprint = utlsFingerprint
-                                            }
                                         }
                                     }
                                     if (needKeepAliveInterval) {
@@ -490,9 +486,6 @@ fun buildV2RayConfig(
                                         tlsSettings = TLSObject().apply {
                                             if (bean.sni.isNotBlank()) {
                                                 serverName = bean.sni
-                                            }
-                                            if (utlsFingerprint.isNotBlank()) {
-                                                fingerprint = utlsFingerprint
                                             }
                                         }
                                     }
@@ -584,10 +577,6 @@ fun buildV2RayConfig(
 
                                         if (bean.allowInsecure) {
                                             allowInsecure = true
-                                        }
-
-                                        if (utlsFingerprint.isNotBlank()) {
-                                            fingerprint = utlsFingerprint
                                         }
                                     }
                                 }
@@ -737,9 +726,6 @@ fun buildV2RayConfig(
                                     }
                                     if (bean.alpn.isNotBlank()) {
                                         alpn = bean.alpn.split("\n")
-                                    }
-                                    if (utlsFingerprint.isNotBlank()) {
-                                        fingerprint = utlsFingerprint
                                     }
                                 }
                                 if (needKeepAliveInterval) {

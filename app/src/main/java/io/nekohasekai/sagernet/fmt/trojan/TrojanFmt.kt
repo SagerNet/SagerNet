@@ -24,7 +24,6 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.fmt.trojan_go.mkTrojanGoFingerprint
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
@@ -129,7 +128,6 @@ fun TrojanBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
             }
             if (sni.isNotBlank()) it["sni"] = sni
             if (alpn.isNotBlank()) it["alpn"] = JSONArray(alpn.split("\n"))
-            it["fingerprint"] = mkTrojanGoFingerprint()
         }
     }.toStringPretty()
 }

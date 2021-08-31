@@ -197,7 +197,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             newValue
         }
 
-        val utlsFingerprint = findPreference<SimpleMenuPreference>(Key.UTLS_FINGERPRINT)!!
         val trafficStatistics = findPreference<SwitchPreference>(Key.TRAFFIC_STATISTICS)!!
 
         serviceMode.setOnPreferenceChangeListener { _, _ ->
@@ -241,7 +240,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
-        utlsFingerprint.onPreferenceChangeListener = reloadListener
         trafficStatistics.onPreferenceChangeListener = reloadListener
 
     }

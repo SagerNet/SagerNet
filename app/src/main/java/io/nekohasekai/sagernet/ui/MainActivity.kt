@@ -33,7 +33,6 @@ import androidx.core.view.ViewCompat
 import androidx.preference.PreferenceDataStore
 import cn.hutool.core.codec.Base64Decoder
 import cn.hutool.core.util.ZipUtil
-import com.github.shadowsocks.plugin.InternalPlugin
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -244,9 +243,9 @@ class MainActivity : ThemedActivity(),
         val existsButOnShitSystem = if (pluginName == pluginId) {
             PluginManager.fetchPlugins().map { it.id }.contains(pluginName)
         } else {
-            ShadowsocksPluginPluginManager.fetchPlugins()
-                .any { it.id == pluginId && it !is InternalPlugin }
+            ShadowsocksPluginPluginManager.fetchPlugins(true).map { it.id }.contains(pluginId)
         }
+
         if (existsButOnShitSystem) {
             MaterialAlertDialogBuilder(this).setTitle(R.string.missing_plugin).setMessage(
                 getString(

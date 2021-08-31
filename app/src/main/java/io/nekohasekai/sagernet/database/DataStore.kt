@@ -193,7 +193,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
-    var utlsFingerprint by configurationStore.string(Key.UTLS_FINGERPRINT)
     var trafficStatistics by configurationStore.boolean(Key.TRAFFIC_STATISTICS)
 
     // protocol

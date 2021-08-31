@@ -224,7 +224,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
 
     private fun initPlugins() {
         plugin.value = pluginConfiguration.selected
-        plugin.init()
+        plugin.init(true)
         pluginConfigure.isEnabled = plugin.selectedEntry?.let { it is NoPlugin } == false
         pluginConfigure.text = pluginConfiguration.getOptions().toString()
     }

@@ -241,14 +241,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_misc">
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue=""
-            app:entries="@array/utls_entry"
-            app:entryValues="@array/utls_value"
-            app:icon="@drawable/ic_baseline_fingerprint_24"
-            app:key="utlsFingerprint"
-            app:title="@string/utls_fingerprint"
-            app:useSimpleSummaryProvider="true" />
         <io.nekohasekai.sagernet.widget.LinkPreference
             app:defaultValue="https://api.v2fly.org/checkConnection.svgz"
             app:icon="@drawable/ic_baseline_cast_connected_24"
