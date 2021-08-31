@@ -26,11 +26,13 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import io.nekohasekai.sagernet.SagerNet
 
-class PluginList : ArrayList<Plugin>() {
+class PluginList(skipInternal: Boolean) : ArrayList<Plugin>() {
     init {
         add(NoPlugin)
-        add(InternalPlugin.SIMPLE_OBFS)
-        add(InternalPlugin.V2RAY_PLUGIN)
+        if (!skipInternal) {
+            add(InternalPlugin.SIMPLE_OBFS)
+            add(InternalPlugin.V2RAY_PLUGIN)
+        }
         addAll(SagerNet.application.packageManager.queryIntentContentProviders(
                 Intent(PluginContract.ACTION_NATIVE_PLUGIN), PackageManager.GET_META_DATA)
                 .filter { it.providerInfo.exported }.map { NativePlugin(it) })

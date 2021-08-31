@@ -29,10 +29,12 @@ import com.github.shadowsocks.plugin.PluginList
 import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.R
 
-class PluginPreference(context: Context, attrs: AttributeSet? = null) : ListPreference(context, attrs) {
+class PluginPreference(context: Context, attrs: AttributeSet? = null) : ListPreference(
+    context, attrs
+) {
     companion object FallbackProvider : SummaryProvider<PluginPreference> {
-        override fun provideSummary(preference: PluginPreference) =
-                preference.selectedEntry?.label ?: preference.unknownValueSummary.format(preference.value)
+        override fun provideSummary(preference: PluginPreference) = preference.selectedEntry?.label
+            ?: preference.unknownValueSummary.format(preference.value)
     }
 
     lateinit var plugins: PluginList
@@ -57,12 +59,13 @@ class PluginPreference(context: Context, attrs: AttributeSet? = null) : ListPref
         }
     }
 
-    fun init() {
-        plugins = PluginManager.fetchPlugins()
+    fun init(skipInternal: Boolean = false) {
+        plugins = PluginManager.fetchPlugins(skipInternal)
         entryValues = plugins.lookup.map { it.key }.toTypedArray()
         icon = entryIcon
         summaryProvider = FallbackProvider
     }
+
     override fun onSetInitialValue(defaultValue: Any?) {
         super.onSetInitialValue(defaultValue)
         init()

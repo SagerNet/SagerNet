@@ -101,15 +101,22 @@ object PluginManager {
 
     private var receiver: BroadcastReceiver? = null
     private var cachedPlugins: PluginList? = null
-    fun fetchPlugins() = synchronized(this) {
+    private var cachedPluginsSkipInternal: PluginList? = null
+    fun fetchPlugins(skipInternal: Boolean) = synchronized(this) {
         if (receiver == null) receiver = SagerNet.application.listenForPackageChanges {
             synchronized(this) {
                 receiver = null
                 cachedPlugins = null
+                cachedPluginsSkipInternal = null
             }
         }
-        if (cachedPlugins == null) cachedPlugins = PluginList()
-        cachedPlugins!!
+        if (skipInternal) {
+            if (cachedPlugins == null) cachedPlugins = PluginList(skipInternal)
+            cachedPlugins!!
+        } else {
+            if (cachedPluginsSkipInternal == null) cachedPluginsSkipInternal = PluginList(skipInternal)
+            cachedPluginsSkipInternal!!
+        }
     }
 
     private fun buildUri(id: String) = Uri.Builder()
