@@ -34,6 +34,7 @@
         <entry key="app/src/main/res/layout/layout_assets.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_chain_settings.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_config_settings.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_debug.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_edit_config.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_edit_group.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_empty.xml" value="0.26033755274261605" />
@@ -56,6 +57,7 @@
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_scanner.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_settings_activity.xml" value="0.17844202898550723" />
+        <entry key="app/src/main/res/layout/layout_tools.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_traffic.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_traffic_item.xml" value="0.22192028985507245" />
         <entry key="app/src/main/res/layout/layout_traffic_list.xml" value="0.2636752136752137" />

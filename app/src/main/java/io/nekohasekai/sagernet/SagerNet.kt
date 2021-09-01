@@ -40,6 +40,7 @@ import androidx.core.content.getSystemService
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.bg.proto.UidDumper
+import io.nekohasekai.sagernet.crash.CrashHandler
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
@@ -54,8 +55,6 @@ import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
 import org.conscrypt.Conscrypt
-import org.lsposed.hiddenapibypass.HiddenApiBypass
-import java.io.File
 import java.security.Security
 import androidx.work.Configuration as WorkConfiguration
 
@@ -70,16 +69,11 @@ class SagerNet : Application(),
 
     override fun onCreate() {
         super.onCreate()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            HiddenApiBypass.addHiddenApiExemptions("L");
-        }
 
         System.setProperty(DEBUG_PROPERTY_NAME, DEBUG_PROPERTY_VALUE_ON)
-
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler)
         DataStore.init()
-
         updateNotificationChannels()
-
         Seq.setContext(this)
 
         val internalAssets = filesDir

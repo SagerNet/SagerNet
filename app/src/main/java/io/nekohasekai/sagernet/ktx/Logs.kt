@@ -21,7 +21,8 @@ package io.nekohasekai.sagernet.ktx
 
 import android.util.Log
 import cn.hutool.core.util.StrUtil
-import io.nekohasekai.sagernet.BuildConfig
+import java.io.InputStream
+import java.io.OutputStream
 
 object Logs {
 
@@ -82,4 +83,12 @@ object Logs {
         Log.e(mkTag(), message, exception)
     }
 
+}
+
+fun InputStream.use(out: OutputStream) {
+    use { input ->
+        out.use { output ->
+            input.copyTo(output)
+        }
+    }
 }

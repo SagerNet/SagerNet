@@ -63,6 +63,7 @@ dependencies {
     implementation("org.yaml:snakeyaml:1.29")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.mikepenz:aboutlibraries:8.9.1")
+    implementation("com.jakewharton:process-phoenix:2.1.2")
 
     implementation("com.simplecityapps:recyclerview-fastscroll:2.0.1") {
         exclude(group = "androidx.recyclerview")
