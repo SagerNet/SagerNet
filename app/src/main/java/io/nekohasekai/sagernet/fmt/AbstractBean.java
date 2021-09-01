@@ -41,7 +41,7 @@ import io.nekohasekai.sagernet.ktx.NetsKt;
 public abstract class AbstractBean extends Serializable implements Cloneable<AbstractBean> {
 
     public String serverAddress;
-    public int serverPort;
+    public Integer serverPort;
     public String name;
 
     public transient boolean isChain;
@@ -88,7 +88,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         } else if (serverAddress.startsWith("[") && serverAddress.endsWith("]")) {
             serverAddress = NetsKt.unwrapHost(serverAddress);
         }
-        if (serverPort == 0) {
+        if (serverPort == null) {
             serverPort = 1080;
         }
         if (name == null) name = "";

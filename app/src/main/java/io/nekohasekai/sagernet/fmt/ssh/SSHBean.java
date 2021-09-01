@@ -43,10 +43,12 @@ public class SSHBean extends AbstractBean {
 
     @Override
     public void initializeDefaultValues() {
+        if (serverPort == null) serverPort = 22;
+
         super.initializeDefaultValues();
 
-        if (username == null) username = "";
-        if (authType == null) authType = AUTH_TYPE_NONE;
+        if (username == null) username = "root";
+        if (authType == null) authType = AUTH_TYPE_PASSWORD;
         if (password == null) password = "";
         if (privateKey == null) privateKey = "";
         if (privateKeyPassphrase == null) privateKeyPassphrase = "";

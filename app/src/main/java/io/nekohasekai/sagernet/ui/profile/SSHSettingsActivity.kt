@@ -39,22 +39,9 @@ class SSHSettingsActivity : ProfileSettingsActivity<SSHBean>() {
         DataStore.serverPort = serverPort
         DataStore.serverUsername = username
         DataStore.serverAuthType = authType
-
-        when (authType) {
-            SSHBean.AUTH_TYPE_NONE -> {
-                DataStore.serverPassword = ""
-                DataStore.serverPassword1 = ""
-            }
-            SSHBean.AUTH_TYPE_PASSWORD -> {
-                DataStore.serverPassword = password
-                DataStore.serverPassword1 = ""
-            }
-            SSHBean.AUTH_TYPE_PRIVATE_KEY -> {
-                DataStore.serverPrivateKey = privateKey
-                DataStore.serverPassword1 = privateKeyPassphrase
-            }
-        }
-
+        DataStore.serverPassword = password
+        DataStore.serverPrivateKey = privateKey
+        DataStore.serverPassword1 = privateKeyPassphrase
         DataStore.serverCertificates = publicKey
     }
 

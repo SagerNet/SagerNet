@@ -42,9 +42,7 @@ public class NaiveBean extends AbstractBean {
 
     @Override
     public void initializeDefaultValues() {
-        if (serverPort == 0) {
-            serverPort = 443;
-        }
+        if (serverPort == null) serverPort = 443;
         super.initializeDefaultValues();
         if (proto == null) proto = "https";
         if (username == null) username = "";

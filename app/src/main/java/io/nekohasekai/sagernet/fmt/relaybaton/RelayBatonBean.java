@@ -37,7 +37,7 @@ public class RelayBatonBean extends AbstractBean {
 
     @Override
     public void initializeDefaultValues() {
-        if (serverPort == 0) serverPort = 443;
+        if (serverPort == null) serverPort = 443;
         super.initializeDefaultValues();
         if (username == null) username = "";
         if (password == null) password = "";
