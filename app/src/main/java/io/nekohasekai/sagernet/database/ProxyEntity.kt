@@ -262,6 +262,18 @@ data class ProxyEntity(
         }
     }
 
+    fun haveStandardLink(): Boolean {
+        return when (requireBean()) {
+            is RelayBatonBean -> false
+            is BrookBean -> false
+            is ConfigBean -> false
+            is HysteriaBean -> false
+            is SnellBean -> false
+            is SSHBean -> false
+            else -> true
+        }
+    }
+
     fun toLink(): String? = with(requireBean()) {
         when (this) {
             is SOCKSBean -> toUri()

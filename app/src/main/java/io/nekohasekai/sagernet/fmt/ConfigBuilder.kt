@@ -993,12 +993,10 @@ fun buildV2RayConfig(
             protocol = "freedom"
             settings = LazyOutboundConfigurationObject(this,
                 FreedomOutboundConfigurationObject().apply {
-                    when (ipv6Mode) {
-                        IPv6Mode.DISABLE -> domainStrategy = "UseIPv4"
-                        IPv6Mode.ONLY -> domainStrategy = "UseIPv6"
-                        else -> if (useFakeDns) {
-                            domainStrategy = "UseIP"
-                        }
+                    domainStrategy = when (ipv6Mode) {
+                        IPv6Mode.DISABLE -> "UseIPv4"
+                        IPv6Mode.ONLY -> "UseIPv6"
+                        else -> "UseIP"
                     }
                 })
         })
