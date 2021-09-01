@@ -14,7 +14,7 @@ dependencies {
     implementation("com.android.tools.build:gradle-api:$androidPluginVersion")
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib"))
-    implementation("cn.hutool:hutool-crypto:5.7.10")
+    implementation("cn.hutool:hutool-crypto:5.7.11")
     implementation("org.tukaani:xz:1.9")
     implementation("com.github.triplet.gradle:play-publisher:$playPublisherVersion")
     implementation("org.kohsuke:github-api:1.131")
