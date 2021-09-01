@@ -212,18 +212,16 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                     .build())
                             }
                         }
-                        if (isDefaultFlavor) {
-                            addItem(MaterialAboutActionItem.Builder()
-                                .icon(R.drawable.ic_baseline_card_giftcard_24)
-                                .text(R.string.donate)
-                                .subText(R.string.donate_info)
-                                .setOnClickAction {
-                                    requireContext().launchCustomTab(
-                                        "https://opencollective.com/sagernet"
-                                    )
-                                }
-                                .build())
-                        }
+                        addItem(MaterialAboutActionItem.Builder()
+                            .icon(R.drawable.ic_baseline_card_giftcard_24)
+                            .text(R.string.donate)
+                            .subText(R.string.donate_info)
+                            .setOnClickAction {
+                                requireContext().launchCustomTab(
+                                    "https://opencollective.com/sagernet"
+                                )
+                            }
+                            .build())
                     }
                     .build())
                 .addCard(MaterialAboutCard.Builder()
@@ -235,6 +233,16 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .setOnClickAction {
                             requireContext().launchCustomTab(
                                 "https://github.com/SagerNet/SagerNet"
+
+                            )
+                        }
+                        .build())
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.baseline_translate_24)
+                        .text(R.string.translate_platform)
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(
+                                "https://hosted.weblate.org/engage/sagernet/"
 
                             )
                         }

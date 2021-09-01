@@ -449,5 +449,6 @@
     <string name="ssh_public_key">Public Key</string>
     <string name="ssh_private_key">Private Key</string>
     <string name="ssh_private_key_passphrase">Private Key Passphrase</string>
+    <string name="translate_platform">Translate Platform</string>
 
 </resources>
