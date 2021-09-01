@@ -24,7 +24,6 @@ import android.os.Build
 import android.system.OsConstants
 import cn.hutool.cache.impl.LFUCacheCompact
 import cn.hutool.core.util.HexUtil
-import com.topjohnwu.superuser.io.SuFileInputStream
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.utils.PackageCache
 import libcore.UidDumper
@@ -107,9 +106,7 @@ object UidDumper : UidDumper {
             if (cache.remoteAddress == remote) return cache.uid
         }
 
-        var lines = (if (!canReadProc) SuFileInputStream.open(proc)
-            .bufferedReader()
-            .readLines() else proc.readLines()).map { line ->
+        var lines = proc.readLines().map { line ->
             line.split(" ").filterNot { it.isBlank() }
         }
         lines = lines.subList(1, lines.size)
