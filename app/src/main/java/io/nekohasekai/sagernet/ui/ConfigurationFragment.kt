@@ -758,7 +758,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
 
-                val hideUngrouped = SagerDatabase.proxyDao.countByGroup(groupList.find { it.ungrouped }!!.id) == 0L
+                val hideUngrouped = groupList.size > 1 && SagerDatabase.proxyDao.countByGroup(groupList.find { it.ungrouped }!!.id) == 0L
 
                 if (hideUngrouped) groupList.removeAll { it.ungrouped }
 
