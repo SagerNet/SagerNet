@@ -107,6 +107,7 @@ class VpnService : BaseVpnService(),
         if (::tun2socks.isInitialized) tun2socks.close()
         if (::conn.isInitialized) conn.close()
         super.killProcesses(scope)
+        persistAppStats()
         active = false
         scope.launch { DefaultNetworkListener.stop(this) }
     }

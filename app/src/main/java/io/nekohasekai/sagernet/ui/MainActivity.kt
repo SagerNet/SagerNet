@@ -325,9 +325,6 @@ class MainActivity : ThemedActivity(),
     }
 
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
-        if (id == R.id.nav_logcat) {
-
-        }
         when (id) {
             R.id.nav_configuration -> {
                 displayFragment(ConfigurationFragment())
