@@ -37,3 +37,6 @@
 [submodule "library/core"]
 	path = library/core
 	url = https://github.com/SagerNet/LibSagerNetCore
+[submodule "external/termux-view"]
+	path = external/termux-view
+	url = https://github.com/SagerNet/termux-view

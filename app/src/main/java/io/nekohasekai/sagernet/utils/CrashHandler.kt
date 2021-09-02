@@ -16,7 +16,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.crash
+package io.nekohasekai.sagernet.utils
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -38,8 +38,9 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
     @Suppress("UNNECESSARY_SAFE_CALL")
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
 
-        val logFile = File.createTempFile(
-            "SagerNet Crash Report ", ".log", File(app.cacheDir, "log")
+        val logFile = File.createTempFile("SagerNet Crash Report ",
+            ".log",
+            File(app.cacheDir, "log").also { it.mkdirs() }
         )
 
         var report = buildReportHeader()
@@ -70,7 +71,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     .putExtra(
                         Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                            app, app.packageName + ".log", logFile
+                            app, BuildConfig.APPLICATION_ID + ".log", logFile
                         )
                     ), app.getString(R.string.abc_shareactionprovider_share_with)
             )

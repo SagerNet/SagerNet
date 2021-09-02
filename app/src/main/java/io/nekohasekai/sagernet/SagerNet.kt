@@ -40,7 +40,7 @@ import androidx.core.content.getSystemService
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.bg.proto.UidDumper
-import io.nekohasekai.sagernet.crash.CrashHandler
+import io.nekohasekai.sagernet.utils.CrashHandler
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs

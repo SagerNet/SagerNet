@@ -8,11 +8,6 @@
             android:title="@string/menu_configuration" />
 
         <item
-            android:id="@+id/nav_traffic"
-            android:icon="@drawable/ic_baseline_transform_24"
-            android:title="@string/menu_traffic" />
-
-        <item
             android:id="@+id/nav_group"
             android:icon="@drawable/ic_baseline_view_list_24"
             android:title="@string/menu_group" />
@@ -30,6 +25,23 @@
 
     <group
         android:id="@+id/misc"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_logcat"
+            android:icon="@drawable/ic_baseline_bug_report_24"
+            android:title="@string/menu_log" />
+        <item
+            android:id="@+id/nav_traffic"
+            android:icon="@drawable/ic_baseline_transform_24"
+            android:title="@string/menu_traffic" />
+        <item
+            android:id="@+id/nav_tools"
+            android:icon="@drawable/baseline_construction_24"
+            android:title="@string/menu_tools" />
+    </group>
+
+    <group
+        android:id="@+id/about"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_faq"

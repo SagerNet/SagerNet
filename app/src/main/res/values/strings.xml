@@ -450,5 +450,8 @@
     <string name="ssh_private_key">Private Key</string>
     <string name="ssh_private_key_passphrase">Private Key Passphrase</string>
     <string name="translate_platform">Translate Platform</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_log">Logs</string>
+    <string name="clear_logcat">Clear Logcat</string>
 
 </resources>

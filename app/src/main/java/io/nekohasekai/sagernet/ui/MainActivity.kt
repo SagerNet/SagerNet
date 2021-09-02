@@ -80,6 +80,10 @@ class MainActivity : ThemedActivity(),
         }
         navigation.setNavigationItemSelectedListener(this)
 
+        if (!(BuildConfig.DEBUG || isExpert)) {
+            navigation.menu.removeItem(R.id.nav_tools)
+        }
+
         if (savedInstanceState == null) {
             displayFragmentWithId(R.id.nav_configuration)
         }
@@ -321,18 +325,23 @@ class MainActivity : ThemedActivity(),
     }
 
     fun displayFragmentWithId(@IdRes id: Int): Boolean {
+        if (id == R.id.nav_logcat) {
+
+        }
         when (id) {
             R.id.nav_configuration -> {
                 displayFragment(ConfigurationFragment())
                 connection.bandwidthTimeout = connection.bandwidthTimeout
             }
+            R.id.nav_group -> displayFragment(GroupFragment())
+            R.id.nav_route -> displayFragment(RouteFragment())
+            R.id.nav_settings -> displayFragment(SettingsFragment())
             R.id.nav_traffic -> {
                 displayFragment(TrafficFragment())
                 connection.trafficTimeout = connection.trafficTimeout
             }
-            R.id.nav_group -> displayFragment(GroupFragment())
-            R.id.nav_route -> displayFragment(RouteFragment())
-            R.id.nav_settings -> displayFragment(SettingsFragment())
+            R.id.nav_tools -> displayFragment(ToolsFragment())
+            R.id.nav_logcat -> displayFragment(LogcatFragment())
             R.id.nav_faq -> {
                 launchCustomTab("https://sagernet.org/")
                 return false

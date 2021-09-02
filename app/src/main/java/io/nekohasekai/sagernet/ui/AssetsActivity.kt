@@ -138,11 +138,7 @@ class AssetsActivity : ThemedActivity() {
                     parentFile?.mkdirs()
                 }
 
-                outFile.outputStream().use { out ->
-                    contentResolver.openInputStream(file)?.use {
-                        it.copyTo(out)
-                    }
-                }
+                contentResolver.openInputStream(file)?.use(outFile.outputStream())
 
                 File(outFile.parentFile, outFile.nameWithoutExtension + ".version.txt").apply {
                     if (isFile) delete()
@@ -334,15 +330,14 @@ class AssetsActivity : ThemedActivity() {
             error("Error when downloading $browserDownloadUrl : HTTP ${response.code}")
         }
 
+        val cacheFile = File(file.parentFile, file.name + ".tmp")
         response.body!!.use { body ->
-            file.outputStream().use { out ->
-                body.byteStream().use {
-                    it.copyTo(out)
-                }
-            }
+            body.byteStream().use(cacheFile.outputStream())
         }
         if (fileName.endsWith(".xz")) {
-            Libcore.unxz(file.absolutePath)
+            Libcore.unxz(cacheFile.absolutePath, file.absolutePath)
+        } else {
+            cacheFile.renameTo(file)
         }
 
         versionFile.writeText(tagName)

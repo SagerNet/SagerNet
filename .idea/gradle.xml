@@ -26,6 +26,13 @@
                   <project path="$PROJECT_DIR$/external/editorkit/languages/language-plaintext" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/external/termux-view" name="termux-view">
+                <projects>
+                  <project path="$PROJECT_DIR$/external/termux-view" />
+                  <project path="$PROJECT_DIR$/external/termux-view/terminal-emulator" />
+                  <project path="$PROJECT_DIR$/external/termux-view/terminal-view" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
@@ -62,6 +69,9 @@
             <option value="$PROJECT_DIR$/external/preferencex/preferencex" />
             <option value="$PROJECT_DIR$/external/preferencex/preferencex-colorpicker" />
             <option value="$PROJECT_DIR$/external/preferencex/preferencex-simplemenu" />
+            <option value="$PROJECT_DIR$/external/termux-view" />
+            <option value="$PROJECT_DIR$/external/termux-view/terminal-emulator" />
+            <option value="$PROJECT_DIR$/external/termux-view/terminal-view" />
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/library/include" />
             <option value="$PROJECT_DIR$/library/proto" />

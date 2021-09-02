@@ -16,25 +16,15 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ui.tool
+package io.nekohasekai.sagernet.ui
 
-import android.os.Bundle
-import android.view.View
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.databinding.LayoutDebugBinding
+import androidx.fragment.app.Fragment
 
-class DebugFragment : NamedFragment(R.layout.layout_debug) {
+abstract class NamedFragment : Fragment {
 
-    override fun name() = "Debug"
+    constructor() : super()
+    constructor(contentLayoutId: Int) : super(contentLayoutId)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val binding = LayoutDebugBinding.bind(view)
-
-        binding.debugCrash.setOnClickListener {
-            error("test crash")
-        }
-    }
+    abstract fun name(): String
 
 }

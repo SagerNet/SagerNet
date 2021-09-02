@@ -41,7 +41,7 @@ import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.crash.CrashHandler
+import io.nekohasekai.sagernet.utils.CrashHandler
 import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
 import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.ktx.*
@@ -51,7 +51,6 @@ import libcore.Libcore
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.PrintWriter
 
 class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
@@ -87,46 +86,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.about_fragment_holder, AboutContent())
                     .commitAllowingStateLoss()
-            }
-        }
-
-        fun exportLog() {
-            val context = requireContext()
-
-            runOnDefaultDispatcher {
-                val logFile = File.createTempFile(
-                    "SagerNet ",
-                    ".log",
-                    File(app.cacheDir, "log").also { it.mkdirs() })
-
-                var report = CrashHandler.buildReportHeader()
-
-                report += "Logcat: \n\n"
-
-                logFile.writeText(report)
-
-                try {
-                    Runtime.getRuntime().exec(arrayOf("logcat", "-d")).inputStream.use(
-                            FileOutputStream(
-                                logFile, true
-                            )
-                        )
-                } catch (e: IOException) {
-                    Logs.w(e)
-                    logFile.appendText("Export logcat error: " + CrashHandler.formatThrowable(e))
-                }
-
-                startActivity(
-                    Intent.createChooser(
-                        Intent(Intent.ACTION_SEND).setType("text/x-log")
-                            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            .putExtra(
-                                Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                                    context, app.packageName + ".log", logFile
-                                )
-                            ), context.getString(R.string.abc_shareactionprovider_share_with)
-                    )
-                )
             }
         }
 
@@ -179,12 +138,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             }
                         }
                     }
-                    .addItem(MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_bug_report_24)
-                        .text(R.string.logcat)
-                        .subText(R.string.logcat_summary)
-                        .setOnClickAction { exportLog() }
-                        .build())
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             val pm = app.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -210,7 +163,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             .subText(R.string.donate_info)
                             .setOnClickAction {
                                 requireContext().launchCustomTab(
-                                    "https://opencollective.com/sagernet"
+                                    "https://liberapay.com/nekohasekai"
                                 )
                             }
                             .build())
