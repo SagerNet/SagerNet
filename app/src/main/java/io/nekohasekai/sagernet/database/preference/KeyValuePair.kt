@@ -41,6 +41,10 @@ class KeyValuePair() {
 
     @androidx.room.Dao
     interface Dao {
+
+        @Query("SELECT * FROM `KeyValuePair`")
+        fun all(): List<KeyValuePair>
+
         @Query("SELECT * FROM `KeyValuePair` WHERE `key` = :key")
         operator fun get(key: String): KeyValuePair?
 
@@ -67,8 +71,7 @@ class KeyValuePair() {
         get() = if (valueType == TYPE_INT) ByteBuffer.wrap(value).int else null
     val long: Long?
         get() = when (valueType) {
-            @Suppress("DEPRECATION")
-            TYPE_INT,
+            @Suppress("DEPRECATION") TYPE_INT,
             -> ByteBuffer.wrap(value).int.toLong()
             TYPE_LONG -> ByteBuffer.wrap(value).long
             else -> null
@@ -137,4 +140,17 @@ class KeyValuePair() {
         this.value = stream.toByteArray()
         return this
     }
+
+    @Suppress("IMPLICIT_CAST_TO_ANY")
+    override fun toString(): String {
+        return when (valueType) {
+            TYPE_BOOLEAN -> boolean
+            TYPE_FLOAT -> float
+            TYPE_LONG -> long
+            TYPE_STRING -> string
+            TYPE_STRING_SET -> stringSet
+            else -> null
+        }?.toString() ?: "null"
+    }
+
 }

@@ -25,6 +25,8 @@ import androidx.core.content.FileProvider
 import com.jakewharton.processphoenix.ProcessPhoenix
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.use
@@ -134,6 +136,19 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         report += "SUPPORTED_ABIS: ${
             Build.SUPPORTED_ABIS.filter { it.isNotBlank() }.joinToString(", ")
         }\n\n"
+
+
+        try {
+            report += "Settings: \n"
+            for (pair in PublicDatabase.kvPairDao.all()) {
+                report += "\n"
+                report += pair.key + ": " + pair.toString()
+            }
+        }catch (e: Exception) {
+            report += "Export settings failed: " + formatThrowable(e)
+        }
+
+        report += "\n\n"
 
         return report
     }
