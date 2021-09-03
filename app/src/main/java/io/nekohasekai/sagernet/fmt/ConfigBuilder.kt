@@ -146,8 +146,8 @@ fun buildV2RayConfig(
     val allowAccess = DataStore.allowAccess
     val bind = if (!forTest && allowAccess) "0.0.0.0" else LOCALHOST
 
-    val remoteDns = DataStore.remoteDns.split("\n")
-    val directDNS = DataStore.directDns.split("\n")
+    val remoteDns = DataStore.remoteDns.split("\n").mapNotNull { dns -> dns.trim().takeIf { it.isNotBlank() && !it.startsWith("#") } }
+    val directDNS = DataStore.directDns.split("\n").mapNotNull { dns -> dns.trim().takeIf { it.isNotBlank() && !it.startsWith("#") } }
     val enableDnsRouting = DataStore.enableDnsRouting
     val useFakeDns = DataStore.enableFakeDns
     val trafficSniffing = DataStore.trafficSniffing
