@@ -253,12 +253,14 @@ jobs:
     needs:
       - libcore
       - shadowsocks
+      - shadowsocks_libev
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Fetch Status
         run: |
           git submodule status 'library/shadowsocks/*' > shadowsocks_status
+          git submodule status 'library/shadowsocks-libev/*' > shadowsocks_libev_status
           git submodule status library/core > libcore_status
       - name: LibCore Cache
         uses: actions/cache@v2
@@ -270,8 +272,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            app/libs/shadowsocks-release.aar
+            app/libs/shadowsocks.aar
           key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+      - name: Shadowsocks (libev) Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/shadowsocks-libev.aar
+          key: ${{ hashFiles('library/shadowsocks-libev/build.gradle.kts', 'shadowsocks_libev_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
