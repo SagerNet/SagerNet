@@ -642,12 +642,47 @@
     <string-array name="ss_aead_provider">
         <item>V2Ray</item>
         <item>shadowsocks-rust</item>
+        <item>shadowsocks-libev</item>
         <item>Clash</item>
+    </string-array>
+    <string-array name="ss_aead_provider_values">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="ss_aead_provider_api21">
+        <item>V2Ray</item>
+        <item>shadowsocks-libev</item>
+        <item>Clash</item>
+    </string-array>
+    <string-array name="ss_aead_provider_api21_values">
+        <item>0</item>
+        <item>3</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="ss_stream_provider">
         <item>shadowsocks-rust</item>
+        <item>shadowsocks-libev</item>
         <item>Clash</item>
+    </string-array>
+
+    <string-array name="ss_stream_provider_values">
+        <item>0</item>
+        <item>2</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="ss_stream_provider_api21">
+        <item>shadowsocks-libev</item>
+        <item>Clash</item>
+    </string-array>
+
+    <string-array name="ss_stream_provider_api21_values">
+        <item>2</item>
+        <item>1</item>
     </string-array>
 
     <string-array name="group_types">

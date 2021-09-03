@@ -198,11 +198,13 @@ object ShadowsocksProvider {
     const val V2RAY = 0
     const val SHADOWSOCKS_RUST = 1
     const val CLASH = 2
+    const val SHADOWSOCKS_LIBEV = 3
 }
 
 object ShadowsocksStreamProvider {
     const val SHADOWSOCKS_RUST = 0
     const val CLASH = 1
+    const val SHADOWSOCKS_LIBEV = 2
 }
 
 object IPv6Mode {

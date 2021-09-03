@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.database
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
@@ -311,19 +312,17 @@ data class ProxyEntity(
                 for ((isBalancer, chain) in config.index) {
                     chain.entries.forEachIndexed { index, (port, profile) ->
                         val needChain = !isBalancer && index != chain.size - 1
-                        val bean = profile.requireBean()
-                        when {
-                            pickShadowsocksProvider() == ShadowsocksProvider.SHADOWSOCKS_RUST -> {
-                                bean as ShadowsocksBean
+                        when (val bean = profile.requireBean()) {
+                            is ShadowsocksBean -> {
                                 append("\n\n")
                                 append(bean.buildShadowsocksConfig(port))
 
                             }
-                            bean is ShadowsocksRBean -> {
+                            is ShadowsocksRBean -> {
                                 append("\n\n")
                                 append(bean.buildShadowsocksRConfig())
                             }
-                            bean is TrojanGoBean -> {
+                            is TrojanGoBean -> {
                                 append("\n\n")
                                 append(
                                     bean.buildTrojanGoConfig(
@@ -331,15 +330,15 @@ data class ProxyEntity(
                                     )
                                 )
                             }
-                            bean is NaiveBean -> {
+                            is NaiveBean -> {
                                 append("\n\n")
                                 append(bean.buildNaiveConfig(port))
                             }
-                            bean is RelayBatonBean -> {
+                            is RelayBatonBean -> {
                                 append("\n\n")
                                 append(bean.buildRelayBatonConfig(port))
                             }
-                            bean is HysteriaBean -> {
+                            is HysteriaBean -> {
                                 append("\n\n")
                                 append(bean.buildHysteriaConfig(port, null))
                             }
@@ -406,18 +405,25 @@ data class ProxyEntity(
                 ) -> {
                     return ShadowsocksProvider.CLASH
                 }
-                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust && !ssPluginSupportedByClash(
+                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && bean.method in methodsSsRust && !ssPluginSupportedByClash(
                     false
                 ) -> {
                     return ShadowsocksProvider.SHADOWSOCKS_RUST
+                }
+                prefer == ShadowsocksProvider.SHADOWSOCKS_LIBEV && bean.method in methodsSsLibev && !ssPluginSupportedByClash(
+                    false
+                ) -> {
+                    return ShadowsocksProvider.SHADOWSOCKS_LIBEV
                 }
             }
             return if (ssPreferClash()) {
                 ShadowsocksProvider.CLASH
             } else if (bean.method in methodsV2fly && bean.plugin.isBlank()) {
                 ShadowsocksProvider.V2RAY
-            } else {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ShadowsocksProvider.SHADOWSOCKS_RUST
+            } else {
+                ShadowsocksProvider.SHADOWSOCKS_LIBEV
             }
         } else {
             val prefer = DataStore.providerShadowsocksStream
@@ -427,16 +433,23 @@ data class ProxyEntity(
                 ) -> {
                     return ShadowsocksProvider.CLASH
                 }
-                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_RUST && bean.method in methodsSsRust && !ssPluginSupportedByClash(
+                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_RUST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && bean.method in methodsSsRust && !ssPluginSupportedByClash(
                     false
                 ) -> {
                     return ShadowsocksProvider.SHADOWSOCKS_RUST
                 }
+                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_LIBEV && bean.method in methodsSsLibev && !ssPluginSupportedByClash(
+                    false
+                ) -> {
+                    return ShadowsocksProvider.SHADOWSOCKS_LIBEV
+                }
             }
             return if (ssPreferClash()) {
                 ShadowsocksProvider.CLASH
-            } else {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ShadowsocksProvider.SHADOWSOCKS_RUST
+            } else {
+                ShadowsocksProvider.SHADOWSOCKS_LIBEV
             }
         }
     }
@@ -454,14 +467,14 @@ data class ProxyEntity(
                 return prefer
             } catch (e: Exception) {
             }
+            return true
         }
-
-        return true
+        return prefer
     }
 
     fun ssPreferClash(): Boolean {
         val bean = ssBean ?: return false
-        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust
+        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust && bean.method !in methodsSsLibev
         return onlyClash || ssPluginSupportedByClash(false)
     }
 

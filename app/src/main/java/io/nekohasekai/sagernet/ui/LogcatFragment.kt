@@ -100,9 +100,21 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "tag,color",
                 "AndroidRuntime:D",
                 "ProxyInstance:D",
+                "GuardedProcessPool:D",
                 "VpnService:D",
                 "libcore:D",
                 "v2ray-core:D",
+
+                "libsslocal:D",
+                "libss-local:D",
+                "libtrojan:D",
+                "libtrojan:D",
+                "libnaive:D",
+                "libbrook:D",
+                "libhysteria:D",
+                "libpingtunnel:D",
+                "librelaybaton:D",
+
                 "*:S"
             ), arrayOf(), 3000, this
         )

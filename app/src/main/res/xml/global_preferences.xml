@@ -144,7 +144,7 @@
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/ss_aead_provider"
-            app:entryValues="@array/int_array_3"
+            app:entryValues="@array/ss_aead_provider_values"
             app:icon="@drawable/ic_baseline_nfc_24"
             app:key="providerShadowsocksAEAD"
             app:title="@string/ss_aead_provider"
@@ -152,7 +152,7 @@
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/ss_stream_provider"
-            app:entryValues="@array/int_array_2"
+            app:entryValues="@array/ss_stream_provider_values"
             app:key="providerShadowsocksStream"
             app:title="@string/ss_stream_provider"
             app:useSimpleSummaryProvider="true" />

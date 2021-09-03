@@ -31,8 +31,19 @@ import java.io.IOException
 
 object Executable {
     const val SS_LOCAL = "libsslocal.so"
+    const val SS_LIBEV_LOCAL = "libss-local.so"
 
-    private val EXECUTABLES = setOf(SS_LOCAL)
+    private val EXECUTABLES = setOf(
+        SS_LOCAL,
+        SS_LIBEV_LOCAL,
+        "libtrojan.so",
+        "libtrojan-go.so",
+        "libnaive.so",
+        "libbrook.so",
+        "libhysteria.so",
+        "libpingtunnel.so",
+        "librelaybaton.so"
+    )
 
     fun killAll() {
         for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }

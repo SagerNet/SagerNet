@@ -71,7 +71,7 @@ class GuardedProcessPool(private val onFatal: suspend (IOException) -> Unit) : C
                         streamLogger(process.errorStream) { Log.e(cmdName, it) }
                     }
                     thread(name = "stdout-$cmdName") {
-                        streamLogger(process.inputStream) { Log.v(cmdName, it) }
+                        streamLogger(process.inputStream) { Log.i(cmdName, it) }
                         // this thread also acts as a daemon thread for waitFor
                         runBlocking { exitChannel.send(process.waitFor()) }
                     }
