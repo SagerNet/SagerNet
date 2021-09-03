@@ -1,5 +1,7 @@
 include(":library:include")
 include(":library:shadowsocks")
+include(":library:shadowsocks-libev")
+
 include(":library:proto")
 include(":library:proto-stub")
 

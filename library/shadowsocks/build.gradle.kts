@@ -8,6 +8,10 @@ plugins {
 setupCommon()
 setupNdk()
 
+dependencies {
+    implementation(project(":library:shadowsocks-libev"))
+}
+
 cargo {
     module = "src/main/rust/shadowsocks-rust"
     libname = "sslocal"

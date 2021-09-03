@@ -40,3 +40,25 @@
 [submodule "external/termux-view"]
 	path = external/termux-view
 	url = https://github.com/SagerNet/termux-view
+[submodule "library/shadowsocks-libev/src/main/jni/libev"]
+	path = library/shadowsocks-libev/src/main/jni/libev
+	url = https://git.lighttpd.net/mirrors/libev.git
+[submodule "library/shadowsocks-libev/src/main/jni/libancillary"]
+	path = library/shadowsocks-libev/src/main/jni/libancillary
+	url = https://github.com/shadowsocks/libancillary.git
+[submodule "library/shadowsocks-libev/src/main/jni/libevent"]
+	path = library/shadowsocks-libev/src/main/jni/libevent
+	url = https://github.com/shadowsocks/libevent.git
+[submodule "library/shadowsocks-libev/src/main/jni/mbedtls"]
+	path = library/shadowsocks-libev/src/main/jni/mbedtls
+	url = https://github.com/SagerNet/mbedtls
+[submodule "library/shadowsocks-libev/src/main/jni/pcre"]
+	path = library/shadowsocks-libev/src/main/jni/pcre
+	url = https://android.googlesource.com/platform/external/pcre
+[submodule "library/shadowsocks-libev/src/main/jni/libsodium"]
+	path = library/shadowsocks-libev/src/main/jni/libsodium
+	url = https://github.com/jedisct1/libsodium.git
+	branch = stable
+[submodule "library/shadowsocks-libev/src/main/jni/shadowsocks-libev"]
+	path = library/shadowsocks-libev/src/main/jni/shadowsocks-libev
+	url = https://github.com/shadowsocks/shadowsocks-libev
