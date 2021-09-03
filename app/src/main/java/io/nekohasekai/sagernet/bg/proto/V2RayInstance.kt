@@ -161,7 +161,8 @@ abstract class V2RayInstance(
                         initPlugin("hysteria-plugin")
                         pluginConfigs[port] = profile.type to bean.buildHysteriaConfig(port) {
                             File(
-                                app.noBackupFilesDir, "hysteria_" + SystemClock.elapsedRealtime() + ".ca"
+                                app.noBackupFilesDir,
+                                "hysteria_" + SystemClock.elapsedRealtime() + ".ca"
                             ).apply {
                                 parentFile?.mkdirs()
                                 cacheFiles.add(this)
@@ -234,6 +235,8 @@ abstract class V2RayInstance(
 
                         if (profileType == ShadowsocksProvider.SHADOWSOCKS_RUST) {
                             commands.add("--log-without-time")
+                        } else {
+                            commands.addAll(arrayOf("-u", "-t", "600"))
                         }
 
                         if (DataStore.enableLog) commands.add("-v")
