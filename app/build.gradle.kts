@@ -43,8 +43,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.work:work-runtime-ktx:2.7.0-alpha05")
-    implementation("androidx.work:work-multiprocess:2.7.0-alpha05")
+    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")
+    implementation("androidx.work:work-multiprocess:2.7.0-beta01")
 
     implementation(project(":external:preferencex:preferencex"))
     implementation(project(":external:preferencex:preferencex-simplemenu"))

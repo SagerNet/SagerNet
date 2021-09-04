@@ -417,4 +417,7 @@
     <string name="menu_log">日志</string>
     <string name="menu_tools">工具</string>
     <string name="translate_platform">翻译平台</string>
+    <string name="wireguard_local_address">本地地址</string>
+    <string name="wireguard_public_key">节点公钥</string>
+    <string name="wireguard_psk">节点预共享密钥</string>
 </resources>
