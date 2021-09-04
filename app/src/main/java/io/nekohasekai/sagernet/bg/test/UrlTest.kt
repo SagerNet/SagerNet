@@ -32,7 +32,6 @@ class UrlTest {
     suspend fun doTest(profile: ProxyEntity): Int {
         if (profile.useClashBased()) {
             val instance = when (profile.type) {
-                ProxyEntity.TYPE_SOCKS -> Socks4To5Instance(profile.socksBean!!, 0)
                 ProxyEntity.TYPE_SS -> ShadowsocksInstance(profile.ssBean!!, 0)
                 ProxyEntity.TYPE_SSR -> ShadowsocksRInstance(profile.ssrBean!!, 0)
                 ProxyEntity.TYPE_SNELL -> SnellInstance(profile.snellBean!!, 0)

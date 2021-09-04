@@ -189,9 +189,6 @@ abstract class V2RayInstance(
                             }
                         }
                     }
-                    is SOCKSBean -> {
-                        externalInstances[port] = Socks4To5Instance(bean, port)
-                    }
                     is SnellBean -> {
                         externalInstances[port] = SnellInstance(bean, port)
                     }

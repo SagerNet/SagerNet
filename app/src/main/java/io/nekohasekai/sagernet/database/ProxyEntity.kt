@@ -360,7 +360,7 @@ data class ProxyEntity(
 
     fun needExternal(): Boolean {
         return when (type) {
-            TYPE_SOCKS -> socksBean!!.protocol != SOCKSBean.PROTOCOL_SOCKS5
+            TYPE_SOCKS -> false
             TYPE_HTTP -> false
             TYPE_SS -> pickShadowsocksProvider() != ShadowsocksProvider.V2RAY
             TYPE_VMESS -> false
@@ -375,7 +375,6 @@ data class ProxyEntity(
     fun useClashBased(): Boolean {
         if (!needExternal()) return false
         return when (type) {
-            TYPE_SOCKS -> socksBean!!.protocol != SOCKSBean.PROTOCOL_SOCKS5
             TYPE_SS -> pickShadowsocksProvider() == ShadowsocksProvider.CLASH
             TYPE_SSR -> true
             TYPE_SNELL -> true
