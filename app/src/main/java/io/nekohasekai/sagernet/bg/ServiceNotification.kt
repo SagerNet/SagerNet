@@ -102,10 +102,20 @@ class ServiceNotification(
                 show()
             }
 
-            override fun profilePersisted(profileId: Long) {}
-            override fun missingPlugin(profileName: String?, pluginName: String?) {}
-            override fun statsUpdated(statsList: AppStatsList?) {}
-            override fun routeAlert(type: Int, routeName: String?) {}
+            override fun statsUpdated(statsList: AppStatsList?) {
+            }
+
+            override fun observatoryResultsUpdated(groupId: Long) {
+            }
+
+            override fun profilePersisted(profileId: Long) {
+            }
+
+            override fun missingPlugin(profileName: String?, pluginName: String?) {
+            }
+
+            override fun routeAlert(type: Int, routeName: String?) {
+            }
         }
     }
     private var callbackRegistered = false

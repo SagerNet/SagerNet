@@ -45,7 +45,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
-import io.nekohasekai.sagernet.ktx.USE_STATS_SERVICE
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isRunning
 import io.nekohasekai.sagernet.ktx.mkPort
@@ -64,7 +63,6 @@ const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
 const val TAG_API_IN = "api-in"
-const val TAG_API = "api"
 
 const val LOCALHOST = "127.0.0.1"
 const val IP6_LOCALHOST = "::1"
@@ -861,13 +859,13 @@ fun buildV2RayConfig(
                         if (requireTransproxy) inboundTag.add(TAG_TRANS)
                         balancerTag = "balancer-$tagOutbound"
                     }
-                    outbounds.add(0, OutboundObject().apply {
+                   /* outbounds.add(0, OutboundObject().apply {
                         protocol = "loopback"
                         settings = LazyOutboundConfigurationObject(this,
                             LoopbackOutboundConfigurationObject().apply {
                                 inboundTag = TAG_SOCKS
                             })
-                    })
+                    })*/
                 }
             }
 
@@ -1130,7 +1128,7 @@ fun buildV2RayConfig(
 
         stats = emptyMap()
 
-        val apiPort = DataStore.apiPort
+       /* val apiPort = DataStore.apiPort
 
         api = ApiObject().apply {
             tag = TAG_API
@@ -1165,6 +1163,8 @@ fun buildV2RayConfig(
                 outboundTag = TAG_API
             })
         }
+
+        */
     }.let {
         V2rayBuildResult(
             gson.toJson(it),

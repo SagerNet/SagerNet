@@ -1,6 +1,5 @@
 /******************************************************************************
- *                                                                            *
- * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
+ * Copyright (C) 2021 by nekohasekai <contact-git@sekai.icu>                  *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -17,15 +16,23 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ktx
-/*
+package io.nekohasekai.sagernet.bg.observatory;
 
-import io.grpc.okhttp.OkHttpChannelBuilder
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.fmt.LOCALHOST
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
+import java.util.List;
 
-fun createChannel() =
-    OkHttpChannelBuilder.forAddress(LOCALHOST, DataStore.apiPort).usePlaintext()
-        .executor(Dispatchers.Default.asExecutor()).build()*/
+public class ObservatoryStatus {
+
+    public List<Status> status;
+
+    public static class Status {
+
+        public boolean alive;
+        public Long lastSeenTime;
+        public Long lastTryTime;
+        public String lastErrorReason;
+        public String outboundTag;
+        public Long delay;
+
+    }
+
+}

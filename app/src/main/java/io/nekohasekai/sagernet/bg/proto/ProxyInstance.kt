@@ -20,19 +20,17 @@
 package io.nekohasekai.sagernet.bg.proto
 
 import cn.hutool.core.util.NumberUtil
-import com.v2ray.core.app.observatory.command.GetOutboundStatusRequest
-import com.v2ray.core.app.observatory.command.ObservatoryServiceGrpcKt
-import com.v2ray.core.app.stats.command.GetStatsRequest
-import com.v2ray.core.app.stats.command.StatsServiceGrpcKt
-import io.grpc.ManagedChannel
-import io.grpc.StatusException
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
+import io.nekohasekai.sagernet.bg.observatory.ObservatoryStatus
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.fmt.gson.gson
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.*
 import libcore.Libcore
@@ -42,11 +40,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     profile
 ) {
 
-    lateinit var managedChannel: ManagedChannel
-    val statsService by lazy { StatsServiceGrpcKt.StatsServiceCoroutineStub(managedChannel) }
-    val observatoryService by lazy {
-        ObservatoryServiceGrpcKt.ObservatoryServiceCoroutineStub(managedChannel)
-    }
     lateinit var observatoryJob: Job
 
     override fun init() {
@@ -70,50 +63,17 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     override fun launch() {
         super.launch()
 
-        if (config.enableApi) {
-            managedChannel = createChannel()
-        }
-
         if (config.observatoryTags.isNotEmpty()) {
             observatoryJob = runOnDefaultDispatcher {
                 val interval = 10000L
                 while (isActive) {
                     try {
-                        val statusList = observatoryService.getOutboundStatus(
-                            GetOutboundStatusRequest.getDefaultInstance()
-                        ).status.statusList
-                        if (!isActive) break
-                        statusList.forEach { status ->
-                            val profileId = status.outboundTag.substringAfter("global-")
-                            if (NumberUtil.isLong(profileId)) {
-                                val profile = SagerDatabase.proxyDao.getById(profileId.toLong())
-                                if (profile != null) {
-                                    val newStatus = if (status.alive) 1 else 3
-                                    val newDelay = status.delay.toInt()
-                                    val newErrorReason = status.lastErrorReason
-
-                                    if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
-                                        profile.status = newStatus
-                                        profile.ping = newDelay
-                                        profile.error = newErrorReason
-                                        SagerDatabase.proxyDao.updateProxy(profile)
-                                        onMainDispatcher {
-                                            service.data.binder.broadcast {
-                                                it.profilePersisted(profile.id)
-                                            }
-                                        }
-                                        Logs.d("Send result for #$profileId ${profile.displayName()}")
-                                    }
-                                } else {
-                                    Logs.d("Profile with id #$profileId not found")
-                                }
-                            } else {
-                                Logs.d("Persist skipped on outbound ${status.outboundTag}")
-                            }
+                        loopObservatoryResults()
+                    } catch (e: Exception) {
+                        if (e.message?.contains("unavailable") == false) {
+                            Logs.w(e)
                         }
-                    } catch (e: StatusException) {
-                        if (closed) break
-                        Logs.w(e)
+                        break
                     }
                     delay(interval)
                 }
@@ -129,6 +89,55 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         SagerNet.started = true
     }
 
+    suspend fun loopObservatoryResults() {
+        val statusList = gson.fromJson(v2rayPoint.observatoryStatus, ObservatoryStatus::class.java)
+        val notify = mutableSetOf<Long>()
+        for (status in statusList.status) {
+            val profileId = status.outboundTag.substringAfter("global-")
+            if (NumberUtil.isLong(profileId)) {
+                val id = profileId.toLong()
+                var flush = false
+                val profile = when {
+                    id == profile.id -> profile
+                    statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
+                    else -> {
+                        flush = true
+                        SagerDatabase.proxyDao.getById(id)
+                    }
+                }
+
+                if (profile != null) {
+                    val newStatus = if (status.alive) 1 else 3
+                    val newDelay = status.delay.toInt()
+                    val newErrorReason = status.lastErrorReason
+
+                    if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
+                        profile.status = newStatus
+                        profile.ping = newDelay
+                        profile.error = newErrorReason
+
+                        notify.add(profile.groupId)
+                        if (flush) SagerDatabase.proxyDao.updateProxy(profile)
+
+                        Logs.d("Send result for #$profileId ${profile.displayName()}")
+                    }
+                } else {
+                    Logs.d("Profile with id #$profileId not found")
+                }
+            } else {
+                Logs.d("Persist skipped on outbound ${status.outboundTag}")
+            }
+        }
+        if (notify.isNotEmpty()) {
+            onMainDispatcher {
+                service.data.binder.broadcast {
+                    for (groupId in notify) it.observatoryResultsUpdated(groupId)
+                }
+            }
+        }
+    }
+
+
     override fun destroy(scope: CoroutineScope) {
         SagerNet.started = false
 
@@ -138,44 +147,12 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         if (::observatoryJob.isInitialized) {
             observatoryJob.cancel()
         }
-
-        if (::managedChannel.isInitialized) {
-            managedChannel.shutdownNow()
-        }
     }
 
     // ------------- stats -------------
 
     private suspend fun queryStats(tag: String, direct: String): Long {
-        if (USE_STATS_SERVICE) {
-            try {
-                return queryStatsGrpc(tag, direct)
-            } catch (e: StatusException) {
-                if (closed) return 0L
-                Logs.w(e)
-                if (isExpert) return 0L
-            }
-        }
         return v2rayPoint.queryStats(tag, direct)
-    }
-
-    private suspend fun queryStatsGrpc(tag: String, direct: String): Long {
-        if (!::managedChannel.isInitialized) {
-            return 0L
-        }
-        try {
-            return statsService.getStats(
-                GetStatsRequest.newBuilder()
-                    .setName("outbound>>>$tag>>>traffic>>>$direct")
-                    .setReset(true)
-                    .build()
-            ).stat.value
-        } catch (e: StatusException) {
-            if (e.status.description?.contains("not found") == true) {
-                return 0L
-            }
-            throw e
-        }
     }
 
     private val currentTags by lazy {

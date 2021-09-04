@@ -49,6 +49,8 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
         fun stateChanged(state: BaseService.State, profileName: String?, msg: String?)
         fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {}
         fun statsUpdated(stats: List<AppStats>) {}
+        fun observatoryResultsUpdated(groupId: Long) {}
+
         fun profilePersisted(profileId: Long) {}
         fun missingPlugin(profileName: String, pluginName: String) {}
         fun routeAlert(type: Int, routeName: String) {}
@@ -103,6 +105,13 @@ class SagerConnection(private var listenForDeath: Boolean = false) : ServiceConn
             val callback = callback ?: return
             runOnMainDispatcher {
                 callback.routeAlert(type, routeName)
+            }
+        }
+
+        override fun observatoryResultsUpdated(groupId: Long) {
+            val callback = callback ?: return
+            runOnMainDispatcher {
+                callback.observatoryResultsUpdated(groupId)
             }
         }
     }
