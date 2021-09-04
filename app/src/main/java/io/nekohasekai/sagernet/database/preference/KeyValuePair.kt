@@ -45,6 +45,9 @@ class KeyValuePair() {
         @Query("SELECT * FROM `KeyValuePair`")
         fun all(): List<KeyValuePair>
 
+        @Query("DELETE FROM `KeyValuePair`")
+        fun deleteAll(): Int
+
         @Query("SELECT * FROM `KeyValuePair` WHERE `key` = :key")
         operator fun get(key: String): KeyValuePair?
 

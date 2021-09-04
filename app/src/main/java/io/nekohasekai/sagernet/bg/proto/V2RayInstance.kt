@@ -28,10 +28,7 @@ import android.webkit.WebViewClient
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ShadowsocksProvider
 import io.nekohasekai.sagernet.TrojanProvider
-import io.nekohasekai.sagernet.bg.AbstractInstance
-import io.nekohasekai.sagernet.bg.Executable
-import io.nekohasekai.sagernet.bg.ExternalInstance
-import io.nekohasekai.sagernet.bg.GuardedProcessPool
+import io.nekohasekai.sagernet.bg.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
@@ -59,6 +56,8 @@ import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
+import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.CoroutineScope
@@ -168,6 +167,10 @@ abstract class V2RayInstance(
                                 cacheFiles.add(this)
                             }
                         }
+                    }
+                    is WireGuardBean -> {
+                        initPlugin("wireguard-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildWireGuardUapiConf()
                     }
                     is ConfigBean -> {
                         when (bean.type) {
@@ -384,6 +387,30 @@ abstract class V2RayInstance(
                             "--log-level",
                             if (DataStore.enableLog) "trace" else "warn",
                             "client"
+                        )
+
+                        processes.start(commands)
+                    }
+                    bean is WireGuardBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "wg_" + SystemClock.elapsedRealtime() + ".conf"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf(
+                            initPlugin("wireguard-plugin").path,
+                            "-a",
+                            bean.localAddress,
+                            "-b",
+                            "127.0.0.1:$port",
+                            "-c",
+                            configFile.absolutePath,
+                            "-d",
+                            "127.0.0.1:${DataStore.localDNSPort}"
                         )
 
                         processes.start(commands)

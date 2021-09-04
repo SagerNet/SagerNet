@@ -17,6 +17,7 @@ when {
         include(":plugin:trojan")
         include(":plugin:trojan-go")
         include(":plugin:hysteria")
+        include(":plugin:wireguard")
     }
     buildPlugin == "none" -> {
     }

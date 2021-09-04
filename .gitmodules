@@ -62,3 +62,6 @@
 [submodule "library/shadowsocks-libev/src/main/jni/shadowsocks-libev"]
 	path = library/shadowsocks-libev/src/main/jni/shadowsocks-libev
 	url = https://github.com/SagerNet/shadowsocks-libev
+[submodule "plugin/wireguard/src/main/go/wgsocks"]
+	path = plugin/wireguard/src/main/go/wgsocks
+	url = https://github.com/SagerNet/wgsocks

@@ -114,6 +114,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "libhysteria:D",
                 "libpingtunnel:D",
                 "librelaybaton:D",
+                "libwg:D",
 
                 "*:S"
             ), arrayOf(), 3000, this

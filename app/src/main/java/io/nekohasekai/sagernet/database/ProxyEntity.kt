@@ -68,6 +68,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
+import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.ssSecureList
@@ -102,6 +103,7 @@ data class ProxyEntity(
     var hysteriaBean: HysteriaBean? = null,
     var snellBean: SnellBean? = null,
     var sshBean: SSHBean? = null,
+    var wgBean: WireGuardBean? = null,
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
     var balancerBean: BalancerBean? = null
@@ -123,6 +125,7 @@ data class ProxyEntity(
         const val TYPE_HYSTERIA = 15
         const val TYPE_SNELL = 16
         const val TYPE_SSH = 17
+        const val TYPE_WG = 18
 
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14
@@ -185,6 +188,8 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_SNELL -> snellBean = KryoConverters.snellDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
+            TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
+
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_BALANCER -> balancerBean = KryoConverters.balancerBeanDeserialize(byteArray)
@@ -220,6 +225,7 @@ data class ProxyEntity(
         TYPE_HYSTERIA -> "Hysteria"
         TYPE_SNELL -> "Snell"
         TYPE_SSH -> "SSH"
+        TYPE_WG -> "WireGuard"
         TYPE_CHAIN -> chainName
         TYPE_CONFIG -> configName
         TYPE_BALANCER -> balancerName
@@ -246,6 +252,7 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> hysteriaBean
             TYPE_SNELL -> snellBean
             TYPE_SSH -> sshBean
+            TYPE_WG -> wgBean
 
             TYPE_CONFIG -> configBean
             TYPE_CHAIN -> chainBean
@@ -271,6 +278,7 @@ data class ProxyEntity(
             is HysteriaBean -> false
             is SnellBean -> false
             is SSHBean -> false
+            is WireGuardBean -> false
             else -> true
         }
     }
@@ -293,6 +301,7 @@ data class ProxyEntity(
             is HysteriaBean -> toUniversalLink()
             is SnellBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
+            is WireGuardBean -> toUniversalLink()
             else -> null
         }
     }
@@ -494,6 +503,7 @@ data class ProxyEntity(
         hysteriaBean = null
         snellBean = null
         sshBean = null
+        wgBean = null
 
         configBean = null
         chainBean = null
@@ -560,6 +570,10 @@ data class ProxyEntity(
                 type = TYPE_SSH
                 sshBean = bean
             }
+            is WireGuardBean -> {
+                type = TYPE_WG
+                wgBean = bean
+            }
             is ConfigBean -> {
                 type = TYPE_CONFIG
                 configBean = bean
@@ -595,6 +609,7 @@ data class ProxyEntity(
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
                 TYPE_SNELL -> SnellSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
+                TYPE_WG -> WireGuardSettingsActivity::class.java
 
                 TYPE_CONFIG -> ConfigSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java

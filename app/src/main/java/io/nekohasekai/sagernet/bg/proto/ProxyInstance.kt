@@ -51,7 +51,9 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
     override fun init() {
         if (service is VpnService) {
-            Libcore.setProtector { service.protect(it.toInt()) }
+            Libcore.setProtector { service.protect(it) }
+        } else {
+            Libcore.setProtector { true }
         }
 
         Libcore.setIPv6Mode(DataStore.ipv6Mode.toLong())

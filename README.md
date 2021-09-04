@@ -31,6 +31,7 @@ The application is designed to be used whenever possible.
 * relaybaton ( relaybaton-plugin )
 * Brook ( brook-plugin )
 * Hysteria ( hysteria-plugin )
+* WireGuard ( wireguard-plugin )
 
 ##### ROOT required
 
@@ -109,6 +110,8 @@ Licensed under [GPLv3][clash]
     <li><a href="https://github.com/iyouport-org/relaybaton/blob/ech/LICENSE">iyouport-org/relaybaton</a>:  <code>MIT</code></li>
     <li><a href="https://github.com/txthinking/brook/blob/master/LICENSE">txthinking/brook</a>:  <code>GPL 3.0</code></li>
     <li><a href="https://github.com/HyNetwork/hysteria/blob/master/LICENSE.md">HyNetwork/hysteria</a>:  <code>MIT</code></li>
+    <li><a href="https://github.com/WireGuard/wireguard-go/blob/master/LICENSE">WireGuard/wireguard-go</a>:  <code>MIT</code></li>
+
 </ul>
 
 ## License

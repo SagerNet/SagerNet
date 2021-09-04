@@ -25,6 +25,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.OpenableColumns
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
@@ -70,11 +71,13 @@ import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
 import libcore.Libcore
+import okhttp3.internal.closeQuietly
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.UnknownHostException
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.zip.ZipInputStream
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false,
@@ -172,11 +175,34 @@ class ConfigurationFragment @JvmOverloads constructor(
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
         if (it != null) runOnDefaultDispatcher {
             try {
-                val fileText = requireContext().contentResolver.openInputStream(it)!!
-                    .bufferedReader()
-                    .readText()
-                val proxies = RawUpdater.parseRaw(fileText)
-                if (proxies.isNullOrEmpty()) onMainDispatcher {
+                val fileName = requireContext().contentResolver.query(it, null, null, null, null)
+                    ?.use { cursor ->
+                        cursor.moveToFirst()
+                        cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+                            .let(cursor::getString)
+                    }
+
+                val proxies = mutableListOf<AbstractBean>()
+                if (fileName != null && fileName.endsWith(".zip")) {
+                    // try parse wireguard zip
+
+                    val zip = ZipInputStream(requireContext().contentResolver.openInputStream(it)!!)
+                    while (true) {
+                        val entry = zip.nextEntry ?: break
+                        if (entry.isDirectory) continue
+                        val fileText = zip.bufferedReader().readText()
+                        RawUpdater.parseRaw(fileText)?.let { pl -> proxies.addAll(pl) }
+                        zip.closeEntry()
+                    }
+                    zip.closeQuietly()
+                } else {
+                    val fileText = requireContext().contentResolver.openInputStream(it)!!
+                        .bufferedReader()
+                        .readText()
+                    RawUpdater.parseRaw(fileText)?.let { pl -> proxies.addAll(pl) }
+                }
+
+                if (proxies.isEmpty()) onMainDispatcher {
                     snackbar(getString(R.string.no_proxies_found_in_file)).show()
                 } else import(proxies)
             } catch (e: SubscriptionFoundException) {
@@ -290,6 +316,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             R.id.action_new_ssh -> {
                 startActivity(Intent(requireActivity(), SSHSettingsActivity::class.java))
+            }
+            R.id.action_new_wg -> {
+                startActivity(Intent(requireActivity(), WireGuardSettingsActivity::class.java))
             }
             R.id.action_new_config -> {
                 startActivity(Intent(requireActivity(), ConfigSettingsActivity::class.java))
@@ -758,7 +787,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
 
-                val hideUngrouped = groupList.size > 1 && SagerDatabase.proxyDao.countByGroup(groupList.find { it.ungrouped }!!.id) == 0L
+                val hideUngrouped = groupList.size > 1 && SagerDatabase.proxyDao.countByGroup(
+                    groupList.find { it.ungrouped }!!.id
+                ) == 0L
 
                 if (hideUngrouped) groupList.removeAll { it.ungrouped }
 

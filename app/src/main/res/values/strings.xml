@@ -217,6 +217,7 @@
     <string name="action_hysteria" translatable="false">Hysteria</string>
     <string name="action_snell" translatable="false">Snell</string>
     <string name="action_ssh" translatable="false">SSH</string>
+    <string name="action_wireguard" translatable="false">WireGuard</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -453,5 +454,8 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_log">Logs</string>
     <string name="clear_logcat">Clear Logcat</string>
+    <string name="wireguard_local_address">Local Address</string>
+    <string name="wireguard_public_key">Peer Public Key</string>
+    <string name="wireguard_psk">Peer Pre-Shared Key</string>
 
 </resources>
