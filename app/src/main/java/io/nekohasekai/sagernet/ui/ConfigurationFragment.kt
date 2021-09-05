@@ -172,10 +172,10 @@ class ConfigurationFragment @JvmOverloads constructor(
         super.onDestroy()
     }
 
-    val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        if (it != null) runOnDefaultDispatcher {
+    val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) { file ->
+        if (file != null) runOnDefaultDispatcher {
             try {
-                val fileName = requireContext().contentResolver.query(it, null, null, null, null)
+                val fileName = requireContext().contentResolver.query(file, null, null, null, null)
                     ?.use { cursor ->
                         cursor.moveToFirst()
                         cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
@@ -186,7 +186,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (fileName != null && fileName.endsWith(".zip")) {
                     // try parse wireguard zip
 
-                    val zip = ZipInputStream(requireContext().contentResolver.openInputStream(it)!!)
+                    val zip = ZipInputStream(requireContext().contentResolver.openInputStream(file)!!)
                     while (true) {
                         val entry = zip.nextEntry ?: break
                         if (entry.isDirectory) continue
@@ -196,9 +196,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                     zip.closeQuietly()
                 } else {
-                    val fileText = requireContext().contentResolver.openInputStream(it)!!
-                        .bufferedReader()
-                        .readText()
+                    val fileText = requireContext().contentResolver.openInputStream(file)!!.use {
+                        it.bufferedReader().readText()
+                    }
                     RawUpdater.parseRaw(fileText)?.let { pl -> proxies.addAll(pl) }
                 }
 

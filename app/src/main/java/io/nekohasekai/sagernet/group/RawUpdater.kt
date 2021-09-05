@@ -411,11 +411,11 @@ object RawUpdater : GroupUpdater() {
             }
 
             val peerBean = bean.clone()
-            peerBean.serverAddress = endpoint.substringBefore(":")
-            peerBean.serverPort = endpoint.substringAfter(":").toIntOrNull() ?: continue
+            peerBean.serverAddress = endpoint.substringBeforeLast(":")
+            peerBean.serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
             peerBean.peerPublicKey = peer["PublicKey"] ?: continue
             peerBean.peerPreSharedKey = peer["PresharedKey"]
-            beans.add(peerBean)
+            beans.add(peerBean.applyDefaultValues())
         }
         if (beans.isEmpty()) error("Empty available peer list")
         return beans
