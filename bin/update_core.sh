@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pushd library/core
-git fetch origin main || exit 1
-git reset origin/main --hard
+git fetch origin v5 || exit 1
+git reset origin/v5 --hard
 popd
 
 pushd external/v2ray-core
-git fetch origin master || exit 1
-git reset origin/master --hard
+git fetch origin dev-v5z || exit 1
+git reset origin/dev-v5z --hard
 popd
 
 git add .

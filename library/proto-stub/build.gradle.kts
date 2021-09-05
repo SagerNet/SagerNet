@@ -16,17 +16,17 @@ dependencies {
     protobuf(project(":library:proto"))
 
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
-    api("io.grpc:grpc-protobuf-lite:$grpcVersion")
+/*    api("io.grpc:grpc-protobuf:$grpcVersion")
     api("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
-    api("io.grpc:grpc-stub:$grpcVersion")
-    api("com.google.protobuf:protobuf-javalite:$protobufVersion")
+    api("io.grpc:grpc-stub:$grpcVersion")*/
+    api("com.google.protobuf:protobuf-java:$protobufVersion")
 }
 
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:$protobufVersion"
     }
-    plugins {
+/*    plugins {
         id("java") {
             artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
         }
@@ -36,19 +36,19 @@ protobuf {
         id("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:$grpcKotlinVersion:jdk7@jar"
         }
-    }
+    }*/
     generateProtoTasks {
         all().forEach {
             it.plugins {
                 id("java") {
-                    option("lite")
+//                    option("lite")
                 }
-                id("grpc") {
+/*                id("grpc") {
                     option("lite")
                 }
                 id("grpckt") {
                     option("lite")
-                }
+                }*/
             }
         }
     }
