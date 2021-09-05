@@ -397,7 +397,9 @@ object RawUpdater : GroupUpdater() {
         val ini = Ini(StringReader(conf))
         val iface = ini["Interface"] ?: error("Missing 'Interface' selection")
         val bean = WireGuardBean().applyDefaultValues()
-        bean.localAddress = iface["Address"]?.substringBefore("/")
+        bean.localAddress = iface["Address"]?.let { address ->
+            address.split(",").joinToString("\n") { it.substringBefore("/") }
+        }
         bean.privateKey = iface["PrivateKey"]
         val peers = ini.getAll("Peer")
         if (peers.isNullOrEmpty()) error("Missing 'Peer' selections")
