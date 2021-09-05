@@ -401,7 +401,7 @@ abstract class V2RayInstance(
                         val commands = mutableListOf(
                             initPlugin("wireguard-plugin").path,
                             "-a",
-                            bean.localAddress,
+                            bean.localAddress.split("\n").joinToString(","),
                             "-b",
                             "127.0.0.1:$port",
                             "-c",
