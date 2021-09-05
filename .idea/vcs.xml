@@ -28,6 +28,7 @@
     <mapping directory="$PROJECT_DIR$/plugin/naive/src/main/jni/naiveproxy" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/pingtunnel/src/main/go/pingtunnel" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/relaybaton/src/main/go/relaybaton" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/trojan-go/src/main/go/trojan-go" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan/src/main/cpp/igniter-libs" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan/src/main/cpp/trojan" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/wireguard/src/main/go/wgsocks" vcs="Git" />
