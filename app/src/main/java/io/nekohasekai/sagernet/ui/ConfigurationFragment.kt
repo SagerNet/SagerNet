@@ -632,7 +632,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 if (!isActive) break
                                 if (result != -1) {
                                     profile.status = 1
-                                    profile.ping = result.toInt()
+                                    profile.ping = result
                                 } else {
                                     profile.status = 2
                                     profile.error = getString(R.string.connection_test_unreachable)

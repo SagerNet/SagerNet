@@ -20,14 +20,14 @@
 package io.nekohasekai.sagernet.bg.proto
 
 import cn.hutool.core.util.NumberUtil
+import com.v2ray.core.app.observatory.ObservationResult
+import com.v2ray.core.app.observatory.OutboundStatus
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
-import io.nekohasekai.sagernet.bg.observatory.ObservatoryStatus
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
-import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -65,6 +65,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
         if (config.observatoryTags.isNotEmpty()) {
             observatoryJob = runOnDefaultDispatcher {
+                sendInitStatuses()
+
                 val interval = 10000L
                 while (isActive) {
                     try {
@@ -89,10 +91,42 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         SagerNet.started = true
     }
 
+    fun sendInitStatuses() {
+        val time = (System.currentTimeMillis() / 1000) - 300
+        for (observatoryTag in config.observatoryTags) {
+            val profileId = observatoryTag.substringAfter("global-")
+            if (NumberUtil.isLong(profileId)) {
+                val id = profileId.toLong()
+                val profile = when {
+                    id == profile.id -> profile
+                    statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
+                    else -> SagerDatabase.proxyDao.getById(id)
+                } ?: continue
+
+                if (profile.status > 0) v2rayPoint.updateStatus(
+                    observatoryTag,
+                    OutboundStatus.newBuilder()
+                        .setOutboundTag(observatoryTag)
+                        .setAlive(profile.status == 1)
+                        .setDelay(profile.ping.toLong())
+                        .setLastErrorReason(profile.error)
+                        .setLastTryTime(time)
+                        .setLastSeenTime(time)
+                        .build()
+                        .toByteArray()
+                )
+            }
+        }
+    }
+
     suspend fun loopObservatoryResults() {
-        val statusList = gson.fromJson(v2rayPoint.observatoryStatus, ObservatoryStatus::class.java)
+        val statusPb = v2rayPoint.observatoryStatus
+        if (statusPb == null || statusPb.isEmpty()) {
+            return
+        }
+        val statusList = ObservationResult.parseFrom(statusPb)
         val notify = mutableSetOf<Long>()
-        for (status in statusList.status) {
+        for (status in statusList.statusList) {
             val profileId = status.outboundTag.substringAfter("global-")
             if (NumberUtil.isLong(profileId)) {
                 val id = profileId.toLong()

@@ -828,6 +828,7 @@ public class V2RayConfig {
         public Set<String> subjectSelector;
         public String probeUrl;
         public String probeInterval;
+        public Boolean enableConcurrency;
     }
 
     public void init() {

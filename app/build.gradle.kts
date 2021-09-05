@@ -90,8 +90,8 @@ dependencies {
     implementation("termux:terminal-view:1.0")
 
 
-   /* implementation(project(":library:proto-stub"))
-    implementation("io.grpc:grpc-okhttp:1.40.1")*/
+    implementation(project(":library:proto-stub"))
+//    implementation("io.grpc:grpc-okhttp:1.40.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }

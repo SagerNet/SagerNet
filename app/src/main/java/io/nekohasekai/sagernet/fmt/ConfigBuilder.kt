@@ -76,7 +76,6 @@ class V2rayBuildResult(
     var outboundTagsCurrent: List<String>,
     var outboundTagsAll: Map<String, ProxyEntity>,
     var bypassTag: String,
-    var enableApi: Boolean,
     var observatoryTags: Set<String>,
     val dumpUid: Boolean,
     val alerts: List<Pair<Int, String>>,
@@ -850,6 +849,7 @@ fun buildV2RayConfig(
                         if (testInterval > 0) {
                             probeInterval = "${testInterval}s"
                         }
+                        enableConcurrency = true
                     }
                     if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
                     observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
@@ -1187,7 +1187,6 @@ fun buildV2RayConfig(
             outboundTagsCurrent,
             outboundTagsAll,
             TAG_BYPASS,
-            !it.api?.services.isNullOrEmpty(),
             it.observatory?.subjectSelector ?: HashSet(),
             dumpUid,
             alerts
@@ -1326,7 +1325,6 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         outboundTags,
         emptyMap(),
         directTag,
-        false,
         emptySet(),
         false,
         emptyList()
