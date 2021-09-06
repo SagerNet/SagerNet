@@ -398,4 +398,15 @@
     <string name="traffic_statistics_summary">Güç tüketimini arttırabilir</string>
     <string name="traffic_statistics">Trafik İstatistiklerini Etkinleştir</string>
     <string name="statistics_disabled">Trafik istatistikleri devre dışı</string>
+    <string name="clear_logcat">Günlüğü Temizle</string>
+    <string name="menu_log">Günlükler</string>
+    <string name="menu_tools">Araçlar</string>
+    <string name="translate_platform">Çeviri Platformu</string>
+    <string name="ssh_private_key_passphrase">Gizli Anahtar Parolası</string>
+    <string name="ssh_private_key">Gizli Anahtar</string>
+    <string name="ssh_public_key">Umumi Anahtar</string>
+    <string name="ssh_auth_type_none">Hiçbiri</string>
+    <string name="wireguard_psk">Eş Ön Paylaşımlı Anahtarı</string>
+    <string name="wireguard_public_key">Eş Umumi Anahtarı</string>
+    <string name="wireguard_local_address">Yerel Adres</string>
 </resources>
