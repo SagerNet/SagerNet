@@ -311,7 +311,7 @@ data class ProxyEntity(
 
         return with(requireBean()) {
             StringBuilder().apply {
-                val config = buildV2RayConfig(this@ProxyEntity)
+                val config = buildV2RayConfig(this@ProxyEntity, false)
                 append(config.config)
 
                 if (!config.index.all { it.chain.isEmpty() }) {

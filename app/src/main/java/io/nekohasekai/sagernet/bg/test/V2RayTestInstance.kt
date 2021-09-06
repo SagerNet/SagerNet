@@ -22,7 +22,7 @@ package io.nekohasekai.sagernet.bg.test
 import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.bg.proto.V2RayInstance
 import io.nekohasekai.sagernet.database.ProxyEntity
-import io.nekohasekai.sagernet.fmt.buildV2RayConfig
+import io.nekohasekai.sagernet.fmt.v2ray.pb.buildV2rayProto
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.tryResume
@@ -55,7 +55,7 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
     }
 
     override fun buildConfig() {
-        config = buildV2RayConfig(profile, true)
+        config = buildV2rayProto(profile, true)
     }
 
     override fun loadConfig() {

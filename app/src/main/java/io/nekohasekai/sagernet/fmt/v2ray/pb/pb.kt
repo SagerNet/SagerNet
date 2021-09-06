@@ -22,15 +22,33 @@ import com.google.protobuf.ByteString
 import com.google.protobuf.Message
 import com.google.protobuf.any
 import com.v2ray.core.common.net.iPOrDomain
+import com.v2ray.core.common.net.portRange
 import io.nekohasekai.sagernet.ktx.isIpAddress
 
 fun String.toIpOrDomain() = iPOrDomain {
     if (isIpAddress()) {
-        ip = ByteString.copyFromUtf8(this@toIpOrDomain)
+        ip = toByteString()
     } else {
         domain = this@toIpOrDomain
     }
 }
+
+fun String.toByteString() = ByteString.copyFromUtf8(this)
+
+fun Int.toPortRange() = let {
+    portRange {
+        from = it
+        to = it
+    }
+}
+
+fun typedMessage(block: () -> Message) = block().let {
+    any {
+        typeUrl = "types.v2fly.org/" + it.descriptorForType.fullName
+        value = it.toByteString()
+    }
+}
+
 
 fun <T> T.typedMessage(block: T.() -> Message) = block().let {
     any {

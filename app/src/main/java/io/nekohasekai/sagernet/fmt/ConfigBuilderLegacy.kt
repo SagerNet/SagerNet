@@ -49,6 +49,7 @@ import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isRunning
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
+import libcore.V2RayBuilder
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -68,7 +69,6 @@ const val LOCALHOST = "127.0.0.1"
 const val IP6_LOCALHOST = "::1"
 
 class V2rayBuildResult(
-    var config: String,
     var index: List<IndexEntity>,
     var requireWs: Boolean,
     var wsPort: Int,
@@ -80,11 +80,15 @@ class V2rayBuildResult(
     val dumpUid: Boolean,
     val alerts: List<Pair<Int, String>>,
 ) {
+    lateinit var config: String
+    var configPointer = 0L
+    var ref: V2RayBuilder? = null
+
     data class IndexEntity(var isBalancer: Boolean, var chain: LinkedHashMap<Int, ProxyEntity>)
 }
 
 fun buildV2RayConfig(
-    proxy: ProxyEntity, forTest: Boolean = false
+    proxy: ProxyEntity, forTest: Boolean
 ): V2rayBuildResult {
 
     val outboundTags = ArrayList<String>()
@@ -744,11 +748,11 @@ fun buildV2RayConfig(
                                 }
                             }
                         }
-                        if ((isBalancer || index == 0) && proxyEntity.needCoreMux() && DataStore.enableMux) {
-                            mux = OutboundObject.MuxObject().apply {
-                                enabled = true
-                                concurrency = DataStore.muxConcurrency
-                            }
+                    }
+                    if ((isBalancer || index == 0) && proxyEntity.needCoreMux() && DataStore.enableMux) {
+                        currentOutbound.mux = OutboundObject.MuxObject().apply {
+                            enabled = true
+                            concurrency = DataStore.muxConcurrency
                         }
                     }
                 }
@@ -1179,7 +1183,6 @@ fun buildV2RayConfig(
          */
     }.let {
         V2rayBuildResult(
-            gson.toJson(it),
             indexMap,
             requireWs,
             if (requireWs) it.browserForwarder.listenPort else 0,
@@ -1190,7 +1193,9 @@ fun buildV2RayConfig(
             it.observatory?.subjectSelector ?: HashSet(),
             dumpUid,
             alerts
-        )
+        ).apply {
+            config = gson.toJson(it)
+        }
     }
 
 }
@@ -1315,9 +1320,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         config["outbounds"] = JSONArray(outbounds.map { JSONObject(gson.toJson(it)) })
     }
 
-
     return V2rayBuildResult(
-        config.toStringPretty(),
         emptyList(),
         requireWs,
         wsPort,
@@ -1328,6 +1331,8 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         emptySet(),
         false,
         emptyList()
-    )
+    ).also {
+        it.config = config.toStringPretty()
+    }
 
 }

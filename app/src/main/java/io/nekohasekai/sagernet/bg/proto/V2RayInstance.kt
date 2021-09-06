@@ -28,14 +28,16 @@ import android.webkit.WebViewClient
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ShadowsocksProvider
 import io.nekohasekai.sagernet.TrojanProvider
-import io.nekohasekai.sagernet.bg.*
+import io.nekohasekai.sagernet.bg.AbstractInstance
+import io.nekohasekai.sagernet.bg.Executable
+import io.nekohasekai.sagernet.bg.ExternalInstance
+import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
-import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
@@ -48,7 +50,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
@@ -56,6 +57,7 @@ import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
+import io.nekohasekai.sagernet.fmt.v2ray.pb.buildV2rayProto
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
@@ -90,11 +92,17 @@ abstract class V2RayInstance(
     }
 
     protected open fun buildConfig() {
-        config = buildV2RayConfig(profile)
+        config = buildV2rayProto(profile, false)
     }
 
     protected open fun loadConfig() {
-        v2rayPoint.loadConfig(config.config, false)
+        if (config.configPointer != 0L) {
+            v2rayPoint.loadProto(config.configPointer)
+            config.ref?.close()
+            config.ref = null
+        } else {
+            v2rayPoint.loadConfig(config.config, false)
+        }
     }
 
     open fun init() {

@@ -19,12 +19,22 @@
 package io.nekohasekai.sagernet.fmt.v2ray.pb.proxy
 
 import com.v2ray.core.app.proxyman.senderConfig
+import com.v2ray.core.common.protocol.serverEndpoint
 import com.v2ray.core.proxy.socks.Version
 import com.v2ray.core.proxy.socks.account
 import com.v2ray.core.proxy.socks.clientConfig
 import com.v2ray.core.transport.internet.streamConfig
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.v2ray.pb.*
+
+fun newSocks5Client(addressIn: String, portIn: Int) = typedMessage {
+    clientConfig {
+        server.add(serverEndpoint {
+            address = addressIn.toIpOrDomain()
+            port = portIn
+        })
+    }
+}
 
 fun SOCKSBean.buildProxySettings() = letTyped {
     clientConfig {

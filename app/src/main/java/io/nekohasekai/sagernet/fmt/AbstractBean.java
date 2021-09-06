@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import com.v2ray.core.common.net.Network;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -67,6 +68,10 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
 
     public String network() {
         return "tcp,udp";
+    }
+
+    public List<Network> networkProto() {
+        return Arrays.asList(Network.TCP, Network.UDP);
     }
 
     public boolean canICMPing() {

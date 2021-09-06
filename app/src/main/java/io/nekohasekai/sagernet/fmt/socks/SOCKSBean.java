@@ -23,8 +23,12 @@ import androidx.annotation.NonNull;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import com.v2ray.core.common.net.Network;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
@@ -67,6 +71,12 @@ public class SOCKSBean extends AbstractBean {
     public String network() {
         if (protocol < PROTOCOL_SOCKS5) return "tcp";
         return super.network();
+    }
+
+    @Override
+    public List<Network> networkProto() {
+        if (protocol < PROTOCOL_SOCKS5) return Arrays.asList(Network.TCP);
+        return super.networkProto();
     }
 
     @Override
