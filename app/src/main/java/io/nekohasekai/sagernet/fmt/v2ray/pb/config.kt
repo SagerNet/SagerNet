@@ -23,6 +23,7 @@ import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.OutboundHandlerConfig
 import com.v2ray.core.app.dns.fakedns.fakeDnsPool
 import com.v2ray.core.app.dns.fakedns.fakeDnsPoolMulti
+import com.v2ray.core.app.log.LogType
 import com.v2ray.core.app.policy.SystemPolicyKt.stats
 import com.v2ray.core.app.policy.systemPolicy
 import com.v2ray.core.app.proxyman.*
@@ -165,6 +166,7 @@ fun buildV2rayProto(proxy: ProxyEntity, forTest: Boolean): V2rayBuildResult {
 
         app.add(typedMessage {
             logConfig {
+                errorLogType = LogType.Console
                 errorLogLevel = if (!forTest && DataStore.enableLog) Severity.Debug else Severity.Error
             }
         })

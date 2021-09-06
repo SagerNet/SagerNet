@@ -24,16 +24,17 @@ import com.google.protobuf.any
 import com.v2ray.core.common.net.iPOrDomain
 import com.v2ray.core.common.net.portRange
 import io.nekohasekai.sagernet.ktx.isIpAddress
+import libcore.Libcore
 
-fun String.toIpOrDomain() = iPOrDomain {
-    if (isIpAddress()) {
-        ip = toByteString()
-    } else {
-        domain = this@toIpOrDomain
+fun String.toIpOrDomain() = let {
+    iPOrDomain {
+        if (isIpAddress()) {
+            ip = ByteString.copyFrom(Libcore.parseIP(it))
+        } else {
+            domain = it
+        }
     }
 }
-
-fun String.toByteString() = ByteString.copyFromUtf8(this)
 
 fun Int.toPortRange() = let {
     portRange {
