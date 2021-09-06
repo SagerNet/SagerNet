@@ -96,10 +96,8 @@ abstract class V2RayInstance(
     }
 
     protected open fun loadConfig() {
-        if (config.configPointer != 0L) {
-            v2rayPoint.loadProto(config.configPointer)
-            config.ref?.close()
-            config.ref = null
+        if (config.proto != null) {
+            v2rayPoint.loadProto(config.proto!!)
         } else {
             v2rayPoint.loadConfig(config.config, false)
         }

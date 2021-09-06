@@ -53,7 +53,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
         super.init()
 
-        Logs.d(config.config)
+        if (config.proto == null) Logs.d(config.config)
+
         pluginConfigs.forEach { (_, plugin) ->
             val (_, content) = plugin
             Logs.d(content)

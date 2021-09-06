@@ -51,7 +51,6 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
-import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.DnsObject
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.RoutingObject
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.RoutingObject.BalancerObject
@@ -61,22 +60,21 @@ import io.nekohasekai.sagernet.ktx.isRunning
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
 import libcore.Libcore
-import libcore.V2RayBuilder
-import com.v2ray.core.Config as V2rayConfig
 import com.v2ray.core.app.browserforwarder.config as browserforwarderConfig
+import com.v2ray.core.app.dispatcher.Config as DispatcherConfig
 import com.v2ray.core.app.log.config as logConfig
 import com.v2ray.core.app.policy.config as policyConfig
 import com.v2ray.core.app.reverse.Config as ReverseConfig
 import com.v2ray.core.app.stats.Config as StatsConfig
 import com.v2ray.core.config as v2rayConfig
+import com.v2ray.core.proxy.blackhole.Config as BlackholeConfig
+import com.v2ray.core.proxy.dns.config as dnsConfig
 import com.v2ray.core.proxy.dokodemo.config as dokodemoConfig
 import com.v2ray.core.proxy.freedom.Config as FreedomConfig
 import com.v2ray.core.proxy.freedom.config as freedomConfig
 import com.v2ray.core.proxy.http.serverConfig as httpServerConfig
 import com.v2ray.core.proxy.socks.serverConfig as socksServerConfig
 import com.v2ray.core.transport.internet.websocket.Config as WebsocketConfig
-import  com.v2ray.core.proxy.blackhole.Config as BlackholeConfig
-import com.v2ray.core.proxy.dns.config as dnsConfig
 
 fun buildV2rayProto(proxy: ProxyEntity, forTest: Boolean): V2rayBuildResult {
 
@@ -170,6 +168,10 @@ fun buildV2rayProto(proxy: ProxyEntity, forTest: Boolean): V2rayBuildResult {
                 errorLogLevel = if (!forTest && DataStore.enableLog) Severity.Debug else Severity.Error
             }
         })
+
+        app.add(typedMessage { DispatcherConfig.getDefaultInstance() })
+        app.add(typedMessage { InboundConfig.getDefaultInstance() })
+        app.add(typedMessage { OutboundConfig.getDefaultInstance() })
 
         dns.apply {
             hosts = DataStore.hosts.split("\n")
@@ -801,23 +803,17 @@ fun buildV2rayProto(proxy: ProxyEntity, forTest: Boolean): V2rayBuildResult {
 
     }
 
-    val builder = Libcore.newV2RayLoader(config.toByteArray())
+    val builder = Libcore.newV2RayBuilder(config.toByteArray())
     builder.setDNS(gson.toJson(dns))
     builder.setRouter(gson.toJson(routing))
-    val configPtr = try {
-        builder.build()
-    } catch (e: Exception) {
-        builder.close()
-        throw e
-    }
+    builder.close()
 
     return V2rayBuildResult(
         indexMap, requireWs, wsPort, outboundTags, outboundTagsCurrent, outboundTagsAll, TAG_BYPASS,
         /*it.observatory?.subjectSelector ?:*/
         HashSet(), dumpUid, alerts
     ).apply {
-        configPointer = configPtr
-        ref = builder
+        proto = builder
     }
 
 }

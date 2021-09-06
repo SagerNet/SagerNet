@@ -271,6 +271,7 @@ class VpnService : BaseVpnService(),
     }
 
     fun persistAppStats() {
+        if (!::tun2socks.isInitialized) return
         if (!DataStore.trafficStatistics) return
 
         appStats.clear()

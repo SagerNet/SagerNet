@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+      - v5
     paths-ignore:
       - '**.md'
       - '.github/**'
@@ -11,6 +12,7 @@ on:
   pull_request:
     branches:
       - dev
+      - v5
 
 jobs:
   libcore:

@@ -18,7 +18,6 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray.pb.proxy
 
-import com.v2ray.core.common.protocol.serverEndpoint
 import com.v2ray.core.proxy.shadowsocks.CipherType
 import com.v2ray.core.proxy.shadowsocks.account
 import com.v2ray.core.proxy.shadowsocks.clientConfig
@@ -31,7 +30,9 @@ fun ShadowsocksBean.buildProxySettings() = letTyped {
     clientConfig {
         server.add(asEndpoint(typedMessage {
             account {
-                cipherType = CipherType.valueOf(it.method.uppercase())
+                cipherType = CipherType.valueOf(
+                    it.method.replace("-ietf", "").replace("-", "_").uppercase()
+                )
                 password = it.password
             }
         }))

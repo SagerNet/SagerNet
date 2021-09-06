@@ -81,8 +81,7 @@ class V2rayBuildResult(
     val alerts: List<Pair<Int, String>>,
 ) {
     lateinit var config: String
-    var configPointer = 0L
-    var ref: V2RayBuilder? = null
+    var proto: V2RayBuilder? = null
 
     data class IndexEntity(var isBalancer: Boolean, var chain: LinkedHashMap<Int, ProxyEntity>)
 }
