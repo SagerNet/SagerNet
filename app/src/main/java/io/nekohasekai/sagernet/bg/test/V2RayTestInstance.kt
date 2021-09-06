@@ -58,8 +58,4 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
         config = buildV2rayProto(profile, true)
     }
 
-    override fun loadConfig() {
-        v2rayPoint.loadConfig(config.config, true)
-    }
-
 }
