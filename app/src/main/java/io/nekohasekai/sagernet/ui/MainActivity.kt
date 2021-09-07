@@ -80,10 +80,6 @@ class MainActivity : ThemedActivity(),
         }
         navigation.setNavigationItemSelectedListener(this)
 
-        if (!(BuildConfig.DEBUG || isExpert)) {
-            navigation.menu.removeItem(R.id.nav_tools)
-        }
-
         if (savedInstanceState == null) {
             displayFragmentWithId(R.id.nav_configuration)
         }
