@@ -60,6 +60,7 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
+import io.nekohasekai.sagernet.databinding.LayoutProgressListBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
 import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
@@ -462,12 +463,11 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     inner class TestDialog {
-        val binding = LayoutProgressBinding.inflate(layoutInflater)
+        val binding = LayoutProgressListBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
-            .setNegativeButton(android.R.string.cancel, { _, _ ->
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
                 cancel()
-            })
-            .setCancelable(false)
+            }.setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
         val adapter = TestAdapter()
