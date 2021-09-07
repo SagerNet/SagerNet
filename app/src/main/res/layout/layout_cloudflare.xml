@@ -11,13 +11,15 @@
         android:autoLink="web"
         android:text="@string/cloudflare_license"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?android:attr/textColorSecondary" />
+        android:textColor="?android:textColorPrimary" />
 
     <Button
         android:id="@+id/warpGenerate"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/warp_generate" />
+        android:text="@string/warp_generate"
+        android:textColor="?whiteOrTextPrimary" />
 
 </LinearLayout>
