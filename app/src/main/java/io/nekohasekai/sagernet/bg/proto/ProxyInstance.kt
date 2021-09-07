@@ -109,7 +109,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                         .setOutboundTag(observatoryTag)
                         .setAlive(profile.status == 1)
                         .setDelay(profile.ping.toLong())
-                        .setLastErrorReason(profile.error)
+                        .setLastErrorReason(profile.error ?: "")
                         .setLastTryTime(time)
                         .setLastSeenTime(time)
                         .build()
