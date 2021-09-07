@@ -38,6 +38,7 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.internalUri
+import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
@@ -92,7 +93,7 @@ abstract class V2RayInstance(
     }
 
     protected open fun buildConfig() {
-        config = buildV2rayProto(profile, false)
+        config = buildV2RayConfig(profile, false)
     }
 
     protected open fun loadConfig() {
