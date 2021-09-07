@@ -408,4 +408,12 @@
     <string name="no_statistics">لا توجد إحصاءات حتى الآن</string>
     <string name="traffic_statistics_summary">قد يزيد من استهلاك الطاقة</string>
     <string name="traffic_statistics">تمكين إحصائيات حركة المرور</string>
+    <string name="clear_logcat">تقارير أداء واضحة</string>
+    <string name="menu_log">السجلات</string>
+    <string name="menu_tools">أدوات</string>
+    <string name="translate_platform">منصة الترجمة</string>
+    <string name="ssh_private_key_passphrase">عبارة مرور المفتاح الخاص</string>
+    <string name="ssh_private_key">مفتاح خاص</string>
+    <string name="ssh_public_key">المفتاح العمومي</string>
+    <string name="ssh_auth_type_none">لا شيء</string>
 </resources>

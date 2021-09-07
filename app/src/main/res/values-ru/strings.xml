@@ -402,4 +402,12 @@
     <string name="no_statistics">Статистики пока нет</string>
     <string name="traffic_statistics_summary">Может увеличить потребление энергии</string>
     <string name="traffic_statistics">Включить статистику трафика</string>
+    <string name="clear_logcat">Четкие отчеты об эффективности</string>
+    <string name="menu_log">Логи</string>
+    <string name="menu_tools">Инструменты</string>
+    <string name="translate_platform">Перевести платформу</string>
+    <string name="ssh_private_key_passphrase">Парольная фраза закрытого ключа</string>
+    <string name="ssh_private_key">Закрытый ключ</string>
+    <string name="ssh_public_key">Открытый ключ</string>
+    <string name="ssh_auth_type_none">Никто</string>
 </resources>

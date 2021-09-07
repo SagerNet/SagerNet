@@ -400,4 +400,15 @@
     <string name="no_statistics">هنوز آماری در دسترس نیست</string>
     <string name="traffic_statistics_summary">ممکن است مصرف برق را افزایش دهد</string>
     <string name="traffic_statistics">فعال کردن آمار ترافیک</string>
+    <string name="clear_logcat">پاکسازی گزارش عملکرد</string>
+    <string name="menu_log">گزارش عملکرد</string>
+    <string name="menu_tools">ابزارها</string>
+    <string name="translate_platform">پلتفرم ترجمه</string>
+    <string name="ssh_private_key_passphrase">عبارت عبور کلید خصوصی</string>
+    <string name="ssh_private_key">کلید خصوصی</string>
+    <string name="ssh_public_key">کلید عمومی</string>
+    <string name="ssh_auth_type_none">هیچ‌کدام</string>
+    <string name="wireguard_psk">کلید از پیش اشتراکی همتا</string>
+    <string name="wireguard_public_key">کلید عمومی همتا</string>
+    <string name="wireguard_local_address">آدرس محلی</string>
 </resources>
