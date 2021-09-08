@@ -80,7 +80,9 @@ class SagerNet : Application(),
         val externalAssets = getExternalFilesDir(null) ?: internalAssets
         Libcore.initializeV2Ray(
             internalAssets.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
-        )
+        ) {
+            DataStore.rulesProvider == 0
+        }
         Libcore.setenv("v2ray.conf.geoloader", "memconservative")
         Libcore.setUidDumper(UidDumper)
 
