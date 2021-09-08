@@ -101,6 +101,23 @@
         </menu>
     </item>
     <item
+        android:id="@+id/action_order"
+        android:title="@string/group_order">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_order_origin"
+                    android:title="@string/group_order_origin" />
+                <item
+                    android:id="@+id/action_order_by_name"
+                    android:title="@string/group_order_by_name" />
+                <item
+                    android:id="@+id/action_order_by_delay"
+                    android:title="@string/group_order_by_delay" />
+            </group>
+        </menu>
+    </item>
+    <item
         android:id="@+id/action_group_filter"
         android:title="@string/group_filter">
         <menu>

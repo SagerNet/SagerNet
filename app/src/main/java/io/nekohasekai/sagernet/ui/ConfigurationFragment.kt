@@ -59,7 +59,6 @@ import io.nekohasekai.sagernet.bg.test.UrlTest
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
-import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressListBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
@@ -467,7 +466,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
             .setNegativeButton(android.R.string.cancel) { _, _ ->
                 cancel()
-            }.setCancelable(false)
+            }
+            .setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
         val adapter = TestAdapter()
@@ -952,6 +952,49 @@ class ConfigurationFragment @JvmOverloads constructor(
             } else if (!::configurationListView.isInitialized) {
                 onViewCreated(requireView(), null)
             }
+            checkOrderMenu()
+        }
+
+        fun checkOrderMenu() {
+            val menu = (requireParentFragment() as ToolbarFragment).toolbar.menu
+            val origin = menu.findItem(R.id.action_order_origin)
+            val byName = menu.findItem(R.id.action_order_by_name)
+            val byDelay = menu.findItem(R.id.action_order_by_delay)
+            when (proxyGroup.order) {
+                GroupOrder.ORIGIN -> {
+                    origin.isChecked = true
+                }
+                GroupOrder.BY_NAME -> {
+                    byName.isChecked = true
+                }
+                GroupOrder.BY_DELAY -> {
+                    byDelay.isChecked = true
+                }
+            }
+
+            fun updateTo(order: Int) {
+                if (proxyGroup.order == order) return
+                runOnDefaultDispatcher {
+                    proxyGroup.order = order
+                    GroupManager.updateGroup(proxyGroup)
+                }
+            }
+
+            origin.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.ORIGIN)
+                true
+            }
+            byName.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.BY_NAME)
+                true
+            }
+            byDelay.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.BY_DELAY)
+                true
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -1215,6 +1258,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 when (proxyGroup.order) {
                     GroupOrder.BY_NAME -> {
                         newProfiles = newProfiles.sortedBy { it.displayName() }
+
                     }
                     GroupOrder.BY_DELAY -> {
                         newProfiles = newProfiles.sortedBy { if (it.status == 1) it.ping else 114514 }
