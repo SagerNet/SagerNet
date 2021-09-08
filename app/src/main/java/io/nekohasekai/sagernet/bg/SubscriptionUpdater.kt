@@ -35,8 +35,6 @@ object SubscriptionUpdater {
 
     private const val WORK_NAME = "SubscriptionUpdater"
 
-    private val DEFAULT_CONSTRAINTS = Constraints.Builder().setRequiresBatteryNotLow(true).build()
-
     suspend fun reconfigureUpdater() {
         RemoteWorkManager.getInstance(app).cancelUniqueWork(WORK_NAME)
 
@@ -57,7 +55,6 @@ object SubscriptionUpdater {
                 .apply {
                     if (minInitDelay > 0) setInitialDelay(minInitDelay, TimeUnit.SECONDS)
                 }
-                .setConstraints(DEFAULT_CONSTRAINTS)
                 .build()
         )
     }
