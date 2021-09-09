@@ -169,7 +169,7 @@ class AssetsActivity : ThemedActivity() {
         fun reloadAssets() {
             val filesDir = getExternalFilesDir(null) ?: filesDir
             val files = filesDir.listFiles()
-                ?.filter { it.isFile && !it.name.endsWith(".version.txt") && it.name !in internalFiles }
+                ?.filter { it.isFile && it.name.endsWith(".dat") && it.name !in internalFiles }
             assets.clear()
             assets.add(File(filesDir, "geoip.dat"))
             assets.add(
