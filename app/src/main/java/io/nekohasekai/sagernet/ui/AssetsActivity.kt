@@ -330,6 +330,7 @@ class AssetsActivity : ThemedActivity() {
         }
         if (fileName.endsWith(".xz")) {
             Libcore.unxz(cacheFile.absolutePath, file.absolutePath)
+            cacheFile.delete()
         } else {
             cacheFile.renameTo(file)
         }
