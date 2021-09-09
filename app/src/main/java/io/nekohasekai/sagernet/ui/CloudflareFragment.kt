@@ -32,6 +32,7 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.snackbar
 import io.nekohasekai.sagernet.utils.Cloudflare
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 
@@ -70,8 +71,11 @@ class CloudflareFragment : NamedFragment(R.layout.layout_cloudflare) {
                         DataStore.selectedGroup = groupId
                     }
                     onMainDispatcher {
-                        dialog.dismiss()
                         activity.displayFragmentWithId(R.id.nav_configuration)
+                    }
+                    delay(1000L)
+                    onMainDispatcher {
+                        dialog.dismiss()
                     }
                     ProfileManager.createProfile(groupId, bean)
                 }
