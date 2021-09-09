@@ -154,10 +154,7 @@ class MainActivity : ThemedActivity(),
                 }
             } catch (e: Exception) {
                 onMainDispatcher {
-                    MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.error_title)
-                        .setMessage(e.readableMessage)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
+                    alert(e.readableMessage).show()
                 }
                 return
             }
@@ -198,10 +195,7 @@ class MainActivity : ThemedActivity(),
             parseProxies(uri.toString()).getOrNull(0) ?: error(getString(R.string.no_proxies_found))
         } catch (e: Exception) {
             onMainDispatcher {
-                MaterialAlertDialogBuilder(this@MainActivity).setTitle(R.string.error_title)
-                    .setMessage(e.readableMessage)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                alert(e.readableMessage).show()
             }
             return
         }

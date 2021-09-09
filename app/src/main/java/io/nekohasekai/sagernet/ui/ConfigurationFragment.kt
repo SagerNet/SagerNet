@@ -541,10 +541,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 if (profile.status == 3) {
                     binding.content.setOnClickListener {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                            .setMessage(profile.error ?: "<?>")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
+                        alert(profile.error ?: "<?>").show()
                     }
                 } else {
                     binding.content.setOnClickListener {}
@@ -1390,10 +1387,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (proxyEntity.status == 3) {
                     profileStatus.setText(R.string.unavailable)
                     profileStatus.setOnClickListener {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                            .setMessage(proxyEntity.error ?: "<?>")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
+                        alert(proxyEntity.error ?: "<?>").show()
                     }
                 } else {
                     profileStatus.setOnClickListener(null)

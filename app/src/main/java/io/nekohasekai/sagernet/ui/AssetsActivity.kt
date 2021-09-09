@@ -125,10 +125,7 @@ class AssetsActivity : ThemedActivity() {
                 .substringAfter(':')
 
             if (!fileName.endsWith(".dat")) {
-                MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
-                    .setMessage(getString(R.string.route_not_asset, fileName))
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                alert(getString(R.string.route_not_asset, fileName)).show()
                 return@registerForActivityResult
             }
             val filesDir = getExternalFilesDir(null) ?: filesDir
@@ -261,10 +258,7 @@ class AssetsActivity : ThemedActivity() {
                         updateAsset(file, versionFile, localVersion)
                     }.onFailure {
                         onMainDispatcher {
-                            MaterialAlertDialogBuilder(this@AssetsActivity).setTitle(R.string.error_title)
-                                .setMessage(it.readableMessage)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                            alert(it.readableMessage).show()
                         }
                     }
 
