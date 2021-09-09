@@ -49,7 +49,7 @@ class ApiInstance : AbstractInstance {
         point.start()
     }
 
-    override fun destroy(scope: CoroutineScope) {
+    override fun close() {
         if (::point.isInitialized) point.close()
     }
 }

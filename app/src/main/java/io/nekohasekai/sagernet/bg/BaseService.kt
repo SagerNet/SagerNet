@@ -372,8 +372,8 @@ class BaseService {
             else startService(Intent(this, javaClass))
         }
 
-        fun killProcesses(scope: CoroutineScope) {
-            data.proxy?.destroy(scope)
+        fun killProcesses() {
+            data.proxy?.close()
         }
 
         fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = true) {
@@ -388,7 +388,7 @@ class BaseService {
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
                 // we use a coroutineScope here to allow clean-up in parallel
                 coroutineScope {
-                    killProcesses(this) // clean up receivers
+                    data.proxy?.close()
                     val data = data
                     if (data.closeReceiverRegistered) {
                         unregisterReceiver(data.closeReceiver)

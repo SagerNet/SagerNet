@@ -55,6 +55,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.bg.test.LocalDnsInstance
 import io.nekohasekai.sagernet.bg.test.UrlTest
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
@@ -708,6 +709,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         val test = TestDialog()
         val dialog = test.builder.show()
+        val testJobs = mutableListOf<Job>()
+        val dnsInstance = LocalDnsInstance()
+
         val mainJob = runOnDefaultDispatcher {
             val group = DataStore.currentGroup()
             var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
@@ -725,8 +729,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
-            val testJobs = mutableListOf<Job>()
             val urlTest = UrlTest()
+            dnsInstance.launch()
 
             repeat(5) {
                 testJobs.add(launch {
@@ -754,13 +758,14 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             testJobs.joinAll()
-
+            dnsInstance.closeQuietly()
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
                 dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
             }
         }
         test.cancel = {
+            dnsInstance.closeQuietly()
             mainJob.cancel()
             runOnDefaultDispatcher {
                 GroupManager.postReload(DataStore.currentGroupId())

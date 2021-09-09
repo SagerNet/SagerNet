@@ -46,6 +46,8 @@ import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libcore.AppStats
 import libcore.TrafficListener
@@ -103,13 +105,14 @@ class VpnService : BaseVpnService(),
         startVpn()
     }
 
-    override fun killProcesses(scope: CoroutineScope) {
+    @Suppress("EXPERIMENTAL_API_USAGE")
+    override fun killProcesses() {
         if (::tun2socks.isInitialized) tun2socks.close()
         if (::conn.isInitialized) conn.close()
-        super.killProcesses(scope)
+        super.killProcesses()
         persistAppStats()
         active = false
-        scope.launch { DefaultNetworkListener.stop(this) }
+        GlobalScope.launch(Dispatchers.Default) { DefaultNetworkListener.stop(this) }
     }
 
     override fun onBind(intent: Intent) = when (intent.action) {
