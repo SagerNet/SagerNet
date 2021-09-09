@@ -141,7 +141,6 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
                 "android"
             }
 
-            binding.root.setOnClickListener {}
             binding.menu.setOnClickListener {
                 val popup = PopupMenu(requireContext(), it)
                 popup.menuInflater.inflate(R.menu.traffic_item_menu, popup.menu)

@@ -287,8 +287,6 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
 
         fun bind(proxyEntity: ProxyEntity) {
 
-            itemView.setOnClickListener {}
-
             profileName.text = proxyEntity.displayName()
             profileType.text = proxyEntity.displayType()
 

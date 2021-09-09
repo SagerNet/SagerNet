@@ -62,8 +62,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
         ViewCompat.setOnApplyWindowInsetsListener(view, ListHolderListener)
         toolbar.setTitle(R.string.menu_about)
 
-        binding.titleCard.setOnClickListener {}
-
         parentFragmentManager.beginTransaction()
             .replace(R.id.about_fragment_holder, AboutContent())
             .commitAllowingStateLoss()
