@@ -397,8 +397,10 @@ object RawUpdater : GroupUpdater() {
         val ini = Ini(StringReader(conf))
         val iface = ini["Interface"] ?: error("Missing 'Interface' selection")
         val bean = WireGuardBean().applyDefaultValues()
-        bean.localAddress = iface["Address"]?.let { address ->
-            address.split(",").joinToString("\n") { it.substringBefore("/") }
+        val localAddresses = iface.getAll("Address")
+        if (localAddresses.isNullOrEmpty()) error("Empty address in 'Interface' selection")
+        bean.localAddress = localAddresses.flatMap { it.split(",") }.let { address ->
+            address.joinToString("\n") { it.substringBefore("/") }
         }
         bean.privateKey = iface["PrivateKey"]
         val peers = ini.getAll("Peer")
