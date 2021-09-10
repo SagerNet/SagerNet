@@ -388,7 +388,7 @@ class BaseService {
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
                 // we use a coroutineScope here to allow clean-up in parallel
                 coroutineScope {
-                    data.proxy?.close()
+                    killProcesses()
                     val data = data
                     if (data.closeReceiverRegistered) {
                         unregisterReceiver(data.closeReceiver)
