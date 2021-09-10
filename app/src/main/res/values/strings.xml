@@ -462,5 +462,6 @@
     <string name="warp_license">CloudFlare Wrap is a free WireGuard VPN provider. By using it, you agree to the TOS: https://www.cloudflare.com/application/terms/</string>
     <string name="warp_generate">Generate Configuration</string>
     <string name="generating">Generating…</string>
+    <string name="tun_implementation">TUN Implementation</string>
 
 </resources>

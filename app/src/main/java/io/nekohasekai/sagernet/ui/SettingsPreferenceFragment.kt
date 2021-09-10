@@ -210,6 +210,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
+
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
@@ -247,6 +249,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
         trafficStatistics.onPreferenceChangeListener = reloadListener
+        tunImplementation.onPreferenceChangeListener = reloadListener
 
     }
 

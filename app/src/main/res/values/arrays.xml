@@ -742,4 +742,9 @@
         <item>@string/ssh_public_key</item>
     </string-array>
 
+    <string-array name="tun_implementation">
+        <item>gVisor</item>
+        <item>LwIP</item>
+    </string-array>
+
 </resources>

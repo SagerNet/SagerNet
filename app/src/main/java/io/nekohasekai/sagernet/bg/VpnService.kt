@@ -32,10 +32,7 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import androidx.annotation.RequiresApi
-import io.nekohasekai.sagernet.IPv6Mode
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.StatsEntity
@@ -45,13 +42,13 @@ import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libcore.AppStats
+import libcore.Libcore
 import libcore.TrafficListener
-import libcore.Tun2socks
+import libcore.Tun2ray
 import java.io.FileDescriptor
 import android.net.VpnService as BaseVpnService
 
@@ -81,7 +78,7 @@ class VpnService : BaseVpnService(),
     }
 
     lateinit var conn: ParcelFileDescriptor
-    lateinit var tun2socks: Tun2socks
+    lateinit var tun: Tun2ray
 
     private var active = false
     private var metered = false
@@ -107,7 +104,7 @@ class VpnService : BaseVpnService(),
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
-        if (::tun2socks.isInitialized) tun2socks.close()
+        if (::tun.isInitialized) tun.close()
         if (::conn.isInitialized) conn.close()
         super.killProcesses()
         persistAppStats()
@@ -253,17 +250,18 @@ class VpnService : BaseVpnService(),
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
         conn = builder.establish() ?: throw NullConnectionException()
 
-        tun2socks = Tun2socks(
+        tun = Libcore.newTun2ray(
             conn.fd,
             VPN_MTU,
             data.proxy!!.v2rayPoint,
             PRIVATE_VLAN4_ROUTER,
+            DataStore.tunImplementation == TunImplementation.GVISOR,
             true,
             DataStore.trafficSniffing,
             DataStore.enableFakeDns,
             DataStore.enableLog,
             data.proxy!!.config.dumpUid,
-            DataStore.trafficStatistics
+            DataStore.trafficStatistics,
         )
     }
 
@@ -277,7 +275,7 @@ class VpnService : BaseVpnService(),
         if (!DataStore.trafficStatistics) return
 
         appStats.clear()
-        tun2socks.readAppTraffics(this)
+        tun.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()
         val all = SagerDatabase.statsDao.all().associateBy { it.packageName }
         for (stats in appStats) {

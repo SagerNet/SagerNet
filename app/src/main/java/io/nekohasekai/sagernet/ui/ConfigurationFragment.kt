@@ -958,6 +958,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         fun checkOrderMenu() {
+            if (select) return
+
             val menu = (requireParentFragment() as ToolbarFragment).toolbar.menu
             val origin = menu.findItem(R.id.action_order_origin)
             val byName = menu.findItem(R.id.action_order_by_name)

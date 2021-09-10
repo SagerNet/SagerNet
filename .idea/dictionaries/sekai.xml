@@ -15,6 +15,7 @@
       <w>geosite</w>
       <w>grpc</w>
       <w>gson</w>
+      <w>gvisor</w>
       <w>libev</w>
       <w>libnaive</w>
       <w>libtrojan</w>

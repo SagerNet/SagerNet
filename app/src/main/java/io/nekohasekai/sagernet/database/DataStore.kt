@@ -194,6 +194,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var trafficStatistics by configurationStore.boolean(Key.TRAFFIC_STATISTICS)
+    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
 
     // protocol
 

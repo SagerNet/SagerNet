@@ -89,6 +89,7 @@ object Key {
     const val PROVIDER_SS_STREAM = "providerShadowsocksStream"
 
     const val TRAFFIC_STATISTICS = "trafficStatistics"
+    const val TUN_IMPLEMENTATION = "tunImplementation"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
@@ -187,6 +188,11 @@ object Key {
     const val SUBSCRIPTION_AUTO_UPDATE = "subscriptionAutoUpdate"
     const val SUBSCRIPTION_AUTO_UPDATE_DELAY = "subscriptionAutoUpdateDelay"
 
+}
+
+object TunImplementation {
+    const val GVISOR = 0
+    const val LWIP = 1
 }
 
 object TrojanProvider {
