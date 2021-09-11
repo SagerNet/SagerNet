@@ -30,8 +30,15 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-val methodsV2fly = arrayOf(
-    "none", "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305", "xchacha20-ietf-poly1305"
+val methodsXray = arrayOf(
+    "none",
+    "aes-128-gcm",
+    "aes-256-gcm",
+    "chacha20-ietf-poly1305",
+    "aes-256-cfb",
+    "aes-128-cfb",
+    "chacha20",
+    "chacha20-ietf"
 )
 
 val methodsClash = arrayOf(
