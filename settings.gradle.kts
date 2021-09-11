@@ -8,25 +8,6 @@ include(":library:shadowsocks-libev")
 
 include(":plugin:api")
 
-val buildPlugin = System.getenv("BUILD_PLUGIN")
-when {
-    buildPlugin.isNullOrBlank() -> {
-        include(":plugin:naive")
-        include(":plugin:pingtunnel")
-        include(":plugin:relaybaton")
-        include(":plugin:brook")
-        include(":plugin:trojan")
-        include(":plugin:trojan-go")
-        include(":plugin:hysteria")
-        include(":plugin:wireguard")
-    }
-    buildPlugin == "none" -> {
-    }
-    else -> {
-        include(":plugin:$buildPlugin")
-    }
-}
-
 include(":external:preferencex:preferencex")
 include(":external:preferencex:preferencex-simplemenu")
 include(":external:preferencex:flexbox")
@@ -50,4 +31,4 @@ includeBuild("external/termux-view") {
 }
 
 include(":app")
-rootProject.name = "SagerNet"
+rootProject.name = "AnXray"
