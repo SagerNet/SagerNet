@@ -70,7 +70,6 @@ object Key {
     const val TRANSPROXY_PORT = "transproxyPort"
 
     const val CONNECTION_TEST_URL = "connectionTestURL"
-    const val PROBE_INTERVAL = "probeInterval"
 
     const val ENABLE_MUX = "enableMux"
     const val ENABLE_MUX_FOR_ALL = "enableMuxForAll"
@@ -88,6 +87,7 @@ object Key {
     const val PROVIDER_SS_AEAD = "providerShadowsocksAEAD"
     const val PROVIDER_SS_STREAM = "providerShadowsocksStream"
 
+    const val UTLS_FINGERPRINT = "utlsFingerprint"
     const val TRAFFIC_STATISTICS = "trafficStatistics"
     const val TUN_IMPLEMENTATION = "tunImplementation"
 
@@ -124,17 +124,16 @@ object Key {
     const val SERVER_ENCRYPTION = "serverEncryption"
     const val SERVER_ALPN = "serverALPN"
     const val SERVER_CERTIFICATES = "serverCertificates"
-    const val SERVER_PINNED_CERTIFICATE_CHAIN = "serverPinnedCertificateChain"
+    const val SERVER_FLOW = "serverFlow"
     const val SERVER_QUIC_SECURITY = "serverQuicSecurity"
-    const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
     const val SERVER_WS_BROWSER_FORWARDING = "serverWsBrowserForwarding"
-    const val SERVER_EARLY_DATA_HEADER_NAME = "serverEarlyDataHeaderName"
     const val SERVER_CONFIG = "serverConfig"
 
     const val SERVER_SECURITY_CATEGORY = "serverSecurityCategory"
     const val SERVER_WS_CATEGORY = "serverWsCategory"
     const val SERVER_SS_CATEGORY = "serverSsCategory"
     const val SERVER_HEADERS = "serverHeaders"
+    const val SERVER_MULTI_MODE = "serverMultiMode"
     const val SERVER_ALLOW_INSECURE = "serverAllowInsecure"
 
     const val SERVER_AUTH_TYPE = "serverAuthType"

@@ -83,7 +83,7 @@ class SagerNet : Application(),
         ) {
             DataStore.rulesProvider == 0
         }
-        Libcore.setenv("v2ray.conf.geoloader", "memconservative")
+        //Libcore.setenv("v2ray.conf.geoloader", "memconservative")
         Libcore.setUidDumper(UidDumper)
 
         runOnDefaultDispatcher {

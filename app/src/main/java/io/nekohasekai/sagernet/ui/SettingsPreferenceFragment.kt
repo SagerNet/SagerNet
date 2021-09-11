@@ -156,7 +156,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val enableLog = findPreference<SwitchPreference>(Key.ENABLE_LOG)!!
 
         val apiPort = findPreference<EditTextPreference>(Key.API_PORT)!!
-        val probeIndival = findPreference<EditTextPreference>(Key.PROBE_INTERVAL)!!
 
         transproxyPort.isEnabled = requireTransproxy.isChecked
         transproxyMode.isEnabled = requireTransproxy.isChecked
@@ -203,6 +202,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             newValue
         }
 
+        val utlsFingerprint = findPreference<SimpleMenuPreference>(Key.UTLS_FINGERPRINT)!!
         val trafficStatistics = findPreference<SwitchPreference>(Key.TRAFFIC_STATISTICS)!!
 
         serviceMode.setOnPreferenceChangeListener { _, _ ->
@@ -241,13 +241,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         transproxyMode.onPreferenceChangeListener = reloadListener
 
         enableLog.onPreferenceChangeListener = reloadListener
-
-        probeIndival.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        probeIndival.onPreferenceChangeListener = reloadListener
-
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
+        utlsFingerprint.onPreferenceChangeListener = reloadListener
         trafficStatistics.onPreferenceChangeListener = reloadListener
         tunImplementation.onPreferenceChangeListener = reloadListener
 

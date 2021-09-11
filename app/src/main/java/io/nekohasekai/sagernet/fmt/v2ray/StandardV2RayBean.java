@@ -145,19 +145,27 @@ public abstract class StandardV2RayBean extends AbstractBean {
      */
     public String alpn;
 
+    /**
+     * XTLS 的流控方式。可选值为 xtls-rprx-direct、xtls-rprx-splice 等。
+     * <p>
+     * 若使用 XTLS，此项不可省略，否则无此项。此项不可为空字符串。
+     */
+    public String flow;
+
     // --------------------------------------- //
 
     public String grpcServiceName;
-    public Integer wsMaxEarlyData;
+    public Boolean grpcMultiMode;
     public String earlyDataHeaderName;
 
     public String certificates;
-    public String pinnedPeerCertificateChainSha256;
 
     // --------------------------------------- //
 
     public Boolean wsUseBrowserForwarder;
     public Boolean allowInsecure;
+
+    // --------------------------------------- //
 
     @Override
     public void initializeDefaultValues() {
@@ -180,11 +188,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (StrUtil.isBlank(alpn)) alpn = "";
 
         if (StrUtil.isBlank(grpcServiceName)) grpcServiceName = "";
-        if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
+        if (grpcMultiMode == null) grpcMultiMode = false;
+
         if (wsUseBrowserForwarder == null) wsUseBrowserForwarder = false;
         if (certificates == null) certificates = "";
-        if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
-        if (earlyDataHeaderName == null) earlyDataHeaderName = "";
+        if (StrUtil.isBlank(flow)) flow = "";
         if (allowInsecure == null) allowInsecure = false;
 
     }
@@ -213,9 +221,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
             case "ws": {
                 output.writeString(host);
                 output.writeString(path);
-                output.writeInt(wsMaxEarlyData);
                 output.writeBoolean(wsUseBrowserForwarder);
-                output.writeString(earlyDataHeaderName);
                 break;
             }
             case "http": {
@@ -230,6 +236,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
             }
             case "grpc": {
                 output.writeString(grpcServiceName);
+                output.writeBoolean(grpcMultiMode);
             }
         }
 
@@ -240,7 +247,14 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(sni);
                 output.writeString(alpn);
                 output.writeString(certificates);
-                output.writeString(pinnedPeerCertificateChainSha256);
+                output.writeBoolean(allowInsecure);
+                break;
+            }
+            case "xtls": {
+                output.writeString(sni);
+                output.writeString(alpn);
+                output.writeString(flow);
+                output.writeString(certificates);
                 output.writeBoolean(allowInsecure);
                 break;
             }
@@ -276,11 +290,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
             case "ws": {
                 host = input.readString();
                 path = input.readString();
-                wsMaxEarlyData = input.readInt();
                 wsUseBrowserForwarder = input.readBoolean();
-                if (version >= 2) {
-                    earlyDataHeaderName = input.readString();
-                }
                 break;
             }
             case "http": {
@@ -295,6 +305,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
             }
             case "grpc": {
                 grpcServiceName = input.readString();
+                grpcMultiMode = input.readBoolean();
             }
         }
 
@@ -303,14 +314,16 @@ public abstract class StandardV2RayBean extends AbstractBean {
             case "tls": {
                 sni = input.readString();
                 alpn = input.readString();
-                if (version >= 1) {
-                    certificates = input.readString();
-                    pinnedPeerCertificateChainSha256 = input.readString();
-                }
-                if (version >= 3) {
-                    allowInsecure = input.readBoolean();
-                }
+                if (version >= 1) certificates = input.readString();
+                if (version >= 3) allowInsecure = input.readBoolean();
                 break;
+            }
+            case "xtls": {
+                sni = input.readString();
+                alpn = input.readString();
+                flow = input.readString();
+                if (version >= 4) certificates = input.readString();
+                if (version >= 3) allowInsecure = input.readBoolean();
             }
         }
         if (this instanceof VMessBean && version != 4) {

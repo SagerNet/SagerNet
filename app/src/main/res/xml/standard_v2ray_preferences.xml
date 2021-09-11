@@ -68,6 +68,11 @@
             app:key="serverPath"
             app:title="@string/http_path"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_running_with_errors_24"
+            app:key="serverMultiMode"
+            app:summary="@string/multi_mode_sum"
+            app:title="@string/multi_mode" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/transport_layer_encryption_entry"
             app:entryValues="@array/transport_layer_encryption_value"
@@ -95,10 +100,12 @@
             app:key="serverCertificates"
             app:title="@string/certificates"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:icon="@drawable/ic_baseline_push_pin_24"
-            app:key="serverPinnedCertificateChain"
-            app:title="@string/pinned_peer_certificate_chain_sha256"
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/xtls_flow_entry"
+            app:entryValues="@array/xtls_flow_value"
+            app:icon="@drawable/ic_baseline_stream_24"
+            app:key="serverFlow"
+            app:title="@string/flow"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
@@ -110,18 +117,6 @@
     <PreferenceCategory
         app:key="serverWsCategory"
         app:title="@string/cag_ws">
-        <EditTextPreference
-            app:defaultValue="0"
-            app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="serverWsMaxEarlyData"
-            app:title="@string/ws_max_early_data"
-            app:useSimpleSummaryProvider="true" />
-
-        <EditTextPreference
-            app:icon="@drawable/ic_baseline_stream_24"
-            app:key="serverEarlyDataHeaderName"
-            app:title="@string/early_data_header_name"
-            app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
             app:icon="@drawable/ic_baseline_texture_24"

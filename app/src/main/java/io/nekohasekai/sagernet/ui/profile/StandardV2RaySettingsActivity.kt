@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceCategory
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
@@ -55,7 +56,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         when (type) {
             "kcp" -> DataStore.serverPath = mKcpSeed
             "quic" -> DataStore.serverPath = quicKey
-            "grpc" -> DataStore.serverPath = grpcServiceName
+            "grpc" -> {
+                DataStore.serverPath = grpcServiceName
+                DataStore.serverMultiMode = grpcMultiMode
+            }
             else -> DataStore.serverPath = path
         }
 
@@ -63,10 +67,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn
         DataStore.serverCertificates = certificates
-        DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
+        DataStore.serverFlow = flow
         DataStore.serverQuicSecurity = quicSecurity
-        DataStore.serverWsMaxEarlyData = wsMaxEarlyData
-        DataStore.serverEarlyDataHeaderName = earlyDataHeaderName
 
         DataStore.serverWsBrowserForwarding = wsUseBrowserForwarder
         DataStore.serverAllowInsecure = allowInsecure
@@ -88,17 +90,18 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         when (type) {
             "kcp" -> mKcpSeed = DataStore.serverPath
             "quic" -> quicKey = DataStore.serverPath
-            "grpc" -> grpcServiceName = DataStore.serverPath
+            "grpc" -> {
+                grpcServiceName = DataStore.serverPath
+                grpcMultiMode = DataStore.serverMultiMode
+            }
             else -> path = DataStore.serverPath
         }
         security = DataStore.serverSecurity
         sni = DataStore.serverSNI
         alpn = DataStore.serverALPN
         certificates = DataStore.serverCertificates
-        pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
+        flow = DataStore.serverFlow
         quicSecurity = DataStore.serverQuicSecurity
-        wsMaxEarlyData = DataStore.serverWsMaxEarlyData
-        earlyDataHeaderName = DataStore.serverEarlyDataHeaderName
 
         wsUseBrowserForwarder = DataStore.serverWsBrowserForwarding
         allowInsecure = DataStore.serverAllowInsecure
@@ -111,6 +114,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var path: EditTextPreference
     lateinit var quicSecurity: SimpleMenuPreference
     lateinit var security: SimpleMenuPreference
+    lateinit var multiMode: SwitchPreference
+    lateinit var xtlsFlow: SimpleMenuPreference
 
     lateinit var securityCategory: PreferenceCategory
     lateinit var wsCategory: PreferenceCategory
@@ -136,6 +141,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
         securityCategory = findPreference(Key.SERVER_SECURITY_CATEGORY)!!
         wsCategory = findPreference(Key.SERVER_WS_CATEGORY)!!
+
+        xtlsFlow = findPreference(Key.SERVER_FLOW)!!
+        multiMode = findPreference(Key.SERVER_MULTI_MODE)!!
 
         val alterId = findPreference<EditTextPreference>(Key.SERVER_ALTER_ID)!!
         if (bean is VLESSBean) {
@@ -176,12 +184,13 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         }
 
         vmessExperimentsCategory = findPreference(Key.SERVER_VMESS_EXPERIMENTS_CATEGORY)!!
-        vmessExperimentsCategory.isVisible = bean is VMessBean
+        vmessExperimentsCategory.isVisible = false
     }
 
     val tcpHeadersValue = app.resources.getStringArray(R.array.tcp_headers_value)
     val kcpQuicHeadersValue = app.resources.getStringArray(R.array.kcp_quic_headers_value)
     val quicSecurityValue = app.resources.getStringArray(R.array.quic_security_value)
+    val xtlsFlowValue = app.resources.getStringArray(R.array.xtls_flow_value)
 
     fun updateView(network: String) {
         if (bean is StandardV2RayBean) {
@@ -223,7 +232,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 quicSecurity.value = DataStore.serverQuicSecurity
             }
         }
-
+        multiMode.isVisible = isGRPC
         wsCategory.isVisible = isWs
 
         when (network) {
@@ -250,7 +259,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
                 requestHost.setTitle(R.string.http_host)
                 path.setTitle(R.string.http_path)
-
                 header.isVisible = true
             }
             "http" -> {
@@ -315,7 +323,16 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     fun updateTle(tle: String) {
         val isTLS = tle == "tls"
-        securityCategory.isVisible = isTLS
+        val isXTLS = tle == "xtls"
+        securityCategory.isVisible = isTLS || isXTLS
+        xtlsFlow.isVisible = isXTLS
+        if (isXTLS) {
+            if (DataStore.serverFlow !in xtlsFlowValue) {
+                xtlsFlow.value = xtlsFlowValue[0]
+            } else {
+                xtlsFlow.value = DataStore.serverFlow
+            }
+        }
     }
 
 }

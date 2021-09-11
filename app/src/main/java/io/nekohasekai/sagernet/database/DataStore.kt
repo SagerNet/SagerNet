@@ -122,26 +122,24 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
     var socksPort: Int
-        get() = getLocalPort(Key.SOCKS_PORT, 2080)
+        get() = getLocalPort(Key.SOCKS_PORT, 2081)
         set(value) = saveLocalPort(Key.SOCKS_PORT, value)
     var localDNSPort: Int
-        get() = getLocalPort(Key.LOCAL_DNS_PORT, 6450)
+        get() = getLocalPort(Key.LOCAL_DNS_PORT, 6451)
         set(value) {
             saveLocalPort(Key.LOCAL_DNS_PORT, value)
         }
     var httpPort: Int
-        get() = getLocalPort(Key.HTTP_PORT, 9080)
+        get() = getLocalPort(Key.HTTP_PORT, 9081)
         set(value) = saveLocalPort(Key.HTTP_PORT, value)
     var transproxyPort: Int
-        get() = getLocalPort(Key.TRANSPROXY_PORT, 9200)
+        get() = getLocalPort(Key.TRANSPROXY_PORT, 9201)
         set(value) = saveLocalPort(Key.TRANSPROXY_PORT, value)
     var apiPort: Int
-        get() = getLocalPort(Key.API_PORT, 9002)
+        get() = getLocalPort(Key.API_PORT, 9003)
         set(value) {
             saveLocalPort(Key.API_PORT, value)
         }
-
-    var probeInterval by configurationStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
 
     fun initGlobal() {
         if (configurationStore.getString(Key.SOCKS_PORT) == null) {
@@ -193,6 +191,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
+    var utlsFingerprint by configurationStore.string(Key.UTLS_FINGERPRINT)
     var trafficStatistics by configurationStore.boolean(Key.TRAFFIC_STATISTICS)
     var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
 
@@ -233,13 +232,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverEncryption by profileCacheStore.string(Key.SERVER_ENCRYPTION)
     var serverALPN by profileCacheStore.string(Key.SERVER_ALPN)
     var serverCertificates by profileCacheStore.string(Key.SERVER_CERTIFICATES)
-    var serverPinnedCertificateChain by profileCacheStore.string(Key.SERVER_PINNED_CERTIFICATE_CHAIN)
+    var serverFlow by profileCacheStore.string(Key.SERVER_FLOW)
     var serverQuicSecurity by profileCacheStore.string(Key.SERVER_QUIC_SECURITY)
-    var serverWsMaxEarlyData by profileCacheStore.stringToInt(Key.SERVER_WS_MAX_EARLY_DATA)
     var serverWsBrowserForwarding by profileCacheStore.boolean(Key.SERVER_WS_BROWSER_FORWARDING)
-    var serverEarlyDataHeaderName by profileCacheStore.string(Key.SERVER_EARLY_DATA_HEADER_NAME)
     var serverHeaders by profileCacheStore.string(Key.SERVER_HEADERS)
     var serverAllowInsecure by profileCacheStore.boolean(Key.SERVER_ALLOW_INSECURE)
+    var serverMultiMode by profileCacheStore.boolean(Key.SERVER_MULTI_MODE)
 
     var serverVMessExperimentalAuthenticatedLength by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_AUTHENTICATED_LENGTH)
     var serverVMessExperimentalNoTerminationSignal by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_NO_TERMINATION_SIGNAL)

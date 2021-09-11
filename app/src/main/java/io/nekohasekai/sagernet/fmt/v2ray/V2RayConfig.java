@@ -587,6 +587,7 @@ public class V2RayConfig {
                 public String id;
                 public String encryption;
                 public Integer level;
+                public String flow;
 
             }
 
@@ -605,6 +606,7 @@ public class V2RayConfig {
             public String password;
             public String email;
             public Integer level;
+            public String flow;
 
         }
 
@@ -636,6 +638,7 @@ public class V2RayConfig {
         public String network;
         public String security;
         public TLSObject tlsSettings;
+        public TLSObject xtlsSettings;
         public TcpObject tcpSettings;
         public KcpObject kcpSettings;
         public WebSocketObject wsSettings;
@@ -650,7 +653,6 @@ public class V2RayConfig {
             public Integer mark;
             public Boolean tcpFastOpen;
             public String tproxy;
-            public Integer tcpKeepAliveInterval;
 
         }
 
@@ -663,7 +665,7 @@ public class V2RayConfig {
         public List<String> alpn;
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
-        public List<String> pinnedPeerCertificateChainSha256;
+        public String fingerprint;
 
         public static class CertificateObject {
 
@@ -743,9 +745,6 @@ public class V2RayConfig {
         public Boolean acceptProxyProtocol;
         public String path;
         public Map<String, String> headers;
-        public Integer maxEarlyData;
-        public String earlyDataHeaderName;
-        public Boolean useBrowserForwarding;
 
     }
 
@@ -782,26 +781,18 @@ public class V2RayConfig {
     public static class GrpcObject {
 
         public String serviceName;
+        public Boolean multiMode;
 
     }
 
     public Map<String, Object> stats;
 
-    public List<FakeDnsObject> fakedns;
+    public FakeDnsObject fakedns;
 
     public static class FakeDnsObject {
 
         public String ipPool;
         public Integer poolSize;
-
-    }
-
-    public BrowserForwarderObject browserForwarder;
-
-    public static class BrowserForwarderObject {
-
-        public String listenAddr;
-        public Integer listenPort;
 
     }
 

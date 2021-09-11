@@ -71,7 +71,6 @@ class V2rayBuildResult(
     var config: String,
     var index: List<IndexEntity>,
     var requireWs: Boolean,
-    var wsPort: Int,
     var outboundTags: List<String>,
     var outboundTagsCurrent: List<String>,
     var outboundTagsAll: Map<String, ProxyEntity>,
@@ -174,16 +173,13 @@ fun buildV2RayConfig(
             })
 
             if (useFakeDns) {
-                fakedns = mutableListOf()
-                fakedns.add(FakeDnsObject().apply {
-                    ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
+                fakedns = FakeDnsObject().apply {
+                    ipPool = if (ipv6Mode == IPv6Mode.ONLY) {
+                        "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
+                    } else {
+                        "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
+                    }
                     poolSize = 65535
-                })
-                if (ipv6Mode != IPv6Mode.DISABLE) {
-                    fakedns.add(FakeDnsObject().apply {
-                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
-                        poolSize = 65535
-                    })
                 }
             }
 
@@ -354,6 +350,7 @@ fun buildV2RayConfig(
 
         var rootBalancer: RoutingObject.RuleObject? = null
 
+        val utlsFingerprint = DataStore.utlsFingerprint
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
@@ -423,9 +420,6 @@ fun buildV2RayConfig(
                     }
                 } else {
                     currentOutbound.apply {
-                        val keepAliveInterval = DataStore.tcpKeepAliveInterval
-                        val needKeepAliveInterval = keepAliveInterval !in intArrayOf(0, 15)
-
                         if (bean is SOCKSBean) {
                             protocol = "socks"
                             settings = LazyOutboundConfigurationObject(
@@ -445,7 +439,7 @@ fun buildV2RayConfig(
                                             }
                                         })
                                 })
-                            if (bean.tls || needKeepAliveInterval) {
+                            if (bean.tls) {
                                 streamSettings = StreamSettingsObject().apply {
                                     network = "tcp"
                                     if (bean.tls) {
@@ -454,11 +448,10 @@ fun buildV2RayConfig(
                                             if (bean.sni.isNotBlank()) {
                                                 serverName = bean.sni
                                             }
-                                        }
-                                    }
-                                    if (needKeepAliveInterval) {
-                                        sockopt = StreamSettingsObject.SockoptObject().apply {
-                                            tcpKeepAliveInterval = keepAliveInterval
+
+                                            if (utlsFingerprint.isNotBlank()) {
+                                                fingerprint = utlsFingerprint
+                                            }
                                         }
                                     }
                                 }
@@ -481,7 +474,7 @@ fun buildV2RayConfig(
                                             }
                                         })
                                 })
-                            if (bean.tls || needKeepAliveInterval) {
+                            if (bean.tls) {
                                 streamSettings = StreamSettingsObject().apply {
                                     network = "tcp"
                                     if (bean.tls) {
@@ -490,11 +483,9 @@ fun buildV2RayConfig(
                                             if (bean.sni.isNotBlank()) {
                                                 serverName = bean.sni
                                             }
-                                        }
-                                    }
-                                    if (needKeepAliveInterval) {
-                                        sockopt = StreamSettingsObject.SockoptObject().apply {
-                                            tcpKeepAliveInterval = keepAliveInterval
+                                            if (utlsFingerprint.isNotBlank()) {
+                                                fingerprint = utlsFingerprint
+                                            }
                                         }
                                     }
                                 }
@@ -541,6 +532,9 @@ fun buildV2RayConfig(
                                                         id = bean.uuidOrGenerate()
                                                         encryption = bean.encryption
                                                         level = 8
+                                                        if (bean.security == "xtls") {
+                                                            flow = bean.flow
+                                                        }
                                                     })
                                             })
                                     })
@@ -551,38 +545,36 @@ fun buildV2RayConfig(
                                 if (bean.security.isNotBlank()) {
                                     security = bean.security
                                 }
-                                if (security == "tls") {
-                                    tlsSettings = TLSObject().apply {
-                                        if (bean.sni.isNotBlank()) {
-                                            serverName = bean.sni
-                                        }
+                                val settings = TLSObject().apply {
+                                    if (bean.sni.isNotBlank()) {
+                                        serverName = bean.sni
+                                    }
 
-                                        if (bean.alpn.isNotBlank()) {
-                                            alpn = bean.alpn.split("\n")
-                                        }
+                                    if (bean.alpn.isNotBlank()) {
+                                        alpn = bean.alpn.split("\n")
+                                    }
 
-                                        if (bean.certificates.isNotBlank()) {
-                                            disableSystemRoot = true
-                                            certificates = listOf(
-                                                TLSObject.CertificateObject()
-                                                    .apply {
-                                                        usage = "verify"
-                                                        certificate = bean.certificates.split(
-                                                            "\n"
-                                                        ).filter { it.isNotBlank() }
-                                                    })
-                                        }
-
-                                        if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
-                                            pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.split(
+                                    if (bean.certificates.isNotBlank()) {
+                                        disableSystemRoot = true
+                                        certificates = listOf(TLSObject.CertificateObject().apply {
+                                            usage = "verify"
+                                            certificate = bean.certificates.split(
                                                 "\n"
                                             ).filter { it.isNotBlank() }
-                                        }
-
-                                        if (bean.allowInsecure) {
-                                            allowInsecure = true
-                                        }
+                                        })
                                     }
+
+                                    if (bean.allowInsecure) {
+                                        allowInsecure = true
+                                    }
+
+                                    if (utlsFingerprint.isNotBlank()) {
+                                        fingerprint = utlsFingerprint
+                                    }
+                                }
+                                when (security) {
+                                    "tls" -> tlsSettings = settings
+                                    "xtls" -> xtlsSettings = settings
                                 }
 
                                 when (network) {
@@ -639,16 +631,7 @@ fun buildV2RayConfig(
 
                                             path = bean.path.takeIf { it.isNotBlank() } ?: "/"
 
-                                            if (bean.wsMaxEarlyData > 0) {
-                                                maxEarlyData = bean.wsMaxEarlyData
-                                            }
-
-                                            if (bean.earlyDataHeaderName.isNotBlank()) {
-                                                earlyDataHeaderName = bean.earlyDataHeaderName
-                                            }
-
                                             if (bean.wsUseBrowserForwarder) {
-                                                useBrowserForwarding = true
                                                 requireWs = true
                                             }
                                         }
@@ -678,16 +661,10 @@ fun buildV2RayConfig(
                                     "grpc" -> {
                                         grpcSettings = GrpcObject().apply {
                                             serviceName = bean.grpcServiceName
+                                            multiMode = bean.grpcMultiMode
                                         }
                                     }
                                 }
-
-                                if (needKeepAliveInterval) {
-                                    sockopt = StreamSettingsObject.SockoptObject().apply {
-                                        tcpKeepAliveInterval = keepAliveInterval
-                                    }
-                                }
-
                             }
                         } else if (bean is ShadowsocksBean) {
                             protocol = "shadowsocks"
@@ -701,13 +678,6 @@ fun buildV2RayConfig(
                                             method = bean.method
                                             password = bean.password
                                         })
-                                    if (needKeepAliveInterval) {
-                                        streamSettings = StreamSettingsObject().apply {
-                                            sockopt = StreamSettingsObject.SockoptObject().apply {
-                                                tcpKeepAliveInterval = keepAliveInterval
-                                            }
-                                        }
-                                    }
                                 })
                         } else if (bean is TrojanBean) {
                             protocol = "trojan"
@@ -720,27 +690,28 @@ fun buildV2RayConfig(
                                             port = bean.serverPort
                                             password = bean.password
                                             level = 8
+                                            if (bean.security == "xtls") {
+                                                flow = bean.flow
+                                            }
                                         })
                                 })
                             streamSettings = StreamSettingsObject().apply {
                                 network = "tcp"
-                                security = "tls"
-                                tlsSettings = TLSObject().apply {
+                                security = bean.security
+                                val settings = TLSObject().apply {
                                     if (bean.sni.isNotBlank()) {
                                         serverName = bean.sni
                                     }
                                     if (bean.alpn.isNotBlank()) {
                                         alpn = bean.alpn.split("\n")
                                     }
-                                }
-                                if (needKeepAliveInterval) {
-                                    sockopt = StreamSettingsObject.SockoptObject().apply {
-                                        tcpKeepAliveInterval = keepAliveInterval
+                                    if (utlsFingerprint.isNotBlank()) {
+                                        fingerprint = utlsFingerprint
                                     }
                                 }
-                                if (bean.allowInsecure) {
-                                    tlsSettings = tlsSettings ?: TLSObject()
-                                    tlsSettings.allowInsecure = true
+                                when (security) {
+                                    "tls" -> tlsSettings = settings
+                                    "xtls" -> xtlsSettings = settings
                                 }
                             }
                         }
@@ -845,11 +816,10 @@ fun buildV2RayConfig(
                     selector = chainOutbounds.map { it.tag }
                     if (observatory == null) observatory = ObservatoryObject().apply {
                         probeUrl = DataStore.connectionTestURL
-                        val testInterval = DataStore.probeInterval
+                        /*val testInterval = DataStore.probeInterval
                         if (testInterval > 0) {
                             probeInterval = "${testInterval}s"
-                        }
-                        enableConcurrency = true
+                        }*/
                     }
                     if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
                     observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
@@ -986,13 +956,6 @@ fun buildV2RayConfig(
                 })
             }
 
-        }
-
-        if (requireWs) {
-            browserForwarder = BrowserForwarderObject().apply {
-                listenAddr = LOCALHOST
-                listenPort = mkPort()
-            }
         }
 
         for (freedom in arrayOf(TAG_DIRECT, TAG_BYPASS)) outbounds.add(OutboundObject().apply {
@@ -1169,20 +1132,18 @@ fun buildV2RayConfig(
                      })
              })
 
-             routing.rules.add(0, RoutingObject.RuleObject().apply {
-                 type = "field"
-                 inboundTag = listOf(TAG_API_IN)
-                 outboundTag = TAG_API
-             })
-         }
-
-         */
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                inboundTag = listOf(TAG_API_IN)
+                outboundTag = TAG_API
+            })
+        }
+*/
     }.let {
         V2rayBuildResult(
             gson.toJson(it),
             indexMap,
             requireWs,
-            if (requireWs) it.browserForwarder.listenPort else 0,
             outboundTags,
             outboundTagsCurrent,
             outboundTagsAll,
@@ -1258,12 +1219,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
     var requireWs = false
     var wsPort = 0
     if (config.contains("browserForwarder")) {
-        config["browserForwarder"] = JSONObject(gson.toJson(BrowserForwarderObject().apply {
-            requireWs = true
-            listenAddr = LOCALHOST
-            listenPort = mkPort()
-            wsPort = listenPort
-        }))
+        requireWs = true
     }
 
     val outbounds = try {
@@ -1315,12 +1271,10 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         config["outbounds"] = JSONArray(outbounds.map { JSONObject(gson.toJson(it)) })
     }
 
-
     return V2rayBuildResult(
         config.toStringPretty(),
         emptyList(),
         requireWs,
-        wsPort,
         outboundTags,
         outboundTags,
         emptyMap(),

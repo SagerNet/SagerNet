@@ -50,6 +50,10 @@ import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
 import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
+import io.nekohasekai.sagernet.fmt.shadowsocks.methodsXray
+import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.*
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
@@ -405,7 +409,7 @@ data class ProxyEntity(
         if (bean.method.contains(ssSecureList)) {
             val prefer = DataStore.providerShadowsocksAEAD
             when {
-                prefer == ShadowsocksProvider.V2RAY && bean.method in methodsV2fly && bean.plugin.isBlank() -> {
+                prefer == ShadowsocksProvider.V2RAY && bean.method in methodsXray && bean.plugin.isBlank() -> {
                     return ShadowsocksProvider.V2RAY
                 }
                 prefer == ShadowsocksProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash(
@@ -426,7 +430,7 @@ data class ProxyEntity(
             }
             return if (ssPreferClash()) {
                 ShadowsocksProvider.CLASH
-            } else if (bean.method in methodsV2fly && bean.plugin.isBlank()) {
+            } else if (bean.method in methodsXray && bean.plugin.isBlank()) {
                 ShadowsocksProvider.V2RAY
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ShadowsocksProvider.SHADOWSOCKS_RUST
@@ -482,7 +486,7 @@ data class ProxyEntity(
 
     fun ssPreferClash(): Boolean {
         val bean = ssBean ?: return false
-        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust && bean.method !in methodsSsLibev
+        val onlyClash = bean.method !in methodsXray && bean.method !in methodsSsRust && bean.method !in methodsSsLibev
         return onlyClash || ssPluginSupportedByClash(false)
     }
 
