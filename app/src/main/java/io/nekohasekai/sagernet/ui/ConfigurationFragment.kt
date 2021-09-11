@@ -19,6 +19,8 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -29,6 +31,7 @@ import android.provider.OpenableColumns
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.TypedValue
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -36,6 +39,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.TypefaceCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.size
@@ -91,11 +95,28 @@ class ConfigurationFragment @JvmOverloads constructor(
     val alwaysShowAddress by lazy { DataStore.alwaysShowAddress }
     val securityAdvisory by lazy { DataStore.securityAdvisory }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (!select) {
             toolbar.inflateMenu(R.menu.add_profile_menu)
             toolbar.setOnMenuItemClickListener(this)
+            runCatching {
+                val mTitleTextView = Toolbar::class.java.getDeclaredField("mTitleTextView")
+                    .apply { isAccessible = true }.get(toolbar) as TextView
+                mTitleTextView.typeface = TypefaceCompat.createFromResourcesFontFile(
+                    view.context,
+                    resources,
+                    R.font.bgothm,
+                    "res/font/bgothm.ttf",
+                    mTitleTextView.typeface.style
+                )
+                mTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    (mTitleTextView.textSize * 1.35).toFloat()
+                )
+            }.onFailure {
+                Logs.w(it)
+            }
         } else {
             toolbar.setTitle(R.string.select_profile)
             toolbar.setNavigationIcon(R.drawable.ic_navigation_close)
@@ -332,9 +353,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
-            R.id.action_new_balancer -> {
+            /*R.id.action_new_balancer -> {
                 startActivity(Intent(requireActivity(), BalancerSettingsActivity::class.java))
-            }
+            }*/
             R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())

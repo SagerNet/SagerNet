@@ -123,9 +123,8 @@ class ServiceNotification(
     private val builder = NotificationCompat.Builder(service as Context, channel).setWhen(0)
         .setTicker(service.getString(R.string.forward_success)).setContentTitle(profileName)
         .setContentIntent(SagerNet.configureIntent(service))
-        .setSmallIcon(R.drawable.ic_service_active).setCategory(NotificationCompat.CATEGORY_SERVICE)
+        .setSmallIcon(R.drawable.ic_service_ax).setCategory(NotificationCompat.CATEGORY_SERVICE)
         .setPriority(if (visible) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_MIN)
-
     init {
         service as Context
         val closeAction = NotificationCompat.Action.Builder(

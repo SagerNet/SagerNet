@@ -145,7 +145,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 val context = requireContext()
 
                 runOnDefaultDispatcher {
-                    val logFile = File.createTempFile("SagerNet ",
+                    val logFile = File.createTempFile("AnXray ",
                         ".log",
                         File(app.cacheDir, "log").also { it.mkdirs() })
 

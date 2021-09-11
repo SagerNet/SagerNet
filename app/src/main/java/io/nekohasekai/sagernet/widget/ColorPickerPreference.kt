@@ -107,8 +107,8 @@ class ColorPickerPreference @JvmOverloads constructor(
     }
 
     private fun setInternalColor(colorIndexToSet: Int, force: Boolean) {
-        val colorIndex = if (colorIndexToSet >= colors.size || colorIndexToSet < 0) 1 else colorIndexToSet
-        val oldColor = getPersistedInt(2) - 1
+        val colorIndex = if (colorIndexToSet >= colors.size || colorIndexToSet < 0) colors.size - 1 else colorIndexToSet
+        val oldColor = getPersistedInt(colors.size) - 1
         val changed = oldColor != colorIndex
         if (changed || force) {
             this.colorIndex = colorIndex
@@ -121,15 +121,14 @@ class ColorPickerPreference @JvmOverloads constructor(
     override fun onSetInitialValue(defaultValueObj: Any?) {
         setInternalColor(
             getPersistedInt(
-                2
+                colors.size
             ) - 1, true
         )
     }
 
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
-        if (isPersistent) {
-            // No need to save instance state since it's persistent
+        if (isPersistent) { // No need to save instance state since it's persistent
             return superState
         }
         val myState = SavedState(superState)
@@ -138,8 +137,7 @@ class ColorPickerPreference @JvmOverloads constructor(
     }
 
     override fun onRestoreInstanceState(state: Parcelable) {
-        if (state.javaClass != SavedState::class.java) {
-            // Didn't save state for us in onSaveInstanceState
+        if (state.javaClass != SavedState::class.java) { // Didn't save state for us in onSaveInstanceState
             super.onRestoreInstanceState(state)
             return
         }

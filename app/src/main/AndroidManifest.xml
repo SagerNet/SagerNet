@@ -198,9 +198,9 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
             android:configChanges="uiMode" />
-        <activity
+        <!--<activity
             android:name="io.nekohasekai.sagernet.ui.profile.BalancerSettingsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode" />-->
         <activity
             android:name="io.nekohasekai.sagernet.ui.GroupSettingsActivity"
             android:configChanges="uiMode" />
@@ -276,7 +276,7 @@
             android:name="io.nekohasekai.sagernet.bg.TileService"
             android:directBootAware="true"
             android:exported="true"
-            android:icon="@drawable/ic_service_active"
+            android:icon="@drawable/ic_service_ax"
             android:label="@string/tile_title"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:process=":bg"

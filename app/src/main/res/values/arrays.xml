@@ -490,19 +490,42 @@
     <string-array name="transport_layer_encryption_entry">
         <item>NONE</item>
         <item>TLS</item>
+        <item>XTLS</item>
+
     </string-array>
 
     <string-array name="transport_layer_encryption_value">
         <item>none</item>
         <item>tls</item>
+        <item>xtls</item>
     </string-array>
 
     <string-array name="trojan_transport_layer_encryption_entry">
         <item>TLS</item>
+        <item>XTLS</item>
     </string-array>
 
     <string-array name="trojan_transport_layer_encryption_value">
         <item>tls</item>
+        <item>xtls</item>
+    </string-array>
+
+    <string-array name="xtls_flow_entry" translatable="false">
+        <item>XTLS-RPRX-ORIGIN</item>
+        <item>XTLS-RPRX-ORIGIN-UDP443</item>
+        <item>XTLS-RPRX-DIRECT</item>
+        <item>XTLS-RPRX-DIRECT-UDP443</item>
+        <item>XTLS-RPRX-SPLICE</item>
+        <item>XTLS-RPRX-SPLICE-UDP443</item>
+    </string-array>
+
+    <string-array name="xtls_flow_value" translatable="false">
+        <item>xtls-rprx-origin</item>
+        <item>xtls-rprx-origin-udp443</item>
+        <item>xtls-rprx-direct</item>
+        <item>xtls-rprx-direct-udp443</item>
+        <item>xtls-rprx-splice</item>
+        <item>xtls-rprx-splice-udp443</item>
     </string-array>
 
     <string-array name="notification_entry">
@@ -570,7 +593,7 @@
     </string-array>
 
     <string-array name="config_type_entry">
-        <item>V2Ray</item>
+        <item>Xray</item>
         <item>Trojan-Go</item>
     </string-array>
     <string-array name="config_type_value">
@@ -624,7 +647,7 @@
     </string-array>
 
     <string-array name="trojan_provider">
-        <item>V2Ray</item>
+        <item>Xray</item>
         <item>Trojan-Go</item>
     </string-array>
 
@@ -634,13 +657,13 @@
     </string-array>
 
     <string-array name="trojan_provider_experimental">
-        <item>V2Ray</item>
+        <item>Xray</item>
         <item>Trojan</item>
         <item>Trojan-Go</item>
     </string-array>
 
     <string-array name="ss_aead_provider">
-        <item>V2Ray</item>
+        <item>Xray</item>
         <item>shadowsocks-rust</item>
         <item>shadowsocks-libev</item>
         <item>Clash</item>
@@ -706,6 +729,22 @@
         <item>SOCKS4</item>
         <item>SOCKS4A</item>
         <item>SOCKS5</item>
+    </string-array>
+
+    <string-array name="utls_entry">
+        <item>DISABLED</item>
+        <item>CHROME</item>
+        <item>FIREFOX</item>
+        <item>SAFARI</item>
+        <item>RANDOMIZED</item>
+    </string-array>
+
+    <string-array name="utls_value">
+        <item />
+        <item>chrome</item>
+        <item>firefox</item>
+        <item>safari</item>
+        <item>randomized</item>
     </string-array>
 
     <string-array name="snell_versions">

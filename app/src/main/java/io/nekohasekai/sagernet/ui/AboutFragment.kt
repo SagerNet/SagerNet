@@ -26,6 +26,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.os.SystemClock
 import android.provider.Settings
 import android.text.util.Linkify
 import android.view.View
@@ -61,6 +62,17 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
         ViewCompat.setOnApplyWindowInsetsListener(view, ListHolderListener)
         toolbar.setTitle(R.string.menu_about)
+
+        var eTime = 0L
+        var eCount = 0
+
+        binding.titleCard.setOnClickListener {
+            val time = SystemClock.elapsedRealtime()
+            if (time - eTime >= 1000L) eCount = 1 else if (++eCount >= 3) {
+                requireContext().launchCustomTab("https://github.com/XTLS")
+            }
+            eTime = time
+        }
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.about_fragment_holder, AboutContent())
@@ -103,15 +115,19 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .subText(versionName)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                "https://github.com/SagerNet/SagerNet/releases"
+                                "https://github.com/XTLS/AnXray/releases"
                             )
                         }
                         .build())
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_airplanemode_active_24)
-                        .text(getString(R.string.version_x, "v2ray-core"))
+                        .text(getString(R.string.version_x, "Xray-core"))
                         .subText("v" + Libcore.getV2RayVersion())
-                        .setOnClickAction { }
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(
+                                "https://github.com/XTLS/Xray-core/releases"
+                            )
+                        }
                         .build())
                     .apply {
                         val m = enumValues<PluginEntry>().associateBy { it.pluginId }
@@ -175,7 +191,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.github)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                "https://github.com/SagerNet/SagerNet"
+                                "https://github.com/XTLS/AnXray"
 
                             )
                         }
@@ -195,7 +211,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.telegram)
                         .setOnClickAction {
                             requireContext().launchCustomTab(
-                                "https://t.me/SagerNet"
+                                "https://t.me/AnXray"
                             )
                         }
                         .build())

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2021 by nekohasekai <contact-git@sekai.icu>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108"
+    android:tint="#000000">
+    <group android:scaleX="0.57"
+        android:scaleY="0.55"
+        android:translateX="0"
+        android:translateY="0">
+        <group android:translateY="151.20006">
+            <path android:pathData="M64.796875,-31L25.484375,-31L15.703125,0.5L4.609375,0.5L37.578125,-101L52.421875,-101L86.40625,0.5L75.171875,0.5L64.796875,-31ZM28.21875,-39.96875L61.921875,-39.96875L44.921875,-93.046875L28.21875,-39.96875Z"
+                android:fillColor="#000000"/>
+            <path android:pathData="M177.10938,0L164.875,0L135.64062,-46.6875L106.265625,0L94.171875,0L128.73438,-54.234375L97.625,-101.5L109.859375,-101.5L135.78125,-61.921875L161.98438,-101.5L173.79688,-101.5L142.40625,-54.8125L177.10938,0Z"
+                android:fillColor="#000000"/>
+        </group>
+    </group>
+</vector>

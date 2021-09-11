@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_desc">適用於 Android 的通用代理工具鏈，由 Kotlin 編寫。</string>
     <string name="project">專案</string>
     <string name="github">原始碼</string>
     <string name="telegram">Telegram 更新頻道</string>
@@ -102,7 +101,7 @@
     <!-- notification category -->
     <string name="service_vpn">VPN 服務</string>
     <string name="service_proxy">代理服務</string>
-    <string name="forward_success">SagerNet 已啟動。</string>
+    <string name="forward_success">AnXray 已啟動。</string>
     <string name="invalid_server">伺服器名稱無效</string>
     <string name="stop">停止</string>
     <string name="stopping">關閉中……</string>

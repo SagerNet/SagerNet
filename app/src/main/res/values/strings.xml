@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">SagerNet</string>
-    <string name="app_desc">The universal proxy toolchain for Android, written in Kotlin.</string>
+    <string name="app_name" translatable="false">AnXray</string>
+    <string name="app_desc" translatable="false">Another Xray for Android.</string>
     <string name="project">Project</string>
     <string name="github">Source code</string>
     <string name="telegram">Telegram update channel</string>
@@ -64,6 +64,7 @@
     <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
     <string name="show_direct_speed">Show Direct Speed</string>
     <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as well</string>
+    <string name="xray_utls_fingerprint">Xray uTLS Fingerprint</string>
     <string name="security_settings">Security Settings</string>
     <string name="allow_insecure">Allow Insecure</string>
     <string name="allow_insecure_sum">Disable certificate checking. When enabled, this configuration is as secure as plaintext</string>
@@ -106,6 +107,8 @@
     <string name="alter_id">Alter ID</string>
     <string name="security">Transport layer encryption</string>
     <string name="network">Network</string>
+    <string name="flow">Flow control algorithm</string>
+
     <string name="header_type">Header Type</string>
     <string name="ws_host">WebSocket Host</string>
     <string name="ws_path">WebSocket Path</string>
@@ -115,12 +118,14 @@
     <string name="quic_key">Quic KEY</string>
     <string name="kcp_seed">mKCP Seed</string>
     <string name="grpc_service_name">gRPC ServiceName</string>
+    <string name="multi_mode">gRPC Multi Mode</string>
+    <string name="multi_mode_sum">Experimental option. May not be retained for a long time, and cross-version compatibility is not guaranteed.</string>
+
     <string name="tls">Use TLS</string>
     <string name="sni">Server Name Indication</string>
     <string name="alpn">Application-Layer Protocol Negotiation</string>
     <string name="certificates">Certificates</string>
     <string name="pinned_peer_certificate_chain_sha256">Pinned Certificate Chain</string>
-    <string name="early_data_header_name">Early Data Header Name</string>
     <string name="encryption">Encryption</string>
     <string name="extra_headers">Extra Headers</string>
     <string name="config_type">Config Type</string>
@@ -395,6 +400,7 @@
     <string name="experimental_settings">Experimental</string>
     <string name="experimental_authenticated_length">Make the length of each payload segment no longer malleable. This experiment requires the server and client use the same version of v2ray-core. More breaking updates on this experiment is expected.</string>
     <string name="experimental_no_termination_signal">Do not send connection single duplex termination signal for TCP connection when transferred over VMess. This will break some application.</string>
+    <string name="utls_fingerprint">uTLS Fingerprint</string>
     <string name="hysteria_stream_receive_window">QUIC Stream Receive Window</string>
     <string name="hysteria_connection_receive_window">QUIC Connection Receive Window</string>
     <string name="hysteria_disable_mtu_discovery">Disable Path MTU Discovery</string>

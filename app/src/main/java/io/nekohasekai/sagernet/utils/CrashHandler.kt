@@ -40,7 +40,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
     @Suppress("UNNECESSARY_SAFE_CALL")
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
 
-        val logFile = File.createTempFile("SagerNet Crash Report ",
+        val logFile = File.createTempFile("AnXray Crash Report ",
             ".log",
             File(app.cacheDir, "log").also { it.mkdirs() }
         )

@@ -33,7 +33,7 @@ import android.service.quicksettings.TileService as BaseTileService
 
 @RequiresApi(24)
 class TileService : BaseTileService(), SagerConnection.Callback {
-    private val iconIdle by lazy { Icon.createWithResource(this, R.drawable.ic_service_idle) }
+    private val iconIdle by lazy { Icon.createWithResource(this, R.drawable.ic_service_ax) }
     private val iconBusy by lazy { Icon.createWithResource(this, R.drawable.ic_service_busy) }
     private val iconConnected by lazy {
         Icon.createWithResource(this,
@@ -74,16 +74,16 @@ class TileService : BaseTileService(), SagerConnection.Callback {
             when (serviceState) {
                 BaseService.State.Idle -> error("serviceState")
                 BaseService.State.Connecting -> {
-                    icon = iconBusy
+                    icon = iconIdle
                     state = Tile.STATE_ACTIVE
                 }
                 BaseService.State.Connected -> {
-                    icon = iconConnected
+                    icon = iconIdle
                     if (!keyguard.isDeviceLocked) label = profileName()
                     state = Tile.STATE_ACTIVE
                 }
                 BaseService.State.Stopping -> {
-                    icon = iconBusy
+                    icon = iconIdle
                     state = Tile.STATE_UNAVAILABLE
                 }
                 BaseService.State.Stopped -> {

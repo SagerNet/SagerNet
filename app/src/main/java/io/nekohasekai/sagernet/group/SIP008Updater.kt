@@ -56,7 +56,7 @@ object SIP008Updater : GroupUpdater() {
             val response =
                 httpClient.newCall(Request.Builder().url(subscription.link).header("User-Agent",
                     subscription.customUserAgent.takeIf { it.isNotBlank() }
-                        ?: "SagerNet/${BuildConfig.VERSION_NAME}").build()).execute().apply {
+                        ?: "AxXray/${BuildConfig.VERSION_NAME}").build()).execute().apply {
                     if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                     if (body == null) error("ERROR: Empty response")
                 }

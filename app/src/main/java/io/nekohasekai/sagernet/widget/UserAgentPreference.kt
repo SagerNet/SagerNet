@@ -38,7 +38,7 @@ class UserAgentPreference : EditTextPreference {
 
     override fun getSummary(): CharSequence {
         if (text.isNullOrBlank()) {
-            return "SagerNet/${BuildConfig.VERSION_NAME}"
+            return "AxXray/${BuildConfig.VERSION_NAME}"
         }
         return super.getSummary()
     }
