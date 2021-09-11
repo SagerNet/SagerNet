@@ -19,9 +19,17 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
-import cn.hutool.core.util.NumberUtil
-import com.v2ray.core.app.observatory.ObservationResult
-import com.v2ray.core.app.observatory.OutboundStatus
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
+import android.os.SystemClock
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import cn.hutool.core.util.NumberUtil/*
+import com.xray.app.observatory.ObservationResult
+import com.xray.app.observatory.OutboundStatus*/
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
@@ -35,6 +43,7 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.*
 import libcore.Libcore
 import java.io.IOException
+
 
 class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : V2RayInstance(
     profile
@@ -63,7 +72,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     override fun launch() {
         super.launch()
 
-        if (config.observatoryTags.isNotEmpty()) {
+       /* if (config.observatoryTags.isNotEmpty()) {
             observatoryJob = runOnDefaultDispatcher {
                 sendInitStatuses()
 
@@ -80,7 +89,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                     delay(interval)
                 }
             }
-        }
+        }*/
 
         if (DataStore.allowAccess) {
             externalInstances[11451] = ApiInstance().apply {
@@ -92,7 +101,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     }
 
     fun sendInitStatuses() {
-        val time = (System.currentTimeMillis() / 1000) - 300
+        /*val time = (System.currentTimeMillis() / 1000) - 300
         for (observatoryTag in config.observatoryTags) {
             val profileId = observatoryTag.substringAfter("global-")
             if (NumberUtil.isLong(profileId)) {
@@ -116,10 +125,10 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                         .toByteArray()
                 )
             }
-        }
+        }*/
     }
 
-    suspend fun loopObservatoryResults() {
+   /* suspend fun loopObservatoryResults() {
         val statusPb = v2rayPoint.observatoryStatus
         if (statusPb == null || statusPb.isEmpty()) {
             return
@@ -169,7 +178,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 }
             }
         }
-    }
+    }*/
 
     override fun close() {
         SagerNet.started = false
@@ -205,12 +214,16 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     }
 
     class OutboundStats(
-        val proxyEntity: ProxyEntity, var uplinkTotal: Long = 0L, var downlinkTotal: Long = 0L
+        val proxyEntity: ProxyEntity,
+        var uplinkTotal: Long = 0L,
+        var downlinkTotal: Long = 0L
     )
 
     private val statsOutbounds = hashMapOf<Long, OutboundStats>()
     private fun registerStats(
-        proxyEntity: ProxyEntity, uplink: Long? = null, downlink: Long? = null
+        proxyEntity: ProxyEntity,
+        uplink: Long? = null,
+        downlink: Long? = null
     ) {
         if (proxyEntity.id == outboundStats.proxyEntity.id) return
         val stats = statsOutbounds.getOrPut(proxyEntity.id) {
