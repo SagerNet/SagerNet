@@ -60,6 +60,10 @@ import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import libcore.Libcore
 import kotlinx.coroutines.*
 import libcore.V2RayInstance
 import okhttp3.internal.closeQuietly
@@ -415,10 +419,18 @@ abstract class V2RayInstance(
             }
         }
 
+        lateinit var wsUrl: String
+        if (config.requireWs) {
+            val wsPort = mkPort()
+            wsUrl = "http://$LOCALHOST:$wsPort/"
+            Libcore.setenv("XRAY_BROWSER_DIALER", "$LOCALHOST:$wsPort")
+        } else {
+            Libcore.unsetenv("XRAY_BROWSER_DIALER")
+        }
+
         v2rayPoint.start()
 
         if (config.requireWs) {
-            val url = "http://$LOCALHOST:" + (config.wsPort) + "/"
 
             runOnMainDispatcher {
                 wsForwarder = WebView(context)
@@ -435,7 +447,7 @@ abstract class V2RayInstance(
                             wsForwarder.loadUrl("about:blank")
 
                             delay(1000L)
-                            wsForwarder.loadUrl(url)
+                            wsForwarder.loadUrl(wsUrl)
                         }
                     }
 
@@ -446,7 +458,7 @@ abstract class V2RayInstance(
 
                     }
                 }
-                wsForwarder.loadUrl(url)
+                wsForwarder.loadUrl(wsUrl)
             }
         }
 
