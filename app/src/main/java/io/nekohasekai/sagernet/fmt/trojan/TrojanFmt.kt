@@ -49,6 +49,7 @@ fun parseTrojan(server: String): TrojanBean {
         security = link.queryParameter("security") ?: "tls"
         sni = link.queryParameter("sni") ?: ""
         alpn = link.queryParameter("alpn") ?: ""
+        flow = link.queryParameter("flow") ?: ""
         name = link.fragment ?: ""
     }
 
@@ -67,6 +68,10 @@ fun TrojanBean.toUri(): String {
 
     when (security) {
         "tls" -> {
+        }
+        "xtls" -> {
+            builder.addQueryParameter("security", security)
+            builder.addQueryParameter("flow", flow)
         }
     }
 
