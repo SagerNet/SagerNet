@@ -40,7 +40,6 @@ import androidx.core.content.getSystemService
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
 import io.nekohasekai.sagernet.bg.proto.UidDumper
-import io.nekohasekai.sagernet.utils.CrashHandler
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
@@ -48,6 +47,7 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
+import io.nekohasekai.sagernet.utils.CrashHandler
 import io.nekohasekai.sagernet.utils.DeviceStorageApp
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Theme
@@ -129,6 +129,10 @@ class SagerNet : Application(),
 
         lateinit var application: SagerNet
 
+        val isTv by lazy {
+            uiMode.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+        }
+
         val deviceStorage by lazy {
             if (Build.VERSION.SDK_INT < 24) application else DeviceStorageApp(application)
         }
@@ -147,6 +151,7 @@ class SagerNet : Application(),
         val connectivity by lazy { application.getSystemService<ConnectivityManager>()!! }
         val notification by lazy { application.getSystemService<NotificationManager>()!! }
         val user by lazy { application.getSystemService<UserManager>()!! }
+        val uiMode by lazy { application.getSystemService<UiModeManager>()!! }
         val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
         val directBootSupported by lazy {
             Build.VERSION.SDK_INT >= 24 && try {

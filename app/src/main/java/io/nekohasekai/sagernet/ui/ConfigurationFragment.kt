@@ -29,10 +29,7 @@ import android.provider.OpenableColumns
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -171,6 +168,14 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         super.onDestroy()
+    }
+
+    override fun onKeyDown(ketCode: Int, event: KeyEvent): Boolean {
+        val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
+        fragment?.configurationListView?.apply {
+            if (!hasFocus()) requestFocus()
+        }
+        return super.onKeyDown(ketCode, event)
     }
 
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) { file ->
@@ -955,6 +960,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 onViewCreated(requireView(), null)
             }
             checkOrderMenu()
+            configurationListView.requestFocus()
         }
 
         fun checkOrderMenu() {
@@ -1330,6 +1336,12 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 onMainDispatcher {
                                     selectedView.visibility = View.VISIBLE
                                     if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
+                                }
+                            } else if (SagerNet.isTv) {
+                                if (SagerNet.started) {
+                                    SagerNet.stopService()
+                                } else {
+                                    SagerNet.startService()
                                 }
                             }
                         }

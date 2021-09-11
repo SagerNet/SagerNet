@@ -26,6 +26,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.RemoteException
 import android.provider.Settings
+import android.view.KeyEvent
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.IdRes
@@ -490,6 +491,28 @@ class MainActivity : ThemedActivity(),
         GroupManager.userInterface = null
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                if (super.onKeyDown(keyCode, event)) return true
+                binding.drawerLayout.open()
+                navigation.requestFocus()
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                if (binding.drawerLayout.isOpen) {
+                    binding.drawerLayout.close()
+                    return true
+                }
+            }
+        }
+
+        if (super.onKeyDown(keyCode, event)) return true
+        if (binding.drawerLayout.isOpen) return false
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragment_holder) as? ToolbarFragment
+        return fragment != null && fragment.onKeyDown(keyCode, event)
     }
 
 }

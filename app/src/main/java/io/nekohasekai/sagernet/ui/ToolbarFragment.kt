@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -42,5 +43,6 @@ open class ToolbarFragment : Fragment {
         }
     }
 
+    open fun onKeyDown(ketCode: Int, event: KeyEvent) = false
     open fun onBackPressed(): Boolean = false
 }
