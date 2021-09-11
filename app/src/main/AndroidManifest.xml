@@ -27,7 +27,6 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -45,6 +44,7 @@
     </queries>
 
     <application
+        android:banner="@mipmap/ic_launcher"
         android:name="io.nekohasekai.sagernet.SagerNet"
         android:allowBackup="true"
         android:autoRevokePermissions="allowed"
@@ -74,6 +74,12 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
@@ -326,11 +332,11 @@
 
         <activity
             android:name="com.mikepenz.aboutlibraries.ui.LibsActivity"
-            tools:node="remove"/>
+            tools:node="remove" />
 
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
-            tools:node="remove"/>
+            tools:node="remove" />
 
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
