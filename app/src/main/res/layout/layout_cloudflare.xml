@@ -48,10 +48,9 @@
                 android:gravity="end"
                 android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
+                <Button
                     android:id="@+id/warpGenerate"
-
-                    style="?attr/borderlessButtonStyle"
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
