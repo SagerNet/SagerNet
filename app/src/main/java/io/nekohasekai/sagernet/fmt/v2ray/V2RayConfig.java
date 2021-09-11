@@ -470,6 +470,8 @@ public class V2RayConfig {
     public static class BlackholeOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public ResponseObject response;
+        public Boolean keepConnection;
+        public Integer userLevel;
 
         public static class ResponseObject {
             public String type;
