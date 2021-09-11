@@ -54,10 +54,7 @@ jobs:
           key: native-${{ hashFiles('**/*.gradle.kts') }}
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-          ./run lib core
+        run: ./run lib core
   shadowsocks:
     name: Native Build (shadowsocks-rust)
     runs-on: ubuntu-latest
@@ -73,7 +70,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks.aar
-          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
@@ -149,7 +146,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks.aar
-          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Shadowsocks (libev) Cache
         uses: actions/cache@v2
         with:
@@ -272,7 +269,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks.aar
-          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Shadowsocks (libev) Cache
         uses: actions/cache@v2
         with:

@@ -1,42 +1,18 @@
 [submodule "library/shadowsocks/src/main/rust/shadowsocks-rust"]
 	path = library/shadowsocks/src/main/rust/shadowsocks-rust
 	url = https://github.com/shadowsocks/shadowsocks-rust.git
-[submodule "plugin/trojan-go/src/main/go/trojan-go"]
-	path = plugin/trojan-go/src/main/go/trojan-go
-	url = https://github.com/p4gefau1t/trojan-go
-[submodule "plugin/naive/src/main/jni/naiveproxy"]
-	path = plugin/naive/src/main/jni/naiveproxy
-	url = https://github.com/klzgrad/naiveproxy
-[submodule "plugin/pingtunnel/src/main/go/pingtunnel"]
-	path = plugin/pingtunnel/src/main/go/pingtunnel
-	url = https://github.com/esrrhs/pingtunnel
-[submodule "plugin/relaybaton/src/main/go/relaybaton"]
-	path = plugin/relaybaton/src/main/go/relaybaton
-	url = https://github.com/iyouport-org/relaybaton
-[submodule "plugin/brook/src/main/go/brook"]
-	path = plugin/brook/src/main/go/brook
-	url = https://github.com/txthinking/brook
 [submodule "external/editorkit"]
 	path = external/editorkit
 	url = https://github.com/SagerNet/editorkit
 [submodule "external/preferencex"]
 	path = external/preferencex
 	url = https://github.com/SagerNet/preferencex-android
-[submodule "external/v2ray-core"]
-	path = external/v2ray-core
-	url = https://github.com/SagerNet/v2ray-core
-[submodule "plugin/trojan/src/main/cpp/igniter-libs"]
-	path = plugin/trojan/src/main/cpp/igniter-libs
-	url = https://github.com/trojan-gfw/igniter-libs
-[submodule "plugin/trojan/src/main/cpp/trojan"]
-	path = plugin/trojan/src/main/cpp/trojan
-	url = https://github.com/trojan-gfw/trojan
-[submodule "plugin/hysteria/src/main/go/hysteria"]
-	path = plugin/hysteria/src/main/go/hysteria
-	url = https://github.com/HyNetwork/hysteria
+[submodule "external/Xray-core"]
+	path = external/Xray-core
+	url = https://github.com/nekohasekai/Xray-core
 [submodule "library/core"]
 	path = library/core
-	url = https://github.com/SagerNet/LibSagerNetCore
+	url = https://github.com/XTLS/LibAnXrayCore
 [submodule "external/termux-view"]
 	path = external/termux-view
 	url = https://github.com/SagerNet/termux-view
@@ -62,6 +38,3 @@
 [submodule "library/shadowsocks-libev/src/main/jni/shadowsocks-libev"]
 	path = library/shadowsocks-libev/src/main/jni/shadowsocks-libev
 	url = https://github.com/SagerNet/shadowsocks-libev
-[submodule "plugin/wireguard/src/main/go/wgsocks"]
-	path = plugin/wireguard/src/main/go/wgsocks
-	url = https://github.com/SagerNet/wgsocks

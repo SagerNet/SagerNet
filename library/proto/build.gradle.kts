@@ -3,5 +3,5 @@ plugins {
 }
 
 java {
-    sourceSets.getByName("main").resources.srcDir(rootProject.file("external/v2ray-core"))
+    sourceSets.getByName("main").resources.srcDir(rootProject.file("external/Xray-core"))
 }

@@ -5,7 +5,7 @@ git fetch origin main || exit 1
 git reset origin/main --hard
 popd
 
-pushd external/v2ray-core
+pushd external/Xray-core
 git fetch origin main || exit 1
 git reset origin/main --hard
 popd
