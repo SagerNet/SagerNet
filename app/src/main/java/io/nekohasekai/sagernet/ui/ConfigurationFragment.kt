@@ -966,7 +966,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         fun checkOrderMenu() {
             if (select) return
 
-            val menu = (requireParentFragment() as ToolbarFragment).toolbar.menu
+            val pf = requireParentFragment() as? ToolbarFragment ?: return
+            val menu = pf.toolbar.menu
             val origin = menu.findItem(R.id.action_order_origin)
             val byName = menu.findItem(R.id.action_order_by_name)
             val byDelay = menu.findItem(R.id.action_order_by_delay)
@@ -1320,6 +1321,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
             fun bind(proxyEntity: ProxyEntity) {
+                val pf = requireParentFragment() as? ConfigurationFragment ?: return
+
                 entity = proxyEntity
 
                 if (select) {
@@ -1375,8 +1378,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (showTraffic && address.length >= 30) {
                     address = address.substring(0, 27) + "..."
                 }
-
-                val pf = requireParentFragment() as ConfigurationFragment
 
                 if (proxyEntity.requireBean().name.isBlank() || !pf.alwaysShowAddress) {
                     address = ""
