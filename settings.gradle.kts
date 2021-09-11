@@ -1,9 +1,10 @@
+include(":library:stub")
 include(":library:include")
-include(":library:shadowsocks")
-include(":library:shadowsocks-libev")
-
 include(":library:proto")
 include(":library:proto-stub")
+
+include(":library:shadowsocks")
+include(":library:shadowsocks-libev")
 
 include(":plugin:api")
 
@@ -25,7 +26,6 @@ when {
         include(":plugin:$buildPlugin")
     }
 }
-
 
 include(":external:preferencex:preferencex")
 include(":external:preferencex:preferencex-simplemenu")

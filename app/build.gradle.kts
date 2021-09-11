@@ -30,7 +30,8 @@ android {
 dependencies {
 
     implementation(fileTree("libs"))
-    compileOnly(project(":library:include"))
+    compileOnly(project(":library:stub"))
+    implementation(project(":library:include"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("androidx.core:core-ktx:1.6.0")
