@@ -1,15 +1,27 @@
-# SagerNet for Android
+<div align="center">
+
+# ![AnXray](https://github.com/XTLS/AnXray/raw/img/screenshots/0.png)
+
+Another Xray for Android.
 
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
-[![Releases](https://img.shields.io/github/downloads/SagerNet/SagerNet/total.svg)](https://github.com/SagerNet/SagerNet/releases)
-[![Language: Kotlin](https://img.shields.io/github/languages/top/SagerNet/SagerNet.svg)](https://github.com/SagerNet/SagerNet/search?l=kotlin)
+[![Releases](https://img.shields.io/github/downloads/XTLS/AnXray/total.svg)](https://github.com/XTLS/AnXray/releases)
+[![Language: Kotlin](https://img.shields.io/github/languages/top/XTLS/AnXray.svg)](https://github.com/XTLS/AnXray/search?l=kotlin)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-orange.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-The universal proxy toolchain for Android, written in Kotlin.
+</div>
+
+## SCREENSHOTS
+
+The X-style logo, slogan, and exclusive bright & dark themes designed by [RPRX](https://github.com/rprx), the Chief Visual Designer at AnXray.
+
+<img src="https://github.com/XTLS/AnXray/raw/img/screenshots/1.jpg" width="270"> <img src="https://github.com/XTLS/AnXray/raw/img/screenshots/2.jpg" width="270"> <img src="https://github.com/XTLS/AnXray/raw/img/screenshots/3.jpg" width="270">
+
+<img src="https://github.com/XTLS/AnXray/raw/img/screenshots/4.jpg" width="270"> <img src="https://github.com/XTLS/AnXray/raw/img/screenshots/5.jpg" width="270"> <img src="https://github.com/XTLS/AnXray/raw/img/screenshots/6.jpg" width="270">
 
 ## Documents
 
-https://sagernet.org
+https://anxray.org
 
 ### Protocols
 
@@ -23,8 +35,8 @@ The application is designed to be used whenever possible.
 * Shadowsocks
 * ShadowsocksR
 * VMess
-* VLESS
-* Trojan
+* VLESS with XTLS support
+* Trojan with XTLS support
 * Snell
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy ( naive-plugin )
@@ -46,64 +58,22 @@ The application is designed to be used whenever possible.
 #### Features
 
 * Full basic features
-* V2Ray WebSocket browser forwarding
+* Xray WebSocket browser dialer
 * Option to change the notification update interval
 * A Chinese apps scanner (based on dex classpath scanning, so it may be slower)
 * Proxy chain
 * Balancer
 * Advanced routing with outbound profile selection
 * Reverse proxy
-* Custom config (V2Ray / Trojan-Go)
+* Custom config (Xray / Trojan-Go)
 * Traffic statistics support, including real-time display and cumulative statistics
 * Foreground status based routing support
 
-## Localization
-
-Is SagerNet not in your language, or the translation is incorrect or incomplete? Get involved in the
-translations on our [Weblate](https://hosted.weblate.org/engage/sagernet/).
-
-[![Translation status](https://hosted.weblate.org/widgets/sagernet/-/horizontal-auto.svg)](https://hosted.weblate.org/engage/sagernet/)
-
-### Adding a new language
-
-First and foremost, Android must already support the specific language and locale you want to add.
-We cannot work with languages that Android and the SDK do not support, the tools simply break down.
-Next, if you are considering adding a country-specific variant of a language (e.g. de-AT), first
-make sure that the main language is well maintained (e.g. de). Your contribution might be useful to
-more people if you contribute to the existing version of your language rather than the
-country-specific variant.
-
-Anyone can create a new language via Weblate.
-
 ## Credits
 
-#### shadowsocks-android
-
-`The first professional proxy application on native android.`
-
-Licensed under [GPLv3 or later][shadowsocks-android]
-
-[shadowsocks-android]: https://github.com/shadowsocks/shadowsocks-android/blob/master/LICENSE
-
-#### v2ray-core
-
-`A unified platform for anti-censorship, as the core, providing routing, DNS, and more for SN.`
-
-Licensed under [MIT][v2ray-core]
-
-[v2ray-core]: https://github.com/shadowsocks/shadowsocks-android/blob/master/LICENSE
-
-#### clash (OPEN SOURCE version)
-
-`Provides built-in shadowsocks plugins, SSR and Snell support for SN.`
-
-Licensed under [GPLv3][clash]
-
-[clash]: https://github.com/Dreamacro/clash/blob/master/LICENSE
-
-#### Plugins
-
 <ul>
+    <li><a href="https://github.com/shadowsocks/shadowsocks-android">shadowsocks/shadowsocks-android</a>: <code>GPL 3.0</code></li>
+    <li><a href="https://github.com/shadowsocksRb/shadowsocksr-libev/blob/master/LICENSE">shadowsocksRb/shadowsocksr-libev</a>: <code>GPL 3.0</code></li>
     <li><a href="https://github.com/p4gefau1t/trojan-go/blob/master/LICENSE">p4gefau1t/Trojan-Go</a>: <code>GPL 3.0</code></li>
     <li><a href="https://github.com/klzgrad/naiveproxy/blob/master/LICENSE">klzgrad/naiveproxy</a>:  <code>BSD-3-Clause License</code></li>
     <li><a href="https://github.com/esrrhs/pingtunnel/blob/master/LICENSE">esrrhs/pingtunnel</a>:  <code>MIT</code></li>
