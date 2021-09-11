@@ -27,12 +27,12 @@ jobs:
         with:
           path: |
             app/libs/libcore.aar
-          key: ${{ hashFiles('bin/lib/core/*', 'libcore_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/core/*', 'libcore_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17
+          go-version: 1.17.1
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
@@ -50,7 +50,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -106,7 +106,7 @@ jobs:
         with:
           path: |
             plugin/pingtunnel/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/pingtunnel/*', 'pt_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/pingtunnel/*', 'pt_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -129,7 +129,7 @@ jobs:
         with:
           path: |
             plugin/relaybaton/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/relaybaton/*', 'rb_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/relaybaton/*', 'rb_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -152,7 +152,7 @@ jobs:
         with:
           path: |
             plugin/brook/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/brook/*', 'brook_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -175,12 +175,12 @@ jobs:
         with:
           path: |
             plugin/hysteria/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/hysteria/*', 'hysteria_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/hysteria/*', 'hysteria_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.16
+          go-version: 1.17.1
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin hysteria
@@ -198,12 +198,12 @@ jobs:
         with:
           path: |
             plugin/wireguard/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/wireguard/*', 'wireguard_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/wireguard/*', 'wireguard_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17
+          go-version: 1.17.1
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin wireguard
@@ -290,7 +290,7 @@ jobs:
         with:
           path: |
             app/libs/libcore.aar
-          key: ${{ hashFiles('bin/lib/core/*', 'libcore_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/core/*', 'libcore_status') }}
       - name: Shadowsocks Cache
         uses: actions/cache@v2
         with:

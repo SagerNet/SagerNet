@@ -39,7 +39,7 @@ jobs:
         with:
           path: |
             plugin/brook/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/brook/*', 'brook_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -69,7 +69,7 @@ jobs:
         with:
           path: |
             plugin/brook/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/brook/*', 'brook_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -177,7 +177,7 @@ jobs:
         with:
           path: |
             plugin/brook/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/brook/*', 'brook_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/brook/*', 'brook_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:

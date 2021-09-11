@@ -39,7 +39,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Install Golang
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
@@ -64,7 +64,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -172,7 +172,7 @@ jobs:
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/trojan_go/*', 'trojan_go_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
