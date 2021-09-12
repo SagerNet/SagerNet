@@ -202,12 +202,6 @@ fun buildV2RayConfig(
         }
 
         policy = PolicyObject().apply {
-            levels = mapOf("8" to PolicyObject.LevelPolicyObject().apply {
-                connIdle = 300
-                downlinkOnly = 1
-                handshake = 4
-                uplinkOnly = 1
-            })
             system = PolicyObject.SystemPolicyObject().apply {
                 statsOutboundDownlink = true
                 statsOutboundUplink = true
@@ -225,7 +219,6 @@ fun buildV2RayConfig(
                 SocksInboundConfigurationObject().apply {
                     auth = "noauth"
                     udp = true
-                    userLevel = 8
                 })
             if (trafficSniffing || useFakeDns) {
                 sniffing = InboundObject.SniffingObject().apply {
@@ -249,7 +242,6 @@ fun buildV2RayConfig(
                 settings = LazyInboundConfigurationObject(this,
                     HTTPInboundConfigurationObject().apply {
                         allowTransparent = true
-                        userLevel = 8
                     })
                 if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
@@ -275,7 +267,6 @@ fun buildV2RayConfig(
                     DokodemoDoorInboundConfigurationObject().apply {
                         network = "tcp,udp"
                         followRedirect = true
-                        userLevel = 8
                     })
                 if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
@@ -508,7 +499,6 @@ fun buildV2RayConfig(
                                                         alterId = bean.alterId
                                                         security = bean.encryption.takeIf { it.isNotBlank() }
                                                             ?: "auto"
-                                                        level = 8
                                                         experimental = ""
                                                         if (bean.experimentalAuthenticatedLength) {
                                                             experimental += "AuthenticatedLength"
@@ -532,7 +522,6 @@ fun buildV2RayConfig(
                                                     .apply {
                                                         id = bean.uuidOrGenerate()
                                                         encryption = bean.encryption
-                                                        level = 8
                                                     })
                                             })
                                     })
@@ -708,7 +697,6 @@ fun buildV2RayConfig(
                                             address = bean.serverAddress
                                             port = bean.serverPort
                                             password = bean.password
-                                            level = 8
                                         })
                                 })
                             streamSettings = StreamSettingsObject().apply {
@@ -1230,7 +1218,6 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
                 SocksInboundConfigurationObject().apply {
                     auth = "noauth"
                     udp = true
-                    userLevel = 8
                 })
             if (trafficSniffing) {
                 sniffing = InboundObject.SniffingObject().apply {
