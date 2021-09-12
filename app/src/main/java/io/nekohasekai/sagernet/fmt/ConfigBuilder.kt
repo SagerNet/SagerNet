@@ -986,10 +986,10 @@ fun buildV2RayConfig(
         outbounds.add(OutboundObject().apply {
             tag = TAG_BLOCK
             protocol = "blackhole"
-            settings = LazyOutboundConfigurationObject(this,
+           /* settings = LazyOutboundConfigurationObject(this,
                 BlackholeOutboundConfigurationObject().apply {
                     keepConnection = true
-                })
+                })*/
         })
 
         inbounds.add(InboundObject().apply {
