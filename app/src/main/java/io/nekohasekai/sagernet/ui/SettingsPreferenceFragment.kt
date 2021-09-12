@@ -156,7 +156,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val enableLog = findPreference<SwitchPreference>(Key.ENABLE_LOG)!!
 
         val apiPort = findPreference<EditTextPreference>(Key.API_PORT)!!
-        val probeIndival = findPreference<EditTextPreference>(Key.PROBE_INTERVAL)!!
+        val probeInterval = findPreference<EditTextPreference>(Key.PROBE_INTERVAL)!!
 
         transproxyPort.isEnabled = requireTransproxy.isChecked
         transproxyMode.isEnabled = requireTransproxy.isChecked
@@ -210,8 +210,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
-        val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
-
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
@@ -242,14 +240,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         enableLog.onPreferenceChangeListener = reloadListener
 
-        probeIndival.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        probeIndival.onPreferenceChangeListener = reloadListener
+        probeInterval.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        probeInterval.onPreferenceChangeListener = reloadListener
 
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
         trafficStatistics.onPreferenceChangeListener = reloadListener
-        tunImplementation.onPreferenceChangeListener = reloadListener
 
     }
 
