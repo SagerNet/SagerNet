@@ -69,6 +69,7 @@ public class V2RayConfig {
             public Boolean skipFallback;
             public List<String> domains;
             public List<String> expectIPs;
+            public Boolean concurrent;
 
         }
 
@@ -84,6 +85,9 @@ public class V2RayConfig {
         public List<String> domains;
         public List<String> expectIPs;
         public String queryStrategy;
+
+        public Boolean disableFallback;
+        public Boolean disableFallbackIfMatch;
 
     }
 
@@ -396,6 +400,8 @@ public class V2RayConfig {
         public StreamSettingsObject streamSettings;
         public ProxySettingsObject proxySettings;
         public MuxObject mux;
+        public String domainStrategy;
+        public Long fallbackDelayMs;
 
         public void init() {
             if (settings != null) {

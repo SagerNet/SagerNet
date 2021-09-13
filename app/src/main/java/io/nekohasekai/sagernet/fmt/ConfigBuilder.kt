@@ -155,6 +155,12 @@ fun buildV2RayConfig(
     val requireHttp = !forTest && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp)
     val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
     val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
+    val outboundDomainStrategy = when (ipv6Mode) {
+        IPv6Mode.DISABLE -> "UseIPv4"
+        IPv6Mode.PREFER -> "PreferIPv6"
+        IPv6Mode.ONLY -> "UseIPv6"
+        else -> "PreferIPv4"
+    }
     var dumpUid = false
     val alerts = mutableListOf<Pair<Int, String>>()
 
@@ -169,9 +175,14 @@ fun buildV2RayConfig(
 
             servers.addAll(remoteDns.map {
                 DnsObject.StringOrServerObject().apply {
-                    valueX = it
+                    valueY = DnsObject.ServerObject().apply {
+                        address = it
+                        concurrent = true
+                    }
                 }
             })
+
+            disableFallbackIfMatch = true
 
             if (useFakeDns) {
                 fakedns = mutableListOf()
@@ -731,6 +742,7 @@ fun buildV2RayConfig(
                 }
 
                 currentOutbound.tag = tagIn
+                currentOutbound.domainStrategy = outboundDomainStrategy
 
                 if (!isBalancer && index > 0) {
                     if (!pastExternal) {
@@ -973,23 +985,16 @@ fun buildV2RayConfig(
         for (freedom in arrayOf(TAG_DIRECT, TAG_BYPASS)) outbounds.add(OutboundObject().apply {
             tag = freedom
             protocol = "freedom"
-            settings = LazyOutboundConfigurationObject(this,
-                FreedomOutboundConfigurationObject().apply {
-                    domainStrategy = when (ipv6Mode) {
-                        IPv6Mode.DISABLE -> "UseIPv4"
-                        IPv6Mode.ONLY -> "UseIPv6"
-                        else -> "UseIP"
-                    }
-                })
+            domainStrategy = outboundDomainStrategy
         })
 
         outbounds.add(OutboundObject().apply {
             tag = TAG_BLOCK
             protocol = "blackhole"
-           /* settings = LazyOutboundConfigurationObject(this,
-                BlackholeOutboundConfigurationObject().apply {
-                    keepConnection = true
-                })*/
+            /* settings = LazyOutboundConfigurationObject(this,
+                 BlackholeOutboundConfigurationObject().apply {
+                     keepConnection = true
+                 })*/
         })
 
         inbounds.add(InboundObject().apply {
@@ -1086,6 +1091,7 @@ fun buildV2RayConfig(
                         address = it
                         domains = bypassDomain.toList()
                         skipFallback = true
+                        concurrent = true
                     }
                 }
             })
