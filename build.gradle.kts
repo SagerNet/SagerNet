@@ -1,4 +1,3 @@
-import com.android.build.gradle.api.AndroidBasePlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -41,10 +40,6 @@ subprojects {
     // skip uploading the mapping to Crashlytics
     tasks.whenTaskAdded {
         if (name.contains("uploadCrashlyticsMappingFile")) enabled = false
-    }
-
-    plugins.withType(AndroidBasePlugin::class.java) {
-        project.apply("plugin" to "org.gradle.android.cache-fix")
     }
 }
 

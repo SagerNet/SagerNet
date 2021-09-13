@@ -23,5 +23,4 @@ dependencies {
     implementation("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.1")
     implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.17")
     implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
-    implementation("gradle.plugin.org.gradle.android:android-cache-fix-gradle-plugin:2.3.3")
 }
