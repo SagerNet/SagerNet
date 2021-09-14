@@ -49,6 +49,7 @@ import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isRunning
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -155,12 +156,17 @@ fun buildV2RayConfig(
     val requireHttp = !forTest && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || DataStore.requireHttp)
     val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
     val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
-    val outboundDomainStrategy = when (ipv6Mode) {
-        IPv6Mode.DISABLE -> "UseIPv4"
-        IPv6Mode.PREFER -> "PreferIPv6"
-        IPv6Mode.ONLY -> "UseIPv6"
+    val resolveDestination = DataStore.resolveDestination
+    val destinationOverride = DataStore.destinationOverride
+
+    val outboundDomainStrategy = when {
+        !resolveDestination -> "AsIs"
+        ipv6Mode == IPv6Mode.DISABLE -> "UseIPv4"
+        ipv6Mode == IPv6Mode.PREFER -> "PreferIPv6"
+        ipv6Mode == IPv6Mode.ONLY -> "UseIPv6"
         else -> "PreferIPv4"
     }
+
     var dumpUid = false
     val alerts = mutableListOf<Pair<Int, String>>()
 
@@ -234,12 +240,13 @@ fun buildV2RayConfig(
             if (trafficSniffing || useFakeDns) {
                 sniffing = InboundObject.SniffingObject().apply {
                     enabled = true
-                    destOverride = if (useFakeDns) {
-                        listOf("fakedns", "http", "tls")
-                    } else {
-                        listOf("http", "tls")
+                    destOverride = when {
+                        useFakeDns && !trafficSniffing -> listOf("fakedns")
+                        useFakeDns -> listOf("fakedns", "http", "tls")
+                        else -> listOf("http", "tls")
                     }
-                    metadataOnly = false
+                    metadataOnly = useFakeDns && !trafficSniffing
+                    routeOnly = !destinationOverride
                 }
             }
         })
@@ -257,12 +264,13 @@ fun buildV2RayConfig(
                 if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride = if (useFakeDns) {
-                            listOf("fakedns", "http", "tls")
-                        } else {
-                            listOf("http", "tls")
+                        destOverride = when {
+                            useFakeDns && !trafficSniffing -> listOf("fakedns")
+                            useFakeDns -> listOf("fakedns", "http", "tls")
+                            else -> listOf("http", "tls")
                         }
-                        metadataOnly = false
+                        metadataOnly = useFakeDns && !trafficSniffing
+                        routeOnly = !destinationOverride
                     }
                 }
             })
@@ -282,12 +290,13 @@ fun buildV2RayConfig(
                 if (trafficSniffing || useFakeDns) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride = if (useFakeDns) {
-                            listOf("fakedns", "http", "tls")
-                        } else {
-                            listOf("http", "tls")
+                        destOverride = when {
+                            useFakeDns && !trafficSniffing -> listOf("fakedns")
+                            useFakeDns -> listOf("fakedns", "http", "tls")
+                            else -> listOf("http", "tls")
                         }
-                        metadataOnly = false
+                        metadataOnly = useFakeDns && !trafficSniffing
+                        routeOnly = !destinationOverride
                     }
                 }
                 when (DataStore.transproxyMode) {
@@ -304,7 +313,6 @@ fun buildV2RayConfig(
 
         routing = RoutingObject().apply {
             domainStrategy = DataStore.domainStrategy
-            domainMatcher = DataStore.domainMatcher
 
             rules = mutableListOf()
 
@@ -985,7 +993,6 @@ fun buildV2RayConfig(
         for (freedom in arrayOf(TAG_DIRECT, TAG_BYPASS)) outbounds.add(OutboundObject().apply {
             tag = freedom
             protocol = "freedom"
-            domainStrategy = outboundDomainStrategy
         })
 
         outbounds.add(OutboundObject().apply {
@@ -1080,6 +1087,18 @@ fun buildV2RayConfig(
             for (bypassRule in extraRules.filter { it.isBypassRule() }) {
                 if (bypassRule.domains.isNotBlank()) {
                     bypassDomain.addAll(bypassRule.domains.split("\n"))
+                }
+            }
+        }
+
+        remoteDns.forEach {
+            var address = it
+            if (address.contains("://")) {
+                address = address.substringAfter("://")
+            }
+            "https://$address".toHttpUrlOrNull()?.apply {
+                if (!host.isIpAddress()) {
+                    bypassDomain.add("full:" + host)
                 }
             }
         }

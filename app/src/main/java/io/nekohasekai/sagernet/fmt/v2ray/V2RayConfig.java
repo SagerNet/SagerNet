@@ -195,6 +195,7 @@ public class V2RayConfig {
             public Boolean enabled;
             public List<String> destOverride;
             public Boolean metadataOnly;
+            public Boolean routeOnly;
 
         }
 

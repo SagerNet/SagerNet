@@ -124,11 +124,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val showDirectSpeed = findPreference<SwitchPreference>(Key.SHOW_DIRECT_SPEED)!!
         val ipv6Mode = findPreference<Preference>(Key.IPV6_MODE)!!
         val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
-        val domainMatcher = findPreference<Preference>(Key.DOMAIN_MATCHER)!!
-        if (!isExpert) {
-            domainMatcher.remove()
-        }
-
         val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
         val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
         val enableMuxForAll = findPreference<Preference>(Key.ENABLE_MUX_FOR_ALL)!!
@@ -210,6 +205,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
+        val destinationOverride = findPreference<SwitchPreference>(Key.DESTINATION_OVERRIDE)!!
+        val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
+
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
@@ -217,7 +216,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         showStopButton.onPreferenceChangeListener = reloadListener
         showDirectSpeed.onPreferenceChangeListener = reloadListener
         domainStrategy.onPreferenceChangeListener = reloadListener
-        domainMatcher.onPreferenceChangeListener = reloadListener
         trafficSniffing.onPreferenceChangeListener = reloadListener
         enableMux.onPreferenceChangeListener = reloadListener
         enableMuxForAll.onPreferenceChangeListener = reloadListener
@@ -247,6 +245,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
         trafficStatistics.onPreferenceChangeListener = reloadListener
+        tunImplementation.onPreferenceChangeListener = reloadListener
+        destinationOverride.onPreferenceChangeListener = reloadListener
+        resolveDestination.onPreferenceChangeListener = reloadListener
 
     }
 
