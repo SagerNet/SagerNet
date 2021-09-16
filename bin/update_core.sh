@@ -6,8 +6,8 @@ git reset origin/v5 --hard
 popd
 
 pushd external/v2ray-core
-git fetch origin dev-v5z || exit 1
-git reset origin/dev-v5z --hard
+git fetch origin dev-v5zd || exit 1
+git reset origin/dev-v5zd --hard
 popd
 
 git add .
