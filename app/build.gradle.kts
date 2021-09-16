@@ -30,7 +30,8 @@ android {
 dependencies {
 
     implementation(fileTree("libs"))
-    compileOnly(project(":library:include"))
+    compileOnly(project(":library:stub"))
+    implementation(project(":library:include"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("androidx.core:core-ktx:1.6.0")
@@ -51,10 +52,10 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.4.0")
-    implementation("cn.hutool:hutool-core:5.7.11")
-    implementation("cn.hutool:hutool-cache:5.7.11")
-    implementation("cn.hutool:hutool-json:5.7.11")
-    implementation("cn.hutool:hutool-crypto:5.7.11")
+    implementation("cn.hutool:hutool-core:5.7.12")
+    implementation("cn.hutool:hutool-cache:5.7.12")
+    implementation("cn.hutool:hutool-json:5.7.12")
+    implementation("cn.hutool:hutool-crypto:5.7.12")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")

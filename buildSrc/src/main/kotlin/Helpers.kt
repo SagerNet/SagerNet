@@ -511,9 +511,8 @@ fun Project.setupApp() {
         add("androidTestImplementation", "androidx.test.espresso:espresso-core:3.4.0")
 
         if (targetAbi.isNotBlank()) {
-            add("implementation", project(":library:core"))
             add("implementation", project(":library:shadowsocks"))
-            add("implementation", project(":library:shadowsocksr"))
+            add("implementation", project(":library:shadowsocks-libev"))
         }
     }
 

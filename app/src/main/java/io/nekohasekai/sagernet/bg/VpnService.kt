@@ -32,10 +32,7 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import androidx.annotation.RequiresApi
-import io.nekohasekai.sagernet.IPv6Mode
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.StatsEntity
@@ -45,11 +42,13 @@ import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libcore.AppStats
+import libcore.Libcore
 import libcore.TrafficListener
-import libcore.Tun2socks
+import libcore.Tun2ray
 import java.io.FileDescriptor
 import android.net.VpnService as BaseVpnService
 
@@ -79,7 +78,7 @@ class VpnService : BaseVpnService(),
     }
 
     lateinit var conn: ParcelFileDescriptor
-    lateinit var tun2socks: Tun2socks
+    lateinit var tun: Tun2ray
 
     private var active = false
     private var metered = false
@@ -103,13 +102,14 @@ class VpnService : BaseVpnService(),
         startVpn()
     }
 
-    override fun killProcesses(scope: CoroutineScope) {
-        if (::tun2socks.isInitialized) tun2socks.close()
+    @Suppress("EXPERIMENTAL_API_USAGE")
+    override fun killProcesses() {
+        if (::tun.isInitialized) tun.close()
         if (::conn.isInitialized) conn.close()
-        super.killProcesses(scope)
+        super.killProcesses()
         persistAppStats()
         active = false
-        scope.launch { DefaultNetworkListener.stop(this) }
+        GlobalScope.launch(Dispatchers.Default) { DefaultNetworkListener.stop(this) }
     }
 
     override fun onBind(intent: Intent) = when (intent.action) {
@@ -143,7 +143,7 @@ class VpnService : BaseVpnService(),
         override fun getLocalizedMessage() = getString(R.string.reboot_required)
     }
 
-    private suspend fun startVpn() {
+    private fun startVpn() {
         instance = this
 
         val profile = data.proxy!!.profile
@@ -169,7 +169,7 @@ class VpnService : BaseVpnService(),
         if (DataStore.bypassLan && !DataStore.bypassLanInCoreOnly) {
             resources.getStringArray(R.array.bypass_private_route).forEach {
                 val subnet = Subnet.fromString(it)!!
-                builder.addRoute(subnet.address.hostAddress, subnet.prefixSize)
+                builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
             }
             builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
             // https://issuetracker.google.com/issues/149636790
@@ -250,17 +250,19 @@ class VpnService : BaseVpnService(),
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
         conn = builder.establish() ?: throw NullConnectionException()
 
-        tun2socks = Tun2socks(
+        tun = Libcore.newTun2ray(
             conn.fd,
             VPN_MTU,
             data.proxy!!.v2rayPoint,
             PRIVATE_VLAN4_ROUTER,
+            DataStore.tunImplementation == TunImplementation.GVISOR,
             true,
             DataStore.trafficSniffing,
+            DataStore.destinationOverride,
             DataStore.enableFakeDns,
             DataStore.enableLog,
             data.proxy!!.config.dumpUid,
-            DataStore.trafficStatistics
+            DataStore.trafficStatistics,
         )
     }
 
@@ -275,12 +277,12 @@ class VpnService : BaseVpnService(),
         if (!DataStore.trafficStatistics) return
 
         appStats.clear()
-        tun2socks.readAppTraffics(this)
+        tun.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()
         val all = SagerDatabase.statsDao.all().associateBy { it.packageName }
         for (stats in appStats) {
             val packageName = if (stats.uid >= 10000) {
-                PackageCache.uidMap[stats.uid.toInt()]?.iterator()?.next() ?: "android"
+                PackageCache.uidMap[stats.uid]?.iterator()?.next() ?: "android"
             } else {
                 "android"
             }
@@ -288,16 +290,16 @@ class VpnService : BaseVpnService(),
                 SagerDatabase.statsDao.create(
                     StatsEntity(
                         packageName = packageName,
-                        tcpConnections = stats.tcpConnTotal.toInt(),
-                        udpConnections = stats.udpConnTotal.toInt(),
+                        tcpConnections = stats.tcpConnTotal,
+                        udpConnections = stats.udpConnTotal,
                         uplink = stats.uplinkTotal,
                         downlink = stats.downlinkTotal
                     )
                 )
             } else {
                 val entity = all[packageName]!!
-                entity.tcpConnections += stats.tcpConnTotal.toInt()
-                entity.udpConnections += stats.udpConnTotal.toInt()
+                entity.tcpConnections += stats.tcpConnTotal
+                entity.udpConnections += stats.udpConnTotal
                 entity.uplink += stats.uplinkTotal
                 entity.downlink += stats.downlinkTotal
                 toUpdate.add(entity)

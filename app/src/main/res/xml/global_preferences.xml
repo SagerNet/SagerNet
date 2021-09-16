@@ -33,7 +33,14 @@
             app:key="serviceMode"
             app:title="@string/service_mode"
             app:useSimpleSummaryProvider="true" />
-
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/tun_implementation"
+            app:entryValues="@array/int_array_2"
+            app:icon="@drawable/ic_baseline_flip_camera_android_24"
+            app:key="tunImplementation"
+            app:title="@string/tun_implementation"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="trafficStatistics"
@@ -102,26 +109,28 @@
             app:key="bypassLanInCoreOnly"
             app:title="@string/bypass_lan_in_core_only" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="IPIfNonMatch"
+            app:defaultValue="AsIs"
             app:entries="@array/domain_strategy"
             app:entryValues="@array/domain_strategy"
             app:icon="@drawable/ic_action_dns"
             app:key="domainStrategy"
             app:title="@string/domain_strategy"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="mph"
-            app:entries="@array/domain_matcher_entry"
-            app:entryValues="@array/domain_matcher_value"
-            app:icon="@drawable/ic_baseline_domain_24"
-            app:key="domainMatcher"
-            app:title="@string/domain_matcher"
-            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:defaultValue="true"
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="trafficSniffing"
             app:title="@string/traffic_sniffing" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
+            app:key="destinationOverride"
+            app:summary="@string/destination_override_summary"
+            app:title="@string/destination_override" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_wrap_text_24"
+            app:key="resolveDestination"
+            app:summary="@string/resolve_destination_summary"
+            app:title="@string/resolve_destination" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="1"
             app:entries="@array/ipv6_mode"

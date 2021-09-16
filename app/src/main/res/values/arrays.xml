@@ -527,17 +527,6 @@
         <item>IPOnDemand</item>
     </string-array>
 
-    <string-array name="domain_matcher_entry">
-        <item>@string/dm_linear</item>
-        <item>@string/dm_mph</item>
-    </string-array>
-
-    <string-array name="domain_matcher_value">
-        <item>linear</item>
-        <item>mph</item>
-    </string-array>
-
-
     <string-array name="transproxy_mode">
         <item>REDIRECT</item>
         <item>TPROXY</item>
@@ -740,6 +729,11 @@
         <item>@string/ssh_auth_type_none</item>
         <item>@string/password</item>
         <item>@string/ssh_public_key</item>
+    </string-array>
+
+    <string-array name="tun_implementation">
+        <item>gVisor</item>
+        <item>LwIP</item>
     </string-array>
 
 </resources>

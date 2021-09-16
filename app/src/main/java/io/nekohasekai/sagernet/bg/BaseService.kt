@@ -179,7 +179,7 @@ class BaseService {
 
         private suspend fun loopStats() {
             var lastQueryTime = 0L
-            val tun = (data?.proxy?.service as? VpnService)?.tun2socks ?: return
+            val tun = (data?.proxy?.service as? VpnService)?.tun ?: return
             if (!tun.trafficStatsEnabled) return
 
             while (true) {
@@ -303,7 +303,7 @@ class BaseService {
         override fun resetTrafficStats() {
             runOnDefaultDispatcher {
                 SagerDatabase.statsDao.deleteAll()
-                (data?.proxy?.service as? VpnService)?.tun2socks?.resetAppTraffics()
+                (data?.proxy?.service as? VpnService)?.tun?.resetAppTraffics()
                 val empty = AppStatsList(emptyList())
                 broadcast { item ->
                     if (statsListeners.contains(item.asBinder())) {
@@ -330,7 +330,7 @@ class BaseService {
         }
 
         override fun getTrafficStatsEnabled(): Boolean {
-            return (data?.proxy?.service as? VpnService)?.tun2socks?.trafficStatsEnabled ?: false
+            return (data?.proxy?.service as? VpnService)?.tun?.trafficStatsEnabled ?: false
         }
 
         override fun close() {
@@ -372,8 +372,8 @@ class BaseService {
             else startService(Intent(this, javaClass))
         }
 
-        fun killProcesses(scope: CoroutineScope) {
-            data.proxy?.destroy(scope)
+        fun killProcesses() {
+            data.proxy?.close()
         }
 
         fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = true) {
@@ -388,7 +388,7 @@ class BaseService {
                 data.connectingJob?.cancelAndJoin() // ensure stop connecting first
                 // we use a coroutineScope here to allow clean-up in parallel
                 coroutineScope {
-                    killProcesses(this) // clean up receivers
+                    killProcesses()
                     val data = data
                     if (data.closeReceiverRegistered) {
                         unregisterReceiver(data.closeReceiver)

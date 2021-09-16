@@ -328,8 +328,6 @@ class BalancerSettingsActivity :
 
         fun bind(proxyEntity: ProxyEntity) {
 
-            itemView.setOnClickListener {}
-
             profileName.text = proxyEntity.displayName()
             profileType.text = proxyEntity.displayType()
 

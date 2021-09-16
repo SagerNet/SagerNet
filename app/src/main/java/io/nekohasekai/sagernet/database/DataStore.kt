@@ -97,9 +97,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME)
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
-    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "IPIfNonMatch" }
-    var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "mph" }
+    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
+    var destinationOverride by configurationStore.boolean(Key.DESTINATION_OVERRIDE)
+    var resolveDestination by configurationStore.boolean(Key.RESOLVE_DESTINATION)
+
+
     var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
@@ -194,6 +197,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var trafficStatistics by configurationStore.boolean(Key.TRAFFIC_STATISTICS)
+    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
 
     // protocol
 
@@ -290,7 +294,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var subscriptionUpdateWhenConnectedOnly by profileCacheStore.boolean(Key.SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY)
     var subscriptionUserAgent by profileCacheStore.string(Key.SUBSCRIPTION_USER_AGENT)
     var subscriptionAutoUpdate by profileCacheStore.boolean(Key.SUBSCRIPTION_AUTO_UPDATE)
-    var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 1440 }
+    var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 360 }
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
     var systemDnsFinal by profileCacheStore.string("systemDnsFinal")

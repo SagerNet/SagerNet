@@ -69,6 +69,7 @@ public class V2RayConfig {
             public Boolean skipFallback;
             public List<String> domains;
             public List<String> expectIPs;
+            public Boolean concurrent;
 
         }
 
@@ -84,6 +85,9 @@ public class V2RayConfig {
         public List<String> domains;
         public List<String> expectIPs;
         public String queryStrategy;
+
+        public Boolean disableFallback;
+        public Boolean disableFallbackIfMatch;
 
     }
 
@@ -191,6 +195,7 @@ public class V2RayConfig {
             public Boolean enabled;
             public List<String> destOverride;
             public Boolean metadataOnly;
+            public Boolean routeOnly;
 
         }
 
@@ -396,6 +401,8 @@ public class V2RayConfig {
         public StreamSettingsObject streamSettings;
         public ProxySettingsObject proxySettings;
         public MuxObject mux;
+        public String domainStrategy;
+        public Long fallbackDelayMs;
 
         public void init() {
             if (settings != null) {
@@ -470,6 +477,8 @@ public class V2RayConfig {
     public static class BlackholeOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public ResponseObject response;
+        public Boolean keepConnection;
+        public Integer userLevel;
 
         public static class ResponseObject {
             public String type;

@@ -39,7 +39,7 @@ jobs:
         with:
           path: |
             plugin/wireguard/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/wireguard/*', 'wireguard_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/wireguard/*', 'wireguard_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -49,7 +49,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17
+          go-version: 1.17.1
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin wireguard
@@ -69,7 +69,7 @@ jobs:
         with:
           path: |
             plugin/wireguard/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/wireguard/*', 'wireguard_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/wireguard/*', 'wireguard_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:
@@ -177,7 +177,7 @@ jobs:
         with:
           path: |
             plugin/wireguard/src/main/jniLibs
-          key: ${{ hashFiles('bin/lib/wireguard/*', 'wireguard_status') }}
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/wireguard/*', 'wireguard_status') }}
       - name: Gradle cache
         uses: actions/cache@v2
         with:

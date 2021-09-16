@@ -29,10 +29,7 @@ import android.provider.OpenableColumns
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -55,11 +52,12 @@ import com.google.android.material.tabs.TabLayoutMediator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.bg.test.LocalDnsInstance
 import io.nekohasekai.sagernet.bg.test.UrlTest
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
-import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
+import io.nekohasekai.sagernet.databinding.LayoutProgressListBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.toUniversalLink
 import io.nekohasekai.sagernet.fmt.v2ray.toV2rayN
@@ -170,6 +168,14 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         super.onDestroy()
+    }
+
+    override fun onKeyDown(ketCode: Int, event: KeyEvent): Boolean {
+        val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
+        fragment?.configurationListView?.apply {
+            if (!hasFocus()) requestFocus()
+        }
+        return super.onKeyDown(ketCode, event)
     }
 
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) { file ->
@@ -462,11 +468,11 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     inner class TestDialog {
-        val binding = LayoutProgressBinding.inflate(layoutInflater)
+        val binding = LayoutProgressListBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
-            .setNegativeButton(android.R.string.cancel, { _, _ ->
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
                 cancel()
-            })
+            }
             .setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
@@ -541,10 +547,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 if (profile.status == 3) {
                     binding.content.setOnClickListener {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                            .setMessage(profile.error ?: "<?>")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
+                        alert(profile.error ?: "<?>").show()
                     }
                 } else {
                     binding.content.setOnClickListener {}
@@ -711,6 +714,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         val test = TestDialog()
         val dialog = test.builder.show()
+        val testJobs = mutableListOf<Job>()
+        val dnsInstance = LocalDnsInstance()
+
         val mainJob = runOnDefaultDispatcher {
             val group = DataStore.currentGroup()
             var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
@@ -728,8 +734,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
-            val testJobs = mutableListOf<Job>()
             val urlTest = UrlTest()
+            dnsInstance.launch()
 
             repeat(5) {
                 testJobs.add(launch {
@@ -757,13 +763,14 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             testJobs.joinAll()
-
+            dnsInstance.closeQuietly()
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
                 dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
             }
         }
         test.cancel = {
+            dnsInstance.closeQuietly()
             mainJob.cancel()
             runOnDefaultDispatcher {
                 GroupManager.postReload(DataStore.currentGroupId())
@@ -951,6 +958,53 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             } else if (!::configurationListView.isInitialized) {
                 onViewCreated(requireView(), null)
+            }
+            checkOrderMenu()
+            configurationListView.requestFocus()
+        }
+
+        fun checkOrderMenu() {
+            if (select) return
+
+            val pf = requireParentFragment() as? ToolbarFragment ?: return
+            val menu = pf.toolbar.menu
+            val origin = menu.findItem(R.id.action_order_origin)
+            val byName = menu.findItem(R.id.action_order_by_name)
+            val byDelay = menu.findItem(R.id.action_order_by_delay)
+            when (proxyGroup.order) {
+                GroupOrder.ORIGIN -> {
+                    origin.isChecked = true
+                }
+                GroupOrder.BY_NAME -> {
+                    byName.isChecked = true
+                }
+                GroupOrder.BY_DELAY -> {
+                    byDelay.isChecked = true
+                }
+            }
+
+            fun updateTo(order: Int) {
+                if (proxyGroup.order == order) return
+                runOnDefaultDispatcher {
+                    proxyGroup.order = order
+                    GroupManager.updateGroup(proxyGroup)
+                }
+            }
+
+            origin.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.ORIGIN)
+                true
+            }
+            byName.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.BY_NAME)
+                true
+            }
+            byDelay.setOnMenuItemClickListener {
+                it.isChecked = true
+                updateTo(GroupOrder.BY_DELAY)
+                true
             }
         }
 
@@ -1215,6 +1269,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 when (proxyGroup.order) {
                     GroupOrder.BY_NAME -> {
                         newProfiles = newProfiles.sortedBy { it.displayName() }
+
                     }
                     GroupOrder.BY_DELAY -> {
                         newProfiles = newProfiles.sortedBy { if (it.status == 1) it.ping else 114514 }
@@ -1266,6 +1321,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
             fun bind(proxyEntity: ProxyEntity) {
+                val pf = requireParentFragment() as? ConfigurationFragment ?: return
+
                 entity = proxyEntity
 
                 if (select) {
@@ -1282,6 +1339,12 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 onMainDispatcher {
                                     selectedView.visibility = View.VISIBLE
                                     if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
+                                }
+                            } else if (SagerNet.isTv) {
+                                if (SagerNet.started) {
+                                    SagerNet.stopService()
+                                } else {
+                                    SagerNet.startService()
                                 }
                             }
                         }
@@ -1316,8 +1379,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                     address = address.substring(0, 27) + "..."
                 }
 
-                val pf = requireParentFragment() as ConfigurationFragment
-
                 if (proxyEntity.requireBean().name.isBlank() || !pf.alwaysShowAddress) {
                     address = ""
                 }
@@ -1346,10 +1407,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (proxyEntity.status == 3) {
                     profileStatus.setText(R.string.unavailable)
                     profileStatus.setOnClickListener {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.error_title)
-                            .setMessage(proxyEntity.error ?: "<?>")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
+                        alert(proxyEntity.error ?: "<?>").show()
                     }
                 } else {
                     profileStatus.setOnClickListener(null)

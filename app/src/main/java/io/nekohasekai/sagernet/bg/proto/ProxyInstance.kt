@@ -110,7 +110,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                         .setOutboundTag(observatoryTag)
                         .setAlive(profile.status == 1)
                         .setDelay(profile.ping.toLong())
-                        .setLastErrorReason(profile.error)
+                        .setLastErrorReason(profile.error ?: "")
                         .setLastTryTime(time)
                         .setLastSeenTime(time)
                         .build()
@@ -172,16 +172,13 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }
     }
 
-
-    override fun destroy(scope: CoroutineScope) {
+    override fun close() {
         SagerNet.started = false
 
         persistStats()
-        super.destroy(scope)
+        super.close()
 
-        if (::observatoryJob.isInitialized) {
-            observatoryJob.cancel()
-        }
+        if (::observatoryJob.isInitialized) observatoryJob.cancel()
     }
 
     // ------------- stats -------------
@@ -192,7 +189,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
     private val currentTags by lazy {
         mapOf(* config.outboundTagsCurrent.map {
-            it to config.outboundTagsAll[it] as ProxyEntity?
+            it to config.outboundTagsAll[it]
         }.toTypedArray())
     }
 
@@ -200,7 +197,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         mapOf(*  config.outboundTags.toMutableList().apply {
             removeAll(config.outboundTagsCurrent)
         }.map {
-            it to config.outboundTagsAll[it] as ProxyEntity?
+            it to config.outboundTagsAll[it]
         }.toTypedArray())
     }
 

@@ -125,10 +125,7 @@ class AssetsActivity : ThemedActivity() {
                 .substringAfter(':')
 
             if (!fileName.endsWith(".dat")) {
-                MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
-                    .setMessage(getString(R.string.route_not_asset, fileName))
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                alert(getString(R.string.route_not_asset, fileName)).show()
                 return@registerForActivityResult
             }
             val filesDir = getExternalFilesDir(null) ?: filesDir
@@ -172,7 +169,7 @@ class AssetsActivity : ThemedActivity() {
         fun reloadAssets() {
             val filesDir = getExternalFilesDir(null) ?: filesDir
             val files = filesDir.listFiles()
-                ?.filter { it.isFile && !it.name.endsWith(".version.txt") && it.name !in internalFiles }
+                ?.filter { it.isFile && it.name.endsWith(".dat") && it.name !in internalFiles }
             assets.clear()
             assets.add(File(filesDir, "geoip.dat"))
             assets.add(
@@ -227,7 +224,6 @@ class AssetsActivity : ThemedActivity() {
 
         fun bind(file: File) {
             this.file = file
-            binding.root.setOnClickListener {}
 
             binding.assetName.text = file.name
             val versionFile = File(file.parentFile, "${file.nameWithoutExtension}.version.txt")
@@ -261,10 +257,7 @@ class AssetsActivity : ThemedActivity() {
                         updateAsset(file, versionFile, localVersion)
                     }.onFailure {
                         onMainDispatcher {
-                            MaterialAlertDialogBuilder(this@AssetsActivity).setTitle(R.string.error_title)
-                                .setMessage(it.readableMessage)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                            alert(it.readableMessage).show()
                         }
                     }
 
@@ -336,6 +329,7 @@ class AssetsActivity : ThemedActivity() {
         }
         if (fileName.endsWith(".xz")) {
             Libcore.unxz(cacheFile.absolutePath, file.absolutePath)
+            cacheFile.delete()
         } else {
             cacheFile.renameTo(file)
         }

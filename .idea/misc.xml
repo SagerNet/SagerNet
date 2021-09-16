@@ -3,9 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="../../../../layout/custom_preview.xml" value="0.39375" />
         <entry key="../../.gradle/caches/transforms-3/60c79b6b6cf50df0de760b958b8bc3be/transformed/material-1.3.0/res/drawable/design_snackbar_background.xml" value="0.147" />
         <entry key="../../.local/lib/android/sdk/platforms/android-30/data/res/layout-watch/preference_material.xml" value="0.17435897435897435" />
+        <entry key="app/src/main/res/drawable/baseline_wrap_text_24.xml" value="0.2085" />
         <entry key="app/src/main/res/drawable/ic_action_copyright.xml" value="0.3375" />
         <entry key="app/src/main/res/drawable/ic_baseline_cast_connected_24.xml" value="0.22239583333333332" />
         <entry key="app/src/main/res/drawable/ic_baseline_emoji_emotions_24.xml" value="0.3375" />
@@ -34,6 +35,7 @@
         <entry key="app/src/main/res/layout/layout_asset_item.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_assets.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_chain_settings.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_cloudflare.xml" value="0.2909441233140655" />
         <entry key="app/src/main/res/layout/layout_config_settings.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_debug.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_edit_config.xml" value="0.2636752136752137" />
@@ -54,6 +56,7 @@
         <entry key="app/src/main/res/layout/layout_profile.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/layout_profile_clash.xml" value="0.2490740740740741" />
         <entry key="app/src/main/res/layout/layout_profile_list.xml" value="0.2636752136752137" />
+        <entry key="app/src/main/res/layout/layout_progess.xml" value="0.15864022662889518" />
         <entry key="app/src/main/res/layout/layout_progress.xml" value="0.2636752136752137" />
         <entry key="app/src/main/res/layout/layout_route.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/layout_route_item.xml" value="0.5" />

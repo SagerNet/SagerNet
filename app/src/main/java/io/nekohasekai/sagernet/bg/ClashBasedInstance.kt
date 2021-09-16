@@ -33,7 +33,7 @@ abstract class ClashBasedInstance : AbstractInstance {
         instance.start()
     }
 
-    override fun destroy(scope: CoroutineScope) {
+    override fun close() {
         if (::instance.isInitialized) instance.close()
     }
 
