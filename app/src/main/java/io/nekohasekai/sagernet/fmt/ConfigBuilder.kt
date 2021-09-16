@@ -440,7 +440,6 @@ fun buildV2RayConfig(
                                         .apply {
                                             address = bean.serverAddress
                                             port = bean.serverPort
-                                            version = bean.protocolName()
                                             if (!bean.username.isNullOrBlank()) {
                                                 users = listOf(SocksOutboundConfigurationObject.ServerObject.UserObject()
                                                     .apply {
@@ -449,6 +448,7 @@ fun buildV2RayConfig(
                                                     })
                                             }
                                         })
+                                    version = bean.protocolVersionName()
                                 })
                             if (bean.tls || needKeepAliveInterval) {
                                 streamSettings = StreamSettingsObject().apply {

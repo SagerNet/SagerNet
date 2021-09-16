@@ -91,6 +91,16 @@ class ConfigurationFragment @JvmOverloads constructor(
     val alwaysShowAddress by lazy { DataStore.alwaysShowAddress }
     val securityAdvisory by lazy { DataStore.securityAdvisory }
 
+    val updateSelectedCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrolled(
+            position: Int, positionOffset: Float, positionOffsetPixels: Int
+        ) {
+            if (adapter.groupList.size > position) {
+                DataStore.selectedGroup = adapter.groupList[position].id
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (!select) {
@@ -112,18 +122,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         groupPager.adapter = adapter
         groupPager.offscreenPageLimit = 2
-
-        if (!select) {
-            groupPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageScrolled(
-                    position: Int, positionOffset: Float, positionOffsetPixels: Int
-                ) {
-                    if (adapter.groupList.size > position) {
-                        DataStore.selectedGroup = adapter.groupList[position].id
-                    }
-                }
-            })
-        }
 
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             if (adapter.groupList.size > position) {
@@ -787,6 +785,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         fun reload() {
 
+            if (!select) {
+                groupPager.unregisterOnPageChangeCallback(updateSelectedCallback)
+            }
+
             runOnDefaultDispatcher {
                 groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 if (groupList.isEmpty()) {
@@ -807,6 +809,12 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                     onMainDispatcher {
                         groupPager.setCurrentItem(selectedIndex, false)
+                    }
+                }
+
+                groupPager.post {
+                    if (!select) {
+                        groupPager.registerOnPageChangeCallback(updateSelectedCallback)
                     }
                 }
 

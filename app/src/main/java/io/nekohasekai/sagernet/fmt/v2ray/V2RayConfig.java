@@ -520,13 +520,13 @@ public class V2RayConfig {
     public static class SocksOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public List<ServerObject> servers;
+        public String version;
 
         public static class ServerObject {
 
             public String address;
             public Integer port;
             public List<UserObject> users;
-            public String version;
 
             public static class UserObject {
 

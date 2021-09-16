@@ -78,6 +78,7 @@ class SagerNet : Application(),
 
         val internalAssets = filesDir
         val externalAssets = getExternalFilesDir(null) ?: internalAssets
+        externalAssets.mkdirs()
         Libcore.initializeV2Ray(
             internalAssets.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
         ) {

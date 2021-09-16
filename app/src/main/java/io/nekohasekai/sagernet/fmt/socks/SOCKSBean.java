@@ -54,6 +54,17 @@ public class SOCKSBean extends AbstractBean {
         }
     }
 
+    public String protocolVersionName() {
+        switch (protocol) {
+            case 0:
+                return "4";
+            case 1:
+                return "4a";
+            default:
+                return "5";
+        }
+    }
+
     public String username;
     public String password;
     public boolean tls;
