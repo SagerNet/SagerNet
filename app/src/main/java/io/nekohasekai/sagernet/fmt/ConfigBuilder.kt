@@ -1140,44 +1140,6 @@ fun buildV2RayConfig(
         if (rootBalancer != null) routing.rules.add(rootBalancer)
 
         stats = emptyMap()
-
-        /* val apiPort = DataStore.apiPort
-
-         api = ApiObject().apply {
-             tag = TAG_API
-             services = mutableListOf()
-             if (USE_STATS_SERVICE) {
-                 services.add("StatsService")
-             }
-             if (!observatory?.subjectSelector.isNullOrEmpty()) {
-                 services.add("ObservatoryService")
-             }
-         }
-
-         if (forTest || api.services.isEmpty()) {
-             api = null
-         } else {
-             inbounds.add(InboundObject().apply {
-                 protocol = "dokodemo-door"
-                 listen = LOCALHOST
-                 port = apiPort
-                 tag = TAG_API_IN
-                 settings = LazyInboundConfigurationObject(this,
-                     DokodemoDoorInboundConfigurationObject().apply {
-                         address = LOCALHOST
-                         port = apiPort
-                         network = "tcp"
-                     })
-             })
-
-             routing.rules.add(0, RoutingObject.RuleObject().apply {
-                 type = "field"
-                 inboundTag = listOf(TAG_API_IN)
-                 outboundTag = TAG_API
-             })
-         }
-
-         */
     }.let {
         V2rayBuildResult(
             gson.toJson(it),

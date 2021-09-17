@@ -83,7 +83,6 @@ object Key {
     const val RULES_PROVIDER = "rulesProvider"
     const val ENABLE_LOG = "enableLog"
 
-    const val API_PORT = "apiPort"
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
 
     const val PROVIDER_TROJAN = "providerTrojan"

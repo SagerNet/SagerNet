@@ -138,11 +138,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var transproxyPort: Int
         get() = getLocalPort(Key.TRANSPROXY_PORT, 9200)
         set(value) = saveLocalPort(Key.TRANSPROXY_PORT, value)
-    var apiPort: Int
-        get() = getLocalPort(Key.API_PORT, 9002)
-        set(value) {
-            saveLocalPort(Key.API_PORT, value)
-        }
 
     var probeInterval by configurationStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
 
@@ -158,9 +153,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         }
         if (configurationStore.getString(Key.TRANSPROXY_PORT) == null) {
             transproxyPort = transproxyPort
-        }
-        if (configurationStore.getString(Key.API_PORT) == null) {
-            apiPort = apiPort
         }
     }
 

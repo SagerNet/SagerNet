@@ -242,11 +242,6 @@
             app:key="transproxyMode"
             app:title="@string/transproxy_mode"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:icon="@drawable/ic_baseline_nfc_24"
-            app:key="apiPort"
-            app:title="@string/api_port"
-            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_misc">
