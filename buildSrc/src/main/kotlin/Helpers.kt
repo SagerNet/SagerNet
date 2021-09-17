@@ -1,10 +1,10 @@
+import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.RuntimeUtil
 import cn.hutool.crypto.digest.DigestUtil
 import com.android.build.gradle.AbstractAppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.github.triplet.gradle.play.PlayPublisherExtension
-import org.apache.commons.codec.binary.Base64InputStream
 import org.apache.tools.ant.filters.StringInputStream
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
@@ -62,7 +62,8 @@ fun Project.requireLocalProperties(): Properties {
 
         val base64 = System.getenv("LOCAL_PROPERTIES")
         if (!base64.isNullOrBlank()) {
-            localProperties.load(Base64InputStream(StringInputStream(base64)))
+
+            localProperties.load(StringInputStream(Base64.decodeStr(base64)))
         } else if (project.rootProject.file("local.properties").exists()) {
             localProperties.load(rootProject.file("local.properties").inputStream())
         }
@@ -91,8 +92,8 @@ fun Project.setupCommon() {
         buildToolsVersion("30.0.3")
         compileSdkVersion(31)
         defaultConfig {
-            minSdkVersion(21)
-            targetSdkVersion(31)
+            minSdk = 21
+            targetSdk = 31
         }
         buildTypes {
             getByName("release") {
@@ -104,21 +105,26 @@ fun Project.setupCommon() {
             targetCompatibility = javaVersion
         }
         lintOptions {
-            disable("MissingTranslation")
-            disable("ExtraTranslation")
-            disable("BlockedPrivateApi")
+            isShowAll = true
+            isCheckAllWarnings = true
+            isCheckReleaseBuilds = false
+            htmlOutput = project.file("build/lint.html")
         }
         packagingOptions {
-            exclude("**/*.kotlin_*")
-            exclude("/META-INF/*.version")
-            exclude("/META-INF/native/**")
-            exclude("/META-INF/native-image/**")
-            exclude("/META-INF/INDEX.LIST")
-            exclude("DebugProbesKt.bin")
-            exclude("com/**")
-            exclude("org/**")
-            exclude("**/*.java")
-            exclude("**/*.proto")
+            excludes.addAll(
+                listOf(
+                    "**/*.kotlin_*",
+                    "/META-INF/*.version",
+                    "/META-INF/native/**",
+                    "/META-INF/native-image/**",
+                    "/META-INF/INDEX.LIST",
+                    "DebugProbesKt.bin",
+                    "com/**",
+                    "org/**",
+                    "**/*.java",
+                    "**/*.proto"
+                )
+            )
         }
         packagingOptions {
             jniLibs.useLegacyPackaging = true
