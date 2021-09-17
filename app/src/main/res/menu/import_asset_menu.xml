@@ -6,5 +6,5 @@
         android:id="@+id/action_import_file"
         android:icon="@drawable/ic_action_note_add"
         android:title="@string/action_import_file"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

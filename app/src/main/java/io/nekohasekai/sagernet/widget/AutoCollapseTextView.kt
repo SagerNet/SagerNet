@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -50,6 +51,7 @@ class AutoCollapseTextView @JvmOverloads constructor(
         } catch (e: IndexOutOfBoundsException) {
         }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?) = try {
         super.onTouchEvent(event)
     } catch (e: IndexOutOfBoundsException) {

@@ -72,7 +72,7 @@ public class ConfigBean extends InternalBean {
         return KryoConverters.deserialize(new ConfigBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<ConfigBean> ConfigBean = new CREATOR<ConfigBean>() {
+    public static final Creator<ConfigBean> CREATOR = new CREATOR<ConfigBean>() {
         @NonNull
         @Override
         public ConfigBean newInstance() {

@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -46,6 +47,7 @@ object PackageCache {
         loaded.unlock()
     }
 
+    @SuppressLint("InlinedApi")
     fun reload() {
         installedPackages = app.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
             .filter {

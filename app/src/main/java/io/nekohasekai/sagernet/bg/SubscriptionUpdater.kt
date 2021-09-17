@@ -82,7 +82,6 @@ object SubscriptionUpdater {
             if (subscriptions.isNotEmpty()) for (profile in subscriptions) {
                 val subscription = profile.subscription!!
 
-                val delay = subscription.autoUpdateDelay
                 if (((System.currentTimeMillis() / 1000).toInt() - subscription.lastUpdated) < subscription.autoUpdateDelay * 60) {
                     continue
                 }

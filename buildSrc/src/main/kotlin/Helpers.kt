@@ -108,6 +108,7 @@ fun Project.setupCommon() {
             isShowAll = true
             isCheckAllWarnings = true
             isCheckReleaseBuilds = false
+            isWarningsAsErrors = true
             htmlOutput = project.file("build/lint.html")
         }
         packagingOptions {

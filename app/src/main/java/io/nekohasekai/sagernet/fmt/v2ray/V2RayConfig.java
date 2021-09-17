@@ -25,11 +25,13 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonToken;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
 import io.nekohasekai.sagernet.fmt.gson.JsonOr;
+import kotlin.text.StringsKt;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused", "RedundantSuppression"})
 public class V2RayConfig {
@@ -228,7 +230,7 @@ public class V2RayConfig {
         @Nullable
         @Override
         protected Class<? extends InboundConfigurationObject> getType() {
-            switch (ctx.protocol.toLowerCase()) {
+            switch (ctx.protocol.toLowerCase(Locale.ROOT)) {
                 case "dokodemo-door":
                     return DokodemoDoorInboundConfigurationObject.class;
                 case "http":
@@ -445,7 +447,7 @@ public class V2RayConfig {
         @Nullable
         @Override
         protected Class<? extends OutboundConfigurationObject> getType() {
-            switch (ctx.protocol.toLowerCase()) {
+            switch (ctx.protocol.toLowerCase(Locale.ROOT)) {
                 case "blackhole":
                     return BlackholeOutboundConfigurationObject.class;
                 case "dns":

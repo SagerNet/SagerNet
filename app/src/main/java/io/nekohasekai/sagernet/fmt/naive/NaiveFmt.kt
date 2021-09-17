@@ -46,7 +46,7 @@ fun parseNaive(link: String): NaiveBean {
 
 fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
     val builder = linkBuilder()
-        .host(serverAddress)
+        .host(finalAddress)
         .port(finalPort)
     if (username.isNotBlank()) {
         builder.username(username)

@@ -159,7 +159,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         pluginConfigure = findPreference(Key.SERVER_PLUGIN_CONFIGURE)!!
         pluginConfigure.setOnBindEditTextListener(EditTextPreferenceModifiers.Monospace)
         pluginConfigure.onPreferenceChangeListener = this@TrojanGoSettingsActivity
-        pluginConfiguration = PluginConfiguration(DataStore.serverPlugin ?: "")
+        pluginConfiguration = PluginConfiguration(DataStore.serverPlugin)
         initPlugins()
     }
 
