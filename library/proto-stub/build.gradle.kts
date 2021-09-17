@@ -8,7 +8,7 @@ plugins {
 
 setupKotlinCommon()
 
-val protobufVersion = "3.17.3"
+val protobufVersion = "3.18.0"
 
 dependencies {
     protobuf(project(":library:proto"))
