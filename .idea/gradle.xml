@@ -74,8 +74,6 @@
             <option value="$PROJECT_DIR$/external/termux-view/terminal-view" />
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/library/include" />
-            <option value="$PROJECT_DIR$/library/proto" />
-            <option value="$PROJECT_DIR$/library/proto-stub" />
             <option value="$PROJECT_DIR$/library/shadowsocks" />
             <option value="$PROJECT_DIR$/library/shadowsocks-libev" />
             <option value="$PROJECT_DIR$/library/stub" />

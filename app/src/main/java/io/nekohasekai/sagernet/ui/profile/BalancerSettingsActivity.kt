@@ -54,6 +54,7 @@ import io.nekohasekai.sagernet.ui.ProfileSelectActivity
 import io.nekohasekai.sagernet.widget.GroupPreference
 import java.util.*
 
+@SuppressLint("Registered")
 class BalancerSettingsActivity :
     ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
 
