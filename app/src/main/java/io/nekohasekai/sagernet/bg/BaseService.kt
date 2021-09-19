@@ -179,7 +179,7 @@ class BaseService {
 
         private suspend fun loopStats() {
             var lastQueryTime = 0L
-            val tun = (data?.proxy?.service as? VpnService)?.tun ?: return
+            val tun = (data?.proxy?.service as? VpnService)?.getTun() ?: return
             if (!tun.trafficStatsEnabled) return
 
             while (true) {
@@ -303,7 +303,7 @@ class BaseService {
         override fun resetTrafficStats() {
             runOnDefaultDispatcher {
                 SagerDatabase.statsDao.deleteAll()
-                (data?.proxy?.service as? VpnService)?.tun?.resetAppTraffics()
+                (data?.proxy?.service as? VpnService)?.getTun()?.resetAppTraffics()
                 val empty = AppStatsList(emptyList())
                 broadcast { item ->
                     if (statsListeners.contains(item.asBinder())) {
@@ -330,7 +330,7 @@ class BaseService {
         }
 
         override fun getTrafficStatsEnabled(): Boolean {
-            return (data?.proxy?.service as? VpnService)?.tun?.trafficStatsEnabled ?: false
+            return (data?.proxy?.service as? VpnService)?.getTun()?.trafficStatsEnabled ?: false
         }
 
         override fun close() {
