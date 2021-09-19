@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.SystemClock
 import android.webkit.WebResourceError
@@ -204,6 +205,7 @@ abstract class V2RayInstance(
         loadConfig()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun launch() {
         val context = if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
 

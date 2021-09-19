@@ -25,11 +25,13 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonToken;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
 import io.nekohasekai.sagernet.fmt.gson.JsonOr;
+import kotlin.text.StringsKt;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused", "RedundantSuppression"})
 public class V2RayConfig {
@@ -69,6 +71,7 @@ public class V2RayConfig {
             public Boolean skipFallback;
             public List<String> domains;
             public List<String> expectIPs;
+            public Boolean concurrent;
 
         }
 
@@ -84,6 +87,9 @@ public class V2RayConfig {
         public List<String> domains;
         public List<String> expectIPs;
         public String queryStrategy;
+
+        public Boolean disableFallback;
+        public Boolean disableFallbackIfMatch;
 
     }
 
@@ -191,6 +197,7 @@ public class V2RayConfig {
             public Boolean enabled;
             public List<String> destOverride;
             public Boolean metadataOnly;
+            public Boolean routeOnly;
 
         }
 
@@ -223,7 +230,7 @@ public class V2RayConfig {
         @Nullable
         @Override
         protected Class<? extends InboundConfigurationObject> getType() {
-            switch (ctx.protocol.toLowerCase()) {
+            switch (ctx.protocol.toLowerCase(Locale.ROOT)) {
                 case "dokodemo-door":
                     return DokodemoDoorInboundConfigurationObject.class;
                 case "http":
@@ -396,6 +403,8 @@ public class V2RayConfig {
         public StreamSettingsObject streamSettings;
         public ProxySettingsObject proxySettings;
         public MuxObject mux;
+        public String domainStrategy;
+        public Long fallbackDelayMs;
 
         public void init() {
             if (settings != null) {
@@ -438,7 +447,7 @@ public class V2RayConfig {
         @Nullable
         @Override
         protected Class<? extends OutboundConfigurationObject> getType() {
-            switch (ctx.protocol.toLowerCase()) {
+            switch (ctx.protocol.toLowerCase(Locale.ROOT)) {
                 case "blackhole":
                     return BlackholeOutboundConfigurationObject.class;
                 case "dns":
@@ -470,6 +479,8 @@ public class V2RayConfig {
     public static class BlackholeOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public ResponseObject response;
+        public Boolean keepConnection;
+        public Integer userLevel;
 
         public static class ResponseObject {
             public String type;
@@ -511,13 +522,13 @@ public class V2RayConfig {
     public static class SocksOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public List<ServerObject> servers;
+        public String version;
 
         public static class ServerObject {
 
             public String address;
             public Integer port;
             public List<UserObject> users;
-            public String version;
 
             public static class UserObject {
 

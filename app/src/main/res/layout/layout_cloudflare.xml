@@ -50,12 +50,12 @@
 
                 <Button
                     android:id="@+id/warpGenerate"
-                    style="@style/Widget.AppCompat.Button.Colored"
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/warp_generate"
-                    android:textColor="?whiteOrTextPrimary" />
+                    android:textColor="?primaryOrTextPrimary" />
             </LinearLayout>
 
         </LinearLayout>

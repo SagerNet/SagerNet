@@ -134,7 +134,7 @@ class ServiceNotification(
                 service,
                 0,
                 Intent(Action.CLOSE).setPackage(service.packageName),
-                PendingIntent.FLAG_IMMUTABLE
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
             )
         ).apply {
             setShowsUserInterface(false)

@@ -123,8 +123,10 @@ class RouteSettingsActivity(
         redirect = DataStore.routeRedirect
         packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }
         val routeForegroundStatus = DataStore.routeForegroundStatus
-        if (routeForegroundStatus.isNotBlank()) {
-            appStatus = listOf(routeForegroundStatus)
+        appStatus = if (routeForegroundStatus.isNotBlank()) {
+            listOf(routeForegroundStatus)
+        } else {
+            emptyList()
         }
 
         if (DataStore.editingId == 0L) {

@@ -97,9 +97,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME)
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
-    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "IPIfNonMatch" }
-    var domainMatcher by configurationStore.string(Key.DOMAIN_MATCHER) { "mph" }
+    var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
+    var destinationOverride by configurationStore.boolean(Key.DESTINATION_OVERRIDE)
+    var resolveDestination by configurationStore.boolean(Key.RESOLVE_DESTINATION)
+
+
     var tcpKeepAliveInterval by configurationStore.stringToInt(Key.TCP_KEEP_ALIVE_INTERVAL) { 15 }
 
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
@@ -135,11 +138,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var transproxyPort: Int
         get() = getLocalPort(Key.TRANSPROXY_PORT, 9201)
         set(value) = saveLocalPort(Key.TRANSPROXY_PORT, value)
-    var apiPort: Int
-        get() = getLocalPort(Key.API_PORT, 9003)
-        set(value) {
-            saveLocalPort(Key.API_PORT, value)
-        }
 
     fun initGlobal() {
         if (configurationStore.getString(Key.SOCKS_PORT) == null) {
@@ -153,9 +151,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         }
         if (configurationStore.getString(Key.TRANSPROXY_PORT) == null) {
             transproxyPort = transproxyPort
-        }
-        if (configurationStore.getString(Key.API_PORT) == null) {
-            apiPort = apiPort
         }
     }
 

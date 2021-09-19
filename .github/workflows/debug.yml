@@ -99,8 +99,8 @@ jobs:
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run init action library
           ./run lib shadowsocks_libev
-  build:
-    name: Gradle Build
+  Lint:
+    name: Android Lint
     runs-on: ubuntu-latest
     needs:
       - libcore
@@ -137,11 +137,11 @@ jobs:
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
-      - name: Debug Build
+      - name: Android Lint
         env:
           BUILD_PLUGIN: none
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
           ./run init action library
-          ./gradlew app:assembleOssDebug
+          ./run lint

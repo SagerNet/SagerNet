@@ -22,12 +22,13 @@ package io.nekohasekai.sagernet.fmt.hysteria
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import io.nekohasekai.sagernet.ktx.wrapUri
 import java.io.File
 
 fun JSONObject.parseHysteria(): HysteriaBean {
     return HysteriaBean().apply {
-        serverAddress = getStr("server").substringBefore(":")
-        serverPort = getStr("server").substringAfter(":")
+        serverAddress = getStr("server").substringBeforeLast(":")
+        serverPort = getStr("server").substringAfterLast(":")
             .takeIf { NumberUtil.isInteger(it) }
             ?.toInt() ?: 443
         uploadMbps = getInt("up_mbps")
@@ -52,7 +53,7 @@ fun JSONObject.parseHysteria(): HysteriaBean {
 
 fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): String {
     return JSONObject().also {
-        it["server"] = "$serverAddress:$serverPort"
+        it["server"] = wrapUri()
         it["up_mbps"] = uploadMbps
         it["down_mbps"] = downloadMbps
         it["socks5"] = JSONObject(mapOf("listen" to "$LOCALHOST:$port"))

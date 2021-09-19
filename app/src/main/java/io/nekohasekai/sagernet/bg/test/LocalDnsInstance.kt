@@ -95,7 +95,6 @@ class LocalDnsInstance : AbstractInstance,
             })
             routing = RoutingObject().apply {
                 domainStrategy = "AsIs"
-                domainMatcher = "mph"
                 rules = listOf(RoutingObject.RuleObject().apply {
                     type = "field"
                     inboundTag = listOf(TAG_DNS_IN)

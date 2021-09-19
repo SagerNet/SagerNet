@@ -190,11 +190,7 @@ abstract class GroupUpdater {
                 val subscription = proxyGroup.subscription!!
                 val connected = DataStore.startedProfile > 0
 
-                val timeout = Duration.ofSeconds(5)
-                val httpClient = createProxyClient().newBuilder()
-                    .connectTimeout(timeout)
-                    .readTimeout(timeout)
-                    .build()
+                val httpClient = createProxyClient()
                 val userInterface = GroupManager.userInterface
 
                 if (userInterface != null) {

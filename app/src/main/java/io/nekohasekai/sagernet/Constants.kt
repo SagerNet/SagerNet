@@ -50,8 +50,10 @@ object Key {
     const val METERED_NETWORK = "meteredNetwork"
 
     const val DOMAIN_STRATEGY = "domainStrategy"
-    const val DOMAIN_MATCHER = "domainMatcher"
     const val TRAFFIC_SNIFFING = "trafficSniffing"
+    const val DESTINATION_OVERRIDE = "destinationOverride"
+    const val RESOLVE_DESTINATION = "resolveDestination"
+
     const val BYPASS_LAN = "bypassLan"
     const val BYPASS_LAN_IN_CORE_ONLY = "bypassLanInCoreOnly"
 
@@ -80,7 +82,6 @@ object Key {
     const val RULES_PROVIDER = "rulesProvider"
     const val ENABLE_LOG = "enableLog"
 
-    const val API_PORT = "apiPort"
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
 
     const val PROVIDER_TROJAN = "providerTrojan"

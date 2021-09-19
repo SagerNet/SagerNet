@@ -93,6 +93,7 @@
                         android:layout_marginTop="16dp"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="?android:textColorSecondary"
+                        android:textIsSelectable="true"
                         android:textSize="12sp" />
 
                 </LinearLayout>

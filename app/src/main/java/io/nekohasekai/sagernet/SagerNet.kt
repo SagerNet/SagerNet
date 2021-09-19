@@ -21,6 +21,7 @@
 
 package io.nekohasekai.sagernet
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.app.admin.DevicePolicyManager
 import android.content.ClipData
@@ -78,6 +79,7 @@ class SagerNet : Application(),
 
         val internalAssets = filesDir
         val externalAssets = getExternalFilesDir(null) ?: internalAssets
+        externalAssets.mkdirs()
         Libcore.initializeV2Ray(
             internalAssets.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
         ) {
@@ -122,6 +124,7 @@ class SagerNet : Application(),
             .build()
     }
 
+    @SuppressLint("InlinedApi")
     companion object {
 
         @Volatile
@@ -140,9 +143,12 @@ class SagerNet : Application(),
         val configureIntent: (Context) -> PendingIntent by lazy {
             {
                 PendingIntent.getActivity(
-                    it, 0, Intent(
+                    it,
+                    0,
+                    Intent(
                         application, MainActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), PendingIntent.FLAG_IMMUTABLE
+                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
                 )
             }
         }
