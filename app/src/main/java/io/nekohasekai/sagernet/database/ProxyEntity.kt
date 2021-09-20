@@ -321,6 +321,7 @@ data class ProxyEntity(
                 for ((isBalancer, chain) in config.index) {
                     chain.entries.forEachIndexed { index, (port, profile) ->
                         val needChain = !isBalancer && index != chain.size - 1
+                        val needMux = index == 0 && DataStore.enableMux
                         when (val bean = profile.requireBean()) {
                             is ShadowsocksBean -> {
                                 append("\n\n")
@@ -333,15 +334,11 @@ data class ProxyEntity(
                             }
                             is TrojanGoBean -> {
                                 append("\n\n")
-                                append(
-                                    bean.buildTrojanGoConfig(
-                                        port, index == 0 && DataStore.enableMux
-                                    )
-                                )
+                                append(bean.buildTrojanGoConfig(port, needMux))
                             }
                             is NaiveBean -> {
                                 append("\n\n")
-                                append(bean.buildNaiveConfig(port))
+                                append(bean.buildNaiveConfig(port, needMux))
                             }
                             is RelayBatonBean -> {
                                 append("\n\n")
