@@ -78,7 +78,11 @@ class VpnService : BaseVpnService(),
     }
 
     lateinit var conn: ParcelFileDescriptor
-    lateinit var tun: Tun2ray
+    private lateinit var tun: Tun2ray
+    fun getTun(): Tun2ray? {
+        if (!::tun.isInitialized) return null
+        return tun
+    }
 
     private var active = false
     private var metered = false
@@ -104,7 +108,7 @@ class VpnService : BaseVpnService(),
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
-        if (::tun.isInitialized) tun.close()
+        getTun()?.close()
         if (::conn.isInitialized) conn.close()
         super.killProcesses()
         persistAppStats()
@@ -272,7 +276,7 @@ class VpnService : BaseVpnService(),
 
     fun persistAppStats() {
         if (!DataStore.trafficStatistics) return
-
+        val tun = getTun() ?: return
         appStats.clear()
         tun.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()

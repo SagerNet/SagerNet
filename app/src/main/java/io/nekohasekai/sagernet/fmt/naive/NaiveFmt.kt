@@ -45,9 +45,7 @@ fun parseNaive(link: String): NaiveBean {
 }
 
 fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
-    val builder = linkBuilder()
-        .host(finalAddress)
-        .port(finalPort)
+    val builder = linkBuilder().host(finalAddress).port(finalPort)
     if (username.isNotBlank()) {
         builder.username(username)
         if (password.isNotBlank()) {
@@ -65,7 +63,7 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
     return builder.toLink(if (proxyOnly) proto else "naive+$proto", false)
 }
 
-fun NaiveBean.buildNaiveConfig(port: Int): String {
+fun NaiveBean.buildNaiveConfig(port: Int, mux: Boolean): String {
     return JSONObject().also {
         it["listen"] = "socks://$LOCALHOST:$port"
         it["proxy"] = toUri(true)
@@ -77,6 +75,9 @@ fun NaiveBean.buildNaiveConfig(port: Int): String {
         }
         if (DataStore.enableLog) {
             it["log"] = ""
+        }
+        if (mux) {
+            it["concurrency"] = DataStore.muxConcurrency
         }
     }.toStringPretty()
 }
