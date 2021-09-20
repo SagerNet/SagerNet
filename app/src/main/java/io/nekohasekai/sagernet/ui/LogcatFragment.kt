@@ -103,7 +103,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "GuardedProcessPool:D",
                 "VpnService:D",
                 "libcore:D",
-                "v2ray-core:D",
+                "xray-core:D",
 
                 "libsslocal:D",
                 "libss-local:D",
