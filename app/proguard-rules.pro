@@ -1,7 +1,7 @@
 -repackageclasses ''
 -allowaccessmodification
--keep class io.nekohasekai.sagernet.** { *;}
 
+-keep class io.nekohasekai.sagernet.** { *;}
 -keep class com.v2ray.core.app.observatory.** { *; }
 
 # ini4j
@@ -11,10 +11,8 @@
 -keep class org.yaml.snakeyaml.** { *; }
 
 # IDK Why
-
 -keep class cn.hutool.core.convert.** { *; }
 
--dontobfuscate
 -keepattributes SourceFile
 
 -dontwarn java.beans.BeanInfo
