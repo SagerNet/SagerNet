@@ -386,7 +386,6 @@
     <string name="traffic_active">فعال</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (پلاگین اندروید شادوساکس)</string>
     <string name="shadowsocks_plugin_simple_obfs">Obfs ساده (پلاگین اندروید شادوساکس)</string>
-    <string name="plugin_exists_but_on_shit_system">نمایه% s به پلاگین% s نیاز دارد، اما فروشنده تجهیزات اختصاصی شما (معمولاً غول های سرمایه دار نظارت کننده و سازنده بدافزارها) اندروید شما را دستکاری کرده و باعث ایجاد مشکل شده است</string>
     <string name="group_order_origin">بر اساس سرآغاز</string>
     <string name="group_order">چیدمان</string>
     <string name="group_order_by_delay">بر اساس تأخیر</string>

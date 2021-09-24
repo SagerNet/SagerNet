@@ -399,35 +399,46 @@
     <string name="group_order_origin">Origin</string>
     <string name="group_order_by_name">By Name</string>
     <string name="group_order_by_delay">By Delay</string>
-    <string name="plugin_exists_but_on_shit_system">Profile% s requires plugin% s, but your proprietary gear vendor (usually the giants of surveillance capital and malware maker) tampered with your Android, causing the com</string>
+    <string name="plugin_exists_but_on_shit_system">Profile %s requires the %s plugin, but your proprietary equipment vendor (usually surveillance capital giants and malware maker) tampered with your Android, making the plugin unusable.</string>
+
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Shadowsocks Android Plugin)</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Plugin)</string>
+
     <string name="traffic_uplink" translatable="false">%s | %s/s ↑</string>
     <string name="traffic_downlink" translatable="false">%s | %s/s ↓</string>
+
     <string name="traffic_uplink_total" translatable="false">%s ↑</string>
     <string name="traffic_downlink_total" translatable="false">%s ↓</string>
     <string name="traffic_active">Active</string>
     <string name="traffic_stats">Statistics</string>
+
     <string name="tcp_connections">%d TCP connections</string>
     <string name="udp_connections">%d UDP connections</string>
+
     <string name="traffic_holder">Open VPN to record traffic statistics</string>
+
     <string name="copy_label">Copy Name</string>
     <string name="copy_package_name">Copy Package Name</string>
     <string name="open_app">Open App</string>
     <string name="open_settings">Open Settings</string>
     <string name="open_market">Open Market</string>
     <string name="create_rule">Create Rule</string>
+
     <string name="copy_success">Copy success!</string>
     <string name="copy_failed">Copy failed.</string>
     <string name="app_no_launcher">The app has no interface.</string>
     <string name="route_for">Rule for %s</string>
+
     <string name="foreground_detector">Foreground detector</string>
     <string name="foreground_detector_summary">This service provides support for routing rules based on the foreground state of apps. If it is not started, the result is always in the background.</string>
+
     <string name="foreground_status">Foreground Status</string>
     <string name="foreground">Foreground</string>
     <string name="background">Background</string>
+
     <string name="route_need_vpn">Routing rule %s relies on the VPN to be in effect, so it is ignored.</string>
     <string name="route_need_fds">Routing rule %s relies on the Foreground Detector Service to be in effect, but is not enabled.</string>
+
     <string name="traffic_statistics">Enable Traffic Statistics</string>
     <string name="traffic_statistics_summary">May increase power consumption</string>
     <string name="no_statistics">No statistics yet</string>
@@ -443,6 +454,7 @@
     <string name="wireguard_local_address">Local Address</string>
     <string name="wireguard_public_key">Peer Public Key</string>
     <string name="wireguard_psk">Peer Pre-Shared Key</string>
+
     <string name="cloudflare_wrap">Warp</string>
     <string name="warp_license">CloudFlare Wrap is a free WireGuard VPN provider. By using it, you agree to the TOS: https://www.cloudflare.com/application/terms/</string>
     <string name="warp_generate">Generate Configuration</string>
