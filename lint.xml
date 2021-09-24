@@ -9,12 +9,11 @@
     <issue id="UnusedResources" severity="ignore" />
     <issue id="VectorRaster" severity="ignore" />
 
-    <issue id="StringFormatInvalid" severity="ignore" />
     <issue id="Untranslatable" severity="ignore" />
-    <issue id="ImpliedQuantity" severity="ignore" />
     <issue id="PluralsCandidate" severity="ignore" />
-    <issue id="DuplicateStrings" severity="ignore" />
     <issue id="TypographyQuotes" severity="ignore" />
+    <issue id="DuplicateStrings" severity="ignore" />
+    <issue id="ImpliedQuantity" severity="ignore" />
 
     <issue id="SelectableText" severity="ignore" />
     <issue id="InsecureBaseConfiguration" severity="ignore" />

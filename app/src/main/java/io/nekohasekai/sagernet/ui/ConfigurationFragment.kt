@@ -72,6 +72,8 @@ import io.nekohasekai.sagernet.ui.profile.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import libcore.Libcore
 import okhttp3.internal.closeQuietly
 import java.net.InetAddress
@@ -1331,6 +1333,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         }
 
+        val profileAccess = Mutex()
+        val reloadAccess = Mutex()
+
         inner class ConfigurationHolder(val view: View) : RecyclerView.ViewHolder(view),
             PopupMenu.OnMenuItemClickListener {
 
@@ -1350,6 +1355,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             fun bind(proxyEntity: ProxyEntity) {
                 val pf = requireParentFragment() as? ConfigurationFragment ?: return
+                val pa = activity as MainActivity
 
                 entity = proxyEntity
 
@@ -1360,13 +1366,24 @@ class ConfigurationFragment @JvmOverloads constructor(
                 } else {
                     view.setOnClickListener {
                         runOnDefaultDispatcher {
-                            if (DataStore.selectedProxy != proxyEntity.id) {
-                                val lastSelected = DataStore.selectedProxy
+                            var update: Boolean
+                            var lastSelected: Long
+                            profileAccess.withLock {
+                                update = DataStore.selectedProxy != proxyEntity.id
+                                lastSelected = DataStore.selectedProxy
                                 DataStore.selectedProxy = proxyEntity.id
-                                ProfileManager.postUpdate(lastSelected)
                                 onMainDispatcher {
                                     selectedView.visibility = View.VISIBLE
-                                    if ((activity as MainActivity).state.canStop) SagerNet.reloadService()
+                                }
+                            }
+
+                            if (update) {
+                                ProfileManager.postUpdate(lastSelected)
+                                if (pa.state.canStop && reloadAccess.tryLock()) {
+                                    SagerNet.stopService()
+                                    delay(1000L)
+                                    SagerNet.startService()
+                                    reloadAccess.unlock()
                                 }
                             } else if (SagerNet.isTv) {
                                 if (SagerNet.started) {
@@ -1454,7 +1471,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 runOnDefaultDispatcher {
                     val selected = (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
-                    val started = SagerNet.started && DataStore.currentProfile == proxyEntity.id
+                    val started = selected && SagerNet.started && DataStore.currentProfile == proxyEntity.id
                     onMainDispatcher {
                         editButton.isEnabled = !started
                         selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE

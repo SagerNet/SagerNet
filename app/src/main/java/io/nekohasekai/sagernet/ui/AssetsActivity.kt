@@ -297,7 +297,7 @@ class AssetsActivity : ThemedActivity() {
         ).execute()
 
         if (!response.isSuccessful) {
-            error("Error when fetching latest release of $repo : HTTP ${response.code}")
+            error("Error when fetching latest release of $repo : HTTP ${response.code}\n\n${response.body?.string()}")
         }
 
         val release = JSONObject(response.body!!.string())
