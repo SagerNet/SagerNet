@@ -104,7 +104,7 @@ class HttpsTest : ViewModel() {
                 Request.Builder()
                     .url(DataStore.connectionTestURL)
                     .addHeader("Connection", "close")
-                    .addHeader("User-Agent", "curl/7.74.0")
+                    .addHeader("User-Agent", USER_AGENT)
                     .build()
             ).apply {
                 val response = try {

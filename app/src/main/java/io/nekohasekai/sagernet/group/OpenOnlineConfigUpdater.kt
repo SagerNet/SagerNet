@@ -26,7 +26,6 @@ import cn.hutool.crypto.digest.DigestUtil
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.ExtraType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
@@ -34,6 +33,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.USER_AGENT
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import okhttp3.*
@@ -116,7 +116,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
 
         val response = oocHttpClient.newCall(Request.Builder().url(baseLink).header("User-Agent",
             subscription.customUserAgent.takeIf { it.isNotBlank() }
-                ?: "SagerNet/${BuildConfig.VERSION_NAME}").build()).execute().apply {
+                ?: USER_AGENT).build()).execute().apply {
             if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
             if (body == null) error("ERROR: Empty response")
         }

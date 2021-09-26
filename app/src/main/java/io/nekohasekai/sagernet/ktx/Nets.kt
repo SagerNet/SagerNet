@@ -113,3 +113,5 @@ const val IPPROTO_ICMPv6 = 58
 
 const val IPPROTO_TCP = 6
 const val IPPROTO_UDP = 17
+
+const val USER_AGENT = "curl/7.74.0"

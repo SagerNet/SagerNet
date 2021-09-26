@@ -22,7 +22,6 @@ package io.nekohasekai.sagernet.group
 import android.net.Uri
 import cn.hutool.json.*
 import com.github.shadowsocks.plugin.PluginOptions
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -77,7 +76,7 @@ object RawUpdater : GroupUpdater() {
                 .url(subscription.link.toHttpUrl())
                 .header("User-Agent",
                     subscription.customUserAgent.takeIf { it.isNotBlank() }
-                        ?: "SagerNet/${BuildConfig.VERSION_NAME}")
+                        ?: USER_AGENT)
                 .build()).execute().apply {
                 if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                 if (body == null) error("ERROR: Empty response")

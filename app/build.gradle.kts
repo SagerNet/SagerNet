@@ -58,8 +58,11 @@ dependencies {
     implementation("cn.hutool:hutool-crypto:5.7.13")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.zxing:core:3.4.1")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
-    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:5.0.0-alpha.2")
+
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.1"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps")
+
     implementation("org.yaml:snakeyaml:1.29")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.mikepenz:aboutlibraries:8.9.1")

@@ -22,7 +22,7 @@ package io.nekohasekai.sagernet.widget
 import android.content.Context
 import android.util.AttributeSet
 import com.takisoft.preferencex.EditTextPreference
-import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.ktx.USER_AGENT
 
 class UserAgentPreference : EditTextPreference {
 
@@ -38,7 +38,7 @@ class UserAgentPreference : EditTextPreference {
 
     override fun getSummary(): CharSequence {
         if (text.isNullOrBlank()) {
-            return "SagerNet/${BuildConfig.VERSION_NAME}"
+            return USER_AGENT
         }
         return super.getSummary()
     }
