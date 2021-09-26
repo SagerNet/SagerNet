@@ -158,12 +158,13 @@ class VpnService : BaseVpnService(),
         val ipv6Mode = DataStore.ipv6Mode
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
-        if (ipv6Mode != IPv6Mode.ONLY) {
-            if (useFakeDns) {
+        if (ipv6Mode != IPv6Mode.DISABLE) {
+            builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
+        }
+        if (useFakeDns) {
+            if (ipv6Mode != IPv6Mode.ONLY) {
                 builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
-            }
-        } else {
-            if (useFakeDns) {
+            } else {
                 builder.addAddress(FAKEDNS_VLAN6_CLIENT, 18)
             }
         }
