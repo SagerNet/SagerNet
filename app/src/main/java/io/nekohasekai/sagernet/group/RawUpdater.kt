@@ -296,9 +296,19 @@ object RawUpdater : GroupUpdater() {
                                     "tls" -> bean.security = if (opt.value?.toString() == "true") "tls" else ""
                                     "skip-cert-verify" -> bean.allowInsecure = opt.value == "true"
                                     "ws-path" -> bean.path = opt.value as String
-                                    "ws-headers" -> for (wsOpt in (opt.value as Map<String, Any>)) {
+                                    "ws-headers" -> for (wsHeader in (opt.value as Map<String, Any>)) {
+                                        when (wsHeader.key.lowercase()) {
+                                            "host" -> bean.host = wsHeader.value as String
+                                        }
+                                    }
+                                    "ws-opts" -> for (wsOpt in (opt.value as Map<String, Any>)) {
                                         when (wsOpt.key.lowercase()) {
-                                            "host" -> bean.host = wsOpt.value as String
+                                            "max-early-data" -> {
+                                                bean.wsMaxEarlyData = wsOpt.value.toString().toInt()
+                                            }
+                                            "early-data-header-name" -> {
+                                                bean.earlyDataHeaderName = wsOpt.value as String
+                                            }
                                         }
                                     }
                                     "servername" -> bean.host = opt.value as String

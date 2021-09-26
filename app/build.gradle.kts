@@ -39,7 +39,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation("androidx.browser:browser:1.3.0")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
@@ -66,7 +66,7 @@ dependencies {
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("org.conscrypt:conscrypt-android:2.5.2")
-    implementation("com.google.guava:guava:30.1.1-android")
+    implementation("com.google.guava:guava:31.0-android")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
     implementation("org.ini4j:ini4j:0.5.4")
 

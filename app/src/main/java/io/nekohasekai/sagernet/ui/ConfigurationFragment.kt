@@ -1355,7 +1355,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             fun bind(proxyEntity: ProxyEntity) {
                 val pf = requireParentFragment() as? ConfigurationFragment ?: return
-                val pa = activity as MainActivity
 
                 entity = proxyEntity
 
@@ -1364,6 +1363,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                         (requireActivity() as ProfileSelectActivity).returnProfile(proxyEntity.id)
                     }
                 } else {
+                    val pa = activity as MainActivity
+
                     view.setOnClickListener {
                         runOnDefaultDispatcher {
                             var update: Boolean
