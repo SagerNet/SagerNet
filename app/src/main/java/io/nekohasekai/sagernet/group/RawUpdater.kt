@@ -38,7 +38,6 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
-import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
@@ -78,7 +77,7 @@ object RawUpdater : GroupUpdater() {
                 .url(subscription.link.toHttpUrl())
                 .header("User-Agent",
                     subscription.customUserAgent.takeIf { it.isNotBlank() }
-                        ?: "AxXray/${BuildConfig.VERSION_NAME}")
+                        ?: "SagerNet/${BuildConfig.VERSION_NAME}")
                 .build()).execute().apply {
                 if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                 if (body == null) error("ERROR: Empty response")
@@ -304,7 +303,8 @@ object RawUpdater : GroupUpdater() {
                                     "ws-opts" -> for (wsOpt in (opt.value as Map<String, Any>)) {
                                         when (wsOpt.key.lowercase()) {
                                             "max-early-data" -> {
-                                                bean.wsMaxEarlyData = wsOpt.value.toString().toInt()
+                                                bean.path = bean.path ?: ""
+                                                bean.path += "?ed=" + wsOpt.value
                                             }
                                             "early-data-header-name" -> {
                                                 bean.earlyDataHeaderName = wsOpt.value as String
@@ -447,14 +447,14 @@ object RawUpdater : GroupUpdater() {
                 }
                 json.containsKey("protocol") -> {
                     val v2rayConfig = gson.fromJson(
-                        json.toString(), OutboundObject::class.java
+                        json.toString(), V2RayConfig.OutboundObject::class.java
                     ).apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
                 json.containsKey("outbound") -> {
                     val v2rayConfig = gson.fromJson(
                         json.getJSONObject("outbound").toString(),
-                        OutboundObject::class.java
+                        V2RayConfig.OutboundObject::class.java
                     ).apply { init() }
                     return parseOutbound(v2rayConfig)
                 }
@@ -489,7 +489,7 @@ object RawUpdater : GroupUpdater() {
                            Logs.w(e)*/
                     json.getJSONArray("outbounds").filterIsInstance<JSONObject>().forEach {
                         val v2rayConfig = gson.fromJson(
-                            it.toString(), OutboundObject::class.java
+                            it.toString(), V2RayConfig.OutboundObject::class.java
                         ).apply { init() }
 
                         proxies.addAll(parseOutbound(v2rayConfig))
@@ -523,7 +523,7 @@ object RawUpdater : GroupUpdater() {
         return proxies
     }
 
-    fun parseOutbound(outboundObject: OutboundObject): List<AbstractBean> {
+    fun parseOutbound(outboundObject: V2RayConfig.OutboundObject): List<AbstractBean> {
         val proxies = ArrayList<AbstractBean>()
 
         with(outboundObject) {
@@ -540,7 +540,7 @@ object RawUpdater : GroupUpdater() {
                             }
                         }
                     }
-                    (settings.value as? HTTPOutboundConfigurationObject)?.servers?.forEach {
+                    (settings.value as? V2RayConfig.HTTPOutboundConfigurationObject)?.servers?.forEach {
                         val httpBeanNext = httpBean.clone().apply {
                             serverAddress = it.address
                             serverPort = it.port
@@ -566,7 +566,7 @@ object RawUpdater : GroupUpdater() {
                             }
                         }
                     }
-                    (settings.value as? SocksOutboundConfigurationObject)?.servers?.forEach {
+                    (settings.value as? V2RayConfig.SocksOutboundConfigurationObject)?.servers?.forEach {
                         val socksBeanNext = socksBean.clone().apply {
                             serverAddress = it.address
                             serverPort = it.port
@@ -587,19 +587,6 @@ object RawUpdater : GroupUpdater() {
                         when (security) {
                             "tls" -> {
                                 tlsSettings?.apply {
-                                    serverName?.also {
-                                        v2rayBean.sni = it
-                                    }
-                                    alpn?.also {
-                                        v2rayBean.alpn = it.joinToString(",")
-                                    }
-                                    allowInsecure?.also {
-                                        v2rayBean.allowInsecure = it
-                                    }
-                                }
-                            }
-                            "xtls" -> {
-                                xtlsSettings?.apply {
                                     serverName?.also {
                                         v2rayBean.sni = it
                                     }
@@ -667,6 +654,10 @@ object RawUpdater : GroupUpdater() {
                                     path?.also {
                                         v2rayBean.path = it
                                     }
+
+                                    /*maxEarlyData?.also {
+                                        v2rayBean.wsMaxEarlyData = it
+                                    }*/
                                 }
                             }
                             "http", "h2" -> {
@@ -703,7 +694,7 @@ object RawUpdater : GroupUpdater() {
                     }
                     if (protocol == "vmess") {
                         v2rayBean as VMessBean
-                        (settings.value as? VMessOutboundConfigurationObject)?.vnext?.forEach {
+                        (settings.value as? V2RayConfig.VMessOutboundConfigurationObject)?.vnext?.forEach {
                             val vmessBean = v2rayBean.clone().apply {
                                 serverAddress = it.address
                                 serverPort = it.port
@@ -719,7 +710,7 @@ object RawUpdater : GroupUpdater() {
                         }
                     } else {
                         v2rayBean as VLESSBean
-                        (settings.value as? VLESSOutboundConfigurationObject)?.vnext?.forEach {
+                        (settings.value as? V2RayConfig.VLESSOutboundConfigurationObject)?.vnext?.forEach {
                             val vlessBean = v2rayBean.clone().apply {
                                 serverAddress = it.address
                                 serverPort = it.port
@@ -729,15 +720,12 @@ object RawUpdater : GroupUpdater() {
                                     uuid = user.id
                                     encryption = user.encryption
                                     name = tag ?: displayName() + " - ${user.id}"
-                                    if (!user.flow.isNullOrBlank()) {
-                                        flow = user.flow
-                                    }
                                 })
                             }
                         }
                     }
                 }
-                "shadowsocks" -> (settings.value as? ShadowsocksOutboundConfigurationObject)?.servers?.forEach {
+                "shadowsocks" -> (settings.value as? V2RayConfig.ShadowsocksOutboundConfigurationObject)?.servers?.forEach {
                     proxies.add(ShadowsocksBean().applyDefaultValues().apply {
                         name = tag
                         serverAddress = it.address
@@ -766,19 +754,9 @@ object RawUpdater : GroupUpdater() {
                                     }
                                 }
                             }
-                            "xtls" -> {
-                                xtlsSettings?.apply {
-                                    serverName?.also {
-                                        trojanBean.sni = it
-                                    }
-                                    alpn?.also {
-                                        trojanBean.alpn = it.joinToString(",")
-                                    }
-                                }
-                            }
                         }
 
-                        (settings.value as? TrojanOutboundConfigurationObject)?.servers?.forEach {
+                        (settings.value as? V2RayConfig.TrojanOutboundConfigurationObject)?.servers?.forEach {
                             proxies.add(trojanBean.clone().apply {
                                 name = tag
                                 serverAddress = it.address
