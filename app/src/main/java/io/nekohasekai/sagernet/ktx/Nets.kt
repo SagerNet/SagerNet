@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.ktx
 
 import android.os.Build
 import cn.hutool.core.lang.Validator
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
@@ -115,3 +116,4 @@ const val IPPROTO_TCP = 6
 const val IPPROTO_UDP = 17
 
 const val USER_AGENT = "curl/7.74.0"
+const val USER_AGENT_ORIGIN = "SagerNet/${BuildConfig.VERSION_NAME}"

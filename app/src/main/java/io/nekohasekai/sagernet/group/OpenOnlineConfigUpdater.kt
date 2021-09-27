@@ -32,10 +32,7 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.USER_AGENT
-import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.cert.CertificateException
@@ -45,8 +42,8 @@ import javax.net.ssl.SSLSocketFactory
 object OpenOnlineConfigUpdater : GroupUpdater() {
 
     val oocConnSpec = ConnectionSpec.Builder(ConnectionSpec.RESTRICTED_TLS)
-            .tlsVersions(TlsVersion.TLS_1_3)
-            .build()
+        .tlsVersions(TlsVersion.TLS_1_3)
+        .build()
 
     override suspend fun doUpdate(
         proxyGroup: ProxyGroup,
@@ -84,8 +81,10 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
             }
             val secret = apiToken.getStr("secret")
             if (secret.isNullOrBlank()) error("Missing field: secret")
-            baseLink =
-                baseLink.newBuilder().addPathSegments(secret).addPathSegments("ooc/v1").build()
+            baseLink = baseLink.newBuilder()
+                .addPathSegments(secret)
+                .addPathSegments("ooc/v1")
+                .build()
 
             val userId = apiToken.getStr("userId")
             if (userId.isNullOrBlank()) error("Missing field: userId")
@@ -107,19 +106,19 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         }
 
         val oocHttpClient = if (certSha256.isNullOrBlank()) httpClient else httpClient.newBuilder()
-                .connectionSpecs(listOf(oocConnSpec))
-                .sslSocketFactory(
-                    SSLSocketFactory.getDefault() as SSLSocketFactory,
-                    PinnedTrustManager(certSha256)
-                )
-                .build()
+            .connectionSpecs(listOf(oocConnSpec))
+            .sslSocketFactory(
+                SSLSocketFactory.getDefault() as SSLSocketFactory, PinnedTrustManager(certSha256)
+            )
+            .build()
 
         val response = oocHttpClient.newCall(Request.Builder().url(baseLink).header("User-Agent",
-            subscription.customUserAgent.takeIf { it.isNotBlank() }
-                ?: USER_AGENT).build()).execute().apply {
-            if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
-            if (body == null) error("ERROR: Empty response")
-        }
+            subscription.customUserAgent.takeIf { it.isNotBlank() } ?: USER_AGENT_ORIGIN).build())
+            .execute()
+            .apply {
+                if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
+                if (body == null) error("ERROR: Empty response")
+            }
 
         Logs.d(response.toString())
 
@@ -140,8 +139,8 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         var profiles = mutableListOf<AbstractBean>()
 
         for (protocol in subscription.protocols) {
-            val profilesInProtocol =
-                oocResponse.getJSONArray(protocol).filterIsInstance<JSONObject>()
+            val profilesInProtocol = oocResponse.getJSONArray(protocol)
+                .filterIsInstance<JSONObject>()
 
             if (protocol == "shadowsocks") for (profile in profilesInProtocol) {
                 val bean = ShadowsocksBean()

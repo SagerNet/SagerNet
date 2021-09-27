@@ -45,6 +45,7 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.widget.ListListener
+import io.nekohasekai.sagernet.widget.UserAgentPreference
 import kotlinx.parcelize.Parcelize
 
 @Suppress("UNCHECKED_CAST")
@@ -123,6 +124,7 @@ class GroupSettingsActivity(
         val subscriptionLink = findPreference<EditTextPreference>(Key.SUBSCRIPTION_LINK)!!
         val subscriptionToken = findPreference<EditTextPreference>(Key.SUBSCRIPTION_TOKEN)!!
         val subscriptionForceVMessAEAD = findPreference<SwitchPreference>(Key.SUBSCRIPTION_FORCE_VMESS_AEAD)!!
+        val subscriptionUserAgent = findPreference<UserAgentPreference>(Key.SUBSCRIPTION_USER_AGENT)!!
 
         fun updateSubscriptionType(subscriptionType: Int = DataStore.subscriptionType) {
             val isRaw = subscriptionType == SubscriptionType.RAW
@@ -131,6 +133,8 @@ class GroupSettingsActivity(
             subscriptionForceVMessAEAD.isVisible = isRaw
             subscriptionLink.isVisible = !isOOCv1
             subscriptionToken.isVisible = isOOCv1
+            subscriptionUserAgent.isOOCv1 = isOOCv1
+            subscriptionUserAgent.notifyChanged()
         }
         updateSubscriptionType()
         subscriptionType.setOnPreferenceChangeListener { _, newValue ->
