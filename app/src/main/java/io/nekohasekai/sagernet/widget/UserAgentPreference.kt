@@ -23,6 +23,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.ktx.USER_AGENT
+import io.nekohasekai.sagernet.ktx.USER_AGENT_ORIGIN
 
 class UserAgentPreference : EditTextPreference {
 
@@ -36,9 +37,15 @@ class UserAgentPreference : EditTextPreference {
         context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
+    var isOOCv1 = false
+
+    public override fun notifyChanged() {
+        super.notifyChanged()
+    }
+
     override fun getSummary(): CharSequence {
         if (text.isNullOrBlank()) {
-            return USER_AGENT
+            return if (isOOCv1) USER_AGENT_ORIGIN else USER_AGENT
         }
         return super.getSummary()
     }
