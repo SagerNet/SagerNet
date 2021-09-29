@@ -49,8 +49,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             Libcore.setProtector { true }
         }
 
-        Libcore.setIPv6Mode(DataStore.ipv6Mode.toLong())
-
         super.init()
 
         Logs.d(config.config)

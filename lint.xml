@@ -8,6 +8,7 @@
     <issue id="ContentDescription" severity="ignore" />
     <issue id="UnusedResources" severity="ignore" />
     <issue id="VectorRaster" severity="ignore" />
+    <issue id="PrivateResource" severity="ignore" />
 
     <issue id="Untranslatable" severity="ignore" />
     <issue id="PluralsCandidate" severity="ignore" />

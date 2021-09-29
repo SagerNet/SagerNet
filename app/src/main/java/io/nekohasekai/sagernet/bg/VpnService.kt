@@ -267,6 +267,7 @@ class VpnService : BaseVpnService(),
             DataStore.enableLog,
             data.proxy!!.config.dumpUid,
             DataStore.trafficStatistics,
+            DataStore.enablePcap
         )
     }
 

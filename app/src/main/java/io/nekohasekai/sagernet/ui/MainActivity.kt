@@ -423,7 +423,9 @@ class MainActivity : ThemedActivity(),
     val connection = SagerConnection(true)
     override fun onServiceConnected(service: ISagerNetService) = changeState(
         try {
-            BaseService.State.values()[service.state]
+            BaseService.State.values()[service.state].also {
+                SagerNet.started = it.canStop
+            }
         } catch (_: RemoteException) {
             BaseService.State.Idle
         }

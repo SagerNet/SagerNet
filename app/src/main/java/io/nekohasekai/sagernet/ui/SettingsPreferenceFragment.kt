@@ -27,16 +27,19 @@ import androidx.core.app.ActivityCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
+import java.io.File
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -205,6 +208,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
         val destinationOverride = findPreference<SwitchPreference>(Key.DESTINATION_OVERRIDE)!!
         val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
+        val enablePcap = findPreference<SwitchPreference>(Key.ENABLE_PCAP)!!
 
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
@@ -245,6 +249,26 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tunImplementation.onPreferenceChangeListener = reloadListener
         destinationOverride.onPreferenceChangeListener = reloadListener
         resolveDestination.onPreferenceChangeListener = reloadListener
+        enablePcap.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue as Boolean) {
+                val path = File(app.externalAssets, "pcap").absolutePath
+                MaterialAlertDialogBuilder(requireContext()).apply {
+                    setTitle(R.string.pcap)
+                    setMessage(resources.getString(R.string.pcap_notice, path))
+                    setPositiveButton(android.R.string.ok) { _, _ ->
+                        needReload()
+                    }
+                    setNegativeButton(android.R.string.copy) { _, _ ->
+                        SagerNet.trySetPrimaryClip(path)
+                        snackbar(R.string.copy_success).show()
+                    }
+                }.show()
+                if (tunImplementation.value != "${TunImplementation.GVISOR}") {
+                    tunImplementation.value = "${TunImplementation.GVISOR}"
+                }
+            } else needReload()
+            true
+        }
 
     }
 

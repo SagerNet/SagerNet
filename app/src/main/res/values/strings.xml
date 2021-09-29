@@ -455,7 +455,7 @@
     <string name="wireguard_public_key">Peer Public Key</string>
     <string name="wireguard_psk">Peer Pre-Shared Key</string>
 
-    <string name="cloudflare_wrap">Warp</string>
+    <string name="cloudflare_wrap" translatable="false">Warp</string>
     <string name="warp_license">CloudFlare Wrap is a free WireGuard VPN provider. By using it, you agree to the TOS: https://www.cloudflare.com/application/terms/</string>
     <string name="warp_generate">Generate Configuration</string>
     <string name="generating">Generating…</string>
@@ -464,5 +464,9 @@
     <string name="destination_override_summary">Use the sniffed domain to overwrite the destination address, not just for routing</string>
     <string name="resolve_destination">Resolve Destination</string>
     <string name="resolve_destination_summary">If the destination address is a domain, it is then passed out based on the IPv6 strategy.</string>
+    <string name="pcap" translatable="false">Pcap</string>
+    <string name="enable_pcap">Enable Pcap</string>
+    <string name="pcap_summary">Save traffic to .pcap file</string>
+    <string name="pcap_notice">Pcap files will be saved to %s</string>
 
 </resources>

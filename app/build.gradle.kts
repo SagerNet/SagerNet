@@ -44,8 +44,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")
-    implementation("androidx.work:work-multiprocess:2.7.0-beta01")
+    implementation("androidx.work:work-runtime-ktx:2.7.0-rc01")
+    implementation("androidx.work:work-multiprocess:2.7.0-rc01")
 
     implementation(project(":external:preferencex:preferencex"))
     implementation(project(":external:preferencex:preferencex-simplemenu"))
@@ -69,7 +69,7 @@ dependencies {
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("org.conscrypt:conscrypt-android:2.5.2")
-    implementation("com.google.guava:guava:31.0-android")
+    implementation("com.google.guava:guava:31.0.1-android")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
     implementation("org.ini4j:ini4j:0.5.4")
 

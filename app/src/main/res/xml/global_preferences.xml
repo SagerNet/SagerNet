@@ -280,6 +280,11 @@
             app:key="tcpKeepAliveInterval"
             app:title="@string/tcp_keep_alive_interval"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_save_24"
+            app:key="enablePcap"
+            app:summary="@string/pcap_summary"
+            app:title="@string/enable_pcap" />
     </PreferenceCategory>
 
 

@@ -91,6 +91,7 @@ object Key {
 
     const val TRAFFIC_STATISTICS = "trafficStatistics"
     const val TUN_IMPLEMENTATION = "tunImplementation"
+    const val ENABLE_PCAP = "enablePcap"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"
