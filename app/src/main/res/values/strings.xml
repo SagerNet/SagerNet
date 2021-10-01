@@ -371,9 +371,11 @@
     <string name="group_filter">Filter</string>
     <string name="group_filter_groups">Groups</string>
     <string name="group_filter_tags">Tags</string>
+    <string name="group_filter_owners">Owners</string>
     <string name="group_filter_ns">OOCv1 subscription is required to use the filtering feature</string>
     <string name="group_filter_groups_nf">No groups in this subscription</string>
     <string name="group_filter_tags_nf">No tags in this subscription</string>
+    <string name="group_filter_owners_nf">No owners in this subscription</string>
     <string name="subscription_used">%s Used</string>
     <string name="subscription_traffic">%s Used / %s Remaining</string>
     <string name="subscription_import">Import subscription</string>

@@ -422,6 +422,51 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 }
             }
+            R.id.group_filter_owners -> {
+                runOnDefaultDispatcher filter@{
+                    val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
+
+                    if (group.subscription?.type != SubscriptionType.OOCv1) {
+                        snackbar(getString(R.string.group_filter_ns)).show()
+                        return@filter
+                    }
+
+                    val subscription = group.subscription!!
+
+                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
+                    val owners = profiles.mapNotNull { it.requireBean().owner }
+                        .toSet()
+                        .toTypedArray()
+                    val checked = owners.map { it in subscription.selectedOwners }.toBooleanArray()
+
+                    if (owners.isEmpty()) {
+                        snackbar(getString(R.string.group_filter_owners_nf)).show()
+                        return@filter
+                    }
+
+                    onMainDispatcher {
+
+                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_groups)
+                            .setMultiChoiceItems(owners, checked) { _, which, isChecked ->
+                                val selected = owners[which]
+                                if (isChecked) {
+                                    subscription.selectedOwners.add(selected)
+                                } else {
+                                    subscription.selectedOwners.remove(selected)
+                                }
+                            }
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                runOnDefaultDispatcher {
+                                    GroupManager.updateGroup(group)
+                                }
+                            }
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show()
+
+                    }
+
+                }
+            }
             R.id.action_filter_tags -> {
                 runOnDefaultDispatcher filter@{
                     val group = DataStore.currentGroup()
@@ -576,6 +621,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (subscription.selectedGroups.isNotEmpty()) {
                     profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
                 }
+                if (subscription.selectedOwners.isNotEmpty()) {
+                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
+                }
                 if (subscription.selectedTags.isNotEmpty()) {
                     profilesUnfiltered = profilesUnfiltered.filter { profile ->
                         profile.requireBean().tags.containsAll(
@@ -643,20 +691,23 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 test.update(profile)
                             } else {
                                 val socket = Socket()
-                                socket.soTimeout = 5000
-                                socket.bind(InetSocketAddress(0))
-                                protectFromVpn(socket.fileDescriptor.int)
-                                val start = SystemClock.elapsedRealtime()
-                                socket.connect(
-                                    InetSocketAddress(
-                                        address, profile.requireBean().serverPort
-                                    ), 5000
-                                )
-                                if (!isActive) break
-                                profile.status = 1
-                                profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
-                                test.update(profile)
-                                socket.close()
+                                try {
+                                    socket.soTimeout = 5000
+                                    socket.bind(InetSocketAddress(0))
+                                    protectFromVpn(socket.fileDescriptor.int)
+                                    val start = SystemClock.elapsedRealtime()
+                                    socket.connect(
+                                        InetSocketAddress(
+                                            address, profile.requireBean().serverPort
+                                        ), 5000
+                                    )
+                                    if (!isActive) break
+                                    profile.status = 1
+                                    profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
+                                    test.update(profile)
+                                } finally {
+                                    socket.closeQuietly()
+                                }
                             }
                         } catch (e: Exception) {
                             if (!isActive) break
@@ -724,6 +775,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 val subscription = group.subscription!!
                 if (subscription.selectedGroups.isNotEmpty()) {
                     profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
+                }
+                if (subscription.selectedOwners.isNotEmpty()) {
+                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
                 }
                 if (subscription.selectedTags.isNotEmpty()) {
                     profilesUnfiltered = profilesUnfiltered.filter { profile ->
@@ -1267,6 +1321,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (subscription != null) {
                     if (subscription.selectedGroups.isNotEmpty()) {
                         newProfiles = newProfiles.filter { it.requireBean().group in subscription.selectedGroups }
+                    }
+                    if (subscription.selectedOwners.isNotEmpty()) {
+                        newProfiles = newProfiles.filter { it.requireBean().owner in subscription.selectedOwners }
                     }
                     if (subscription.selectedTags.isNotEmpty()) {
                         newProfiles = newProfiles.filter { profile ->

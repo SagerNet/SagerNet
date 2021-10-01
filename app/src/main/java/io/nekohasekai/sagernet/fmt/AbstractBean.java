@@ -51,6 +51,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public int extraType;
     public String profileId;
     public String group;
+    public String owner;
     public List<String> tags;
 
     public String displayName() {
@@ -101,17 +102,23 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         if (tags == null) tags = new ArrayList<>();
     }
 
+
+    private transient boolean serializeWithoutName;
+
     @Override
     public void serializeToBuffer(@NonNull ByteBufferOutput output) {
         serialize(output);
 
-        output.writeInt(0);
-        output.writeString(name);
+        output.writeInt(1);
+        if (!serializeWithoutName) {
+            output.writeString(name);
+        }
         output.writeInt(extraType);
         if (extraType == ExtraType.NONE) return;
         output.writeString(profileId);
         if (extraType == ExtraType.OOCv1) {
             output.writeString(group);
+            output.writeString(owner);
             KryosKt.writeStringList(output, tags);
         }
     }
@@ -129,6 +136,9 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
 
         if (extraType == ExtraType.OOCv1) {
             group = input.readString();
+            if (extraVersion >= 1) {
+                owner = input.readString();
+            }
             tags = KryosKt.readStringList(input);
         }
     }
@@ -151,12 +161,22 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return Arrays.equals(KryoConverters.serializeWithoutName(this), KryoConverters.serializeWithoutName((AbstractBean) o));
+        try {
+            serializeWithoutName = true;
+            return Arrays.equals(KryoConverters.serialize(this), KryoConverters.serialize((AbstractBean) o));
+        } finally {
+            serializeWithoutName = false;
+        }
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(KryoConverters.serializeWithoutName(this));
+        try {
+            serializeWithoutName = true;
+            return Arrays.hashCode(KryoConverters.serialize(this));
+        } finally {
+            serializeWithoutName = false;
+        }
     }
 
     @NotNull

@@ -125,6 +125,9 @@
                 android:id="@+id/action_filter_groups"
                 android:title="@string/group_filter_groups" />
             <item
+                android:id="@+id/group_filter_owners"
+                android:title="@string/group_filter_owners" />
+            <item
                 android:id="@+id/action_filter_tags"
                 android:title="@string/group_filter_tags" />
         </menu>

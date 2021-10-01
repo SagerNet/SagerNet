@@ -285,6 +285,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         bean.extraType = ExtraType.OOCv1
         bean.profileId = profile.getStr("id")
         bean.group = profile.getStr("group")
+        bean.owner = profile.getStr("owner")
         bean.tags = profile.getJSONArray("tags")?.filterIsInstance<String>()
     }
 
