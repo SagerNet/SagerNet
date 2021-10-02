@@ -100,7 +100,6 @@
     <string name="project">Proyek</string>
     <string name="app_desc">Peranti proxy universal untuk Android, ditulis dalam Kotlin.</string>
     <string name="ssh_auth_type_none">Kosong</string>
-    <string name="statistics_disabled">Statistik trafik dinonaktifkan</string>
     <string name="no_statistics">Belum ada statistik</string>
     <string name="menu_tools">Alat</string>
     <string name="ssh_private_key">Kunci Privat</string>
@@ -181,9 +180,6 @@
     <string name="mux_for_all">Aktifkan Mux untuk semua kemungkinan protokol yang didukung</string>
     <string name="mux_concurrency">Koneksi Mux Concurrent</string>
     <string name="mux_sum">Mux dirancang untuk mengurangi latensi handshake TCP, bukan untuk meningkatkan throughput koneksi. Menggunakan Mux untuk menonton video, mengunduh, atau uji kecepatan biasanya kontra produktif</string>
-    <string name="dm_mph">Minimal hash sempurna</string>
-    <string name="dm_linear">Pencocokan linier</string>
-    <string name="domain_matcher">Algoritma Pencocokan Domain</string>
     <string name="domain_strategy">Strategi Resolusi Domain</string>
     <string name="route_opt_bypass_lan">Lewati LAN</string>
     <string name="route_not_asset">Bukan file aset: kecuali .dat, tapi %s</string>

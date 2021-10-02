@@ -297,9 +297,6 @@
     <string name="mux_concurrency">Mux одновременных подключений</string>
     <string name="enable_mux">Включить мультиплексор</string>
     <string name="traffic_sniffing">Включить анализ трафика</string>
-    <string name="dm_mph">Минимальный идеальный хеш</string>
-    <string name="dm_linear">Линейное соответствие</string>
-    <string name="domain_matcher">Алгоритм сопоставления доменов</string>
     <string name="domain_strategy">Стратегия разрешения доменов</string>
     <string name="route_opt_block_ads">Блокировать рекламу</string>
     <string name="route_opt_bypass_lan">Обход LAN</string>
@@ -398,10 +395,8 @@
     <string name="hysteria_stream_receive_window">Окно приема потока QUIC</string>
     <string name="ss_stream_provider">Провайдер потока Shadowsocks</string>
     <string name="menu_traffic">Движение</string>
-    <string name="statistics_disabled">Статистика трафика отключена</string>
     <string name="no_statistics">Статистики пока нет</string>
     <string name="traffic_statistics_summary">Может увеличить потребление энергии</string>
-    <string name="traffic_statistics">Включить статистику трафика</string>
     <string name="clear_logcat">Четкие отчеты об эффективности</string>
     <string name="menu_log">Логи</string>
     <string name="menu_tools">Инструменты</string>

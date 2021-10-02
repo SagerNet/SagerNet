@@ -282,9 +282,6 @@
     <string name="mux_sum">تسهیم کننده Mux برای کاهش تأخیر TCP طراحی شده است، قادر به افزایش توان اتصال نیست. استفاده از Mux برای تماشای فیلم، بارگیری یا تست سرعت معمولاً خلاف قوانین تولید است</string>
     <string name="enable_mux">فعالسازی تسهیم کننده</string>
     <string name="traffic_sniffing">فعال کردن استشمام ترافیک</string>
-    <string name="dm_mph">حداقل هش کامل</string>
-    <string name="dm_linear">تطبیق خطی</string>
-    <string name="domain_matcher">الگوریتم همسان سازی دامنه</string>
     <string name="domain_strategy">استراتژی حل دامنه</string>
     <string name="route_opt_block_ads">مسدود کردن تبلیغات</string>
     <string name="route_opt_bypass_lan">بای‌پس LAN</string>
@@ -395,10 +392,8 @@
     <string name="hysteria_stream_receive_window">پنجره دریافت جریان QUIC</string>
     <string name="ss_stream_provider">ارائه دهنده جریان شادوساکس</string>
     <string name="menu_traffic">ترافیک</string>
-    <string name="statistics_disabled">آمار ترافیک غیرفعال شد</string>
     <string name="no_statistics">هنوز آماری در دسترس نیست</string>
     <string name="traffic_statistics_summary">ممکن است مصرف باتری را افزایش دهد</string>
-    <string name="traffic_statistics">فعال کردن آمار ترافیک</string>
     <string name="clear_logcat">پاکسازی گزارش عملکرد</string>
     <string name="menu_log">گزارش عملکرد</string>
     <string name="menu_tools">ابزارها</string>
