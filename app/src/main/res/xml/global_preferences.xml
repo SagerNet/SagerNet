@@ -43,10 +43,22 @@
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_manage_search_24"
-            app:key="trafficStatistics"
+            app:key="appTrafficStatistics"
             app:summary="@string/traffic_statistics_summary"
-            app:title="@string/traffic_statistics" />
-
+            app:title="@string/app_traffic_statistics" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="profileTrafficStatistics"
+            app:summary="@string/profile_traffic_statistics_summary"
+            app:title="@string/profile_traffic_statistics" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="1000"
+            app:entries="@array/notification_entry"
+            app:entryValues="@array/notification_value"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="speedInterval"
+            app:title="@string/speed_interval"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_center_focus_weak_24"
             app:key="alwaysShowAddress"
@@ -63,14 +75,6 @@
             app:key="meteredNetwork"
             app:summary="@string/metered_summary"
             app:title="@string/metered" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="1000"
-            app:entries="@array/notification_entry"
-            app:entryValues="@array/notification_value"
-            app:icon="@drawable/ic_baseline_shutter_speed_24"
-            app:key="speedInterval"
-            app:title="@string/speed_interval"
-            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_speed_24"
             app:key="showDirectSpeed"

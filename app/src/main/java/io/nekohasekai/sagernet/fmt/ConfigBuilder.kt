@@ -158,6 +158,7 @@ fun buildV2RayConfig(
     val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
     val resolveDestination = DataStore.resolveDestination
     val destinationOverride = DataStore.destinationOverride
+    val trafficStatistics = !forTest && DataStore.profileTrafficStatistics
 
     val outboundDomainStrategy = when {
         !resolveDestination -> "AsIs"
@@ -215,13 +216,15 @@ fun buildV2RayConfig(
         }
 
         log = LogObject().apply {
-            loglevel = if (!forTest && DataStore.enableLog) "debug" else "error"
+            loglevel = if (DataStore.enableLog) "debug" else "error"
         }
 
-        policy = PolicyObject().apply {
-            system = PolicyObject.SystemPolicyObject().apply {
-                statsOutboundDownlink = true
-                statsOutboundUplink = true
+        if (trafficStatistics) {
+            policy = PolicyObject().apply {
+                system = PolicyObject.SystemPolicyObject().apply {
+                    statsOutboundDownlink = true
+                    statsOutboundUplink = true
+                }
             }
         }
 
@@ -1004,23 +1007,25 @@ fun buildV2RayConfig(
                  })*/
         })
 
-        inbounds.add(InboundObject().apply {
-            tag = TAG_DNS_IN
-            listen = bind
-            port = DataStore.localDNSPort
-            protocol = "dokodemo-door"
-            settings = LazyInboundConfigurationObject(this,
-                DokodemoDoorInboundConfigurationObject().apply {
-                    address = if (!remoteDns.first().isIpAddress()) {
-                        "1.0.0.1"
-                    } else {
-                        remoteDns.first()
-                    }
-                    network = "tcp,udp"
-                    port = 53
-                })
+        if (!forTest) {
+            inbounds.add(InboundObject().apply {
+                tag = TAG_DNS_IN
+                listen = bind
+                port = DataStore.localDNSPort
+                protocol = "dokodemo-door"
+                settings = LazyInboundConfigurationObject(this,
+                    DokodemoDoorInboundConfigurationObject().apply {
+                        address = if (!remoteDns.first().isIpAddress()) {
+                            "1.0.0.1"
+                        } else {
+                            remoteDns.first()
+                        }
+                        network = "tcp,udp"
+                        port = 53
+                    })
 
-        })
+            })
+
         outbounds.add(OutboundObject().apply {
             protocol = "dns"
             tag = TAG_DNS_OUT
@@ -1042,6 +1047,7 @@ fun buildV2RayConfig(
                     }
                 })
         })
+        }
 
         for (dns in remoteDns) {
             if (!dns.isIpAddress()) continue
@@ -1098,7 +1104,7 @@ fun buildV2RayConfig(
             }
             "https://$address".toHttpUrlOrNull()?.apply {
                 if (!host.isIpAddress()) {
-                    bypassDomain.add("full:" + host)
+                    bypassDomain.add("full:$host")
                 }
             }
         }
@@ -1122,7 +1128,7 @@ fun buildV2RayConfig(
             })
         }
 
-        routing.rules.add(0, RoutingObject.RuleObject().apply {
+        if (!forTest) routing.rules.add(0, RoutingObject.RuleObject().apply {
             type = "field"
             inboundTag = listOf(TAG_DNS_IN)
             outboundTag = TAG_DNS_OUT
@@ -1139,7 +1145,7 @@ fun buildV2RayConfig(
 
         if (rootBalancer != null) routing.rules.add(rootBalancer)
 
-        stats = emptyMap()
+        if (trafficStatistics) stats = emptyMap()
     }.let {
         V2rayBuildResult(
             gson.toJson(it),

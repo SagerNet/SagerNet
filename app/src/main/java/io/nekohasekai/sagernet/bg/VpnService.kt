@@ -266,7 +266,7 @@ class VpnService : BaseVpnService(),
             DataStore.enableFakeDns,
             DataStore.enableLog,
             data.proxy!!.config.dumpUid,
-            DataStore.trafficStatistics,
+            DataStore.appTrafficStatistics,
             DataStore.enablePcap
         )
     }
@@ -278,7 +278,7 @@ class VpnService : BaseVpnService(),
     }
 
     fun persistAppStats() {
-        if (!DataStore.trafficStatistics) return
+        if (!DataStore.appTrafficStatistics) return
         val tun = getTun() ?: return
         appStats.clear()
         tun.readAppTraffics(this)

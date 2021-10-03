@@ -198,7 +198,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             newValue
         }
 
-        val trafficStatistics = findPreference<SwitchPreference>(Key.TRAFFIC_STATISTICS)!!
+        val appTrafficStatistics = findPreference<SwitchPreference>(Key.APP_TRAFFIC_STATISTICS)!!
+        val profileTrafficStatistics = findPreference<SwitchPreference>(Key.PROFILE_TRAFFIC_STATISTICS)!!
+        speedInterval.isEnabled = profileTrafficStatistics.isChecked
+        profileTrafficStatistics.setOnPreferenceChangeListener { _, newValue ->
+            speedInterval.isEnabled = newValue as Boolean
+            true
+        }
 
         serviceMode.setOnPreferenceChangeListener { _, _ ->
             if (SagerNet.started) SagerNet.stopService()
@@ -245,7 +251,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         providerTrojan.onPreferenceChangeListener = reloadListener
         providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
         providerShadowsocksStream.onPreferenceChangeListener = reloadListener
-        trafficStatistics.onPreferenceChangeListener = reloadListener
+        appTrafficStatistics.onPreferenceChangeListener = reloadListener
         tunImplementation.onPreferenceChangeListener = reloadListener
         destinationOverride.onPreferenceChangeListener = reloadListener
         resolveDestination.onPreferenceChangeListener = reloadListener

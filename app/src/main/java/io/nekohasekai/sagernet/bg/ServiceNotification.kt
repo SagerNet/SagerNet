@@ -57,13 +57,14 @@ class ServiceNotification(
     private val service: BaseService.Interface, profileName: String,
     channel: String, visible: Boolean = false,
 ) : BroadcastReceiver() {
+    val trafficStatistics = DataStore.profileTrafficStatistics
     val showDirectSpeed = DataStore.showDirectSpeed
 
     private val callback: ISagerNetServiceCallback by lazy {
         object : ISagerNetServiceCallback.Stub() {
             override fun stateChanged(state: Int, profileName: String?, msg: String?) {}   // ignore
             override fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {
-                if (profileId == 0L || !isCurrent) return
+                if (!trafficStatistics || profileId == 0L || !isCurrent) return
                 builder.apply {
                     if (showDirectSpeed) {
                         val speedDetail = (service as Context).getString(
@@ -160,6 +161,7 @@ class ServiceNotification(
     }
 
     private fun updateCallback(screenOn: Boolean) {
+        if (!trafficStatistics) return
         if (screenOn) {
             service.data.binder.registerCallback(callback)
             service.data.binder.startListeningForBandwidth(

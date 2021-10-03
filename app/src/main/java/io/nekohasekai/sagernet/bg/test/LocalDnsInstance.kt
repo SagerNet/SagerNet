@@ -103,7 +103,7 @@ class LocalDnsInstance : AbstractInstance,
             }
         }
         val i = Libcore.newV2rayInstance()
-        i.loadConfig(gson.toJson(config), false)
+        i.loadConfig(gson.toJson(config))
         i.start()
 
         instance = i

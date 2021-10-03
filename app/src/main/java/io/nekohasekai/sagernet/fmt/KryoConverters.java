@@ -80,24 +80,6 @@ public class KryoConverters {
         return bean;
     }
 
-    public static byte[] serializeWithoutName(AbstractBean bean) {
-        if (bean == null) return NULL;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteBufferOutput buffer = KryosKt.byteBuffer(out);
-        bean.serialize(buffer);
-        IoUtil.flush(buffer);
-        IoUtil.close(buffer);
-        return out.toByteArray();
-    }
-
-    public static <T extends AbstractBean> T deserializeWithoutName(T bean, byte[] bytes) {
-        ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        ByteBufferInput buffer = KryosKt.byteBuffer(input);
-        bean.deserialize(buffer);
-        IoUtil.close(buffer);
-        return bean;
-    }
-
     @TypeConverter
     public static SOCKSBean socksDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;

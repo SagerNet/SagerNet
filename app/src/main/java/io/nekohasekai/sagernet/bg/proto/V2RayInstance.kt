@@ -99,7 +99,7 @@ abstract class V2RayInstance(
     }
 
     protected open fun loadConfig() {
-        v2rayPoint.loadConfig(config.config, false)
+        v2rayPoint.loadConfig(config.config)
     }
 
     open fun init() {
