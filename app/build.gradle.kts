@@ -65,7 +65,7 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.29")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
-    implementation("com.mikepenz:aboutlibraries:8.9.2")
+    implementation("com.mikepenz:aboutlibraries:8.9.3")
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("org.conscrypt:conscrypt-android:2.5.2")
