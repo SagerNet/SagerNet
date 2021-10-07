@@ -163,9 +163,11 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         if (o == null || getClass() != o.getClass()) return false;
         try {
             serializeWithoutName = true;
+            ((AbstractBean) o).serializeWithoutName = true;
             return Arrays.equals(KryoConverters.serialize(this), KryoConverters.serialize((AbstractBean) o));
         } finally {
             serializeWithoutName = false;
+            ((AbstractBean) o).serializeWithoutName = false;
         }
     }
 
