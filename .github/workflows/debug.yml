@@ -296,7 +296,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks.aar
-          key: ${{ hashFiles('library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('gradle/**', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Shadowsocks (libev) Cache
         uses: actions/cache@v2
         with:
