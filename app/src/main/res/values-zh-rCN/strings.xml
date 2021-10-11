@@ -424,4 +424,13 @@
     <string name="generating">正在生成…</string>
     <string name="warp_generate">生成配置</string>
     <string name="warp_license">CloudFlare Wrap 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意服务条款: https://www.cloudflare.com/application/terms/</string>
+    <string name="profile_traffic_statistics_summary">禁用后将不统计使用的流量</string>
+    <string name="app_statistics_disabled">应用流量统计已禁用</string>
+    <string name="enable_pcap">启用 Pcap</string>
+    <string name="pcap_summary">保存流量到 .pcap 文件</string>
+    <string name="pcap_notice">Pcap 文件将被保存到 %s</string>
+    <string name="app_traffic_statistics">应用流量统计</string>
+    <string name="profile_traffic_statistics">配置流量统计</string>
+    <string name="group_filter_owners">拥有者</string>
+    <string name="group_filter_owners_nf">该订阅中没有拥有者</string>
 </resources>

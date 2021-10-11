@@ -219,15 +219,20 @@ fun buildV2RayConfig(
             loglevel = if (DataStore.enableLog) "debug" else "error"
         }
 
-        if (trafficStatistics) {
-            policy = PolicyObject().apply {
+        policy = PolicyObject().apply {
+            levels = mapOf(
+                // dns
+                "1" to PolicyObject.LevelPolicyObject().apply {
+                    connIdle = 30
+                })
+
+            if (trafficStatistics) {
                 system = PolicyObject.SystemPolicyObject().apply {
                     statsOutboundDownlink = true
                     statsOutboundUplink = true
                 }
             }
         }
-
         inbounds = mutableListOf()
 
         if (!forTest) inbounds.add(InboundObject().apply {
@@ -1026,27 +1031,28 @@ fun buildV2RayConfig(
 
             })
 
-        outbounds.add(OutboundObject().apply {
-            protocol = "dns"
-            tag = TAG_DNS_OUT
-            settings = LazyOutboundConfigurationObject(this,
-                DNSOutboundConfigurationObject().apply {
-                    var dns = remoteDns.first()
-                    if (dns.contains(":")) {
-                        val lPort = dns.substringAfterLast(":")
-                        dns = dns.substringBeforeLast(":")
-                        if (NumberUtil.isInteger(lPort)) {
-                            port = lPort.toInt()
+            outbounds.add(OutboundObject().apply {
+                protocol = "dns"
+                tag = TAG_DNS_OUT
+                settings = LazyOutboundConfigurationObject(this,
+                    DNSOutboundConfigurationObject().apply {
+                        userLevel = 1
+                        var dns = remoteDns.first()
+                        if (dns.contains(":")) {
+                            val lPort = dns.substringAfterLast(":")
+                            dns = dns.substringBeforeLast(":")
+                            if (NumberUtil.isInteger(lPort)) {
+                                port = lPort.toInt()
+                            }
                         }
-                    }
-                    if (dns.isIpAddress()) {
-                        address = dns
-                    } else if (dns.contains("://")) {
-                        network = "tcp"
-                        address = dns.substringAfter("://")
-                    }
-                })
-        })
+                        if (dns.isIpAddress()) {
+                            address = dns
+                        } else if (dns.contains("://")) {
+                            network = "tcp"
+                            address = dns.substringAfter("://")
+                        }
+                    })
+            })
         }
 
         for (dns in remoteDns) {

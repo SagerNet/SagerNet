@@ -19,9 +19,6 @@
 package io.nekohasekai.sagernet.utils.cf
 
 import com.google.gson.Gson
-import com.wireguard.crypto.Key
-import java.text.SimpleDateFormat
-import java.util.*
 
 data class UpdateDeviceRequest(
     var name: String, var active: Boolean

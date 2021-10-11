@@ -28,7 +28,6 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.isIpAddress
-import kotlinx.coroutines.CoroutineScope
 import libcore.Libcore
 import libcore.V2RayInstance
 import java.io.Closeable

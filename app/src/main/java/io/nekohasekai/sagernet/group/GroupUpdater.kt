@@ -44,7 +44,6 @@ import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
 import java.net.Inet4Address
 import java.net.InetAddress
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 

@@ -1,6 +1,5 @@
 /******************************************************************************
- *                                                                            *
- * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
+ * Copyright (C) 2021 by nekohasekai <contact-git@sekai.icu>                  *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -17,23 +16,20 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.bg
+package io.nekohasekai.sagernet.bg.test
 
-import libcore.ClashBasedInstance
+//import libcore.DebugInstance
+import io.nekohasekai.sagernet.bg.AbstractInstance
 
-abstract class ClashBasedInstance : AbstractInstance {
+class DebugInstance : AbstractInstance {
 
-    lateinit var instance: ClashBasedInstance
-
-    abstract fun createInstance()
+//    lateinit var instance: DebugInstance
 
     override fun launch() {
-        createInstance()
-        instance.start()
+//        instance = Libcore.newDebugInstance()
     }
 
     override fun close() {
-        if (::instance.isInitialized) instance.close()
+//        if (::instance.isInitialized) instance.close()
     }
-
 }

@@ -405,4 +405,22 @@
     <string name="wireguard_psk">کلید از پیش اشتراکی همتا</string>
     <string name="wireguard_public_key">کلید عمومی همتا</string>
     <string name="wireguard_local_address">آدرس محلی</string>
+    <string name="destination_override">نادیده گرفتن مقصد</string>
+    <string name="resolve_destination">حل مقصد</string>
+    <string name="profile_traffic_statistics">پروفایل آمار ترافیک</string>
+    <string name="app_statistics_disabled">آمار ترافیک برنامه غیرفعال شده است</string>
+    <string name="warp_generate">ایجاد کانفیگ</string>
+    <string name="generating">در حال تولید…</string>
+    <string name="tun_implementation">پیاده سازی TUN</string>
+    <string name="destination_override_summary">از دامنه استشمام شده برای بازنویسی آدرس مقصد استفاده کنید، نه فقط برای مسیریابی</string>
+    <string name="resolve_destination_summary">اگر آدرس مقصد یک دامنه باشد، پس از آن بر اساس استراتژی IPv6 منتقل می شود.</string>
+    <string name="enable_pcap">فعال کردن Pcap</string>
+    <string name="pcap_summary">ذخیره ترافیک در فایل .pcap</string>
+    <string name="group_filter_owners">مالکان</string>
+    <string name="group_filter_owners_nf">هیچ مالکی در این اشتراک وجود ندارد</string>
+    <string name="plugin_exists_but_on_shit_system">نمایه %s به پلاگین %s نیاز دارد، اما فروشنده تجهیزات اختصاصی شما (معمولاً غول های بزرگ نظارت کننده و سازنده بدافزارها) اندروید شما را دستکاری کرده و پلاگین را غیرقابل استفاده کرده است.</string>
+    <string name="app_traffic_statistics">آمار ترافیک برنامه</string>
+    <string name="profile_traffic_statistics_summary">در صورت غیرفعال بودن، ترافیک استفاده شده محاسبه نمی شود</string>
+    <string name="warp_license">CloudFlare Wrap یک ارائه دهنده رایگان WireGuard VPN است. با استفاده از آن، شما با TOS موافقت می کنید: https://www.cloudflare.com/application/terms/</string>
+    <string name="pcap_notice">فایل های Pcap در %s ذخیره می شوند</string>
 </resources>

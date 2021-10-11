@@ -19,6 +19,8 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
+//import io.nekohasekai.sagernet.BuildConfig
+//import io.nekohasekai.sagernet.bg.test.DebugInstance
 import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.app.observatory.ObservationResult
 import com.v2ray.core.app.observatory.OutboundStatus
@@ -32,7 +34,10 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runBlocking
 import libcore.Libcore
 import java.io.IOException
 
@@ -81,10 +86,20 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }
 
         if (DataStore.allowAccess) {
-            externalInstances[11451] = ApiInstance().apply {
-                launch()
+            val api = ApiInstance()
+            try {
+                api.launch()
+                externalInstances[11451] = api
+            } catch (e: Exception) {
+                Logs.w("Failed to start api server", e)
             }
         }
+
+       /* if (BuildConfig.DEBUG && DataStore.enableLog) {
+            externalInstances[9999] = DebugInstance().apply {
+                launch()
+            }
+        }*/
 
         SagerNet.started = true
     }

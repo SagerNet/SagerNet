@@ -22,14 +22,11 @@ import androidx.annotation.NonNull;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
-import com.wireguard.crypto.Key;
-import com.wireguard.crypto.KeyPair;
 
 import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
-import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 
 public class WireGuardBean extends AbstractBean {
 

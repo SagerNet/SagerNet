@@ -24,7 +24,6 @@ import cn.hutool.core.codec.Base64Encoder
 import cn.hutool.core.util.ZipUtil
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyGroup
-import io.nekohasekai.sagernet.ktx.marshall
 
 fun parseUniversal(link: String): AbstractBean {
     return if (link.contains("?")) {

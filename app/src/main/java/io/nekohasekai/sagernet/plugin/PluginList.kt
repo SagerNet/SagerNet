@@ -23,7 +23,6 @@ package io.nekohasekai.sagernet.plugin
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.widget.Toast
 import io.nekohasekai.sagernet.SagerNet
 
 class PluginList : ArrayList<Plugin>() {

@@ -393,7 +393,6 @@
     <string name="force_vmess_aead_sum">VMess yapılandırmasını güvenliksiz doğrulama metoduyla AEAD\'ye yeniden yaz (alterId 0)</string>
     <string name="no_statistics">Henüz istatistik yok</string>
     <string name="traffic_statistics_summary">Güç tüketimini arttırabilir</string>
-    <string name="statistics_disabled">Trafik istatistikleri devre dışı</string>
     <string name="clear_logcat">Günlüğü Temizle</string>
     <string name="menu_log">Günlükler</string>
     <string name="menu_tools">Araçlar</string>
@@ -414,4 +413,13 @@
     <string name="warp_generate">Yapılandırma Oluştur</string>
     <string name="warp_license">CloudFlare Warp bir ücretsiz WireGuard VPN sağlayıcısıdır. Bunu kullanarak kullanım koşullarını kabul etmiş sayılırsınız: https://www.cloudflare.com/application/terms/</string>
     <string name="cloudflare_wrap">Warp</string>
+    <string name="profile_traffic_statistics_summary">Devre dışı bırakıldığında kullanılan trafik sayılmayacak</string>
+    <string name="pcap_summary">Trafiği .pcap dosyasına kaydet</string>
+    <string name="pcap_notice">Pcap dosyaları %s içine kaydedilecek</string>
+    <string name="group_filter_owners">Sahipler</string>
+    <string name="group_filter_owners_nf">Bu abonelikte hiç sahip yok</string>
+    <string name="app_traffic_statistics">Uygulama Trafiği İstatistikleri</string>
+    <string name="profile_traffic_statistics">Profil Trafiği İstatistikleri</string>
+    <string name="app_statistics_disabled">Uygulama Trafiği istatistikleri devre dışı</string>
+    <string name="enable_pcap">Pcap\'i Etkinleştir</string>
 </resources>

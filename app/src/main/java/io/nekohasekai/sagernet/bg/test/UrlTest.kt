@@ -19,7 +19,10 @@
 
 package io.nekohasekai.sagernet.bg.test
 
-import io.nekohasekai.sagernet.bg.proto.*
+import io.nekohasekai.sagernet.bg.proto.SSHInstance
+import io.nekohasekai.sagernet.bg.proto.ShadowsocksInstance
+import io.nekohasekai.sagernet.bg.proto.ShadowsocksRInstance
+import io.nekohasekai.sagernet.bg.proto.SnellInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import libcore.Libcore
