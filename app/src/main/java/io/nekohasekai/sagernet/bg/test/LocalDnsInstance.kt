@@ -28,7 +28,6 @@ import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.isIpAddress
-import kotlinx.coroutines.CoroutineScope
 import libcore.Libcore
 import libcore.V2RayInstance
 import java.io.Closeable
@@ -103,7 +102,7 @@ class LocalDnsInstance : AbstractInstance,
             }
         }
         val i = Libcore.newV2rayInstance()
-        i.loadConfig(gson.toJson(config), false)
+        i.loadConfig(gson.toJson(config))
         i.start()
 
         instance = i

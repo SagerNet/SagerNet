@@ -63,6 +63,7 @@ import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -100,7 +101,7 @@ abstract class V2RayInstance(
     }
 
     protected open fun loadConfig() {
-        v2rayPoint.loadConfig(config.config, false)
+        v2rayPoint.loadConfig(config.config)
     }
 
     open fun init() {
@@ -445,7 +446,7 @@ abstract class V2RayInstance(
                         request: WebResourceRequest?,
                         error: WebResourceError?,
                     ) {
-                        Logs.d("WebView load failed: $error")
+                        Logs.d("WebView load r: $error")
 
                         runOnMainDispatcher {
                             wsForwarder.loadUrl("about:blank")
@@ -477,8 +478,12 @@ abstract class V2RayInstance(
         cacheFiles.removeAll { it.delete(); true }
 
         if (::wsForwarder.isInitialized) {
-            wsForwarder.loadUrl("about:blank")
-            wsForwarder.destroy()
+            runBlocking {
+                onMainDispatcher {
+                    wsForwarder.loadUrl("about:blank")
+                    wsForwarder.destroy()
+                }
+            }
         }
 
         if (::processes.isInitialized) processes.close(GlobalScope + Dispatchers.IO)

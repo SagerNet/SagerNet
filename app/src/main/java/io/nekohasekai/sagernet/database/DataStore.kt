@@ -121,6 +121,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
     var enableLog by configurationStore.boolean(Key.ENABLE_LOG) { BuildConfig.DEBUG }
+    var enablePcap by configurationStore.boolean(Key.ENABLE_PCAP)
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
@@ -187,8 +188,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var utlsFingerprint by configurationStore.string(Key.UTLS_FINGERPRINT)
-    var trafficStatistics by configurationStore.boolean(Key.TRAFFIC_STATISTICS)
     var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
+
+    var appTrafficStatistics by configurationStore.boolean(Key.APP_TRAFFIC_STATISTICS)
+    var profileTrafficStatistics by configurationStore.boolean(Key.PROFILE_TRAFFIC_STATISTICS) { true }
 
     // protocol
 

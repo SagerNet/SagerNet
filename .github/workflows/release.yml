@@ -70,7 +70,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks.aar
-          key: ${{ hashFiles('.github/workflows/*', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('gradle/**', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
@@ -146,7 +146,7 @@ jobs:
         with:
           path: |
             app/libs/shadowsocks.aar
-          key: ${{ hashFiles('.github/workflows/*', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
+          key: ${{ hashFiles('gradle/**', 'library/shadowsocks/build.gradle.kts', 'shadowsocks_status') }}
       - name: Shadowsocks (libev) Cache
         uses: actions/cache@v2
         with:

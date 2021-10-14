@@ -68,6 +68,8 @@ class SagerNet : Application(),
         application = this
     }
 
+    val externalAssets by lazy { getExternalFilesDir(null) ?: filesDir }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -77,11 +79,9 @@ class SagerNet : Application(),
         updateNotificationChannels()
         Seq.setContext(this)
 
-        val internalAssets = filesDir
-        val externalAssets = getExternalFilesDir(null) ?: internalAssets
         externalAssets.mkdirs()
         Libcore.initializeV2Ray(
-            internalAssets.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
+            filesDir.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
         ) {
             DataStore.rulesProvider == 0
         }
@@ -98,7 +98,7 @@ class SagerNet : Application(),
 
         Security.insertProviderAt(Conscrypt.newProvider(), 1)
 
-        StrictMode.setVmPolicy(
+        if (BuildConfig.DEBUG) StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects()
                 .detectLeakedClosableObjects()
@@ -216,6 +216,10 @@ class SagerNet : Application(),
         fun stopService() =
             application.sendBroadcast(Intent(Action.CLOSE).setPackage(application.packageName))
 
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
     }
 
 }

@@ -376,9 +376,11 @@
     <string name="group_filter">Filter</string>
     <string name="group_filter_groups">Groups</string>
     <string name="group_filter_tags">Tags</string>
+    <string name="group_filter_owners">Owners</string>
     <string name="group_filter_ns">OOCv1 subscription is required to use the filtering feature</string>
     <string name="group_filter_groups_nf">No groups in this subscription</string>
     <string name="group_filter_tags_nf">No tags in this subscription</string>
+    <string name="group_filter_owners_nf">No owners in this subscription</string>
     <string name="subscription_used">%s Used</string>
     <string name="subscription_traffic">%s Used / %s Remaining</string>
     <string name="subscription_import">Import subscription</string>
@@ -445,10 +447,12 @@
     <string name="route_need_vpn">Routing rule %s relies on the VPN to be in effect, so it is ignored.</string>
     <string name="route_need_fds">Routing rule %s relies on the Foreground Detector Service to be in effect, but is not enabled.</string>
 
-    <string name="traffic_statistics">Enable Traffic Statistics</string>
+    <string name="app_traffic_statistics">App Traffic Statistics</string>
+    <string name="profile_traffic_statistics">Profile Traffic Statistics</string>
     <string name="traffic_statistics_summary">May increase power consumption</string>
+    <string name="profile_traffic_statistics_summary">When disabled, the used traffic will not be counted</string>
     <string name="no_statistics">No statistics yet</string>
-    <string name="statistics_disabled">Traffic statistics disabled</string>
+    <string name="app_statistics_disabled">App Traffic statistics disabled</string>
     <string name="ssh_auth_type_none">None</string>
     <string name="ssh_public_key">Public Key</string>
     <string name="ssh_private_key">Private Key</string>
@@ -461,7 +465,7 @@
     <string name="wireguard_public_key">Peer Public Key</string>
     <string name="wireguard_psk">Peer Pre-Shared Key</string>
 
-    <string name="cloudflare_wrap">Warp</string>
+    <string name="cloudflare_wrap" translatable="false">Warp</string>
     <string name="warp_license">CloudFlare Wrap is a free WireGuard VPN provider. By using it, you agree to the TOS: https://www.cloudflare.com/application/terms/</string>
     <string name="warp_generate">Generate Configuration</string>
     <string name="generating">Generating…</string>
@@ -470,5 +474,9 @@
     <string name="destination_override_summary">Use the sniffed domain to overwrite the destination address, not just for routing</string>
     <string name="resolve_destination">Resolve Destination</string>
     <string name="resolve_destination_summary">If the destination address is a domain, it is then passed out based on the IPv6 strategy.</string>
+    <string name="pcap" translatable="false">Pcap</string>
+    <string name="enable_pcap">Enable Pcap</string>
+    <string name="pcap_summary">Save traffic to .pcap file</string>
+    <string name="pcap_notice">Pcap files will be saved to %s</string>
 
 </resources>

@@ -44,18 +44,18 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")
-    implementation("androidx.work:work-multiprocess:2.7.0-beta01")
+    implementation("androidx.work:work-runtime-ktx:2.7.0")
+    implementation("androidx.work:work-multiprocess:2.7.0")
 
     implementation(project(":external:preferencex:preferencex"))
     implementation(project(":external:preferencex:preferencex-simplemenu"))
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.4.0")
-    implementation("cn.hutool:hutool-core:5.7.13")
-    implementation("cn.hutool:hutool-cache:5.7.13")
-    implementation("cn.hutool:hutool-json:5.7.13")
-    implementation("cn.hutool:hutool-crypto:5.7.13")
+    implementation("cn.hutool:hutool-core:5.7.14")
+    implementation("cn.hutool:hutool-cache:5.7.14")
+    implementation("cn.hutool:hutool-json:5.7.14")
+    implementation("cn.hutool:hutool-crypto:5.7.14")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.zxing:core:3.4.1")
 
@@ -65,11 +65,11 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.29")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
-    implementation("com.mikepenz:aboutlibraries:8.9.1")
+    implementation("com.mikepenz:aboutlibraries:8.9.3")
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("org.conscrypt:conscrypt-android:2.5.2")
-    implementation("com.google.guava:guava:31.0-android")
+    implementation("com.google.guava:guava:31.0.1-android")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
     implementation("org.ini4j:ini4j:0.5.4")
 

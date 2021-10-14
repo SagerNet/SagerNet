@@ -370,8 +370,6 @@
     <string name="mux_sum">Çoklayıcı bağlantı verimini arttırmak için değil TCP el sıkışma gecikmesini azaltmak için tasarlanmıştır. Video izlemek, bir şeyler indirmek veya hız testleri için genellikle verimsizdir</string>
     <string name="enable_mux">Çoklayıcıyı Etkinleştir</string>
     <string name="traffic_sniffing">Trafik İzlemeyi Etkinleştir</string>
-    <string name="dm_linear">Doğrusal eşleştirme</string>
-    <string name="domain_matcher">Alan Adı Eşleştirme Algoritması</string>
     <string name="domain_strategy">Alan Adı Çözümleme Stratejisi</string>
     <string name="route_opt_block_ads">Reklamları engelle</string>
     <string name="route_asset_updated">Güncellendi</string>
@@ -381,7 +379,6 @@
     <string name="alter_id">Alternatif ID</string>
     <string name="obfs">Şaşırtmaca</string>
     <string name="tcp_keep_alive_interval">TCP aktif paket teslim koruma aralığı</string>
-    <string name="dm_mph">Ufak mükemmel şifreleme</string>
     <string name="route_not_asset">Varlık dosyası değil: .dat beklendi ama %s</string>
     <string name="route_rules_provider">Rota Varlıkları Sağlayıcısı</string>
     <string name="route_assets">Varlıklar</string>
@@ -396,8 +393,6 @@
     <string name="force_vmess_aead_sum">VMess yapılandırmasını güvenliksiz doğrulama metoduyla AEAD\'ye yeniden yaz (alterId 0)</string>
     <string name="no_statistics">Henüz istatistik yok</string>
     <string name="traffic_statistics_summary">Güç tüketimini arttırabilir</string>
-    <string name="traffic_statistics">Trafik İstatistiklerini Etkinleştir</string>
-    <string name="statistics_disabled">Trafik istatistikleri devre dışı</string>
     <string name="clear_logcat">Günlüğü Temizle</string>
     <string name="menu_log">Günlükler</string>
     <string name="menu_tools">Araçlar</string>
@@ -409,4 +404,22 @@
     <string name="wireguard_psk">Eş Ön Paylaşımlı Anahtarı</string>
     <string name="wireguard_public_key">Eş Umumi Anahtarı</string>
     <string name="wireguard_local_address">Yerel Adres</string>
+    <string name="resolve_destination_summary">Eğer hedef adres bir alan adıysa, IPv6 stratejisine göre iletilir.</string>
+    <string name="resolve_destination">Hedefi Çözümle</string>
+    <string name="destination_override_summary">Sadece yönlendirme için değil, hedef adresi geçersiz kılmak için de yakalanmış alan adını kullan</string>
+    <string name="destination_override">Hedefi Geçersiz Kıl</string>
+    <string name="tun_implementation">TUN Tanımlaması</string>
+    <string name="generating">Oluşturuluyor…</string>
+    <string name="warp_generate">Yapılandırma Oluştur</string>
+    <string name="warp_license">CloudFlare Warp bir ücretsiz WireGuard VPN sağlayıcısıdır. Bunu kullanarak kullanım koşullarını kabul etmiş sayılırsınız: https://www.cloudflare.com/application/terms/</string>
+    <string name="cloudflare_wrap">Warp</string>
+    <string name="profile_traffic_statistics_summary">Devre dışı bırakıldığında kullanılan trafik sayılmayacak</string>
+    <string name="pcap_summary">Trafiği .pcap dosyasına kaydet</string>
+    <string name="pcap_notice">Pcap dosyaları %s içine kaydedilecek</string>
+    <string name="group_filter_owners">Sahipler</string>
+    <string name="group_filter_owners_nf">Bu abonelikte hiç sahip yok</string>
+    <string name="app_traffic_statistics">Uygulama Trafiği İstatistikleri</string>
+    <string name="profile_traffic_statistics">Profil Trafiği İstatistikleri</string>
+    <string name="app_statistics_disabled">Uygulama Trafiği istatistikleri devre dışı</string>
+    <string name="enable_pcap">Pcap\'i Etkinleştir</string>
 </resources>

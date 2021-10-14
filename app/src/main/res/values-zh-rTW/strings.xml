@@ -240,9 +240,6 @@
     <string name="route_opt_bypass_lan">略過區域網路位址</string>
     <string name="route_opt_block_ads">封鎖廣告</string>
     <string name="domain_strategy">網域解析策略</string>
-    <string name="domain_matcher">網域比對演算法</string>
-    <string name="dm_linear">線性對比</string>
-    <string name="dm_mph">最小完美散列</string>
     <string name="traffic_sniffing">啟用流量嗅探</string>
     <string name="enable_mux">啟用多工器</string>
     <string name="mux_sum">多工器被設計用於減少 TCP 握手延遲，而非提高連線的輸送量。使用多工器觀看影片，進行下載或進行網路速度測試通常都有反效果</string>
@@ -370,10 +367,8 @@
     <string name="ssh_private_key">私密金鑰</string>
     <string name="ssh_public_key">公開金鑰</string>
     <string name="ssh_auth_type_none">無</string>
-    <string name="statistics_disabled">流量統計資料已停用</string>
     <string name="no_statistics">暫無統計資料</string>
     <string name="traffic_statistics_summary">可能增加電量消耗</string>
-    <string name="traffic_statistics">啟用流量統計資料</string>
     <string name="route_need_fds">路由規則 %s 需要前景模式偵測器以生效，但未被啟用。</string>
     <string name="route_need_vpn">路由規則 %s 需要 VPN 模式以生效，因此被忽略。</string>
     <string name="background">背景</string>
@@ -412,4 +407,26 @@
     <string name="hysteria_auth_type">認證類型</string>
     <string name="hysteria_obfs">混淆密碼</string>
     <string name="ss_stream_provider">Shadowsocks 串流加密提供者</string>
+    <string name="menu_tools">工具</string>
+    <string name="translate_platform">翻譯平台</string>
+    <string name="menu_log">記錄檔</string>
+    <string name="profile_traffic_statistics_summary">當停用時，使用的流量將不會被統計</string>
+    <string name="app_statistics_disabled">應用程式流量統計資料被停用</string>
+    <string name="tun_implementation">TUN 實作</string>
+    <string name="destination_override">覆寫目的地位址</string>
+    <string name="resolve_destination">解析目的地位址</string>
+    <string name="clear_logcat">清除記錄檔</string>
+    <string name="wireguard_local_address">本機位址</string>
+    <string name="wireguard_public_key">節點公開金鑰</string>
+    <string name="wireguard_psk">節點預先共用金鑰</string>
+    <string name="warp_license">Cloudflare Warp 是一個免費的 WireGuard VPN 提供者。使用此服務表示您同意其服務條款：https://www.cloudflare.com/application/terms/</string>
+    <string name="warp_generate">產生設定檔</string>
+    <string name="generating">正在產生……</string>
+    <string name="enable_pcap">啟用 Pcap</string>
+    <string name="pcap_summary">儲存流量資料至 .pcap 檔案</string>
+    <string name="pcap_notice">Pcap 檔案將被儲存至 %s</string>
+    <string name="profile_traffic_statistics">設定檔流量統計資料</string>
+    <string name="app_traffic_statistics">應用程式流量統計資料</string>
+    <string name="resolve_destination_summary">如果目的地位址是一個網域，則基於 IPv6 策略傳出。</string>
+    <string name="destination_override_summary">使用被偵測到的網域複寫目的地位址，而不是僅用於路由</string>
 </resources>

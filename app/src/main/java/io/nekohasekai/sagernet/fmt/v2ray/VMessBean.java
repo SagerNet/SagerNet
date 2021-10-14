@@ -21,9 +21,6 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 
 import androidx.annotation.NonNull;
 
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
-
 import org.jetbrains.annotations.NotNull;
 
 import cn.hutool.core.util.StrUtil;

@@ -89,8 +89,11 @@ object Key {
     const val PROVIDER_SS_STREAM = "providerShadowsocksStream"
 
     const val UTLS_FINGERPRINT = "utlsFingerprint"
-    const val TRAFFIC_STATISTICS = "trafficStatistics"
     const val TUN_IMPLEMENTATION = "tunImplementation"
+    const val ENABLE_PCAP = "enablePcap"
+
+    const val APP_TRAFFIC_STATISTICS = "appTrafficStatistics"
+    const val PROFILE_TRAFFIC_STATISTICS = "profileTrafficStatistics"
 
     const val PROFILE_DIRTY = "profileDirty"
     const val PROFILE_ID = "profileId"

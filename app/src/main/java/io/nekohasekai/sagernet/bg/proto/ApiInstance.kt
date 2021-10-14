@@ -24,7 +24,6 @@ import android.provider.Settings
 import io.nekohasekai.sagernet.bg.AbstractInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
-import kotlinx.coroutines.CoroutineScope
 import libcore.ApiInstance
 
 class ApiInstance : AbstractInstance {
@@ -33,7 +32,7 @@ class ApiInstance : AbstractInstance {
 
     override fun launch() {
         var deviceName = Settings.Secure.getString(app.contentResolver, "bluetooth_name")
-        if (deviceName.isBlank()) {
+        if (deviceName.isNullOrBlank()) {
             deviceName = Build.DEVICE
             if (!deviceName.startsWith(Build.MANUFACTURER)) {
                 deviceName = Build.MANUFACTURER + " " + deviceName

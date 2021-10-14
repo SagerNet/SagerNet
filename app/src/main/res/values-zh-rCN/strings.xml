@@ -176,9 +176,6 @@
     <string name="route_opt_bypass_lan">绕过局域网地址</string>
     <string name="route_opt_block_ads">屏蔽广告</string>
     <string name="domain_strategy">域名解析策略</string>
-    <string name="domain_matcher">域名匹配算法</string>
-    <string name="dm_linear">线性匹配</string>
-    <string name="dm_mph">最小完美散列</string>
     <string name="traffic_sniffing">启用流量探测</string>
     <string name="disable">禁用</string>
     <string name="cag_misc">杂项</string>
@@ -378,7 +375,7 @@
     <string name="group_order_origin">原始</string>
     <string name="group_order_by_name">以名称</string>
     <string name="group_order_by_delay">以延时</string>
-    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s plugin，但你的专有设备供应商（通常也是监视资本主义巨头和恶意软件制造商）篡改了你的安卓系统，使该插件无法使用。</string>
+    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但你的专有设备供应商（通常也是监视资本主义巨头和恶意软件制造商）篡改了你的安卓系统，使该插件无法使用。</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray （Shadowsocks Android 插件）</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs （Shadowsocks Android 插件）</string>
     <string name="experimental_no_termination_signal">通过 VMess 传输时，不要为TCP连接发送连接单双工终止信号。这将破坏与一些应用程序的兼容性。</string>
@@ -406,10 +403,8 @@
     <string name="foreground_detector_summary">本服务用于支持基于前台状态的路由规则，如果未启用，则结果永远为后台。</string>
     <string name="foreground_status">前台状态</string>
     <string name="foreground_detector">前台检测器</string>
-    <string name="statistics_disabled">流量统计已禁用</string>
     <string name="no_statistics">暂无数据</string>
     <string name="traffic_statistics_summary">可能增加电量使用</string>
-    <string name="traffic_statistics">启用流量统计</string>
     <string name="ssh_private_key_passphrase">私钥密码句</string>
     <string name="ssh_private_key">私钥</string>
     <string name="ssh_public_key">公钥</string>
@@ -421,4 +416,22 @@
     <string name="wireguard_local_address">本地地址</string>
     <string name="wireguard_public_key">节点公钥</string>
     <string name="wireguard_psk">节点预共享密钥</string>
+    <string name="cloudflare_wrap">Warp</string>
+    <string name="resolve_destination_summary">如果目标地址是一个域, 则根据 IPv6 策略传出.</string>
+    <string name="resolve_destination">解析目标地址</string>
+    <string name="destination_override_summary">使用探测的域来覆盖目标地址, 而不是仅用于路由</string>
+    <string name="destination_override">覆盖目标地址</string>
+    <string name="tun_implementation">TUN 实现</string>
+    <string name="generating">正在生成…</string>
+    <string name="warp_generate">生成配置</string>
+    <string name="warp_license">CloudFlare Wrap 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意服务条款: https://www.cloudflare.com/application/terms/</string>
+    <string name="profile_traffic_statistics_summary">禁用后将不统计使用的流量</string>
+    <string name="app_statistics_disabled">应用流量统计已禁用</string>
+    <string name="enable_pcap">启用 Pcap</string>
+    <string name="pcap_summary">保存流量到 .pcap 文件</string>
+    <string name="pcap_notice">Pcap 文件将被保存到 %s</string>
+    <string name="app_traffic_statistics">应用流量统计</string>
+    <string name="profile_traffic_statistics">配置流量统计</string>
+    <string name="group_filter_owners">拥有者</string>
+    <string name="group_filter_owners_nf">该订阅中没有拥有者</string>
 </resources>

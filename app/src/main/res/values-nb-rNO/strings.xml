@@ -238,9 +238,6 @@
     <string name="mux_sum">Mux er designet for å redusere ventetid for TCP -håndtrykk, ikke for å øke tilkoblingsmengden. Å bruke Mux til å se på videoer, nedlasting eller hastighetstest er vanligvis kontraproduktivt</string>
     <string name="enable_mux">Aktiver Multiplexer</string>
     <string name="traffic_sniffing">Aktiver trafikksniff</string>
-    <string name="dm_mph">Minimal perfekt hasj</string>
-    <string name="dm_linear">Lineær matchning</string>
-    <string name="domain_matcher">Algoritme for domenetilpasning</string>
     <string name="domain_strategy">Domeneløsningsstrategi</string>
     <string name="route_opt_block_ads">Blokker annonser</string>
     <string name="route_opt_bypass_lan">Omgå LAN</string>
@@ -379,7 +376,6 @@
     <string name="traffic_statistics_summary">Kan øke strømforbruket</string>
     <string name="group_order_origin">Opprinnelse</string>
     <string name="group_order">Rekkefølge</string>
-    <string name="traffic_statistics">Skru på trafikkstatistikk</string>
     <string name="background">Bakgrunn</string>
     <string name="foreground">Forgrunn</string>
     <string name="foreground_status">Forgrunnsstatus</string>
@@ -397,7 +393,6 @@
     <string name="ssh_public_key">Offentlig nøkkel</string>
     <string name="ssh_auth_type_none">Ingen</string>
     <string name="no_statistics">Ingen statistikk enda</string>
-    <string name="statistics_disabled">Trafikk-statistikk avskrudd</string>
     <string name="route_for">Regel for %s</string>
     <string name="app_no_launcher">Programmet har ikke noe grensesnitt.</string>
     <string name="copy_failed">Kunne ikke kopiere.</string>

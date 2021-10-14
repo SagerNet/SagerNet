@@ -32,7 +32,10 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.USER_AGENT_ORIGIN
+import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.cert.CertificateException
@@ -285,6 +288,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         bean.extraType = ExtraType.OOCv1
         bean.profileId = profile.getStr("id")
         bean.group = profile.getStr("group")
+        bean.owner = profile.getStr("owner")
         bean.tags = profile.getJSONArray("tags")?.filterIsInstance<String>()
     }
 

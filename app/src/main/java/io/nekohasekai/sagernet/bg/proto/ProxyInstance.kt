@@ -19,17 +19,10 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Build
-import android.os.SystemClock
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import cn.hutool.core.util.NumberUtil/*
-import com.xray.app.observatory.ObservationResult
-import com.xray.app.observatory.OutboundStatus*/
+//import io.nekohasekai.sagernet.BuildConfig
+//import io.nekohasekai.sagernet.bg.test.DebugInstance
+//import com.xray.app.observatory.ObservationResult
+//import com.xray.app.observatory.OutboundStatus
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
@@ -37,10 +30,9 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import libcore.Libcore
 import java.io.IOException
 
@@ -58,8 +50,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             Libcore.setProtector { true }
         }
 
-        Libcore.setIPv6Mode(DataStore.ipv6Mode.toLong())
-
         super.init()
 
         Logs.d(config.config)
@@ -72,30 +62,40 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     override fun launch() {
         super.launch()
 
-       /* if (config.observatoryTags.isNotEmpty()) {
-            observatoryJob = runOnDefaultDispatcher {
-                sendInitStatuses()
+        /* if (config.observatoryTags.isNotEmpty()) {
+             observatoryJob = runOnDefaultDispatcher {
+                 sendInitStatuses()
 
-                val interval = 10000L
-                while (isActive) {
-                    try {
-                        loopObservatoryResults()
-                    } catch (e: Exception) {
-                        if (e.message?.contains("unavailable") == false) {
-                            Logs.w(e)
-                        }
-                        break
-                    }
-                    delay(interval)
-                }
-            }
-        }*/
+                 val interval = 10000L
+                 while (isActive) {
+                     try {
+                         loopObservatoryResults()
+                     } catch (e: Exception) {
+                         if (e.message?.contains("unavailable") == false) {
+                             Logs.w(e)
+                         }
+                         break
+                     }
+                     delay(interval)
+                 }
+             }
+         }*/
 
         if (DataStore.allowAccess) {
-            externalInstances[11451] = ApiInstance().apply {
-                launch()
+            val api = ApiInstance()
+            try {
+                api.launch()
+                externalInstances[11451] = api
+            } catch (e: Exception) {
+                Logs.w("Failed to start api server", e)
             }
         }
+
+        /* if (BuildConfig.DEBUG && DataStore.enableLog) {
+             externalInstances[9999] = DebugInstance().apply {
+                 launch()
+             }
+         }*/
 
         SagerNet.started = true
     }
@@ -128,57 +128,57 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }*/
     }
 
-   /* suspend fun loopObservatoryResults() {
-        val statusPb = v2rayPoint.observatoryStatus
-        if (statusPb == null || statusPb.isEmpty()) {
-            return
-        }
-        val statusList = ObservationResult.parseFrom(statusPb)
-        val notify = mutableSetOf<Long>()
-        for (status in statusList.statusList) {
-            val profileId = status.outboundTag.substringAfter("global-")
-            if (NumberUtil.isLong(profileId)) {
-                val id = profileId.toLong()
-                var flush = false
-                val profile = when {
-                    id == profile.id -> profile
-                    statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
-                    else -> {
-                        flush = true
-                        SagerDatabase.proxyDao.getById(id)
-                    }
-                }
+    /* suspend fun loopObservatoryResults() {
+         val statusPb = v2rayPoint.observatoryStatus
+         if (statusPb == null || statusPb.isEmpty()) {
+             return
+         }
+         val statusList = ObservationResult.parseFrom(statusPb)
+         val notify = mutableSetOf<Long>()
+         for (status in statusList.statusList) {
+             val profileId = status.outboundTag.substringAfter("global-")
+             if (NumberUtil.isLong(profileId)) {
+                 val id = profileId.toLong()
+                 var flush = false
+                 val profile = when {
+                     id == profile.id -> profile
+                     statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
+                     else -> {
+                         flush = true
+                         SagerDatabase.proxyDao.getById(id)
+                     }
+                 }
 
-                if (profile != null) {
-                    val newStatus = if (status.alive) 1 else 3
-                    val newDelay = status.delay.toInt()
-                    val newErrorReason = status.lastErrorReason
+                 if (profile != null) {
+                     val newStatus = if (status.alive) 1 else 3
+                     val newDelay = status.delay.toInt()
+                     val newErrorReason = status.lastErrorReason
 
-                    if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
-                        profile.status = newStatus
-                        profile.ping = newDelay
-                        profile.error = newErrorReason
+                     if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
+                         profile.status = newStatus
+                         profile.ping = newDelay
+                         profile.error = newErrorReason
 
-                        notify.add(profile.groupId)
-                        if (flush) SagerDatabase.proxyDao.updateProxy(profile)
+                         notify.add(profile.groupId)
+                         if (flush) SagerDatabase.proxyDao.updateProxy(profile)
 
-                        Logs.d("Send result for #$profileId ${profile.displayName()}")
-                    }
-                } else {
-                    Logs.d("Profile with id #$profileId not found")
-                }
-            } else {
-                Logs.d("Persist skipped on outbound ${status.outboundTag}")
-            }
-        }
-        if (notify.isNotEmpty()) {
-            onMainDispatcher {
-                service.data.binder.broadcast {
-                    for (groupId in notify) it.observatoryResultsUpdated(groupId)
-                }
-            }
-        }
-    }*/
+                         Logs.d("Send result for #$profileId ${profile.displayName()}")
+                     }
+                 } else {
+                     Logs.d("Profile with id #$profileId not found")
+                 }
+             } else {
+                 Logs.d("Persist skipped on outbound ${status.outboundTag}")
+             }
+         }
+         if (notify.isNotEmpty()) {
+             onMainDispatcher {
+                 service.data.binder.broadcast {
+                     for (groupId in notify) it.observatoryResultsUpdated(groupId)
+                 }
+             }
+         }
+     }*/
 
     override fun close() {
         SagerNet.started = false
@@ -214,16 +214,12 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     }
 
     class OutboundStats(
-        val proxyEntity: ProxyEntity,
-        var uplinkTotal: Long = 0L,
-        var downlinkTotal: Long = 0L
+        val proxyEntity: ProxyEntity, var uplinkTotal: Long = 0L, var downlinkTotal: Long = 0L
     )
 
     private val statsOutbounds = hashMapOf<Long, OutboundStats>()
     private fun registerStats(
-        proxyEntity: ProxyEntity,
-        uplink: Long? = null,
-        downlink: Long? = null
+        proxyEntity: ProxyEntity, uplink: Long? = null, downlink: Long? = null
     ) {
         if (proxyEntity.id == outboundStats.proxyEntity.id) return
         val stats = statsOutbounds.getOrPut(proxyEntity.id) {

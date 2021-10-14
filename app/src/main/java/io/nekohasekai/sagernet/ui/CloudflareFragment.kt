@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.ktx.snackbar
 import io.nekohasekai.sagernet.utils.Cloudflare
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

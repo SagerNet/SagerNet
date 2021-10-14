@@ -11,6 +11,7 @@
 # IDK Why
 -keep class cn.hutool.core.convert.** { *; }
 
+-dontobfuscate
 -keepattributes SourceFile
 
 -dontwarn java.beans.BeanInfo

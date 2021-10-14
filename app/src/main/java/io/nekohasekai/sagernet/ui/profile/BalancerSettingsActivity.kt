@@ -52,7 +52,6 @@ import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
 import io.nekohasekai.sagernet.widget.GroupPreference
-import java.util.*
 
 @SuppressLint("Registered")
 class BalancerSettingsActivity :

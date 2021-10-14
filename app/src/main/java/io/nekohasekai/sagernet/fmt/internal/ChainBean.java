@@ -31,7 +31,6 @@ import java.util.List;
 
 import cn.hutool.core.util.StrUtil;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
-import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 
 public class ChainBean extends InternalBean {
 

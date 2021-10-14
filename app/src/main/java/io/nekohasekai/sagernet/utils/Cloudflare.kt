@@ -19,7 +19,6 @@
 package io.nekohasekai.sagernet.utils
 
 import com.wireguard.crypto.KeyPair
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.createProxyClient
@@ -29,6 +28,7 @@ import io.nekohasekai.sagernet.utils.cf.UpdateDeviceRequest
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.internal.closeQuietly
 
 // kang from wgcf
 object Cloudflare {
@@ -64,16 +64,20 @@ object Cloudflare {
                 .patch(body.toRequestBody("application/json".toMediaType()))
                 .build()
         ).execute()
-        if (!response.isSuccessful) error(response)
-        val peer = device.config.peers[0]
-        val localAddresses = device.config.interfaceX.addresses
-        return WireGuardBean().apply {
-            name = "CloudFlare Warp ${device.account.id}"
-            privateKey = keyPair.privateKey.toBase64()
-            peerPublicKey = peer.publicKey
-            serverAddress = peer.endpoint.host.substringBeforeLast(":")
-            serverPort = peer.endpoint.host.substringAfterLast(":").toInt()
-            localAddress = localAddresses.v4 + "\n" + localAddresses.v6
+        try {
+            if (!response.isSuccessful) error(response)
+            val peer = device.config.peers[0]
+            val localAddresses = device.config.interfaceX.addresses
+            return WireGuardBean().apply {
+                name = "CloudFlare Warp ${device.account.id}"
+                privateKey = keyPair.privateKey.toBase64()
+                peerPublicKey = peer.publicKey
+                serverAddress = peer.endpoint.host.substringBeforeLast(":")
+                serverPort = peer.endpoint.host.substringAfterLast(":").toInt()
+                localAddress = localAddresses.v4 + "\n" + localAddresses.v6
+            }
+        } finally {
+            response.body?.closeQuietly()
         }
     }
 
