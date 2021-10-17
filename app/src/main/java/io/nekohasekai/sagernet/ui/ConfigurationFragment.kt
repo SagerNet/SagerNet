@@ -1391,7 +1391,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
             fun bind(proxyEntity: ProxyEntity) {
-                val pf = requireParentFragment() as? ConfigurationFragment ?: return
+                val pf = parentFragment as? ConfigurationFragment ?: return
 
                 entity = proxyEntity
 
