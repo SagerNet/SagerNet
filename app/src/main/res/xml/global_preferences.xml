@@ -75,6 +75,14 @@
             app:key="meteredNetwork"
             app:summary="@string/metered_summary"
             app:title="@string/metered" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="1000"
+            app:entries="@array/notification_entry"
+            app:entryValues="@array/notification_value"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="speedInterval"
+            app:title="@string/speed_interval"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_speed_24"
             app:key="showDirectSpeed"

@@ -201,9 +201,9 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
             android:configChanges="uiMode" />
-        <!--<activity
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.BalancerSettingsActivity"
-            android:configChanges="uiMode" />-->
+            android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.GroupSettingsActivity"
             android:configChanges="uiMode" />

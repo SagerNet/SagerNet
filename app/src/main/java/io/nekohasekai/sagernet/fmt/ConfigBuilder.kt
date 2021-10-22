@@ -820,10 +820,10 @@ fun buildV2RayConfig(
                     selector = chainOutbounds.map { it.tag }
                     if (observatory == null) observatory = ObservatoryObject().apply {
                         probeUrl = DataStore.connectionTestURL
-                        /*val testInterval = DataStore.probeInterval
+                        val testInterval = DataStore.probeInterval
                         if (testInterval > 0) {
                             probeInterval = "${testInterval}s"
-                        }*/
+                        }
                     }
                     if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
                     observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
@@ -843,13 +843,13 @@ fun buildV2RayConfig(
                         if (requireTransproxy) inboundTag.add(TAG_TRANS)
                         balancerTag = "balancer-$tagOutbound"
                     }
-                    /* outbounds.add(0, OutboundObject().apply {
+                     outbounds.add(0, OutboundObject().apply {
                          protocol = "loopback"
                          settings = LazyOutboundConfigurationObject(this,
                              LoopbackOutboundConfigurationObject().apply {
                                  inboundTag = TAG_SOCKS
                              })
-                     })*/
+                     })
                 }
             }
 

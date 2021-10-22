@@ -385,7 +385,7 @@
     <string name="traffic_active">Активный</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (плагин Shadowsocks для Android)</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (плагин Shadowsocks для Android)</string>
-    <string name="plugin_exists_but_on_shit_system">Для профиля %s требуется подключаемый модуль %s, но поставщик проприетарного оборудования (обычно крупные компании-наблюдатели и производитель вредоносных программ) подделал ваш Android, сделав модуль непригодным для использования.</string>
+    <string name="plugin_exists_but_on_shit_system">Профиль %s требует плагин %s, но поставщик вашего проприетарного оборудования (обычно это гиганты капитала для наблюдения и производитель вредоносного ПО) подделал ваш Android, сделав плагин непригодным для использования.</string>
     <string name="group_order_by_delay">С задержкой</string>
     <string name="group_order_by_name">По имени</string>
     <string name="group_order_origin">Источник</string>
@@ -405,4 +405,8 @@
     <string name="ssh_private_key">Закрытый ключ</string>
     <string name="ssh_public_key">Открытый ключ</string>
     <string name="ssh_auth_type_none">Никто</string>
+    <string name="group_filter_owners">Владельцы</string>
+    <string name="profile_traffic_statistics">Статистика трафика профиля</string>
+    <string name="group_filter_owners_nf">В этой подписке нет владельцев</string>
+    <string name="app_traffic_statistics">Статистика трафика приложений</string>
 </resources>

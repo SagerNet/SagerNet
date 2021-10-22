@@ -352,9 +352,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
             }
-            /*R.id.action_new_balancer -> {
+            R.id.action_new_balancer -> {
                 startActivity(Intent(requireActivity(), BalancerSettingsActivity::class.java))
-            }*/
+            }
             R.id.action_clear_traffic_statistics -> {
                 runOnDefaultDispatcher {
                     val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
@@ -1411,7 +1411,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
             fun bind(proxyEntity: ProxyEntity) {
-                val pf = requireParentFragment() as? ConfigurationFragment ?: return
+                val pf = parentFragment as? ConfigurationFragment ?: return
 
                 entity = proxyEntity
 
