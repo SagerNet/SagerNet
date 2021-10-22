@@ -22,7 +22,6 @@ package io.nekohasekai.sagernet.bg.proto
 //import io.nekohasekai.sagernet.BuildConfig
 //import io.nekohasekai.sagernet.bg.test.DebugInstance
 import cn.hutool.core.util.NumberUtil
-import com.v2ray.core.app.observatory.ObservationResult
 import com.v2ray.core.app.observatory.OutboundStatus
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
@@ -31,15 +30,14 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 import libcore.Libcore
 import java.io.IOException
+import java.util.*
+import kotlin.concurrent.timerTask
 
 class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : V2RayInstance(
     profile
@@ -68,21 +66,9 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         super.launch()
 
         if (config.observatoryTags.isNotEmpty()) {
+            v2rayPoint.setStatusUpdateListener(::sendObservatoryResult)
             observatoryJob = runOnDefaultDispatcher {
                 sendInitStatuses()
-
-                val interval = 10000L
-                while (isActive) {
-                    try {
-                        loopObservatoryResults()
-                    } catch (e: Exception) {
-                        if (e.message?.contains("unavailable") == false) {
-                            Logs.w(e)
-                        }
-                        break
-                    }
-                    delay(interval)
-                }
             }
         }
 
@@ -118,7 +104,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 } ?: continue
 
                 if (profile.status > 0) v2rayPoint.updateStatus(
-                    observatoryTag,
                     OutboundStatus.newBuilder()
                         .setOutboundTag(observatoryTag)
                         .setAlive(profile.status == 1)
@@ -133,55 +118,58 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }
     }
 
-    suspend fun loopObservatoryResults() {
-        val statusPb = v2rayPoint.observatoryStatus
+    val updateTimer by lazy { Timer("Observatory Timer") }
+    val updateTasks by lazy { hashMapOf<Long, TimerTask>() }
+
+    fun sendObservatoryResult(statusPb: ByteArray?) {
         if (statusPb == null || statusPb.isEmpty()) {
             return
         }
-        val statusList = ObservationResult.parseFrom(statusPb)
-        val notify = mutableSetOf<Long>()
-        for (status in statusList.statusList) {
-            val profileId = status.outboundTag.substringAfter("global-")
-            if (NumberUtil.isLong(profileId)) {
-                val id = profileId.toLong()
-                var flush = false
-                val profile = when {
-                    id == profile.id -> profile
-                    statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
-                    else -> {
-                        flush = true
-                        SagerDatabase.proxyDao.getById(id)
-                    }
+        val status = OutboundStatus.parseFrom(statusPb)
+        val profileId = status.outboundTag.substringAfter("global-")
+        if (NumberUtil.isLong(profileId)) {
+            val id = profileId.toLong()
+            val profile = when {
+                id == profile.id -> profile
+                statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
+                else -> {
+                    SagerDatabase.proxyDao.getById(id)
                 }
+            }
 
-                if (profile != null) {
-                    val newStatus = if (status.alive) 1 else 3
-                    val newDelay = status.delay.toInt()
-                    val newErrorReason = status.lastErrorReason
+            if (profile != null) {
+                val newStatus = if (status.alive) 1 else 3
+                val newDelay = status.delay.toInt()
+                val newErrorReason = status.lastErrorReason
 
-                    if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
-                        profile.status = newStatus
-                        profile.ping = newDelay
-                        profile.error = newErrorReason
+                if (profile.status != newStatus || profile.ping != newDelay || profile.error != newErrorReason) {
+                    profile.status = newStatus
+                    profile.ping = newDelay
+                    profile.error = newErrorReason
 
-                        notify.add(profile.groupId)
-                        if (flush) SagerDatabase.proxyDao.updateProxy(profile)
+                    SagerDatabase.proxyDao.updateProxy(profile)
 
-                        Logs.d("Send result for #$profileId ${profile.displayName()}")
-                    }
-                } else {
-                    Logs.d("Profile with id #$profileId not found")
+                    Logs.d("Send result for #$profileId ${profile.displayName()}")
+
+                    val groupId = profile.groupId
+                    updateTasks.put(groupId, timerTask {
+                        synchronized(this@ProxyInstance) {
+                            if (updateTasks[groupId] == this) {
+                                service.data.binder.broadcast {
+                                    it.observatoryResultsUpdated(profile.groupId)
+                                }
+                                updateTasks.remove(profile.groupId)
+                            }
+                        }
+                    }.also {
+                        updateTimer.schedule(it, 2333L)
+                    })?.cancel()
                 }
             } else {
-                Logs.d("Persist skipped on outbound ${status.outboundTag}")
+                Logs.d("Profile with id #$profileId not found")
             }
-        }
-        if (notify.isNotEmpty()) {
-            onMainDispatcher {
-                service.data.binder.broadcast {
-                    for (groupId in notify) it.observatoryResultsUpdated(groupId)
-                }
-            }
+        } else {
+            Logs.d("Persist skipped on outbound ${status.outboundTag}")
         }
     }
 
@@ -250,7 +238,13 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         downlinkProxy = 0L
 
         val currentUpLink = currentTags.map { (tag, profile) ->
-            queryStats(tag, "uplink").apply { profile?.also { registerStats(it, uplink = this) } }
+            queryStats(tag, "uplink").apply {
+                profile?.also {
+                    registerStats(
+                        it, uplink = this
+                    )
+                }
+            }
         }
         val currentDownLink = currentTags.map { (tag, profile) ->
             queryStats(tag, "downlink").apply {

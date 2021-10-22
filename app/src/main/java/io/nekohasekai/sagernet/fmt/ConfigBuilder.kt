@@ -872,13 +872,13 @@ fun buildV2RayConfig(
                         if (requireTransproxy) inboundTag.add(TAG_TRANS)
                         balancerTag = "balancer-$tagOutbound"
                     }
-                    /* outbounds.add(0, OutboundObject().apply {
+                     outbounds.add(0, OutboundObject().apply {
                          protocol = "loopback"
                          settings = LazyOutboundConfigurationObject(this,
                              LoopbackOutboundConfigurationObject().apply {
                                  inboundTag = TAG_SOCKS
                              })
-                     })*/
+                     })
                 }
             }
 
