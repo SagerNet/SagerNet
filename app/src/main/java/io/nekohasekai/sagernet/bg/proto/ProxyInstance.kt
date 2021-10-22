@@ -50,6 +50,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     override fun init() {
         if (service is VpnService) {
             Libcore.setProtector { service.protect(it) }
+            Libcore.setIPv6Mode(DataStore.ipv6Mode)
         } else {
             Libcore.setProtector { true }
         }
@@ -95,11 +96,11 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             }
         }
 
-       /* if (BuildConfig.DEBUG && DataStore.enableLog) {
-            externalInstances[9999] = DebugInstance().apply {
-                launch()
-            }
-        }*/
+        /* if (BuildConfig.DEBUG && DataStore.enableLog) {
+             externalInstances[9999] = DebugInstance().apply {
+                 launch()
+             }
+         }*/
 
         SagerNet.started = true
     }
