@@ -70,7 +70,7 @@ dependencies {
     implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("org.conscrypt:conscrypt-android:2.5.2")
     implementation("com.google.guava:guava:31.0.1-android")
-    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("org.ini4j:ini4j:0.5.4")
 
     implementation("com.simplecityapps:recyclerview-fastscroll:2.0.1") {
