@@ -518,7 +518,8 @@ fun Project.setupApp() {
         add("androidTestImplementation", "androidx.test:runner:1.4.0")
         add("androidTestImplementation", "androidx.test.espresso:espresso-core:3.4.0")
 
-        if (targetAbi.isNotBlank()) {
+        // workaround for f-droid builds
+        if (requireFlavor().contains("fdroid",true)) {
             add("implementation", project(":library:shadowsocks"))
             add("implementation", project(":library:shadowsocks-libev"))
         }
