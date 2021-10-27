@@ -331,8 +331,6 @@
     <string name="bypass_lan_in_core_only_sum">If Lineage\'s "Allow hotspot clients to use VPNs" does not work, try this.</string>
     <string name="protocol_settings">Protocol Settings</string>
     <string name="trojan_provider">Trojan Provider</string>
-    <string name="ss_aead_provider">Shadowsocks AEAD Provider</string>
-    <string name="ss_stream_provider">Shadowsocks Stream Provider</string>
     <string name="group_basic">Basic</string>
     <string name="group_settings">Group Settings</string>
     <string name="subscription">Subscription</string>

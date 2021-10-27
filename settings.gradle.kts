@@ -3,9 +3,6 @@ include(":library:include")
 include(":library:proto")
 include(":library:proto-stub")
 
-include(":library:shadowsocks")
-include(":library:shadowsocks-libev")
-
 include(":plugin:api")
 
 val buildPlugin = System.getenv("BUILD_PLUGIN")

@@ -364,6 +364,9 @@ public class V2RayConfig {
         public String password;
         public Integer level;
         public String network;
+        public String plugin;
+        public String pluginOpts;
+        public String pluginArgs;
 
     }
 
@@ -467,6 +470,8 @@ public class V2RayConfig {
                     return TrojanOutboundConfigurationObject.class;
                 case "loopback":
                     return LoopbackOutboundConfigurationObject.class;
+                case "wireguard":
+                    return WireGuardOutbounzConfigurationObject.class;
             }
             return null;
         }
@@ -583,6 +588,10 @@ public class V2RayConfig {
 
         }
 
+        public String plugin;
+        public String pluginOpts;
+        public String pluginArgs;
+
     }
 
     public static class VLESSOutboundConfigurationObject implements OutboundConfigurationObject {
@@ -626,6 +635,20 @@ public class V2RayConfig {
     public static class LoopbackOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public String inboundTag;
+
+    }
+
+    public static class WireGuardOutbounzConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String network;
+        public List<String> localAddresses;
+        public String privateKey;
+        public String peerPublicKey;
+        public String preSharedKey;
+        public Integer mtu;
+        public Integer userLevel;
 
     }
 

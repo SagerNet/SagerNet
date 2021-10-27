@@ -165,14 +165,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         val providerTrojan = findPreference<SimpleMenuPreference>(Key.PROVIDER_TROJAN)!!
-        val providerShadowsocksAEAD = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_AEAD)!!
-        val providerShadowsocksStream = findPreference<SimpleMenuPreference>(Key.PROVIDER_SS_STREAM)!!
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            providerShadowsocksAEAD.setEntries(R.array.ss_aead_provider_api21)
-            providerShadowsocksAEAD.setEntryValues(R.array.ss_aead_provider_api21_values)
-            providerShadowsocksStream.setEntries(R.array.ss_stream_provider_api21)
-            providerShadowsocksStream.setEntryValues(R.array.ss_stream_provider_api21_values)
-        }
 
         if (!isExpert) {
             providerTrojan.setEntries(R.array.trojan_provider)
@@ -249,8 +241,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         probeInterval.onPreferenceChangeListener = reloadListener
 
         providerTrojan.onPreferenceChangeListener = reloadListener
-        providerShadowsocksAEAD.onPreferenceChangeListener = reloadListener
-        providerShadowsocksStream.onPreferenceChangeListener = reloadListener
         appTrafficStatistics.onPreferenceChangeListener = reloadListener
         tunImplementation.onPreferenceChangeListener = reloadListener
         destinationOverride.onPreferenceChangeListener = reloadListener

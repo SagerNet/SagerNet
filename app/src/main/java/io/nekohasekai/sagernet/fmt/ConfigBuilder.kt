@@ -23,6 +23,8 @@ import android.os.Build
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
+import com.github.shadowsocks.plugin.PluginConfiguration
+import com.github.shadowsocks.plugin.PluginManager
 import com.google.gson.JsonSyntaxException
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
@@ -38,6 +40,7 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
@@ -45,6 +48,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isRunning
 import io.nekohasekai.sagernet.ktx.mkPort
@@ -714,6 +718,13 @@ fun buildV2RayConfig(
                                             }
                                         }
                                     }
+                                    if (bean.plugin.isNotBlank()) {
+                                       val pluginConfiguration = PluginConfiguration(plugin)
+                                        PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
+                                            plugin = path
+                                            pluginOpts = opts.toString()
+                                        }
+                                    }
                                 })
                         } else if (bean is TrojanBean) {
                             protocol = "trojan"
@@ -745,6 +756,25 @@ fun buildV2RayConfig(
                                 if (bean.allowInsecure) {
                                     tlsSettings = tlsSettings ?: TLSObject()
                                     tlsSettings.allowInsecure = true
+                                }
+                            }
+                        } else if (bean is WireGuardBean) {
+                            protocol = "wireguard"
+                            settings = LazyOutboundConfigurationObject(this,
+                                WireGuardOutbounzConfigurationObject().apply {
+                                    address = bean.finalAddress
+                                    port = bean.finalPort
+                                    network = "udp"
+                                    localAddresses = bean.localAddress.split("\n")
+                                    privateKey = bean.privateKey
+                                    peerPublicKey = bean.peerPublicKey
+                                    preSharedKey = bean.peerPreSharedKey
+                                })
+                            streamSettings = StreamSettingsObject().apply {
+                                if (needKeepAliveInterval) {
+                                    sockopt = StreamSettingsObject.SockoptObject().apply {
+                                        tcpKeepAliveInterval = keepAliveInterval
+                                    }
                                 }
                             }
                         }

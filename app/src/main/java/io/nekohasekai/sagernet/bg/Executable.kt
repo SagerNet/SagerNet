@@ -30,12 +30,7 @@ import java.io.File
 import java.io.IOException
 
 object Executable {
-    const val SS_LOCAL = "libsslocal.so"
-    const val SS_LIBEV_LOCAL = "libss-local.so"
-
     private val EXECUTABLES = setOf(
-        SS_LOCAL,
-        SS_LIBEV_LOCAL,
         "libtrojan.so",
         "libtrojan-go.so",
         "libnaive.so",

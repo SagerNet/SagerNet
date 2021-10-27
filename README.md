@@ -26,12 +26,12 @@ The application is designed to be used whenever possible.
 * VLESS
 * Trojan
 * Snell
+* WireGuard
 * Trojan-Go ( trojan-go-plugin )
 * NaïveProxy ( naive-plugin )
 * relaybaton ( relaybaton-plugin )
 * Brook ( brook-plugin )
 * Hysteria ( hysteria-plugin )
-* WireGuard ( wireguard-plugin )
 
 ##### ROOT required
 

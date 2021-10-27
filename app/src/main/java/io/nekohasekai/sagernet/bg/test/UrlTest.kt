@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.bg.test
 
 import io.nekohasekai.sagernet.bg.proto.SSHInstance
-import io.nekohasekai.sagernet.bg.proto.ShadowsocksInstance
 import io.nekohasekai.sagernet.bg.proto.ShadowsocksRInstance
 import io.nekohasekai.sagernet.bg.proto.SnellInstance
 import io.nekohasekai.sagernet.database.DataStore
@@ -35,7 +34,6 @@ class UrlTest {
     suspend fun doTest(profile: ProxyEntity): Int {
         if (profile.useClashBased()) {
             val instance = when (profile.type) {
-                ProxyEntity.TYPE_SS -> ShadowsocksInstance(profile.ssBean!!, 0)
                 ProxyEntity.TYPE_SSR -> ShadowsocksRInstance(profile.ssrBean!!, 0)
                 ProxyEntity.TYPE_SNELL -> SnellInstance(profile.snellBean!!, 0)
                 ProxyEntity.TYPE_SSH -> SSHInstance(profile.sshBean!!, 0)

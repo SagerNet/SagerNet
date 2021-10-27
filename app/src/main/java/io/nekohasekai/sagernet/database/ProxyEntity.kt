@@ -28,8 +28,6 @@ import androidx.room.*
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ShadowsocksProvider
-import io.nekohasekai.sagernet.ShadowsocksStreamProvider
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -359,10 +357,11 @@ data class ProxyEntity(
         return when (type) {
             TYPE_SOCKS -> false
             TYPE_HTTP -> false
-            TYPE_SS -> pickShadowsocksProvider() != ShadowsocksProvider.V2RAY
+            TYPE_SS -> false
             TYPE_VMESS -> false
             TYPE_VLESS -> false
             TYPE_TROJAN -> DataStore.providerTrojan != TrojanProvider.V2RAY
+            TYPE_WG -> false
             TYPE_CHAIN -> false
             TYPE_BALANCER -> false
             else -> true
@@ -372,7 +371,6 @@ data class ProxyEntity(
     fun useClashBased(): Boolean {
         if (!needExternal()) return false
         return when (type) {
-            TYPE_SS -> pickShadowsocksProvider() == ShadowsocksProvider.CLASH
             TYPE_SSR -> true
             TYPE_SNELL -> true
             TYPE_SSH -> true
@@ -395,92 +393,6 @@ data class ProxyEntity(
             TYPE_TROJAN_GO -> false
             else -> enableMuxForAll
         }
-    }
-
-    fun pickShadowsocksProvider(): Int {
-        val bean = ssBean ?: return -1
-        if (bean.method.contains(ssSecureList)) {
-            val prefer = DataStore.providerShadowsocksAEAD
-            when {
-                prefer == ShadowsocksProvider.V2RAY && bean.method in methodsV2fly && bean.plugin.isBlank() -> {
-                    return ShadowsocksProvider.V2RAY
-                }
-                prefer == ShadowsocksProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash(
-                    true
-                ) -> {
-                    return ShadowsocksProvider.CLASH
-                }
-                prefer == ShadowsocksProvider.SHADOWSOCKS_RUST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && bean.method in methodsSsRust && !ssPluginSupportedByClash(
-                    false
-                ) -> {
-                    return ShadowsocksProvider.SHADOWSOCKS_RUST
-                }
-                prefer == ShadowsocksProvider.SHADOWSOCKS_LIBEV && bean.method in methodsSsLibev && !ssPluginSupportedByClash(
-                    false
-                ) -> {
-                    return ShadowsocksProvider.SHADOWSOCKS_LIBEV
-                }
-            }
-            return if (ssPreferClash()) {
-                ShadowsocksProvider.CLASH
-            } else if (bean.method in methodsV2fly && bean.plugin.isBlank()) {
-                ShadowsocksProvider.V2RAY
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ShadowsocksProvider.SHADOWSOCKS_RUST
-            } else {
-                ShadowsocksProvider.SHADOWSOCKS_LIBEV
-            }
-        } else {
-            val prefer = DataStore.providerShadowsocksStream
-            when {
-                prefer == ShadowsocksStreamProvider.CLASH && bean.method in methodsClash && ssPluginSupportedByClash(
-                    true
-                ) -> {
-                    return ShadowsocksProvider.CLASH
-                }
-                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_RUST && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && bean.method in methodsSsRust && !ssPluginSupportedByClash(
-                    false
-                ) -> {
-                    return ShadowsocksProvider.SHADOWSOCKS_RUST
-                }
-                prefer == ShadowsocksStreamProvider.SHADOWSOCKS_LIBEV && bean.method in methodsSsLibev && !ssPluginSupportedByClash(
-                    false
-                ) -> {
-                    return ShadowsocksProvider.SHADOWSOCKS_LIBEV
-                }
-            }
-            return if (ssPreferClash()) {
-                ShadowsocksProvider.CLASH
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ShadowsocksProvider.SHADOWSOCKS_RUST
-            } else {
-                ShadowsocksProvider.SHADOWSOCKS_LIBEV
-            }
-        }
-    }
-
-    fun ssPluginSupportedByClash(prefer: Boolean): Boolean {
-        val bean = ssBean ?: return false
-        if (bean.plugin.isNotBlank()) {
-            val plugin = PluginConfiguration(bean.plugin)
-            if (plugin.selected !in arrayOf("obfs-local", "v2ray-plugin")) return false
-            if (plugin.selected == "v2ray-plugin") {
-                if (plugin.getOptions()["mode"] != "websocket") return false
-            }
-            try {
-                PluginManager.init(plugin)
-                return prefer
-            } catch (e: Exception) {
-            }
-            return true
-        }
-        return prefer
-    }
-
-    fun ssPreferClash(): Boolean {
-        val bean = ssBean ?: return false
-        val onlyClash = bean.method !in methodsV2fly && bean.method !in methodsSsRust && bean.method !in methodsSsLibev
-        return onlyClash || ssPluginSupportedByClash(false)
     }
 
     fun putBean(bean: AbstractBean): ProxyEntity {
