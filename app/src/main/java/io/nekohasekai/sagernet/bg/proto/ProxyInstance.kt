@@ -65,8 +65,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     override fun launch() {
         super.launch()
 
-        if (config.observatoryTags.isNotEmpty()) {
-            v2rayPoint.setStatusUpdateListener(::sendObservatoryResult)
+        if (config.observerTag.isNotBlank()) {
+            v2rayPoint.setStatusUpdateListener(config.observerTag, ::sendObservatoryResult)
             observatoryJob = runOnDefaultDispatcher {
                 sendInitStatuses()
             }
@@ -104,6 +104,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                 } ?: continue
 
                 if (profile.status > 0) v2rayPoint.updateStatus(
+                    config.observerTag,
                     OutboundStatus.newBuilder()
                         .setOutboundTag(observatoryTag)
                         .setAlive(profile.status == 1)

@@ -39,13 +39,17 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.takisoft.preferencex.EditTextPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
+import com.v2ray.core.app.router.StrategyLeastPingConfig
+import io.nekohasekai.sagernet.BalancerStrategy
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.databinding.LayoutAddEntityBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
@@ -53,8 +57,7 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
 import io.nekohasekai.sagernet.widget.GroupPreference
 
-class BalancerSettingsActivity :
-    ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
+class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
 
     override fun createEntity() = BalancerBean()
 
@@ -66,6 +69,8 @@ class BalancerSettingsActivity :
         DataStore.balancerStrategy = strategy
         DataStore.balancerGroup = groupId
         DataStore.serverProtocol = proxies.joinToString(",")
+        DataStore.balancerProbeUrl = probeUrl
+        DataStore.balancerProbeInterval = probeInterval
     }
 
     override fun BalancerBean.serialize() {
@@ -74,11 +79,15 @@ class BalancerSettingsActivity :
         strategy = DataStore.balancerStrategy
         groupId = DataStore.balancerGroup
         proxies = proxyList.map { it.id }
+        probeUrl = DataStore.balancerProbeUrl
+        probeInterval = DataStore.balancerProbeInterval
         initializeDefaultValues()
     }
 
     lateinit var balancerType: SimpleMenuPreference
     lateinit var balancerGroup: GroupPreference
+    lateinit var probeUrl: EditTextPreference
+    lateinit var probeInterval: EditTextPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -88,6 +97,16 @@ class BalancerSettingsActivity :
 
         balancerType = findPreference(Key.BALANCER_TYPE)!!
         balancerGroup = findPreference(Key.BALANCER_GROUP)!!
+        val balancerStrategy = findPreference<SimpleMenuPreference>(Key.BALANCER_STRATEGY)!!
+        probeUrl = findPreference(Key.PROBE_URL)!!
+        probeInterval = findPreference(Key.PROBE_INTERVAL)!!
+        probeInterval.onBindEditTextListener = EditTextPreferenceModifiers.Number
+
+        balancerStrategy.setOnPreferenceChangeListener { _, newValue ->
+            updateStrategy(newValue as String)
+            true
+        }
+
         itemView = findViewById(R.id.list_cell)
 
         balancerType.setOnPreferenceChangeListener { _, newValue ->
@@ -109,6 +128,12 @@ class BalancerSettingsActivity :
                 itemView.isVisible = false
             }
         };
+    }
+
+    fun updateStrategy(strategy: String = DataStore.balancerStrategy) {
+        val isLatestPing = strategy == BalancerStrategy.LATEST_PING
+        probeUrl.isVisible = isLatestPing
+        probeInterval.isVisible = isLatestPing
     }
 
     lateinit var itemView: LinearLayout
@@ -178,6 +203,7 @@ class BalancerSettingsActivity :
         }
 
         updateType()
+        updateStrategy()
     }
 
     inner class ProxiesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -267,39 +293,38 @@ class BalancerSettingsActivity :
 
     var replacing = 0
 
-    val selectProfileForAdd =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
-            if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
-                DataStore.dirty = true
+    val selectProfileForAdd = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
+        if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
+            DataStore.dirty = true
 
-                val profile = ProfileManager.getProfile(
-                    data!!.getLongExtra(
-                        ProfileSelectActivity.EXTRA_PROFILE_ID, 0
-                    )
-                )!!
+            val profile = ProfileManager.getProfile(
+                data!!.getLongExtra(
+                    ProfileSelectActivity.EXTRA_PROFILE_ID, 0
+                )
+            )!!
 
-                if (!testProfileAllowed(profile)) {
-                    onMainDispatcher {
-                        MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.circular_reference)
-                            .setMessage(R.string.circular_reference_sum)
-                            .setPositiveButton(android.R.string.ok, null).show()
-                    }
-                } else {
-                    configurationList.post {
-                        if (replacing != 0) {
-                            proxyList[replacing - 1] = profile
-                            configurationAdapter.notifyItemChanged(replacing)
-                        } else {
-                            proxyList.add(profile)
-                            configurationAdapter.notifyItemInserted(proxyList.size)
-                        }
+            if (!testProfileAllowed(profile)) {
+                onMainDispatcher {
+                    MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.circular_reference)
+                        .setMessage(R.string.circular_reference_sum)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+                }
+            } else {
+                configurationList.post {
+                    if (replacing != 0) {
+                        proxyList[replacing - 1] = profile
+                        configurationAdapter.notifyItemChanged(replacing)
+                    } else {
+                        proxyList.add(profile)
+                        configurationAdapter.notifyItemInserted(proxyList.size)
                     }
                 }
             }
         }
+    }
 
-    inner class AddHolder(val binding: LayoutAddEntityBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class AddHolder(val binding: LayoutAddEntityBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             binding.root.setOnClickListener {
                 replacing = 0
@@ -312,8 +337,7 @@ class BalancerSettingsActivity :
         }
     }
 
-    inner class ProfileHolder(binding: LayoutProfileBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class ProfileHolder(binding: LayoutProfileBinding) : RecyclerView.ViewHolder(binding.root) {
 
         val profileName = binding.profileName
         val profileType = binding.profileType
@@ -377,8 +401,11 @@ class BalancerSettingsActivity :
                         shareLayout.setOnClickListener {
                             MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.insecure)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
-                                    .bufferedReader().use { it.readText() })
-                                .setPositiveButton(android.R.string.ok, null).show().apply {
+                                    .bufferedReader()
+                                    .use { it.readText() })
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                                .apply {
                                     findViewById<TextView>(android.R.id.message)?.apply {
                                         Linkify.addLinks(this, Linkify.WEB_URLS)
                                         movementMethod = LinkMovementMethod.getInstance()
@@ -396,8 +423,11 @@ class BalancerSettingsActivity :
                         shareLayout.setOnClickListener {
                             MaterialAlertDialogBuilder(this@BalancerSettingsActivity).setTitle(R.string.deprecated)
                                 .setMessage(resources.openRawResource(validateResult.textRes)
-                                    .bufferedReader().use { it.readText() })
-                                .setPositiveButton(android.R.string.ok, null).show().apply {
+                                    .bufferedReader()
+                                    .use { it.readText() })
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                                .apply {
                                     findViewById<TextView>(android.R.id.message)?.apply {
                                         Linkify.addLinks(this, Linkify.WEB_URLS)
                                         movementMethod = LinkMovementMethod.getInstance()

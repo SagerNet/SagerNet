@@ -40,12 +40,12 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
+import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.RoutingObject.BalancerObject.StrategyObject
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
@@ -81,6 +81,7 @@ class V2rayBuildResult(
     var outboundTagsCurrent: List<String>,
     var outboundTagsAll: Map<String, ProxyEntity>,
     var bypassTag: String,
+    var observerTag: String,
     var observatoryTags: Set<String>,
     val dumpUid: Boolean,
     val alerts: List<Pair<Int, String>>,
@@ -141,7 +142,7 @@ fun buildV2RayConfig(
         rule.outbound.takeIf { it > 0 && it != proxy.id }
     }.toHashSet().toList()).associate {
         (it.id to ((it.type == ProxyEntity.TYPE_BALANCER) to lazy {
-            it.balancerBean!!.strategy
+            it.balancerBean
         })) to it.resolveChain()
     }
 
@@ -175,7 +176,8 @@ fun buildV2RayConfig(
     var dumpUid = false
     val alerts = mutableListOf<Pair<Int, String>>()
 
-    return V2RayConfig().apply {
+    lateinit var result: V2rayBuildResult
+    V2RayConfig().apply {
 
         dns = DnsObject().apply {
             hosts = DataStore.hosts.split("\n")
@@ -372,12 +374,13 @@ fun buildV2RayConfig(
         }
 
         var rootBalancer: RoutingObject.RuleObject? = null
+        var rootObserver: MultiObservatoryObject.MultiObservatoryItem? = null
 
         fun buildChain(
             tagOutbound: String,
             profileList: List<ProxyEntity>,
             isBalancer: Boolean,
-            balancerStrategy: (() -> String)
+            balancer: () -> BalancerBean?,
         ): String {
             var pastExternal = false
             lateinit var pastOutbound: OutboundObject
@@ -719,10 +722,21 @@ fun buildV2RayConfig(
                                         }
                                     }
                                     if (bean.plugin.isNotBlank()) {
-                                       val pluginConfiguration = PluginConfiguration(plugin)
-                                        PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
-                                            plugin = path
-                                            pluginOpts = opts.toString()
+                                        val pluginConfiguration = PluginConfiguration(bean.plugin)
+                                        try {
+                                            PluginManager.init(pluginConfiguration)
+                                                ?.let { (path, opts, _) ->
+                                                    plugin = path
+                                                    pluginOpts = opts.toString()
+                                                }
+                                        } catch (e: PluginManager.PluginNotFoundException) {
+                                            if (e.plugin in arrayOf("v2ray-plugin")) {
+                                                plugin = e.plugin
+                                                pluginOpts = pluginConfiguration.getOptions()
+                                                    .toString()
+                                            } else {
+                                                throw e
+                                            }
                                         }
                                     }
                                 })
@@ -872,25 +886,47 @@ fun buildV2RayConfig(
             }
 
             if (isBalancer) {
+                val balancerBean = balancer()!!
+                val observatory = ObservatoryObject().apply {
+                    probeUrl = if (balancerBean.probeUrl.isNotBlank()) {
+                        balancerBean.probeUrl
+                    } else {
+                        DataStore.connectionTestURL
+                    }
+                    if (balancerBean.probeInterval > 0) {
+                        probeInterval = "${balancerBean.probeInterval}s"
+                    }
+                    enableConcurrency = true
+                }
+                val observatoryItem = MultiObservatoryObject.MultiObservatoryItem().apply {
+                    tag = "observer-$tagOutbound"
+                    settings = observatory
+                }
+
                 if (routing.balancers == null) routing.balancers = ArrayList()
                 routing.balancers.add(RoutingObject.BalancerObject().apply {
                     tag = "balancer-$tagOutbound"
                     selector = chainOutbounds.map { it.tag }
-                    if (observatory == null) observatory = ObservatoryObject().apply {
-                        probeUrl = DataStore.connectionTestURL
-                        val testInterval = DataStore.probeInterval
-                        if (testInterval > 0) {
-                            probeInterval = "${testInterval}s"
+                    if (multiObservatory == null) {
+                        multiObservatory = MultiObservatoryObject().apply {
+                            observers = mutableListOf()
                         }
-                        enableConcurrency = true
                     }
-                    if (observatory.subjectSelector == null) observatory.subjectSelector = HashSet()
+                    multiObservatory.observers.add(observatoryItem)
                     observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
-                    strategy = RoutingObject.BalancerObject.StrategyObject().apply {
-                        type = balancerStrategy().takeIf { it.isNotBlank() } ?: "random"
+                    strategy = StrategyObject().apply {
+                        type = balancerBean.strategy.takeIf { it.isNotBlank() } ?: "random"
+                        if (type != "random") {
+                            settings = StrategyObject.StrategyLeastPingConfig().apply {
+                                observerTag = "observer-$tagOutbound"
+                            }
+                        }
                     }
                 })
                 if (tagOutbound == TAG_AGENT) {
+                    if (observatoryItem.settings.probeUrl == DataStore.connectionTestURL) {
+                        rootObserver = observatoryItem
+                    }
                     rootBalancer = RoutingObject.RuleObject().apply {
                         type = "field"
                         inboundTag = mutableListOf()
@@ -902,13 +938,13 @@ fun buildV2RayConfig(
                         if (requireTransproxy) inboundTag.add(TAG_TRANS)
                         balancerTag = "balancer-$tagOutbound"
                     }
-                     outbounds.add(0, OutboundObject().apply {
-                         protocol = "loopback"
-                         settings = LazyOutboundConfigurationObject(this,
-                             LoopbackOutboundConfigurationObject().apply {
-                                 inboundTag = TAG_SOCKS
-                             })
-                     })
+                    outbounds.add(0, OutboundObject().apply {
+                        protocol = "loopback"
+                        settings = LazyOutboundConfigurationObject(this,
+                            LoopbackOutboundConfigurationObject().apply {
+                                inboundTag = TAG_SOCKS
+                            })
+                    })
                 }
             }
 
@@ -916,15 +952,18 @@ fun buildV2RayConfig(
 
         }
 
+        val mainIsBalancer = proxy.balancerBean != null
+
         val tagProxy = buildChain(
-            TAG_AGENT, proxies, proxy.balancerBean != null
-        ) { proxy.balancerBean!!.strategy }
+            TAG_AGENT, proxies, mainIsBalancer
+        ) { proxy.balancerBean }
+
         val balancerMap = mutableMapOf<Long, String>()
         val tagMap = mutableMapOf<Long, String>()
         extraProxies.forEach { (key, entities) ->
             val (id, balancer) = key
-            val (isBalancer, strategy) = balancer
-            tagMap[id] = buildChain("$TAG_AGENT-$id", entities, isBalancer, strategy::value)
+            val (isBalancer, balancerBean) = balancer
+            tagMap[id] = buildChain("$TAG_AGENT-$id", entities, isBalancer, balancerBean::value)
             if (isBalancer) {
                 balancerMap[id] = "balancer-$TAG_AGENT-$id"
             }
@@ -1182,21 +1221,24 @@ fun buildV2RayConfig(
         if (rootBalancer != null) routing.rules.add(rootBalancer)
 
         if (trafficStatistics) stats = emptyMap()
-    }.let {
-        V2rayBuildResult(
-            gson.toJson(it),
+
+        result = V2rayBuildResult(
+            gson.toJson(this),
             indexMap,
             requireWs,
-            if (requireWs) it.browserForwarder.listenPort else 0,
+            if (requireWs) browserForwarder.listenPort else 0,
             outboundTags,
             outboundTagsCurrent,
             outboundTagsAll,
             TAG_BYPASS,
-            it.observatory?.subjectSelector ?: HashSet(),
+            rootObserver?.tag ?: "",
+            rootObserver?.settings?.subjectSelector ?: HashSet(),
             dumpUid,
             alerts
         )
     }
+
+    return result
 
 }
 
@@ -1328,6 +1370,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         outboundTags,
         emptyMap(),
         directTag,
+        "",
         emptySet(),
         false,
         emptyList()

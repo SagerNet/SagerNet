@@ -40,6 +40,9 @@ public class BalancerBean extends InternalBean {
     public List<Long> proxies;
     public Long groupId;
 
+    public String probeUrl;
+    public Integer probeInterval;
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
@@ -48,6 +51,9 @@ public class BalancerBean extends InternalBean {
         if (type == null) type = TYPE_LIST;
         if (proxies == null) proxies = new ArrayList<>();
         if (groupId == null) groupId = 0L;
+        if (probeUrl == null) probeUrl = "";
+        if (probeInterval == null) probeInterval = 300;
+
     }
 
     @Override
@@ -61,7 +67,7 @@ public class BalancerBean extends InternalBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         output.writeInt(type);
         output.writeString(strategy);
         switch (type) {
@@ -78,6 +84,8 @@ public class BalancerBean extends InternalBean {
                 break;
             }
         }
+        output.writeString(probeUrl);
+        output.writeInt(probeInterval);
     }
 
     @Override
@@ -98,6 +106,10 @@ public class BalancerBean extends InternalBean {
                 groupId = input.readLong();
                 break;
             }
+        }
+        if (version >= 1) {
+            probeUrl = input.readString();
+            probeInterval = input.readInt();
         }
     }
 

@@ -72,6 +72,7 @@ object Key {
     const val TRANSPROXY_PORT = "transproxyPort"
 
     const val CONNECTION_TEST_URL = "connectionTestURL"
+    const val PROBE_URL = "probeUrl"
     const val PROBE_INTERVAL = "probeInterval"
 
     const val ENABLE_MUX = "enableMux"
@@ -242,6 +243,10 @@ object GroupOrder {
 object AppStatus {
     const val FOREGROUND = "foreground"
     const val BACKGROUND = "background"
+}
+
+object BalancerStrategy {
+    const val LATEST_PING = "leastPing"
 }
 
 object Action {

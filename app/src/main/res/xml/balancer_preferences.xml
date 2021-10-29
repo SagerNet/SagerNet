@@ -29,4 +29,15 @@
         app:title="@string/menu_group"
         app:useSimpleSummaryProvider="true" />
 
+    <io.nekohasekai.sagernet.widget.LinkPreference
+        app:icon="@drawable/ic_baseline_cast_connected_24"
+        app:key="probeUrl"
+        app:title="@string/probe_url"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:icon="@drawable/ic_baseline_local_bar_24"
+        app:key="probeInterval"
+        app:title="@string/probe_interval"
+        app:useSimpleSummaryProvider="true" />
+
 </PreferenceScreen>

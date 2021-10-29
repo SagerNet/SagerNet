@@ -140,8 +140,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         get() = getLocalPort(Key.TRANSPROXY_PORT, 9200)
         set(value) = saveLocalPort(Key.TRANSPROXY_PORT, value)
 
-    var probeInterval by configurationStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
-
     fun initGlobal() {
         if (configurationStore.getString(Key.SOCKS_PORT) == null) {
             socksPort = socksPort
@@ -254,6 +252,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
     var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)
+    var balancerProbeUrl by profileCacheStore.string(Key.PROBE_URL)
+    var balancerProbeInterval by profileCacheStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
+
 
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)
     var routeDomain by profileCacheStore.string(Key.ROUTE_DOMAIN)
