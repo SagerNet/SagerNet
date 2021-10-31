@@ -10,15 +10,10 @@ if [ -z "$ANDROID_HOME" ]; then
   fi
 fi
 
-_NDK="$ANDROID_HOME/ndk/21.4.7075529"
+_NDK="$ANDROID_HOME/ndk/23.1.7779620"
 [ -f "$_NDK/source.properties" ] || _NDK="$ANDROID_NDK_HOME"
 [ -f "$_NDK/source.properties" ] || _NDK="$NDK"
 [ -f "$_NDK/source.properties" ] || _NDK="$ANDROID_HOME/ndk-bundle"
-
-if [ ! -f "$_NDK/source.properties" ]; then
-  read -p "Enter your NDK version: " NDK_VERSION
-  _NDK="$ANDROID_HOME/ndk/$NDK_VERSION"
-fi
 
 if [ ! -f "$_NDK/source.properties" ]; then
   echo "Error: NDK not found."
@@ -35,8 +30,8 @@ else
 fi
 
 if [ ! $(command -v go) ]; then
-  if [ -d /usr/lib/go-1.16 ]; then
-    export PATH="$PATH:/usr/lib/go-1.16/bin"
+  if [ -d /usr/lib/go-1.17 ]; then
+    export PATH="$PATH:/usr/lib/go-1.17/bin"
   elif [ -d $HOME/.go ]; then
     export PATH="$PATH:$HOME/.go/bin"
   fi
