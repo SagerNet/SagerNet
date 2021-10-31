@@ -317,9 +317,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_hysteria -> {
                 startActivity(Intent(requireActivity(), HysteriaSettingsActivity::class.java))
             }
-            R.id.action_new_snell -> {
-                startActivity(Intent(requireActivity(), SnellSettingsActivity::class.java))
-            }
             R.id.action_new_ssh -> {
                 startActivity(Intent(requireActivity(), SSHSettingsActivity::class.java))
             }
@@ -1504,7 +1501,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                     )
                 }
 
-                shareLayout.isGone = proxyEntity.type == ProxyEntity.TYPE_CHAIN
                 editButton.isGone = select
 
                 runOnDefaultDispatcher {
@@ -1545,7 +1541,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         popup.show()
                     }
 
-                    if (!(select || proxyEntity.type == ProxyEntity.TYPE_CHAIN)) {
+                    if (!select) {
 
                         val validateResult = if (pf.securityAdvisory) {
                             proxyEntity.requireBean().isInsecure()

@@ -373,7 +373,7 @@ public class V2RayConfig {
         public String network;
         public String plugin;
         public String pluginOpts;
-        public String pluginArgs;
+        public List<String> pluginArgs;
 
     }
 
@@ -479,6 +479,8 @@ public class V2RayConfig {
                     return LoopbackOutboundConfigurationObject.class;
                 case "wireguard":
                     return WireGuardOutbounzConfigurationObject.class;
+                case "ssh":
+                    return SSHOutbountConfigurationObject.class;
             }
             return null;
         }
@@ -597,7 +599,7 @@ public class V2RayConfig {
 
         public String plugin;
         public String pluginOpts;
-        public String pluginArgs;
+        public List<String> pluginArgs;
 
     }
 
@@ -655,6 +657,18 @@ public class V2RayConfig {
         public String peerPublicKey;
         public String preSharedKey;
         public Integer mtu;
+        public Integer userLevel;
+
+    }
+
+    public static class SSHOutbountConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String user;
+        public String password;
+        public String privateKey;
+        public String publicKey;
         public Integer userLevel;
 
     }

@@ -42,7 +42,6 @@ import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean;
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
-import io.nekohasekai.sagernet.fmt.snell.SnellBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
@@ -156,12 +155,6 @@ public class KryoConverters {
     public static HysteriaBean hysteriaDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new HysteriaBean(), bytes);
-    }
-
-    @TypeConverter
-    public static SnellBean snellDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
-        return deserialize(new SnellBean(), bytes);
     }
 
     @TypeConverter

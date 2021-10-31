@@ -213,7 +213,6 @@
     <string name="action_relay_baton" translatable="false">RelayBaton</string>
     <string name="action_brook" translatable="false">Brook</string>
     <string name="action_hysteria" translatable="false">Hysteria</string>
-    <string name="action_snell" translatable="false">Snell</string>
     <string name="action_ssh" translatable="false">SSH</string>
     <string name="action_wireguard" translatable="false">WireGuard</string>
     <string name="proxy_chain">Proxy Chain</string>
@@ -471,5 +470,7 @@
     <string name="enable_pcap">Enable Pcap</string>
     <string name="pcap_summary">Save traffic to .pcap file</string>
     <string name="pcap_notice">Pcap files will be saved to %s</string>
+    <string name="naive_insecure_concurrency">Insecure Concurrency</string>
+    <string name="naive_insecure_concurrency_summary">Use N concurrent tunnel connections to be more robust under bad network conditions. More connections make the tunneling easier to detect and less secure. This project strives for the strongest security against traffic analysis. Using it in an insecure way defeats its purpose. \n\nIf you must use this, try N=2 first to see if it solves your issues. Strongly recommend against using more than 4 connections here.</string>
 
 </resources>

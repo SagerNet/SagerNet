@@ -24,5 +24,6 @@ package com.github.shadowsocks.plugin
 class InternalPlugin(override val id: String, override val label: CharSequence) : Plugin() {
     companion object {
         val V2RAY_PLUGIN = InternalPlugin("v2ray-plugin", "V2Ray Plugin (Internal)")
+        val SIMPLE_OBFS = InternalPlugin("obfs-local", "Simple Obfs (Internal)")
     }
 }

@@ -31,6 +31,7 @@ class PluginList(skipInternal: Boolean) : ArrayList<Plugin>() {
         add(NoPlugin)
         if (!skipInternal) {
             add(InternalPlugin.V2RAY_PLUGIN)
+            add(InternalPlugin.SIMPLE_OBFS)
         }
         addAll(SagerNet.application.packageManager.queryIntentContentProviders(
                 Intent(PluginContract.ACTION_NATIVE_PLUGIN), PackageManager.GET_META_DATA)

@@ -90,7 +90,7 @@ class ScannerActivity : ThemedActivity(),
         return Snackbar.make(binding.barcodeScanner, text, Snackbar.LENGTH_LONG)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.scanner_menu, menu)
         return true
     }

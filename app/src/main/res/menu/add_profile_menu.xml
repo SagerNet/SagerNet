@@ -58,9 +58,6 @@
                         android:id="@+id/action_new_hysteria"
                         android:title="@string/action_hysteria" />
                     <item
-                        android:id="@+id/action_new_snell"
-                        android:title="@string/action_snell" />
-                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item

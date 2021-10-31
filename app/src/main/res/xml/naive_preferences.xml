@@ -43,7 +43,12 @@
             app:key="serverHeaders"
             app:title="@string/extra_headers"
             app:useSimpleSummaryProvider="true" />
-
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_warning_24"
+            app:key="serverInsecureConcurrency"
+            app:summary="@string/naive_insecure_concurrency_summary"
+            app:title="@string/naive_insecure_concurrency"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 

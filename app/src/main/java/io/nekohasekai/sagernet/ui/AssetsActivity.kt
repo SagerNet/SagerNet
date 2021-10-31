@@ -109,7 +109,7 @@ class AssetsActivity : ThemedActivity() {
 
     val internalFiles = arrayOf("geoip.dat", "geosite.dat")
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.import_asset_menu, menu)
         return true
     }

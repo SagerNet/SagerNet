@@ -21,12 +21,9 @@ package io.nekohasekai.sagernet.database
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
-import com.github.shadowsocks.plugin.PluginConfiguration
-import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.aidl.TrafficStats
@@ -41,6 +38,7 @@ import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
+import io.nekohasekai.sagernet.fmt.internal.InternalBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
@@ -48,11 +46,12 @@ import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
 import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
-import io.nekohasekai.sagernet.fmt.shadowsocks.*
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
+import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
-import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -69,7 +68,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.ktx.ssSecureList
 import io.nekohasekai.sagernet.ui.profile.*
 
 @Entity(
@@ -99,7 +97,6 @@ data class ProxyEntity(
     var rbBean: RelayBatonBean? = null,
     var brookBean: BrookBean? = null,
     var hysteriaBean: HysteriaBean? = null,
-    var snellBean: SnellBean? = null,
     var sshBean: SSHBean? = null,
     var wgBean: WireGuardBean? = null,
     var configBean: ConfigBean? = null,
@@ -184,7 +181,6 @@ data class ProxyEntity(
             TYPE_RELAY_BATON -> rbBean = KryoConverters.relayBatonDeserialize(byteArray)
             TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
-            TYPE_SNELL -> snellBean = KryoConverters.snellDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
 
@@ -227,7 +223,7 @@ data class ProxyEntity(
         TYPE_CHAIN -> chainName
         TYPE_CONFIG -> configName
         TYPE_BALANCER -> balancerName
-        else -> "Undefined type $type"
+        else -> "Invalid"
     }
 
     fun displayName() = requireBean().displayName()
@@ -248,15 +244,14 @@ data class ProxyEntity(
             TYPE_RELAY_BATON -> rbBean
             TYPE_BROOK -> brookBean
             TYPE_HYSTERIA -> hysteriaBean
-            TYPE_SNELL -> snellBean
             TYPE_SSH -> sshBean
             TYPE_WG -> wgBean
 
             TYPE_CONFIG -> configBean
             TYPE_CHAIN -> chainBean
             TYPE_BALANCER -> balancerBean
-            else -> error("Undefined type $type")
-        } ?: error("Null ${displayType()} profile")
+            else -> null
+        } ?: SOCKSBean().applyDefaultValues()
     }
 
     fun haveLink(): Boolean {
@@ -274,9 +269,9 @@ data class ProxyEntity(
             is BrookBean -> false
             is ConfigBean -> false
             is HysteriaBean -> false
-            is SnellBean -> false
             is SSHBean -> false
             is WireGuardBean -> false
+            is InternalBean -> false
             else -> true
         }
     }
@@ -297,7 +292,6 @@ data class ProxyEntity(
             is BrookBean -> toUniversalLink()
             is ConfigBean -> toUniversalLink()
             is HysteriaBean -> toUniversalLink()
-            is SnellBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
             is WireGuardBean -> toUniversalLink()
             else -> null
@@ -321,15 +315,6 @@ data class ProxyEntity(
                         val needChain = !isBalancer && index != chain.size - 1
                         val needMux = index == 0 && DataStore.enableMux
                         when (val bean = profile.requireBean()) {
-                            is ShadowsocksBean -> {
-                                append("\n\n")
-                                append(bean.buildShadowsocksConfig(port))
-
-                            }
-                            is ShadowsocksRBean -> {
-                                append("\n\n")
-                                append(bean.buildShadowsocksRConfig())
-                            }
                             is TrojanGoBean -> {
                                 append("\n\n")
                                 append(bean.buildTrojanGoConfig(port, needMux))
@@ -355,25 +340,13 @@ data class ProxyEntity(
 
     fun needExternal(): Boolean {
         return when (type) {
-            TYPE_SOCKS -> false
-            TYPE_HTTP -> false
-            TYPE_SS -> false
-            TYPE_VMESS -> false
-            TYPE_VLESS -> false
             TYPE_TROJAN -> DataStore.providerTrojan != TrojanProvider.V2RAY
-            TYPE_WG -> false
-            TYPE_CHAIN -> false
-            TYPE_BALANCER -> false
-            else -> true
-        }
-    }
-
-    fun useClashBased(): Boolean {
-        if (!needExternal()) return false
-        return when (type) {
-            TYPE_SSR -> true
-            TYPE_SNELL -> true
-            TYPE_SSH -> true
+            TYPE_TROJAN_GO -> true
+            TYPE_NAIVE -> true
+            TYPE_PING_TUNNEL -> true
+            TYPE_HYSTERIA -> true
+            TYPE_RELAY_BATON -> true
+            TYPE_BROOK -> true
             else -> false
         }
     }
@@ -409,7 +382,6 @@ data class ProxyEntity(
         rbBean = null
         brookBean = null
         hysteriaBean = null
-        snellBean = null
         sshBean = null
         wgBean = null
 
@@ -470,10 +442,6 @@ data class ProxyEntity(
                 type = TYPE_HYSTERIA
                 hysteriaBean = bean
             }
-            is SnellBean -> {
-                type = TYPE_SNELL
-                snellBean = bean
-            }
             is SSHBean -> {
                 type = TYPE_SSH
                 sshBean = bean
@@ -515,7 +483,6 @@ data class ProxyEntity(
                 TYPE_RELAY_BATON -> RelayBatonSettingsActivity::class.java
                 TYPE_BROOK -> BrookSettingsActivity::class.java
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
-                TYPE_SNELL -> SnellSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
                 TYPE_WG -> WireGuardSettingsActivity::class.java
 

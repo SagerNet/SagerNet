@@ -40,7 +40,9 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
@@ -703,7 +705,7 @@ fun buildV2RayConfig(
                                 }
 
                             }
-                        } else if (bean is ShadowsocksBean) {
+                        } else if (bean is ShadowsocksBean || bean is ShadowsocksRBean) {
                             protocol = "shadowsocks"
                             settings = LazyOutboundConfigurationObject(this,
                                 ShadowsocksOutboundConfigurationObject().apply {
@@ -711,8 +713,16 @@ fun buildV2RayConfig(
                                         .apply {
                                             address = bean.serverAddress
                                             port = bean.serverPort
-                                            method = bean.method
-                                            password = bean.password
+                                            when (bean) {
+                                                is ShadowsocksBean -> {
+                                                    method = bean.method
+                                                    password = bean.password
+                                                }
+                                                is ShadowsocksRBean -> {
+                                                    method = bean.method
+                                                    password = bean.password
+                                                }
+                                            }
                                         })
                                     if (needKeepAliveInterval) {
                                         streamSettings = StreamSettingsObject().apply {
@@ -721,7 +731,15 @@ fun buildV2RayConfig(
                                             }
                                         }
                                     }
-                                    if (bean.plugin.isNotBlank()) {
+                                    if (bean is ShadowsocksRBean) {
+                                        plugin = "shadowsocksr"
+                                        pluginArgs = listOf(
+                                            "--obfs=${bean.obfs}",
+                                            "--obfs-param=${bean.obfsParam}",
+                                            "--protocol=${bean.protocol}",
+                                            "--protocol-param=${bean.protocolParam}"
+                                        )
+                                    } else if (bean is ShadowsocksBean && bean.plugin.isNotBlank()) {
                                         val pluginConfiguration = PluginConfiguration(bean.plugin)
                                         try {
                                             PluginManager.init(pluginConfiguration)
@@ -730,7 +748,7 @@ fun buildV2RayConfig(
                                                     pluginOpts = opts.toString()
                                                 }
                                         } catch (e: PluginManager.PluginNotFoundException) {
-                                            if (e.plugin in arrayOf("v2ray-plugin")) {
+                                            if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
                                                 plugin = e.plugin
                                                 pluginOpts = pluginConfiguration.getOptions()
                                                     .toString()
@@ -783,6 +801,31 @@ fun buildV2RayConfig(
                                     privateKey = bean.privateKey
                                     peerPublicKey = bean.peerPublicKey
                                     preSharedKey = bean.peerPreSharedKey
+                                })
+                            streamSettings = StreamSettingsObject().apply {
+                                if (needKeepAliveInterval) {
+                                    sockopt = StreamSettingsObject.SockoptObject().apply {
+                                        tcpKeepAliveInterval = keepAliveInterval
+                                    }
+                                }
+                            }
+                        }else if (bean is SSHBean) {
+                            protocol = "ssh"
+                            settings = LazyOutboundConfigurationObject(this,
+                                SSHOutbountConfigurationObject().apply {
+                                    address = bean.finalAddress
+                                    port = bean.finalPort
+                                    user = bean.username
+                                    when (bean.authType) {
+                                        SSHBean.AUTH_TYPE_PRIVATE_KEY -> {
+                                            privateKey = bean.privateKey
+                                            password = bean.privateKeyPassphrase
+                                        }
+                                        else -> {
+                                            password = bean.password
+                                        }
+                                    }
+                                    publicKey = bean.publicKey
                                 })
                             streamSettings = StreamSettingsObject().apply {
                                 if (needKeepAliveInterval) {

@@ -36,9 +36,8 @@ fun parseNaive(link: String): NaiveBean {
         serverPort = url.port
         username = url.username
         password = url.password
-        extraHeaders = url.queryParameter("extra-headers")?.let {
-            it.unUrlSafe().replace("\r\n", "\n")
-        }
+        extraHeaders = url.queryParameter("extra-headers")?.unUrlSafe()?.replace("\r\n", "\n")
+        insecureConcurrency = url.queryParameter("insecure-concurrency")?.toIntOrNull()
         name = url.fragment
         initializeDefaultValues()
     }
@@ -59,6 +58,9 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
         if (name.isNotBlank()) {
             builder.encodedFragment(name.urlSafe())
         }
+        if (insecureConcurrency > 0) {
+            builder.addQueryParameter("insecure-concurrency", "$insecureConcurrency")
+        }
     }
     return builder.toLink(if (proxyOnly) proto else "naive+$proto", false)
 }
@@ -76,8 +78,8 @@ fun NaiveBean.buildNaiveConfig(port: Int, mux: Boolean): String {
         if (DataStore.enableLog) {
             it["log"] = ""
         }
-        if (mux) {
-            it["concurrency"] = DataStore.muxConcurrency
+        if (insecureConcurrency > 0) {
+            it["insecure-concurrency"] = insecureConcurrency
         }
     }.toStringPretty()
 }

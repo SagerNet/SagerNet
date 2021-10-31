@@ -19,12 +19,8 @@
 
 package io.nekohasekai.sagernet.bg.test
 
-import io.nekohasekai.sagernet.bg.proto.SSHInstance
-import io.nekohasekai.sagernet.bg.proto.ShadowsocksRInstance
-import io.nekohasekai.sagernet.bg.proto.SnellInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
-import libcore.Libcore
 
 class UrlTest {
 
@@ -32,17 +28,6 @@ class UrlTest {
     val timeout = 5000
 
     suspend fun doTest(profile: ProxyEntity): Int {
-        if (profile.useClashBased()) {
-            val instance = when (profile.type) {
-                ProxyEntity.TYPE_SSR -> ShadowsocksRInstance(profile.ssrBean!!, 0)
-                ProxyEntity.TYPE_SNELL -> SnellInstance(profile.snellBean!!, 0)
-                ProxyEntity.TYPE_SSH -> SSHInstance(profile.sshBean!!, 0)
-                else -> error("unexpected")
-            }
-            instance.createInstance()
-            return Libcore.urlTestClashBased(instance.instance, link, timeout).toInt()
-        }
-
         return V2RayTestInstance(profile, link, timeout).doTest()
     }
 

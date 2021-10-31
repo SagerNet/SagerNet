@@ -128,7 +128,7 @@ class ConfigEditActivity : ThemedActivity() {
         return true
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.profile_apply_menu, menu)
         return true
     }

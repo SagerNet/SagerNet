@@ -46,17 +46,12 @@ import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
 import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
-import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.snell.SnellBean
-import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.fmt.wireguard.buildWireGuardUapiConf
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.*
@@ -104,9 +99,6 @@ abstract class V2RayInstance(
                 val mux = DataStore.enableMux && (isBalancer || chain.size == 0)
 
                 when (val bean = profile.requireBean()) {
-                    is ShadowsocksRBean -> {
-                        externalInstances[port] = ShadowsocksRInstance(bean, port)
-                    }
                     is TrojanBean -> {
                         when (DataStore.providerTrojan) {
                             TrojanProvider.TROJAN -> {
@@ -172,12 +164,6 @@ abstract class V2RayInstance(
                                 }
                             }
                         }
-                    }
-                    is SnellBean -> {
-                        externalInstances[port] = SnellInstance(bean, port)
-                    }
-                    is SSHBean -> {
-                        externalInstances[port] = SSHInstance(bean, port)
                     }
                 }
             }

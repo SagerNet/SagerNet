@@ -12,17 +12,6 @@
     <mapping directory="$PROJECT_DIR$/external/termux-view" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/v2ray-core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/library/core" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/libancillary" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/libev" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/libevent" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/libsodium" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/mbedtls" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/pcre" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/shadowsocks-libev" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/shadowsocks-libev/libbloom" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/shadowsocks-libev/libcork" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks-libev/src/main/jni/shadowsocks-libev/libipset" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/library/shadowsocks/src/main/rust/shadowsocks-rust" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/brook/src/main/go/brook" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/hysteria/src/main/go/hysteria" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/naive/src/main/jni/naiveproxy" vcs="Git" />
@@ -30,6 +19,5 @@
     <mapping directory="$PROJECT_DIR$/plugin/relaybaton/src/main/go/relaybaton" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan/src/main/cpp/igniter-libs" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan/src/main/cpp/trojan" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/plugin/wireguard/src/main/go/wgsocks" vcs="Git" />
   </component>
 </project>

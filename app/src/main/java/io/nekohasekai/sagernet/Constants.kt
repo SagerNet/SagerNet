@@ -153,6 +153,7 @@ object Key {
 
     const val SERVER_PRIVATE_KEY = "serverPrivateKey"
     const val SERVER_LOCAL_ADDRESS = "serverLocalAddress"
+    const val SERVER_INSECURE_CONCURRENCY = "serverInsecureConcurrency"
 
     const val BALANCER_TYPE = "balancerType"
     const val BALANCER_GROUP = "balancerGroup"

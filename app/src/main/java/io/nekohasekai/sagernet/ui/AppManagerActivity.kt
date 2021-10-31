@@ -259,7 +259,7 @@ class AppManagerActivity : ThemedActivity() {
 
     private var sysApps = true
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.per_app_proxy_menu, menu)
         return true
     }

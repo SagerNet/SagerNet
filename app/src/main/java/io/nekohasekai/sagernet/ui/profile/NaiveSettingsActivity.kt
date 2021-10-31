@@ -40,6 +40,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         DataStore.serverPassword = password
         DataStore.serverProtocol = proto
         DataStore.serverHeaders = extraHeaders
+        DataStore.serverInsecureConcurrency = insecureConcurrency
     }
 
     override fun NaiveBean.serialize() {
@@ -50,6 +51,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         password = DataStore.serverPassword
         proto = DataStore.serverProtocol
         extraHeaders = DataStore.serverHeaders.replace("\r\n", "\n")
+        insecureConcurrency = DataStore.serverInsecureConcurrency
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -62,6 +64,9 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+        findPreference<EditTextPreference>(Key.SERVER_ALLOW_INSECURE)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
     }
 
