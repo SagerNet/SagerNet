@@ -940,11 +940,16 @@ fun buildV2RayConfig(
                         probeInterval = "${balancerBean.probeInterval}s"
                     }
                     enableConcurrency = true
+                    subjectSelector = HashSet(chainOutbounds.map { it.tag })
                 }
                 val observatoryItem = MultiObservatoryObject.MultiObservatoryItem().apply {
                     tag = "observer-$tagOutbound"
                     settings = observatory
                 }
+                if (multiObservatory == null) multiObservatory = MultiObservatoryObject().apply {
+                    observers = mutableListOf()
+                }
+                multiObservatory.observers.add(observatoryItem)
 
                 if (routing.balancers == null) routing.balancers = ArrayList()
                 routing.balancers.add(RoutingObject.BalancerObject().apply {
@@ -955,8 +960,6 @@ fun buildV2RayConfig(
                             observers = mutableListOf()
                         }
                     }
-                    multiObservatory.observers.add(observatoryItem)
-                    observatory.subjectSelector.addAll(chainOutbounds.map { it.tag })
                     strategy = StrategyObject().apply {
                         type = balancerBean.strategy.takeIf { it.isNotBlank() } ?: "random"
                         if (type != "random") {
