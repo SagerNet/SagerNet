@@ -105,16 +105,12 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "libcore:D",
                 "v2ray-core:D",
 
-                "libsslocal:D",
-                "libss-local:D",
-                "libtrojan:D",
                 "libtrojan:D",
                 "libnaive:D",
                 "libbrook:D",
                 "libhysteria:D",
                 "libpingtunnel:D",
                 "librelaybaton:D",
-                "libwg:D",
 
                 "*:S"
             ), arrayOf(), 3000, this
