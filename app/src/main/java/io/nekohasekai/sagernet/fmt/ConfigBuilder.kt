@@ -258,8 +258,8 @@ fun buildV2RayConfig(
                     enabled = true
                     destOverride = when {
                         useFakeDns && !trafficSniffing -> listOf("fakedns")
-                        useFakeDns -> listOf("fakedns", "http", "tls")
-                        else -> listOf("http", "tls")
+                        useFakeDns -> listOf("fakedns", "http", "tls", "quic")
+                        else -> listOf("http", "tls", "quic")
                     }
                     metadataOnly = useFakeDns && !trafficSniffing
                     routeOnly = !destinationOverride
@@ -282,8 +282,8 @@ fun buildV2RayConfig(
                         enabled = true
                         destOverride = when {
                             useFakeDns && !trafficSniffing -> listOf("fakedns")
-                            useFakeDns -> listOf("fakedns", "http", "tls")
-                            else -> listOf("http", "tls")
+                            useFakeDns -> listOf("fakedns", "http", "tls", "quic")
+                            else -> listOf("http", "tls", "quic")
                         }
                         metadataOnly = useFakeDns && !trafficSniffing
                         routeOnly = !destinationOverride
@@ -308,8 +308,8 @@ fun buildV2RayConfig(
                         enabled = true
                         destOverride = when {
                             useFakeDns && !trafficSniffing -> listOf("fakedns")
-                            useFakeDns -> listOf("fakedns", "http", "tls")
-                            else -> listOf("http", "tls")
+                            useFakeDns -> listOf("fakedns", "http", "tls", "quic")
+                            else -> listOf("http", "tls", "quic")
                         }
                         metadataOnly = useFakeDns && !trafficSniffing
                         routeOnly = !destinationOverride
@@ -1339,7 +1339,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
             if (trafficSniffing) {
                 sniffing = InboundObject.SniffingObject().apply {
                     enabled = true
-                    destOverride = listOf("http", "tls")
+                    destOverride = listOf("http", "tls", "quic")
                     metadataOnly = false
                 }
             }
