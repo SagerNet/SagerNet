@@ -809,7 +809,7 @@ fun buildV2RayConfig(
                                     }
                                 }
                             }
-                        }else if (bean is SSHBean) {
+                        } else if (bean is SSHBean) {
                             protocol = "ssh"
                             settings = LazyOutboundConfigurationObject(this,
                                 SSHOutbountConfigurationObject().apply {
@@ -1249,11 +1249,18 @@ fun buildV2RayConfig(
             })
         }
 
-        if (!forTest) routing.rules.add(0, RoutingObject.RuleObject().apply {
-            type = "field"
-            inboundTag = listOf(TAG_DNS_IN)
-            outboundTag = TAG_DNS_OUT
-        })
+        if (!forTest) {
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                protocol = listOf("dns")
+                outboundTag = TAG_DNS_OUT
+            })
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                inboundTag = listOf(TAG_DNS_IN)
+                outboundTag = TAG_DNS_OUT
+            })
+        }
 
         if (allowAccess) {
             // temp: fix crash

@@ -89,7 +89,7 @@ class VpnService : BaseVpnService(),
 
     @Volatile
     private var underlyingNetwork: Network? = null
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1) set(value) {
+        set(value) {
             field = value
             if (active && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 setUnderlyingNetworks(underlyingNetworks)
@@ -260,7 +260,6 @@ class VpnService : BaseVpnService(),
             data.proxy!!.v2rayPoint,
             PRIVATE_VLAN4_ROUTER,
             DataStore.tunImplementation == TunImplementation.GVISOR,
-            true,
             DataStore.trafficSniffing,
             DataStore.destinationOverride,
             DataStore.enableFakeDns,
