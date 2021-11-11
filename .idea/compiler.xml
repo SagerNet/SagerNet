@@ -3,7 +3,11 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="11">
       <module name="editorkit.filesystems.filesystem-base" target="1.8" />
+      <module name="editorkit.filesystems.filesystem-base.main" target="1.8" />
+      <module name="editorkit.filesystems.filesystem-base.test" target="1.8" />
       <module name="editorkit.filesystems.filesystem-local" target="1.8" />
+      <module name="editorkit.filesystems.filesystem-local.main" target="1.8" />
+      <module name="editorkit.filesystems.filesystem-local.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
