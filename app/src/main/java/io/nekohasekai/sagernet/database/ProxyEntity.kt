@@ -264,14 +264,8 @@ data class ProxyEntity(
     }
 
     fun haveStandardLink(): Boolean {
-        return when (requireBean()) {
-            is RelayBatonBean -> false
-            is BrookBean -> false
-            is ConfigBean -> false
-            is HysteriaBean -> false
-            is SSHBean -> false
-            is WireGuardBean -> false
-            is InternalBean -> false
+        return haveLink() && when (type) {
+            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_HYSTERIA, TYPE_SSH, TYPE_WG -> false
             else -> true
         }
     }
@@ -299,7 +293,7 @@ data class ProxyEntity(
     }
 
     fun exportConfig(): Pair<String, String> {
-        var name = "profile.json"
+        var name = "${displayName()}.json"
 
         return with(requireBean()) {
             StringBuilder().apply {
@@ -307,7 +301,7 @@ data class ProxyEntity(
                 append(config.config)
 
                 if (!config.index.all { it.chain.isEmpty() }) {
-                    name = "profiles.txt"
+                    name = "${displayName()}.txt"
                 }
 
                 for ((isBalancer, chain) in config.index) {

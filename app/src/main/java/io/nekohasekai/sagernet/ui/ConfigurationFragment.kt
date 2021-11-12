@@ -1521,15 +1521,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
 
                         when {
+                            !proxyEntity.haveLink() -> {
+                                popup.menu.removeItem(R.id.action_group_qr)
+                                popup.menu.removeItem(R.id.action_group_clipboard)
+                            }
                             !proxyEntity.haveStandardLink() -> {
                                 popup.menu.findItem(R.id.action_group_qr).subMenu.removeItem(R.id.action_standard_qr)
                                 popup.menu.findItem(R.id.action_group_clipboard).subMenu.removeItem(
                                     R.id.action_standard_clipboard
                                 )
-                            }
-                            !proxyEntity.haveLink() -> {
-                                popup.menu.removeItem(R.id.action_group_qr)
-                                popup.menu.removeItem(R.id.action_group_clipboard)
                             }
                         }
 
