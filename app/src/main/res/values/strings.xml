@@ -143,6 +143,7 @@
     <string name="empty_route">Empty Route</string>
     <string name="empty_route_notice">Set some rules before saving</string>
     <string name="route_bypass_domain">Domain rule for %s</string>
+    <string name="route_play_store">Play store rule for %s</string>
     <string name="route_bypass_ip">IP rule for %s</string>
     <string name="route_reset">Reset</string>
     <string name="route_reverse">Reverse Proxy</string>
@@ -157,6 +158,7 @@
     <string name="route_not_asset">Not an asset file: excepted .dat, but %s</string>
     <string name="route_opt_bypass_lan">Bypass LAN</string>
     <string name="route_opt_block_ads">Block ADs</string>
+    <string name="route_opt_block_analysis">Block analysis</string>
     <string name="domain_strategy">Domain Resolution Strategy</string>
     <string name="traffic_sniffing">Enable Traffic Sniffing</string>
     <string name="enable_mux">Enable Multiplexer</string>

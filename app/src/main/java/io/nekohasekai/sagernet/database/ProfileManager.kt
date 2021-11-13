@@ -204,6 +204,18 @@ object ProfileManager {
                     outbound = -2
                 )
             )
+            createRule(
+                RuleEntity(
+                    name = app.getString(R.string.route_opt_block_analysis),
+                    domains = app.assets.open("analysis.txt").use {
+                            it.bufferedReader()
+                                .readLines()
+                                .filter { it.isNotBlank() }
+                                .joinToString("\n")
+                        },
+                    outbound = -2,
+                )
+            )
             var country = Locale.getDefault().country.lowercase()
             var displayCountry = Locale.getDefault().displayCountry
             if (country in arrayOf(
@@ -220,6 +232,12 @@ object ProfileManager {
             } else {
                 country = Locale.CHINA.country.lowercase()
                 displayCountry = Locale.CHINA.displayCountry
+                createRule(
+                    RuleEntity(
+                        name = app.getString(R.string.route_play_store, displayCountry),
+                        domains = "domain:googleapis.cn",
+                    ), false
+                )
                 createRule(
                     RuleEntity(
                         name = app.getString(R.string.route_bypass_domain, displayCountry),
