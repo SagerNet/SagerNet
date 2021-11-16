@@ -161,9 +161,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
 
         suspend fun reload() {
             val groups = SagerDatabase.groupDao.allGroups().toMutableList()
-            val hideUngrouped =
-                SagerDatabase.proxyDao.countByGroup(groups.find { it.ungrouped }!!.id) == 0L
-            if (groups.size > 1 && hideUngrouped) groups.removeAll { it.ungrouped }
+            groups.find { it.ungrouped }?.let {
+                if (SagerDatabase.proxyDao.countByGroup(it.id) == 0L) {
+                    groups.remove(it)
+                }
+            }
 
             groupList.clear()
             groupList.addAll(groups)

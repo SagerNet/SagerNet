@@ -848,12 +848,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                     SagerDatabase.groupDao.createGroup(ProxyGroup(ungrouped = true))
                     groupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
-
-                val hideUngrouped = groupList.size > 1 && SagerDatabase.proxyDao.countByGroup(
-                    groupList.find { it.ungrouped }!!.id
-                ) == 0L
-
-                if (hideUngrouped) groupList.removeAll { it.ungrouped }
+                groupList.find { it.ungrouped }?.let {
+                    if (SagerDatabase.proxyDao.countByGroup(it.id) == 0L) {
+                        groupList.remove(it)
+                    }
+                }
 
                 val selectedGroup = selectedItem?.groupId ?: DataStore.currentGroupId()
                 if (selectedGroup != 0L) {
