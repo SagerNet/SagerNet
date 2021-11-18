@@ -19,8 +19,8 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
-//import io.nekohasekai.sagernet.BuildConfig
-//import io.nekohasekai.sagernet.bg.test.DebugInstance
+import io.nekohasekai.sagernet.BuildConfig
+import io.nekohasekai.sagernet.bg.test.DebugInstance
 import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.app.observatory.OutboundStatus
 import io.nekohasekai.sagernet.SagerNet
@@ -30,6 +30,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.Job
@@ -82,11 +83,11 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             }
         }
 
-        /* if (BuildConfig.DEBUG && DataStore.enableLog) {
-             externalInstances[9999] = DebugInstance().apply {
+         if (BuildConfig.DEBUG) {
+             externalInstances[8964] = DebugInstance().apply {
                  launch()
              }
-         }*/
+         }
 
         SagerNet.started = true
     }

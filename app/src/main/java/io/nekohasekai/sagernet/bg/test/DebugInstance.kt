@@ -18,18 +18,19 @@
 
 package io.nekohasekai.sagernet.bg.test
 
-//import libcore.DebugInstance
 import io.nekohasekai.sagernet.bg.AbstractInstance
+import libcore.DebugInstance
+import libcore.Libcore
 
 class DebugInstance : AbstractInstance {
 
-//    lateinit var instance: DebugInstance
+    lateinit var instance: DebugInstance
 
     override fun launch() {
-//        instance = Libcore.newDebugInstance()
+        instance = Libcore.newDebugInstance()
     }
 
     override fun close() {
-//        if (::instance.isInitialized) instance.close()
+        if (::instance.isInitialized) instance.close()
     }
 }
