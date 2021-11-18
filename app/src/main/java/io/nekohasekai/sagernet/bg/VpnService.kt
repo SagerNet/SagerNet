@@ -62,10 +62,8 @@ class VpnService : BaseVpnService(),
         const val VPN_MTU = 1500
         const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
         const val PRIVATE_VLAN4_ROUTER = "172.19.0.2"
-        const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
         const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
         const val PRIVATE_VLAN6_ROUTER = "fdfe:dcba:9876::2"
-        const val FAKEDNS_VLAN6_CLIENT = "fc00::"
 
         private fun <T> FileDescriptor.use(block: (FileDescriptor) -> T) = try {
             block(this)
@@ -154,20 +152,12 @@ class VpnService : BaseVpnService(),
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
             .setSession(profile.displayName())
             .setMtu(VPN_MTU)
-        val useFakeDns = DataStore.enableFakeDns
         val ipv6Mode = DataStore.ipv6Mode
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
-        if (useFakeDns) {
-            builder.addAddress(FAKEDNS_VLAN4_CLIENT, 15)
-        }
 
         if (ipv6Mode != IPv6Mode.DISABLE) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
-
-            if (useFakeDns) {
-                builder.addAddress(FAKEDNS_VLAN6_CLIENT, 18)
-            }
         }
 
         if (DataStore.bypassLan && !DataStore.bypassLanInCoreOnly) {
@@ -262,7 +252,6 @@ class VpnService : BaseVpnService(),
             DataStore.tunImplementation == TunImplementation.GVISOR,
             DataStore.trafficSniffing,
             DataStore.destinationOverride,
-            DataStore.enableFakeDns,
             DataStore.enableLog,
             data.proxy!!.config.dumpUid,
             DataStore.appTrafficStatistics,

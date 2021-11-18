@@ -156,7 +156,6 @@ fun buildV2RayConfig(
     val directDNS = DataStore.directDns.split("\n")
         .mapNotNull { dns -> dns.trim().takeIf { it.isNotBlank() && !it.startsWith("#") } }
     val enableDnsRouting = DataStore.enableDnsRouting
-    val useFakeDns = DataStore.enableFakeDns
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = ArrayList<IndexEntity>()
     var requireWs = false
@@ -199,20 +198,6 @@ fun buildV2RayConfig(
 
             disableFallbackIfMatch = true
 
-            if (useFakeDns) {
-                fakedns = mutableListOf()
-                fakedns.add(FakeDnsObject().apply {
-                    ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
-                    poolSize = 65535
-                })
-                if (ipv6Mode != IPv6Mode.DISABLE) {
-                    fakedns.add(FakeDnsObject().apply {
-                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
-                        poolSize = 65535
-                    })
-                }
-            }
-
             when (ipv6Mode) {
                 IPv6Mode.DISABLE -> {
                     queryStrategy = "UseIPv4"
@@ -253,15 +238,10 @@ fun buildV2RayConfig(
                     auth = "noauth"
                     udp = true
                 })
-            if (trafficSniffing || useFakeDns) {
+            if (trafficSniffing) {
                 sniffing = InboundObject.SniffingObject().apply {
                     enabled = true
-                    destOverride = when {
-                        useFakeDns && !trafficSniffing -> listOf("fakedns")
-                        useFakeDns -> listOf("fakedns", "http", "tls", "quic")
-                        else -> listOf("http", "tls", "quic")
-                    }
-                    metadataOnly = useFakeDns && !trafficSniffing
+                    destOverride = listOf("http", "tls", "quic")
                     routeOnly = !destinationOverride
                 }
             }
@@ -277,15 +257,10 @@ fun buildV2RayConfig(
                     HTTPInboundConfigurationObject().apply {
                         allowTransparent = true
                     })
-                if (trafficSniffing || useFakeDns) {
+                if (trafficSniffing) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride = when {
-                            useFakeDns && !trafficSniffing -> listOf("fakedns")
-                            useFakeDns -> listOf("fakedns", "http", "tls", "quic")
-                            else -> listOf("http", "tls", "quic")
-                        }
-                        metadataOnly = useFakeDns && !trafficSniffing
+                        destOverride = listOf("http", "tls", "quic")
                         routeOnly = !destinationOverride
                     }
                 }
@@ -303,15 +278,10 @@ fun buildV2RayConfig(
                         network = "tcp,udp"
                         followRedirect = true
                     })
-                if (trafficSniffing || useFakeDns) {
+                if (trafficSniffing) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride = when {
-                            useFakeDns && !trafficSniffing -> listOf("fakedns")
-                            useFakeDns -> listOf("fakedns", "http", "tls", "quic")
-                            else -> listOf("http", "tls", "quic")
-                        }
-                        metadataOnly = useFakeDns && !trafficSniffing
+                        destOverride =  listOf("http", "tls", "quic")
                         routeOnly = !destinationOverride
                     }
                 }
@@ -1240,12 +1210,6 @@ fun buildV2RayConfig(
                         concurrent = true
                     }
                 }
-            })
-        }
-
-        if (useFakeDns) {
-            dns.servers.add(0, DnsObject.StringOrServerObject().apply {
-                valueX = "fakedns"
             })
         }
 

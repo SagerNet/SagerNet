@@ -186,11 +186,6 @@
             app:key="enableDnsRouting"
             app:summary="@string/dns_routing_message"
             app:title="@string/enable_dns_routing" />
-        <SwitchPreference
-            app:icon="@drawable/ic_action_lock"
-            app:key="enableFakeDns"
-            app:summary="@string/fakedns_message"
-            app:title="@string/enable_fakedns" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/inbound_settings">
