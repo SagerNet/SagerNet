@@ -191,7 +191,6 @@ fun buildV2RayConfig(
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
                         address = it
-                        concurrent = true
                     }
                 }
             })
@@ -1207,7 +1206,6 @@ fun buildV2RayConfig(
                         address = it
                         domains = bypassDomain.toList()
                         skipFallback = true
-                        concurrent = true
                     }
                 }
             })
