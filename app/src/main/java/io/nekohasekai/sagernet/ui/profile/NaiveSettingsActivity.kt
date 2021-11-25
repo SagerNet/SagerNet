@@ -40,6 +40,8 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         DataStore.serverPassword = password
         DataStore.serverProtocol = proto
         DataStore.serverHeaders = extraHeaders
+        DataStore.serverHost = hostResolverRules
+        DataStore.serverCertificates = certificates
         DataStore.serverInsecureConcurrency = insecureConcurrency
     }
 
@@ -51,6 +53,8 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         password = DataStore.serverPassword
         proto = DataStore.serverProtocol
         extraHeaders = DataStore.serverHeaders.replace("\r\n", "\n")
+        hostResolverRules = DataStore.serverHost
+        certificates = DataStore.serverCertificates
         insecureConcurrency = DataStore.serverInsecureConcurrency
     }
 

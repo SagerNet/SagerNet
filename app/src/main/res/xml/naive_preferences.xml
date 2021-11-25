@@ -44,6 +44,16 @@
             app:title="@string/extra_headers"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
+            app:icon="@drawable/ic_baseline_airplanemode_active_24"
+            app:key="serverHost"
+            app:title="@string/naive_host_resolver_rules"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="serverCertificates"
+            app:title="@string/certificates"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
             app:dialogMessage="@string/naive_insecure_concurrency_summary"
             app:icon="@drawable/ic_baseline_warning_24"
             app:key="serverInsecureConcurrency"

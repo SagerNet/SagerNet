@@ -38,6 +38,8 @@ public class NaiveBean extends AbstractBean {
     public String username;
     public String password;
     public String extraHeaders;
+    public String hostResolverRules;
+    public String certificates;
     public Integer insecureConcurrency;
 
     @Override
@@ -48,17 +50,21 @@ public class NaiveBean extends AbstractBean {
         if (username == null) username = "";
         if (password == null) password = "";
         if (extraHeaders == null) extraHeaders = "";
+        if (certificates == null) certificates = "";
+        if (hostResolverRules == null) hostResolverRules = "";
         if (insecureConcurrency == null) insecureConcurrency = 0;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(proto);
         output.writeString(username);
         output.writeString(password);
         output.writeString(extraHeaders);
+        output.writeString(certificates);
+        output.writeString(hostResolverRules);
         output.writeInt(insecureConcurrency);
     }
 
@@ -70,6 +76,10 @@ public class NaiveBean extends AbstractBean {
         username = input.readString();
         password = input.readString();
         extraHeaders = input.readString();
+        if (version >= 2) {
+            certificates = input.readString();
+            hostResolverRules = input.readString();
+        }
         if (version >= 1) {
             insecureConcurrency = input.readInt();
         }

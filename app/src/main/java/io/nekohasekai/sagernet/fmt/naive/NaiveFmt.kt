@@ -81,5 +81,8 @@ fun NaiveBean.buildNaiveConfig(port: Int, mux: Boolean): String {
         if (insecureConcurrency > 0) {
             it["insecure-concurrency"] = insecureConcurrency
         }
+        if (hostResolverRules.isNotBlank()) {
+            it["host-resolver-rules"] = hostResolverRules
+        }
     }.toStringPretty()
 }
