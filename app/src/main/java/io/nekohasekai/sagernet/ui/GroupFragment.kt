@@ -359,7 +359,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                     }
                 }
                 R.id.action_export_file -> {
-                    startFilesForResult(exportProfiles, "profiles.txt")
+                    startFilesForResult(exportProfiles, "profiles_${proxyGroup.displayName()}.txt")
                 }
                 R.id.action_clear -> {
                     MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.confirm)
