@@ -59,7 +59,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.google.zxing:core:3.4.1")
 
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.0.0-alpha.2"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.0.0-alpha.3"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:okhttp-dnsoverhttps")
 
