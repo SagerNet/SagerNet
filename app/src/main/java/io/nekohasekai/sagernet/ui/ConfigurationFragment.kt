@@ -854,13 +854,16 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
 
-                val selectedGroup = selectedItem?.groupId ?: DataStore.currentGroupId()
-                if (selectedGroup != 0L) {
-                    val selectedIndex = groupList.indexOfFirst { it.id == selectedGroup }
-                    selectedGroupIndex = selectedIndex
-
+                var selectedGroup = selectedItem?.groupId ?: DataStore.currentGroupId()
+                if (selectedGroup > 0L) {
+                    selectedGroupIndex = groupList.indexOfFirst { it.id == selectedGroup }
                     onMainDispatcher {
-                        groupPager.setCurrentItem(selectedIndex, false)
+                        groupPager.setCurrentItem(selectedGroupIndex, false)
+                    }
+                } else if (groupList.size == 1) {
+                    selectedGroup = groupList[0].id
+                    if (DataStore.selectedGroup != selectedGroup) {
+                        DataStore.selectedGroup = selectedGroup
                     }
                 }
 
