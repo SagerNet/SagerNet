@@ -40,6 +40,7 @@ public class HysteriaBean extends AbstractBean {
 
     public String obfuscation;
     public String sni;
+    public String alpn;
     public String caText;
 
     public Integer uploadMbps;
@@ -56,6 +57,7 @@ public class HysteriaBean extends AbstractBean {
         if (authPayload == null) authPayload = "";
         if (obfuscation == null) obfuscation = "";
         if (sni == null) sni = "";
+        if (alpn == null) alpn = "";
         if (caText == null) caText = "";
 
         if (uploadMbps == null) uploadMbps = 10;
@@ -69,12 +71,13 @@ public class HysteriaBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeInt(authPayloadType);
         output.writeString(authPayload);
         output.writeString(obfuscation);
         output.writeString(sni);
+        output.writeString(alpn);
 
         output.writeInt(uploadMbps);
         output.writeInt(downloadMbps);
@@ -95,6 +98,9 @@ public class HysteriaBean extends AbstractBean {
         authPayload = input.readString();
         obfuscation = input.readString();
         sni = input.readString();
+        if (version >= 2) {
+            alpn = input.readString();
+        }
         uploadMbps = input.readInt();
         downloadMbps = input.readInt();
         allowInsecure = input.readBoolean();

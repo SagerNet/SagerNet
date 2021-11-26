@@ -43,6 +43,7 @@ fun JSONObject.parseHysteria(): HysteriaBean {
             authPayload = it
         }
         sni = getStr("server_name")
+        alpn = getStr("alpn")
         allowInsecure = getBool("insecure")
 
         streamReceiveWindow = getInt("recv_window_conn")
@@ -63,6 +64,7 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
             HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload
         }
         if (sni.isNotBlank()) it["server_name"] = sni
+        if (alpn.isNotBlank()) it["alpn"] = alpn
         if (caText.isNotBlank() && cacheFile != null) {
             val caFile = cacheFile()
             caFile.writeText(caText)
