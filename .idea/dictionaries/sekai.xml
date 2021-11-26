@@ -42,6 +42,7 @@
       <w>vless</w>
       <w>vmess</w>
       <w>websocket</w>
+      <w>wireguard</w>
       <w>xray</w>
       <w>xtls</w>
     </words>
