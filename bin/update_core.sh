@@ -10,4 +10,8 @@ git fetch origin main || exit 1
 git reset origin/main --hard
 popd
 
+rm -rf app/build/extracted-include-protos \
+    library/proto/build \
+    library/proto-stub/build
+
 git add .

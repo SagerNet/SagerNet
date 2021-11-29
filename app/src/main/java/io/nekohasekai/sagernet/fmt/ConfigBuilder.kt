@@ -1214,7 +1214,7 @@ fun buildV2RayConfig(
         if (!forTest) {
             routing.rules.add(0, RoutingObject.RuleObject().apply {
                 type = "field"
-                protocol = listOf("dns.strict")
+                protocol = listOf("dns")
                 outboundTag = TAG_DNS_OUT
             })
             routing.rules.add(0, RoutingObject.RuleObject().apply {
