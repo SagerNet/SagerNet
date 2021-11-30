@@ -41,7 +41,6 @@ import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
-import io.nekohasekai.sagernet.AppStatus
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -94,13 +93,6 @@ class RouteSettingsActivity(
         DataStore.routeReverse = reverse
         DataStore.routeRedirect = redirect
         DataStore.routePackages = packages.joinToString("\n")
-        DataStore.routeForegroundStatus = ""
-
-        for (status in appStatus) when (status) {
-            AppStatus.FOREGROUND, AppStatus.BACKGROUND -> {
-                DataStore.routeForegroundStatus = status
-            }
-        }
     }
 
     fun RuleEntity.serialize() {
@@ -122,12 +114,6 @@ class RouteSettingsActivity(
         reverse = DataStore.routeReverse
         redirect = DataStore.routeRedirect
         packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }
-        val routeForegroundStatus = DataStore.routeForegroundStatus
-        appStatus = if (routeForegroundStatus.isNotBlank()) {
-            listOf(routeForegroundStatus)
-        } else {
-            emptyList()
-        }
 
         if (DataStore.editingId == 0L) {
             enabled = true
@@ -136,7 +122,7 @@ class RouteSettingsActivity(
 
     fun needSave(): Boolean {
         if (!DataStore.dirty) return false
-        if (DataStore.routePackages.isBlank() && DataStore.routeForegroundStatus.isBlank() && DataStore.routeDomain.isBlank() && DataStore.routeIP.isBlank() && DataStore.routePort.isBlank() && DataStore.routeSourcePort.isBlank() && DataStore.routeNetwork.isBlank() && DataStore.routeSource.isBlank() && DataStore.routeProtocol.isBlank() && DataStore.routeAttrs.isBlank() && !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())) {
+        if (DataStore.routePackages.isBlank() && DataStore.routeDomain.isBlank() && DataStore.routeIP.isBlank() && DataStore.routePort.isBlank() && DataStore.routeSourcePort.isBlank() && DataStore.routeNetwork.isBlank() && DataStore.routeSource.isBlank() && DataStore.routeProtocol.isBlank() && DataStore.routeAttrs.isBlank() && !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())) {
             return false
         }
         return true

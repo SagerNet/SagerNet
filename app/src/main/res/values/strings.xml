@@ -429,15 +429,7 @@
     <string name="app_no_launcher">The app has no interface.</string>
     <string name="route_for">Rule for %s</string>
 
-    <string name="foreground_detector">Foreground detector</string>
-    <string name="foreground_detector_summary">This service provides support for routing rules based on the foreground state of apps. If it is not started, the result is always in the background.</string>
-
-    <string name="foreground_status">Foreground Status</string>
-    <string name="foreground">Foreground</string>
-    <string name="background">Background</string>
-
     <string name="route_need_vpn">Routing rule %s relies on the VPN to be in effect, so it is ignored.</string>
-    <string name="route_need_fds">Routing rule %s relies on the Foreground Detector Service to be in effect, but is not enabled.</string>
 
     <string name="app_traffic_statistics">App Traffic Statistics</string>
     <string name="profile_traffic_statistics">Profile Traffic Statistics</string>

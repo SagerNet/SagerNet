@@ -25,7 +25,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.RemoteException
-import android.provider.Settings
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.widget.Toast
@@ -406,30 +405,17 @@ class MainActivity : ThemedActivity(),
                     this, getString(R.string.route_need_vpn, routeName), Toast.LENGTH_SHORT
                 ).show()
             }
-            1 -> {
-                // need fds
-
-                MaterialAlertDialogBuilder(this).setTitle(R.string.foreground_detector)
-                    .setMessage(getString(R.string.route_need_fds, routeName))
-                    .setPositiveButton(R.string.enable) { _, _ ->
-                        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
-            }
         }
     }
 
     val connection = SagerConnection(true)
-    override fun onServiceConnected(service: ISagerNetService) = changeState(
-        try {
-            BaseService.State.values()[service.state].also {
-                SagerNet.started = it.canStop
-            }
-        } catch (_: RemoteException) {
-            BaseService.State.Idle
+    override fun onServiceConnected(service: ISagerNetService) = changeState(try {
+        BaseService.State.values()[service.state].also {
+            SagerNet.started = it.canStop
         }
-    )
+    } catch (_: RemoteException) {
+        BaseService.State.Idle
+    })
 
     override fun onServiceDisconnected() = changeState(BaseService.State.Idle)
     override fun onBinderDied() {

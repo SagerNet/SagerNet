@@ -595,18 +595,6 @@
         <item>@string/group_order_by_delay</item>
     </string-array>
 
-    <string-array name="foreground_status">
-        <item tools:ignore="PrivateResource">@string/not_set</item>
-        <item>@string/foreground</item>
-        <item>@string/background</item>
-    </string-array>
-
-    <string-array name="foreground_status_value">
-        <item />
-        <item>foreground</item>
-        <item>background</item>
-    </string-array>
-
     <string-array name="ssh_auth_type">
         <item>@string/ssh_auth_type_none</item>
         <item>@string/password</item>

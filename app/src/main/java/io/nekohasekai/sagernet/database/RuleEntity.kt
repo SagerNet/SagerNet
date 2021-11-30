@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.database
 
 import android.os.Parcelable
 import androidx.room.*
-import io.nekohasekai.sagernet.AppStatus
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import kotlinx.parcelize.Parcelize
@@ -45,11 +44,10 @@ data class RuleEntity(
     var reverse: Boolean = false,
     var redirect: String = "",
     var packages: List<String> = listOf(),
-    var appStatus: List<String> = listOf(),
 ) : Parcelable {
 
     fun isBypassRule(): Boolean {
-        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && port.isBlank() && sourcePort.isBlank() && network.isBlank() && source.isBlank() && protocol.isBlank() && attrs.isBlank() && !reverse && redirect.isBlank() && outbound == -1L && packages.isEmpty() && appStatus.isEmpty()
+        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && port.isBlank() && sourcePort.isBlank() && network.isBlank() && source.isBlank() && protocol.isBlank() && attrs.isBlank() && !reverse && redirect.isBlank() && outbound == -1L && packages.isEmpty()
     }
 
     fun displayName(): String {
@@ -69,7 +67,6 @@ data class RuleEntity(
         if (packages.isNotEmpty()) summary += app.getString(
             R.string.apps_message, packages.size
         ) + "\n"
-        if (appStatus.isNotEmpty()) summary += displayAppStatus().joinToString("\n")
         val lines = summary.trim().split("\n")
         return if (lines.size > 3) {
             lines.subList(0, 3).joinToString("\n", postfix = "\n...")
@@ -91,19 +88,10 @@ data class RuleEntity(
         }
     }
 
-    fun displayAppStatus(): List<String> {
-        return appStatus.map {
-            when (it) {
-                AppStatus.FOREGROUND -> app.getString(R.string.foreground)
-                /*AppStatus.BACKGROUND*/ else -> app.getString(R.string.background)
-            }
-        }
-    }
-
     @androidx.room.Dao
     interface Dao {
 
-        @Query("SELECT * from rules WHERE (appStatus != '' OR packages != '') AND enabled = 1")
+        @Query("SELECT * from rules WHERE (packages != '') AND enabled = 1")
         fun checkVpnNeeded(): List<RuleEntity>
 
         @Query("SELECT * FROM rules ORDER BY userOrder")

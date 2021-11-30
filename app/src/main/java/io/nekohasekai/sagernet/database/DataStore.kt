@@ -270,7 +270,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeReverse by profileCacheStore.boolean(Key.ROUTE_REVERSE)
     var routeRedirect by profileCacheStore.string(Key.ROUTE_REDIRECT)
     var routePackages by profileCacheStore.string(Key.ROUTE_PACKAGES)
-    var routeForegroundStatus by profileCacheStore.string(Key.ROUTE_FOREGROUND_STATUS)
 
     var serverConfig by profileCacheStore.string(Key.SERVER_CONFIG)
 
