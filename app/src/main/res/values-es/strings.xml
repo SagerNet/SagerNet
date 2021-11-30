@@ -58,7 +58,6 @@
     <string name="route_add">Crear ruta</string>
     <string name="port_local_dns">Puerto DNS local</string>
     <string name="dns_hosts">Reescritura de dominio</string>
-    <string name="fakedns_message">Puede hacer que otras aplicaciones deban reiniciarse para volver a conectarse a la red después de que se detenga el proxy</string>
     <string name="group_delete_confirm_prompt">Estás seguro de eliminar este grupo\?</string>
     <string name="action_import_err">Importacion fallida.</string>
     <string name="add_profile_methods_scan_qr_code">Importar con QR</string>
@@ -215,7 +214,6 @@
     <string name="connection_test_url">URL de prueba de conexión</string>
     <string name="transproxy_mode">Modo transproxy</string>
     <string name="require_transproxy">Habilitar Transproxy Inbound</string>
-    <string name="enable_fakedns">Habilitar DNS falso</string>
     <string name="speed_detail">Proxy : %1$s↑ %2$s↓
 \nDirecto : %3$s↑ %4$s↓</string>
     <string name="security_settings">Configuraciones de seguridad</string>
@@ -284,12 +282,9 @@
     <string name="copy_failed">Error de copia.</string>
     <string name="app_no_launcher">La aplicación no tiene interfaz.</string>
     <string name="route_for">Regla para %s</string>
-    <string name="foreground_detector">Detector de primer plano</string>
     <string name="foreground_status">Estado de primer plano</string>
-    <string name="foreground">Primer plano</string>
     <string name="background">Fondo</string>
     <string name="route_need_vpn">La regla de enrutamiento %s depende de que la VPN esté en vigor, por lo que se ignora.</string>
-    <string name="route_need_fds">La regla de enrutamiento %s depende de que el servicio de detector de primer plano esté en vigor, pero no está habilitado.</string>
     <string name="traffic_statistics_summary">Puede aumentar el consumo de energía</string>
     <string name="no_statistics">Aún no hay estadísticas</string>
     <string name="ssh_auth_type_none">Ninguno</string>
@@ -303,7 +298,6 @@
     <string name="wireguard_local_address">Dirección local</string>
     <string name="wireguard_public_key">Clave pública del mismo nivel</string>
     <string name="wireguard_psk">Clave precompartida de pares</string>
-    <string name="foreground_detector_summary">Este servicio proporciona soporte para reglas de enrutamiento basadas en el estado de primer plano de las aplicaciones. Si no se inicia, el resultado siempre está en segundo plano.</string>
     <string name="copy_success">¡Copie el éxito!</string>
     <string name="traffic_holder">Abra VPN para registrar estadísticas de tráfico</string>
     <string name="udp_connections">%d conexiones UDP</string>
@@ -324,7 +318,6 @@
     <string name="subscription">Suscripción</string>
     <string name="group_settings">Configuración de grupo</string>
     <string name="group_basic">Básico</string>
-    <string name="ss_stream_provider">Proveedor de corriente de Shadowsocks</string>
     <string name="ss_aead_provider">Proveedor de Shadowsocks AEAD</string>
     <string name="trojan_provider">Proveedor de Trojan</string>
     <string name="protocol_settings">Configuración de protocolo</string>

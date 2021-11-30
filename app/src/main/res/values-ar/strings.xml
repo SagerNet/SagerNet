@@ -79,7 +79,6 @@
     <string name="require_transproxy">تفعيل ترانسبروكسی الوارد</string>
     <string name="port_local_dns">منفذ DNS المحلي</string>
     <string name="dns_hosts">إعادة كتابة المجال</string>
-    <string name="fakedns_message">قد يتسبب في الحاجة إلى إعادة تشغيل التطبيقات الأخرى لإعادة الاتصال بالشبكة بعد توقف البروکسی</string>
     <string name="enable_fakedns">تفعيل DNS وهمي</string>
     <string name="dns_routing_message">حل المجالات في مسارات الالتفاف باستخدام Direct DNS. كن على علم بتسريبات DNS المحتملة</string>
     <string name="enable_dns_routing">تمكين توجيه DNS</string>
@@ -280,7 +279,6 @@
     <string name="subscription">الاشتراك</string>
     <string name="group_settings">إعدادات المجموعة</string>
     <string name="group_basic">أساسي</string>
-    <string name="ss_aead_provider">مزود Shadowsocks AEAD</string>
     <string name="trojan_provider">Trojan مزود</string>
     <string name="protocol_settings">إعدادات البروتوكول</string>
     <string name="bypass_lan_in_core_only_sum">إذا لم يعمل Lineage\'s السماح لعملاء نقطة الاتصال باستخدام شبكات VPN، فجرّب ذلك.</string>
@@ -367,13 +365,9 @@
     <string name="experimental_no_termination_signal">لا ترسل إشارة إنهاء اتصال فردية مزدوجة لاتصال TCP عند نقلها عبر VMess. سيؤدي هذا إلى كسر بعض التطبيقات.</string>
     <string name="experimental_authenticated_length">لم يعد طول كل شحنة مرنًا. يتطلب هذا الاختبار خادمًا ويستخدم العميل نفس إصدار v2ray-core. من المتوقع المزيد من التحديثات الفورية في هذا الاختبار.</string>
     <string name="experimental_settings">تجريبي</string>
-    <string name="route_need_fds">تعتمد قاعدة التوجيه %s على تفعيل خدمة كاشف المقدمة، ولكن لم يتم تمكينها.</string>
     <string name="route_need_vpn">تعتمد قاعدة التوجيه %s على أن تكون VPN سارية المفعول، لذلك يتم تجاهلها.</string>
-    <string name="foreground_status">حالة المقدمة</string>
     <string name="foreground_detector_summary">تدعم هذه الخدمة قواعد التوجيه بناءً على حالة المقدمة التطبيقات. إذا لم يتم بدء تشغيل، تكون النتيجة دائما في خلفية.</string>
-    <string name="background">خلفية</string>
     <string name="foreground">المقدمة</string>
-    <string name="foreground_detector">كاشف المقدمة</string>
     <string name="route_for">حكم ل %s</string>
     <string name="app_no_launcher">التطبيق ليس له واجهة.</string>
     <string name="copy_failed">فشل النسخ.</string>
@@ -399,7 +393,6 @@
     <string name="hysteria_disable_mtu_discovery">تعطيل اكتشاف MTU للمسار</string>
     <string name="hysteria_connection_receive_window">نافذة تلقي اتصال QUIC</string>
     <string name="hysteria_stream_receive_window">نافذة تلقي دفق QUIC</string>
-    <string name="ss_stream_provider">مزود تيار شادوسوكس</string>
     <string name="menu_traffic">مرور</string>
     <string name="no_statistics">لا توجد إحصاءات حتى الآن</string>
     <string name="traffic_statistics_summary">قد يزيد من استهلاك الطاقة</string>

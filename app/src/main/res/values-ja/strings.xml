@@ -73,7 +73,6 @@
     <string name="connection_test_url">テスト用リンクを接続</string>
     <string name="port_local_dns">ローカルDNSポート</string>
     <string name="dns_hosts">ドメインの書き換え</string>
-    <string name="enable_fakedns">FakeDNSを有効化</string>
     <string name="enable_dns_routing">DNSルーティングを有効化</string>
     <string name="direct_dns">ダイレクトDNS</string>
     <string name="remote_dns">リモートDNS</string>

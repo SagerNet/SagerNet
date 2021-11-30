@@ -89,7 +89,6 @@
     <string name="require_transproxy">Transproxy Gelenini Etkinleştir</string>
     <string name="port_local_dns">Yerel DNS Bağlantı Noktası</string>
     <string name="dns_hosts">Etki alanı yeniden yazma</string>
-    <string name="enable_fakedns">Sahte DNS aktivasyonu</string>
     <string name="dns_routing_message">Doğrudan DNS ile geçiş yollarındaki etki alanlarını çözümleyin. Potansiyel DNS sızıntılarının farkında olun</string>
     <string name="certificates">Sertifikalar</string>
     <string name="sni">Görünecek Sunucu Adı</string>
@@ -141,13 +140,9 @@
     <string name="bypass_apps">Atlat</string>
     <string name="route_opt_bypass_lan">Yerel Ağı Atlat</string>
     <string name="route_bypass">Atlat</string>
-    <string name="route_need_fds">%s yönlendirme kuralı Önplan Algılayıcı Servisine bağlıdır ama servis etkinleştirilmemiş.</string>
     <string name="route_need_vpn">%s yönlendirme kuralı VPN\'in etkin olmasına bağlıdır ve bu nedenle görmezden gelindi.</string>
-    <string name="background">Arkaplan</string>
     <string name="foreground">Önplan</string>
-    <string name="foreground_status">Önplan Durumu</string>
     <string name="foreground_detector_summary">Bu servis uygulamaların önplan durumuna göre rota kuralları desteği sağlar. Eğer başlatılmadıysa sonuç her zaman arkaplandadır.</string>
-    <string name="foreground_detector">Önplan algılayıcısı</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Eklentisi)</string>
     <string name="shadowsocks_plugin_simple_obfs">Basit Şaşırtmaca (Shadowsocks Android Eklentisi)</string>
     <string name="hysteria_connection_receive_window">QUIC Bağlantı Alım Penceresi</string>

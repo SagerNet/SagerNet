@@ -300,7 +300,6 @@
     <string name="bypass_lan_in_core_only_sum">如果 Lineage 之 \"允许热点客户端使用 VPN\" 无法使用, 尝试启用此项.</string>
     <string name="protocol_settings">协议设置</string>
     <string name="trojan_provider">Trojan 提供程序</string>
-    <string name="ss_aead_provider">Shadowsocks AEAD 提供程序</string>
     <string name="group_basic">基本</string>
     <string name="group_settings">分组设置</string>
     <string name="subscription">订阅</string>
@@ -354,7 +353,6 @@
     <string name="direct_dns">直连 DNS</string>
     <string name="enable_dns_routing">启用 DNS 路由</string>
     <string name="dns_routing_message">使用直连 DNS 解析绕过路由中的 domains. 注意潜在的 DNS 泄漏</string>
-    <string name="enable_fakedns">启用 FakeDNS</string>
     <string name="fakedns_message">可能导致其他应用程序在代理停止后需要重新启动以重新连接到网络</string>
     <string name="dns_hosts">域名重写</string>
     <string name="apps">应用</string>
@@ -366,7 +364,6 @@
     <string name="hysteria_upload_mbps">最大上行 (Mbps)</string>
     <string name="hysteria_download_mbps">最大下行 (Mbps)</string>
     <string name="experimental_settings">实验性</string>
-    <string name="ss_stream_provider">Shadowsocks 流式密码提供程序</string>
     <string name="hysteria_stream_receive_window">QUIC 流接收窗口</string>
     <string name="hysteria_connection_receive_window">QUIC 连接接收窗口</string>
     <string name="hysteria_disable_mtu_discovery">禁用路径最大传输单元发现</string>
@@ -395,13 +392,9 @@
     <string name="tcp_connections">%d TCP 连接</string>
     <string name="traffic_stats">统计</string>
     <string name="traffic_active">活动</string>
-    <string name="route_need_fds">路由规则 %s 依赖前台检测服务以生效，但它未被启用。</string>
     <string name="route_need_vpn">路由规则 %s 依赖 VPN 以生效，所以其已被忽略。</string>
-    <string name="background">后台</string>
     <string name="foreground">前台</string>
-    <string name="foreground_detector_summary">本服务用于支持基于前台状态的路由规则，如果未启用，则结果永远为后台。</string>
     <string name="foreground_status">前台状态</string>
-    <string name="foreground_detector">前台检测器</string>
     <string name="no_statistics">暂无数据</string>
     <string name="traffic_statistics_summary">可能增加电量使用</string>
     <string name="ssh_private_key_passphrase">私钥密码句</string>

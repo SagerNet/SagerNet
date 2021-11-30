@@ -34,7 +34,6 @@
     <string name="inbound_settings">Уключыць Transproxy Уваходныя</string>
     <string name="port_local_dns">Лакальны порт DNS</string>
     <string name="dns_hosts">Перапісаць дамен</string>
-    <string name="fakedns_message">Можа выклікаць перазапуск іншых прыкладанняў для паўторнага падлучэння да сеткі пасля спынення проксі</string>
     <string name="enable_fakedns">Уключыць FakeDNS</string>
     <string name="dns_routing_message">Выкарыстоўвайце прамы DNS для маршрутаў па -за проксі. У гэтым выпадку верагодна ўцечка DNS</string>
     <string name="enable_dns_routing">Уключыць маршрутызацыю DNS</string>

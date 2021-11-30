@@ -358,13 +358,9 @@
     <string name="experimental_no_termination_signal">Не отправлять одинарный дуплексный сигнал завершения соединения для TCP-соединения при передаче через VMess. Это сломает какое-то приложение.</string>
     <string name="experimental_authenticated_length">Сделайте длину каждого сегмента полезной нагрузки больше не податливой. Этот эксперимент требует, чтобы сервер и клиент использовали одну и ту же версию v2ray-core. Ожидаются новые важные обновления по этому эксперименту.</string>
     <string name="experimental_settings">Экспериментальный</string>
-    <string name="route_need_fds">Правило маршрутизации %s полагается на работу службы детектора переднего плана, но не включено.</string>
     <string name="route_need_vpn">Правило маршрутизации %s зависит от VPN, поэтому игнорируется.</string>
-    <string name="background">Фон</string>
     <string name="foreground">Передний план</string>
-    <string name="foreground_status">Статус переднего плана</string>
     <string name="foreground_detector_summary">Эта служба обеспечивает поддержку правил маршрутизации на основе состояния переднего плана приложений. Если она не запущена, то результат всегда остается в фоновом режиме.</string>
-    <string name="foreground_detector">Детектор переднего плана</string>
     <string name="route_for">Правило для %s</string>
     <string name="app_no_launcher">У приложения нет интерфейса.</string>
     <string name="copy_failed">Не удалось скопировать.</string>

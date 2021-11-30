@@ -2,7 +2,6 @@
 <resources>
     <string name="port_local_dns">Локальний порт DNS</string>
     <string name="dns_hosts">Переписування домену</string>
-    <string name="fakedns_message">Може призвести до перезапуску інших програм для повторного підключення до мережі після зупинки проксі</string>
     <string name="enable_fakedns">Увімкніть FakeDNS</string>
     <string name="dns_routing_message">Вирішуйте домени в обхідних маршрутах за допомогою Direct DNS. Будьте в курсі можливих витоків DNS</string>
     <string name="enable_dns_routing">Увімкнути маршрутизацію DNS</string>

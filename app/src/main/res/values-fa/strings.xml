@@ -64,7 +64,6 @@
     <string name="require_transproxy">فعالسازی پراکسی شفاف به عنوان ورودی</string>
     <string name="port_local_dns">پورت DNS محلی</string>
     <string name="dns_hosts">بازنویسی دستی دامنه ها</string>
-    <string name="fakedns_message">احتمالا نرم افزارها بعد از متوقف کردن پراکسی نیاز به اجرای دوباره جهت دسترسی به اینترنت خواهند داشت</string>
     <string name="enable_fakedns">فعالسازی DNS جعلی</string>
     <string name="dns_routing_message">استفاده از DNS مستقیم برای مسیرهای خارج از پراکسی. احتمالا نشت DNS در این حالت وجود دارد</string>
     <string name="enable_dns_routing">فعالسازی مسیریابی DNS</string>
@@ -138,7 +137,6 @@
     <string name="subscription">اشتراک‌ها</string>
     <string name="group_settings">تنظیمات گروه</string>
     <string name="group_basic">پایه</string>
-    <string name="ss_aead_provider">ارائه دهنده Shadowsocks AEAD</string>
     <string name="trojan_provider">ارائه دهنده Trojan</string>
     <string name="protocol_settings">تنظیمات پروتکل</string>
     <string name="bypass_lan_in_core_only_sum">اگر لاین هات‌اسپات برای استفاده کاربرها از VPN کار نمی کند، این را امتحان کنید.</string>
@@ -359,13 +357,9 @@
     <string name="experimental_no_termination_signal">هنگام انتقال از طریق VMess، سیگنال ختم دو طرفه اتصال را برای اتصال TCP ارسال نکنید. این باعث خرابی برخی از برنامه ها می شود.</string>
     <string name="experimental_authenticated_length">طول هر بخش محموله دیگر قابل انعطاف نیست. این آزمایش نیاز به سرور دارد و سرویس گیرنده از نسخه مشابه v2ray-core استفاده می کند. انتظار می رود بروزرسانی های فوری بیشتری در مورد این آزمایش ارائه شود.</string>
     <string name="experimental_settings">آزمایشی</string>
-    <string name="route_need_fds">قانون مسیریابی %s متکی به فعال بودن سرویس تشخیص پیش زمینه است، اما فعال نیست.</string>
     <string name="route_need_vpn">قانون مسیریابی %s متکی به در دسترس بودن VPN است، بنابراین نادیده گرفته می شود.</string>
-    <string name="background">پس‌زمینه</string>
     <string name="foreground">پیش زمینه</string>
-    <string name="foreground_status">وضعیت پیش زمینه</string>
     <string name="foreground_detector_summary">این سرویس از قوانین مسیریابی بر اساس وضعیت پیش زمینه برنامه ها پشتیبانی می کند. اگر شروع نشده باشد، نتیجه همیشه در پس زمینه است.</string>
-    <string name="foreground_detector">آشکارساز پیش زمینه</string>
     <string name="route_for">قانون برای %s</string>
     <string name="app_no_launcher">برنامه فاقد رابط کاربری است.</string>
     <string name="copy_failed">کپی نشد.</string>
@@ -390,7 +384,6 @@
     <string name="hysteria_disable_mtu_discovery">غیر فعال کردن مسیر کشف MTU</string>
     <string name="hysteria_connection_receive_window">پنجره دریافت اتصال سریع</string>
     <string name="hysteria_stream_receive_window">پنجره دریافت جریان QUIC</string>
-    <string name="ss_stream_provider">ارائه دهنده جریان شادوساکس</string>
     <string name="menu_traffic">ترافیک</string>
     <string name="no_statistics">هنوز آماری در دسترس نیست</string>
     <string name="traffic_statistics_summary">ممکن است مصرف باتری را افزایش دهد</string>

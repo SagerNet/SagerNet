@@ -184,11 +184,9 @@
     <string name="key_opt">金鑰（選用）</string>
     <string name="username">使用者名稱</string>
     <string name="connection_test_url">連線測試 URL</string>
-    <string name="fakedns_message">可能導致其他應用程式在代理停止後需要重新啟動以重新連線至網路</string>
     <string name="transproxy_mode">透明代理模式</string>
     <string name="require_transproxy">啟用透明代理傳入伺服器</string>
     <string name="dns_hosts">網域重寫</string>
-    <string name="enable_fakedns">啟用 FakeDNS</string>
     <string name="dns_routing_message">使用在路由中被略過的直連 DNS 解析網域。請注意潛在的 DNS 洩漏</string>
     <string name="enable_dns_routing">啟用 DNS 路由</string>
     <string name="direct_dns">直連 DNS</string>
@@ -306,7 +304,6 @@
     <string name="append_http_proxy_sum">HTTP 代理將直接被支援的瀏覽器/應用程式使用，而無需經過虛擬網路卡（Android 10+）</string>
     <string name="bypass_lan_in_core_only">僅在 Core 中繞過區域網路</string>
     <string name="bypass_lan_in_core_only_sum">如果 LineageOS 的“允許熱點客戶端使用此裝置的 VPN”無法使用，嘗試啟用此選項。</string>
-    <string name="ss_aead_provider">Shadowsocks AEAD 提供程式</string>
     <string name="trojan_provider">Trojan 提供程式</string>
     <string name="protocol_settings">協議設定</string>
     <string name="group_basic">基本</string>
@@ -370,13 +367,9 @@
     <string name="ssh_auth_type_none">無</string>
     <string name="no_statistics">暫無統計資料</string>
     <string name="traffic_statistics_summary">可能增加電量消耗</string>
-    <string name="route_need_fds">路由規則 %s 需要前景模式偵測器以生效，但未被啟用。</string>
     <string name="route_need_vpn">路由規則 %s 需要 VPN 模式以生效，因此被忽略。</string>
-    <string name="background">背景</string>
     <string name="foreground">前景</string>
-    <string name="foreground_status">前景狀態</string>
     <string name="foreground_detector_summary">此服務為基於前景狀態的應用程式規則提供支援，如果它未被啟動，結果將永遠為背景。</string>
-    <string name="foreground_detector">前景偵測器</string>
     <string name="route_for">%s 的規則</string>
     <string name="app_no_launcher">此應用程式沒有介面。</string>
     <string name="copy_failed">複製失敗。</string>
@@ -407,7 +400,6 @@
     <string name="hysteria_auth_payload">認證承載</string>
     <string name="hysteria_auth_type">認證類型</string>
     <string name="hysteria_obfs">混淆密碼</string>
-    <string name="ss_stream_provider">Shadowsocks 串流加密提供者</string>
     <string name="menu_tools">工具</string>
     <string name="translate_platform">翻譯平台</string>
     <string name="menu_log">記錄檔</string>

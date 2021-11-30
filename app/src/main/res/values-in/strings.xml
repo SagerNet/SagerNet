@@ -20,7 +20,6 @@
     <string name="require_transproxy">Aktifkan Inbound Transproksi</string>
     <string name="port_local_dns">Port DNS lokal</string>
     <string name="dns_hosts">Tulis ulang DNS</string>
-    <string name="fakedns_message">Dapat menyebabkan aplikasi lain harus dimulai ulang untuk menyambung kembali ke jaringan setelah proksi dihentikan</string>
     <string name="enable_fakedns">Aktifkan FakeDNS</string>
     <string name="dns_routing_message">Selesaikan domain di rute bypass dengan Direct DNS. Waspadai potensi kebocoran DNS</string>
     <string name="enable_dns_routing">Aktifkan DNS Routing</string>
