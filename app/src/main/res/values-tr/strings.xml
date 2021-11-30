@@ -89,7 +89,6 @@
     <string name="require_transproxy">Transproxy Gelenini Etkinleştir</string>
     <string name="port_local_dns">Yerel DNS Bağlantı Noktası</string>
     <string name="dns_hosts">Etki alanı yeniden yazma</string>
-    <string name="fakedns_message">Proxy durdurulduktan sonra ağa yeniden bağlanmak için diğer uygulamaların yeniden başlatılmasına neden olabilir</string>
     <string name="enable_fakedns">Sahte DNS aktivasyonu</string>
     <string name="dns_routing_message">Doğrudan DNS ile geçiş yollarındaki etki alanlarını çözümleyin. Potansiyel DNS sızıntılarının farkında olun</string>
     <string name="certificates">Sertifikalar</string>
@@ -118,7 +117,7 @@
     <string name="route_reverse">Ters Vekil Sunucu</string>
     <string name="route_reset">Sıfırla</string>
     <string name="route_bypass_ip">%s için IP kuralı</string>
-    <string name="route_bypass_domain">%s için alan adı kuralı</string>
+    <string name="route_bypass_domain">%s için etki alanı kuralı</string>
     <string name="empty_route_notice">Kaydetmeden önce bazı kurallar ayarlayın</string>
     <string name="empty_route">Boş Rota</string>
     <string name="route_profile">Profil Seç…</string>
@@ -155,7 +154,6 @@
     <string name="hysteria_stream_receive_window">QUIC Akış Alım Penceresi</string>
     <string name="experimental_no_termination_signal">Duplex sonlandırma sinyalini VMess kullanırken TCP bağlantısı için yollama. Bu bazı uygulamaları bozacaktır.</string>
     <string name="force_resolve_sum">Güncelleme yaparken bütün alan adlarının IP adreslerini çöz. Mümkünse sunucu ve SNI otomatik olarak eklenir</string>
-    <string name="ss_stream_provider">Shadowsocks Akış Sağlayıcı</string>
     <string name="bypass_lan_in_core_only_sum">Eğer Lineage\'in Hotspot istemcilerinin VPN kullanmasına izin ver özelliği çalışmıyorsa bunu deneyin.</string>
     <string name="bypass_lan_in_core_only">Yerel Ağı Sadece Çekirdekte Atlat</string>
     <string name="always_show_address_sum">Yapılandırma kartının üzerinde her zaman sunucu adresini göster</string>
@@ -245,7 +243,6 @@
     <string name="subscription">Abonelik</string>
     <string name="group_settings">Grup Ayarları</string>
     <string name="group_basic">Basit</string>
-    <string name="ss_aead_provider">Shadowsocks AEAD Sağlayıcısı</string>
     <string name="trojan_provider">Trojan Sağlayıcısı</string>
     <string name="protocol_settings">Protokol Ayarları</string>
     <string name="append_http_proxy_sum">HTTP vekil sunucu direkt tarayıcı veya bazı destekli uygulamalar tarafından, sanal NIC aygıtından geçmeden kullanılır (Android 10+)</string>
@@ -422,4 +419,11 @@
     <string name="profile_traffic_statistics">Profil Trafiği İstatistikleri</string>
     <string name="app_statistics_disabled">Uygulama Trafiği istatistikleri devre dışı</string>
     <string name="enable_pcap">Pcap\'i Etkinleştir</string>
+    <string name="route_play_store">%s için Play Store kuralı</string>
+    <string name="route_opt_block_analysis">Çözümlemeyi engelle</string>
+    <string name="probe_url">Özel Test URL\'si</string>
+    <string name="naive_insecure_concurrency">Güvensiz Eşzamanlılık</string>
+    <string name="naive_insecure_concurrency_summary">Kötü ağ koşullarında daha sağlam olmak için N eşzamanlı tünel bağlantısı kullan. Daha fazla bağlantı, tünellemeyi algılamayı kolaylaştırır ve daha az güvenli hale getirir. Bu proje, trafik çözümlemesine karşı en güçlü güvenlik için çaba göstermektedir. Güvensiz bir şekilde kullanmak amacını bozar.
+\n
+\nBunu kullanmanız gerekiyorsa, sorunlarınızı çözüp çözmediğini görmek için önce N=2 değerini deneyin. Burada 4\'ten fazla bağlantı kullanmamanızı şiddetle tavsiye ederiz.</string>
 </resources>

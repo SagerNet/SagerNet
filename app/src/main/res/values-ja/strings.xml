@@ -73,7 +73,6 @@
     <string name="connection_test_url">テスト用リンクを接続</string>
     <string name="port_local_dns">ローカルDNSポート</string>
     <string name="dns_hosts">ドメインの書き換え</string>
-    <string name="fakedns_message">プロキシが停止した後、ネットワークに再接続するために他のアプリケーションを再起動する必要がある場合があります。</string>
     <string name="enable_fakedns">FakeDNSを有効化</string>
     <string name="enable_dns_routing">DNSルーティングを有効化</string>
     <string name="direct_dns">ダイレクトDNS</string>
@@ -93,4 +92,12 @@
     <string name="require_http">HTTPでインバウンドを開く</string>
     <string name="inbound_settings">インバウンド設定</string>
     <string name="menu_traffic">トラフィック</string>
+    <string name="show_direct_speed_sum">プロキシなしの通信速度も通知に表示する</string>
+    <string name="allow_insecure_sum">証明書のチェックを無効にします。この設定を有効にすると、平文と同等の安全性になります。</string>
+    <string name="connection_test_available">成功: HTTPS ハンドシェイクに要した時間は %dms です。</string>
+    <string name="cag_misc">その他の設定</string>
+    <string name="header_type">ヘッダータイプ</string>
+    <string name="key_opt">キー（オプション）</string>
+    <string name="network">ネットワーク</string>
+    <string name="probe_url">カスタムテストURL</string>
 </resources>
