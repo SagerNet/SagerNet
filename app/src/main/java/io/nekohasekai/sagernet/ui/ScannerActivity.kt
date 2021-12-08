@@ -50,6 +50,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.databinding.LayoutScannerBinding
+import io.nekohasekai.sagernet.group.RawUpdater
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 
@@ -131,19 +132,21 @@ class ScannerActivity : ThemedActivity(),
                             )
                         }
 
-                        val results = parseProxies(result.text ?: "")
+                        val results = RawUpdater.parseRaw(result.text ?: "")
 
-                        if (results.isNotEmpty()) {
+                        if (!results.isNullOrEmpty()) {
                             onMainDispatcher {
                                 finish()
-                            }
-                            val currentGroupId = DataStore.selectedGroupForImport()
-                            if (DataStore.selectedGroup != currentGroupId) {
-                                DataStore.selectedGroup = currentGroupId
-                            }
+                                runOnDefaultDispatcher {
+                                    val currentGroupId = DataStore.selectedGroupForImport()
+                                    if (DataStore.selectedGroup != currentGroupId) {
+                                        DataStore.selectedGroup = currentGroupId
+                                    }
 
-                            for (profile in results) {
-                                ProfileManager.createProfile(currentGroupId, profile)
+                                    for (profile in results) {
+                                        ProfileManager.createProfile(currentGroupId, profile)
+                                    }
+                                }
                             }
                         } else {
                             Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
@@ -226,8 +229,8 @@ class ScannerActivity : ThemedActivity(),
         val text = result.result.text
         runOnDefaultDispatcher {
             try {
-                val results = parseProxies(text)
-                if (results.isNotEmpty()) {
+                val results = RawUpdater.parseRaw(text)
+                if (!results.isNullOrEmpty()) {
                     val currentGroupId = DataStore.selectedGroupForImport()
                     if (DataStore.selectedGroup != currentGroupId) {
                         DataStore.selectedGroup = currentGroupId
@@ -244,7 +247,6 @@ class ScannerActivity : ThemedActivity(),
                     action = Intent.ACTION_VIEW
                     data = Uri.parse(e.link)
                 })
-                finish()
             } catch (e: Throwable) {
                 Logs.w(e)
                 onMainDispatcher {
