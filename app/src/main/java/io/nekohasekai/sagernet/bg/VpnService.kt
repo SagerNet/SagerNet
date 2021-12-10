@@ -215,7 +215,7 @@ class VpnService : BaseVpnService(),
             }
 
             individual.apply {
-                if (bypass xor needIncludeSelf) add(packageName) else remove(packageName)
+                /*if (bypass xor needIncludeSelf) add(packageName) else */remove(packageName)
             }.forEach {
                 try {
                     if (bypass) {
