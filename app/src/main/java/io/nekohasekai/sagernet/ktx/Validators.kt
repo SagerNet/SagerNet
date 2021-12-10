@@ -27,6 +27,7 @@ import com.github.shadowsocks.plugin.PluginConfiguration
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
+import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -91,6 +92,8 @@ fun AbstractBean.isInsecure(): ValidateResult {
             }
         } catch (ignored: Exception) {
         }
+    } else if (this is HysteriaBean) {
+        if (allowInsecure) return ResultInsecure(R.raw.insecure)
     }
     return ResultSecure
 }

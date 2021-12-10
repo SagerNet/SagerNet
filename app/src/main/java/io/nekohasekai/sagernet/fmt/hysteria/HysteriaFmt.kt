@@ -22,8 +22,75 @@ package io.nekohasekai.sagernet.fmt.hysteria
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import io.nekohasekai.sagernet.ktx.linkBuilder
+import io.nekohasekai.sagernet.ktx.toLink
+import io.nekohasekai.sagernet.ktx.urlSafe
 import io.nekohasekai.sagernet.ktx.wrapUri
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.File
+
+
+// hysteria://host:port?auth=123456&peer=sni.domain&insecure=1|0&upmbps=100&downmbps=100&alpn=hysteria&obfs=xplus&obfsParam=123456#remarks
+
+fun parseHysteria(url: String): HysteriaBean {
+    val link = url.replace("hysteria://", "https://").toHttpUrlOrNull() ?: error(
+        "invalid hysteria link $url"
+    )
+    return HysteriaBean().apply {
+        serverAddress = link.host
+        serverPort = link.port
+        name = link.fragment
+
+        link.queryParameter("peer")?.also {
+            sni = it
+        }
+        link.queryParameter("auth")?.takeIf { it.isNotBlank() }?.also {
+            authPayloadType = HysteriaBean.TYPE_STRING
+            authPayload = it
+        }
+        /*link.queryParameter("insecure")?.also {
+            allowInsecure = it == "1"
+        }*/
+        link.queryParameter("upmbps")?.also {
+            uploadMbps = it.toIntOrNull() ?: uploadMbps
+        }
+        link.queryParameter("downmbps")?.also {
+            downloadMbps = it.toIntOrNull() ?: downloadMbps
+        }
+        link.queryParameter("alpn")?.also {
+            alpn = it
+        }
+        link.queryParameter("obfs")?.also {
+            obfuscation = it
+        }
+    }
+}
+
+fun HysteriaBean.toUri(): String {
+    val builder = linkBuilder().host(serverAddress).port(serverPort)
+    if (sni.isNotBlank()) {
+        builder.addQueryParameter("peer", sni)
+    }
+    if (authPayload.isNotBlank()) {
+        builder.addQueryParameter("auth", authPayload)
+    }
+    if (uploadMbps != 10) {
+        builder.addQueryParameter("upmbps", "$uploadMbps")
+    }
+    if (downloadMbps != 50) {
+        builder.addQueryParameter("downmbps", "$downloadMbps")
+    }
+    if (alpn.isNotBlank()) {
+        builder.addQueryParameter("alpn", alpn)
+    }
+    if (obfuscation.isNotBlank()) {
+        builder.addQueryParameter("obfs", obfuscation)
+    }
+    if (name.isNotBlank()) {
+        builder.encodedFragment(name.urlSafe())
+    }
+    return builder.toLink("hysteria")
+}
 
 fun JSONObject.parseHysteria(): HysteriaBean {
     return HysteriaBean().apply {

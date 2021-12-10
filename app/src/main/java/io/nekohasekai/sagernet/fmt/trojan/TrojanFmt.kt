@@ -47,9 +47,9 @@ fun parseTrojan(server: String): TrojanBean {
         }
 
         security = link.queryParameter("security") ?: "tls"
-        sni = link.queryParameter("sni") ?: ""
-        alpn = link.queryParameter("alpn") ?: ""
-        name = link.fragment ?: ""
+        sni = link.queryParameter("sni")
+        alpn = link.queryParameter("alpn")
+        name = link.fragment
     }
 
 }

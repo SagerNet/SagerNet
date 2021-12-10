@@ -35,6 +35,7 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
+import io.nekohasekai.sagernet.fmt.hysteria.toUri
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
@@ -265,7 +266,7 @@ data class ProxyEntity(
 
     fun haveStandardLink(): Boolean {
         return haveLink() && when (type) {
-            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_HYSTERIA, TYPE_SSH, TYPE_WG -> false
+            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_SSH, TYPE_WG -> false
             else -> true
         }
     }
@@ -282,10 +283,11 @@ data class ProxyEntity(
             is TrojanGoBean -> toUri()
             is NaiveBean -> toUri()
             is PingTunnelBean -> toUri()
+            is HysteriaBean -> toUri()
+
             is RelayBatonBean -> toUniversalLink()
             is BrookBean -> toUniversalLink()
             is ConfigBean -> toUniversalLink()
-            is HysteriaBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
             is WireGuardBean -> toUniversalLink()
             else -> null

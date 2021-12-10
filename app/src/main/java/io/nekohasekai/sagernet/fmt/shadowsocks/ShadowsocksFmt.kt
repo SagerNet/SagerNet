@@ -102,7 +102,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
                 method = link.username
                 password = link.password
                 plugin = link.queryParameter("plugin") ?: ""
-                name = link.fragment ?: ""
+                name = link.fragment
 
                 fixInvalidParams()
 
@@ -119,7 +119,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             method = methodAndPswd.substringBefore(":")
             password = methodAndPswd.substringAfter(":")
             plugin = link.queryParameter("plugin") ?: ""
-            name = link.fragment ?: ""
+            name = link.fragment
 
             fixInvalidParams()
 
