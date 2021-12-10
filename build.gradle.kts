@@ -6,7 +6,7 @@ allprojects {
     apply(plugin = "com.github.ben-manes.versions")
     tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
         val regex = listOf(
-            "alpha", "beta", "rc", "cr", "m", "preview", "b", "ea"
+            "alpha", "beta", "rc", "cr", "m", "preview","a", "b", "ea", "jre"
         ).map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-+]*") }
         resolutionStrategy {
             componentSelection {
@@ -44,8 +44,6 @@ subprojects {
 }
 
 tasks.named<Wrapper>("wrapper") {
-    distributionType = Wrapper.DistributionType.ALL
-
     doLast {
         val sha256 = java.net.URL("$distributionUrl.sha256")
             .openStream()

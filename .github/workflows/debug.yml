@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17.3
+          go-version: 1.17.5
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
@@ -180,7 +180,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17.2
+          go-version: 1.17.5
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin hysteria

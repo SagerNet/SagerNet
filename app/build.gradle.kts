@@ -29,6 +29,8 @@ android {
 
 dependencies {
 
+    val hutoolVersion = rootProject.extra["hutoolVersion"].toString()
+
     implementation(fileTree("libs"))
     compileOnly(project(":library:stub"))
     implementation(project(":library:include"))
@@ -52,10 +54,10 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
     implementation("com.google.android.material:material:1.4.0")
-    implementation("cn.hutool:hutool-core:5.7.16")
-    implementation("cn.hutool:hutool-cache:5.7.16")
-    implementation("cn.hutool:hutool-json:5.7.16")
-    implementation("cn.hutool:hutool-crypto:5.7.16")
+    implementation("cn.hutool:hutool-core:$hutoolVersion")
+    implementation("cn.hutool:hutool-cache:$hutoolVersion")
+    implementation("cn.hutool:hutool-json:$hutoolVersion")
+    implementation("cn.hutool:hutool-crypto:$hutoolVersion")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.google.zxing:core:3.4.1")
 
@@ -65,7 +67,7 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.29")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
-    implementation("com.mikepenz:aboutlibraries:8.9.3")
+    implementation("com.mikepenz:aboutlibraries:8.9.4")
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("org.conscrypt:conscrypt-android:2.5.2")

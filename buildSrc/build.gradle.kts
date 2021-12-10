@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.5.31"
     `java-gradle-plugin`
     `kotlin-dsl`
 }
@@ -9,11 +9,12 @@ apply(from = "../repositories.gradle.kts")
 dependencies {
     val androidPluginVersion = rootProject.extra["androidPluginVersion"].toString()
     val kotlinVersion = rootProject.extra["kotlinVersion"].toString()
+    val hutoolVersion = rootProject.extra["hutoolVersion"].toString()
     implementation("com.android.tools.build:gradle:$androidPluginVersion")
     implementation("com.android.tools.build:gradle-api:$androidPluginVersion")
     implementation(kotlin("gradle-plugin", kotlinVersion))
-    implementation(kotlin("stdlib"))
-    implementation("cn.hutool:hutool-crypto:5.7.16")
+    implementation(kotlin("stdlib", kotlinVersion))
+    implementation("cn.hutool:hutool-crypto:$hutoolVersion")
     implementation("org.tukaani:xz:1.9")
     implementation("com.github.triplet.gradle:play-publisher:3.6.0")
     implementation("org.kohsuke:github-api:1.131")

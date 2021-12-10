@@ -37,11 +37,9 @@
           </compositeBuild>
         </compositeConfiguration>
         <option name="testRunner" value="GRADLE" />
-        <option name="disableWrapperSourceDistributionNotification" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$USER_HOME$/.gradle/wrapper/dists/gradle-6.8.3-bin/7ykxq50lst7lb7wx1nijpicxn/gradle-6.8.3" />
-        <option name="gradleJvm" value="Android Studio default JDK" />
+        <option name="gradleJvm" value="11" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
