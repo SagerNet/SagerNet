@@ -341,6 +341,7 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> true
             TYPE_RELAY_BATON -> true
             TYPE_BROOK -> true
+            TYPE_CONFIG -> true
             else -> false
         }
     }
