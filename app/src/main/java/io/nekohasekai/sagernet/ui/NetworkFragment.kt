@@ -18,44 +18,36 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.tabs.TabLayoutMediator
-import io.nekohasekai.sagernet.BuildConfig
+import androidx.appcompat.app.AlertDialog
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.databinding.LayoutToolsBinding
-import io.nekohasekai.sagernet.ktx.isExpert
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProfileManager
+import io.nekohasekai.sagernet.databinding.LayoutCloudflareBinding
+import io.nekohasekai.sagernet.databinding.LayoutNetworkBinding
+import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.utils.Cloudflare
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runBlocking
 
-class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
+class NetworkFragment : NamedFragment(R.layout.layout_network) {
+
+    override fun name() = "Network"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.setTitle(R.string.menu_tools)
 
-        val tools = mutableListOf<NamedFragment>()
-        tools.add(NetworkFragment())
-        tools.add(CloudflareFragment())
-
-        if (BuildConfig.DEBUG || isExpert) tools.add(DebugFragment())
-
-        val binding = LayoutToolsBinding.bind(view)
-        binding.toolsPager.adapter = ToolsAdapter(tools)
-
-        TabLayoutMediator(binding.toolsTab, binding.toolsPager) { tab, position ->
-            tab.text = tools[position].name()
-            tab.view.setOnLongClickListener { // clear toast
-                true
-            }
-        }.attach()
-    }
-
-    inner class ToolsAdapter(val tools: List<Fragment>) : FragmentStateAdapter(this) {
-
-        override fun getItemCount() = tools.size
-
-        override fun createFragment(position: Int) = tools[position]
+        val binding = LayoutNetworkBinding.bind(view)
+        binding.stunTest.setOnClickListener {
+            startActivity(Intent(requireContext(), StunActivity::class.java))
+        }
     }
 
 }

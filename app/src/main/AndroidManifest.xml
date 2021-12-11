@@ -252,6 +252,11 @@
             android:label="@string/select_profile"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.StunActivity"
+            android:configChanges="uiMode"
+            android:launchMode="singleTask"
+            android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
 
         <service
             android:name="io.nekohasekai.sagernet.bg.ProxyService"

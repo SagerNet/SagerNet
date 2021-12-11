@@ -403,7 +403,6 @@
     <string name="tun_implementation">TUN Tanımlaması</string>
     <string name="generating">Oluşturuluyor…</string>
     <string name="warp_generate">Yapılandırma Oluştur</string>
-    <string name="warp_license">CloudFlare Warp bir ücretsiz WireGuard VPN sağlayıcısıdır. Bunu kullanarak kullanım koşullarını kabul etmiş sayılırsınız: https://www.cloudflare.com/application/terms/</string>
     <string name="cloudflare_wrap">Warp</string>
     <string name="profile_traffic_statistics_summary">Devre dışı bırakıldığında kullanılan trafik sayılmayacak</string>
     <string name="pcap_summary">Trafiği .pcap dosyasına kaydet</string>

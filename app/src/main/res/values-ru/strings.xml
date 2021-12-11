@@ -407,7 +407,6 @@
     <string name="generating">Создание…</string>
     <string name="tun_implementation">Реализация TUN</string>
     <string name="wireguard_local_address">Частный адрес</string>
-    <string name="warp_license">CloudFlare Warp - это бесплатный провайдер WireGuard VPN. Используя его, вы соглашаетесь с условиями: https://www.cloudflare.com/application/terms/</string>
     <string name="enable_pcap">Включить Pcap</string>
     <string name="pcap_summary">Сохранять трафик в файл .pcap</string>
     <string name="destination_override">Переопределять адрес назначения</string>

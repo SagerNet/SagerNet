@@ -30,6 +30,7 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.Cloudflare
+import io.noties.markwon.Markwon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -43,6 +44,10 @@ class CloudflareFragment : NamedFragment(R.layout.layout_cloudflare) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = LayoutCloudflareBinding.bind(view)
+
+        Markwon.create(requireContext())
+            .setMarkdown(binding.wrapLicense, getString(R.string.warp_license))
+
         binding.warpGenerate.setOnClickListener {
             runBlocking {
                 generateWarpConfiguration()

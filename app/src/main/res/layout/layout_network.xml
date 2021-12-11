@@ -27,15 +27,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/cloudflare_wrap"
+                    android:text="@string/stun_test"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
-                    android:id="@+id/wrap_license"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/warp_license"
+                    android:text="@string/stun_test_summary"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
 
@@ -49,12 +48,12 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/warpGenerate"
+                    android:id="@+id/stunTest"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/warp_generate"
+                    android:text="@string/start"
                     android:textColor="?primaryOrTextPrimary" />
             </LinearLayout>
 

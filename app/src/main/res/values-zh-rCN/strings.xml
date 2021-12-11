@@ -416,7 +416,7 @@
     <string name="tun_implementation">TUN 实现</string>
     <string name="generating">正在生成…</string>
     <string name="warp_generate">生成配置</string>
-    <string name="warp_license">CloudFlare Warp 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意服务条款: https://www.cloudflare.com/application/terms/</string>
+    <string name="warp_license">[CloudFlare Wrap](https://blog.cloudflare.com/1111-warp-better-vpn/) 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意其 [服务条款](https://www.cloudflare.com/application/terms/)。</string>
     <string name="profile_traffic_statistics_summary">禁用后将不统计使用的流量</string>
     <string name="app_statistics_disabled">应用流量统计已禁用</string>
     <string name="enable_pcap">启用 Pcap</string>

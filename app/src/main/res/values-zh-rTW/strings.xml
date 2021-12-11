@@ -412,7 +412,7 @@
     <string name="wireguard_local_address">本機位址</string>
     <string name="wireguard_public_key">節點公開金鑰</string>
     <string name="wireguard_psk">節點預先共用金鑰</string>
-    <string name="warp_license">Cloudflare Warp 是一個免費的 WireGuard VPN 提供者。使用此服務表示您同意其服務條款：https://www.cloudflare.com/application/terms/</string>
+    <string name="warp_license">[CloudFlare Wrap](https://blog.cloudflare.com/1111-warp-better-vpn/) 是一個免費的 WireGuard VPN 提供者。使用此服務表示您同意其 [服務條款](https://www.cloudflare.com/application/terms/)。</string>
     <string name="warp_generate">產生設定檔</string>
     <string name="generating">正在產生……</string>
     <string name="enable_pcap">啟用 Pcap</string>

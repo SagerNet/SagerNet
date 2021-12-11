@@ -450,7 +450,7 @@
     <string name="wireguard_psk">Peer Pre-Shared Key</string>
 
     <string name="cloudflare_wrap" translatable="false">Warp</string>
-    <string name="warp_license">CloudFlare Wrap is a free WireGuard VPN provider. By using it, you agree to the TOS: https://www.cloudflare.com/application/terms/</string>
+    <string name="warp_license">[CloudFlare Wrap](https://blog.cloudflare.com/1111-warp-better-vpn/) is a free WireGuard VPN provider. By using it, you agree to the [TOS](https://www.cloudflare.com/application/terms/).</string>
     <string name="warp_generate">Generate Configuration</string>
     <string name="generating">Generating…</string>
     <string name="tun_implementation">TUN Implementation</string>
@@ -464,5 +464,23 @@
     <string name="pcap_notice">Pcap files will be saved to %s</string>
     <string name="naive_insecure_concurrency">Insecure Concurrency</string>
     <string name="naive_insecure_concurrency_summary">Use N concurrent tunnel connections to be more robust under bad network conditions. More connections make the tunneling easier to detect and less secure. This project strives for the strongest security against traffic analysis. Using it in an insecure way defeats its purpose. \n\nIf you must use this, try N=2 first to see if it solves your issues. Strongly recommend against using more than 4 connections here.</string>
+
+    <string name="stun_test">NAT behaviour discovery</string>
+    <string name="stun_test_summary">Determine the client\'s NAT mapping behaviour and the NAT filtering behaviour defined in RFC 5780 using STUN.</string>
+    <string name="start">Start</string>
+    <string name="recheck">Recheck</string>
+    <string name="stun_attest_loading">This may take a few minutes…</string>
+    <string name="nat_mapping_behaviour">NAT mapping behaviour</string>
+    <string name="endpoint_independent_no_nat">Endpoint independent (no NAT)</string>
+    <string name="endpoint_independent">Endpoint independent</string>
+    <string name="address_dependent">Address dependent</string>
+    <string name="address_and_port_dependent">Address and port dependent</string>
+    <string name="nat_mapping_endpoint_independent">`%s`\n\nIf you send two UDP packets from the same port to different places on the other side of the NAT, the NAT will use the same port to send those packets. This is the only RTC-friendly mapping behavior, and RFC 4787 requires it as a best practice (REQ-1) on all NATs. If both NATs do this, ICE will be able to connect directly, for all of the filtering behaviors described below. This is the most important setting to get right. This mapping type corresponds to the "cone NATs" in the classic STUN defined in [RFC 3489 section 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
+    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`\n\nIf you send two UDP packets from the same port to different places on the other side of the NAT, the NAT will use the same port to send those packets ff the destination address is the same; the destination port does not matter. Sending to two different hosts will use different ports. This will require the use of a TURN server if both sides are using it, unless neither side is doing port-specific filtering, and at least one is doing `endpoint independent filtering`. If you want webrtc or anything else that uses P2P UDP networking, ***do not configure your NAT like this***. This mapping type (loosely) corresponds to the "symmetric NATs" in the classic STUN defined in [RFC 3489 section 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
+
+    <string name="nat_filtering_behaviour">NAT filtering behaviour</string>
+    <string name="nat_filtering_endpoint_independent">`Endpoint independent`\n\nThis is the most permissive of the three. Once you have sent a UDP packet to anywhere on the other side of the NAT, anything else on the other side of the NAT can send UDP packets back to you on that port. This filtering policy gives sysadmins cold sweats, but RFC 4787 recommends its use when real-time-communication (or other things that require "application transparency"; eg gaming) is a priority. Note that this will not do a very good job of compensating if your NAT\'s mapping behavior is misconfigured. It is more important to get the mapping behavior right.</string>
+    <string name="nat_filtering_address_dependent">`Address dependent`\n\nThis is a middle ground that sysadmins have an easier time justifying, but my impression is that it is harder to configure. Once you have sent a UDP packet to a host on the other side of the NAT, the NAT will allow return UDP traffic from that host, regardless of the port that host sends from, but will not allow inbound UDP traffic from other addresses. If your mapping behavior is configured appropriately, this should function as well as `endpoint independent filtering`.</string>
+    <string name="nat_filtering_address_and_port_dependent">`Address and port dependent`\n\nThis is the strictest of the three. Your NAT will only allow return traffic from exactly where you sent your UDP packet. Using this is ***not recommended***, even if you configure mapping behavior correctly, because it will work poorly when the other NAT is misconfigured (fairly common).</string>
 
 </resources>
