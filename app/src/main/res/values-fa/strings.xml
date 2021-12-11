@@ -64,7 +64,6 @@
     <string name="require_transproxy">فعالسازی پراکسی شفاف به عنوان ورودی</string>
     <string name="port_local_dns">پورت DNS محلی</string>
     <string name="dns_hosts">بازنویسی دستی دامنه ها</string>
-    <string name="enable_fakedns">فعالسازی DNS جعلی</string>
     <string name="dns_routing_message">استفاده از DNS مستقیم برای مسیرهای خارج از پراکسی. احتمالا نشت DNS در این حالت وجود دارد</string>
     <string name="enable_dns_routing">فعالسازی مسیریابی DNS</string>
     <string name="remote_dns">DNS پروکسی</string>
@@ -358,7 +357,6 @@
     <string name="experimental_authenticated_length">طول هر بخش محموله دیگر قابل انعطاف نیست. این آزمایش نیاز به سرور دارد و سرویس گیرنده از نسخه مشابه v2ray-core استفاده می کند. انتظار می رود بروزرسانی های فوری بیشتری در مورد این آزمایش ارائه شود.</string>
     <string name="experimental_settings">آزمایشی</string>
     <string name="route_need_vpn">قانون مسیریابی %s متکی به در دسترس بودن VPN است، بنابراین نادیده گرفته می شود.</string>
-    <string name="foreground">پیش زمینه</string>
     <string name="foreground_detector_summary">این سرویس از قوانین مسیریابی بر اساس وضعیت پیش زمینه برنامه ها پشتیبانی می کند. اگر شروع نشده باشد، نتیجه همیشه در پس زمینه است.</string>
     <string name="route_for">قانون برای %s</string>
     <string name="app_no_launcher">برنامه فاقد رابط کاربری است.</string>
@@ -415,4 +413,5 @@
     <string name="app_traffic_statistics">آمار ترافیک برنامه</string>
     <string name="profile_traffic_statistics_summary">در صورت غیرفعال بودن، ترافیک استفاده شده محاسبه نمی شود</string>
     <string name="pcap_notice">فایل های Pcap در %s ذخیره می شوند</string>
+    <string name="probe_url">تست سفارشی URL</string>
 </resources>

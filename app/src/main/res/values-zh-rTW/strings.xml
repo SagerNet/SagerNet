@@ -368,7 +368,6 @@
     <string name="no_statistics">暫無統計資料</string>
     <string name="traffic_statistics_summary">可能增加電量消耗</string>
     <string name="route_need_vpn">路由規則 %s 需要 VPN 模式以生效，因此被忽略。</string>
-    <string name="foreground">前景</string>
     <string name="foreground_detector_summary">此服務為基於前景狀態的應用程式規則提供支援，如果它未被啟動，結果將永遠為背景。</string>
     <string name="route_for">%s 的規則</string>
     <string name="app_no_launcher">此應用程式沒有介面。</string>
@@ -422,4 +421,7 @@
     <string name="app_traffic_statistics">應用程式流量統計資料</string>
     <string name="resolve_destination_summary">如果目的地位址是一個網域，則基於 IPv6 策略傳出。</string>
     <string name="destination_override_summary">使用被偵測到的網域複寫目的地位址，而不是僅用於路由</string>
+    <string name="probe_url">自定義測試 URL</string>
+    <string name="group_filter_owners">擁有者</string>
+    <string name="route_opt_block_analysis">封鎖分析</string>
 </resources>
