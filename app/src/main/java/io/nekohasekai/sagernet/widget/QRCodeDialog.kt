@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.widget
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -35,15 +36,28 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ui.MainActivity
 import java.nio.charset.StandardCharsets
+import kotlin.math.roundToInt
 
 class QRCodeDialog() : DialogFragment() {
 
     companion object {
         private const val KEY_URL = "io.nekohasekai.sagernet.QRCodeDialog.KEY_URL"
         private val iso88591 = StandardCharsets.ISO_8859_1.newEncoder()
+        private val size by lazy {
+            try {
+                val displayMetrics: DisplayMetrics = app.resources.displayMetrics
+                val height: Int = displayMetrics.heightPixels
+                val width: Int = displayMetrics.widthPixels
+                ((if (height > width) width else height) * 0.8).roundToInt()
+            } catch (e: Exception) {
+                Logs.w(e)
+                app.resources.getDimensionPixelSize(R.dimen.qrcode_size)
+            }
+        }
     }
 
     constructor(url: String) : this() {
@@ -59,7 +73,6 @@ packages/apps/Settings/+/8a9ccfd/src/com/android/settings/wifi/dpp/WifiDppQrCode
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = try {
         val url = arguments?.getString(KEY_URL)!!
-        val size = resources.getDimensionPixelSize(R.dimen.qrcode_size)
         val hints = mutableMapOf<EncodeHintType, Any>()
         if (!iso88591.canEncode(url)) hints[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
         val qrBits = MultiFormatWriter().encode(url, BarcodeFormat.QR_CODE, size, size, hints)
