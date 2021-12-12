@@ -123,7 +123,7 @@ abstract class V2RayInstance(
                     }
                     is NaiveBean -> {
                         initPlugin("naive-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildNaiveConfig(port, mux)
+                        pluginConfigs[port] = profile.type to bean.buildNaiveConfig(port)
                     }
                     is PingTunnelBean -> {
                         if (needChain) error("PingTunnel is incompatible with chain")

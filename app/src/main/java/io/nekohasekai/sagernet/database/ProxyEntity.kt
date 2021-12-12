@@ -39,7 +39,6 @@ import io.nekohasekai.sagernet.fmt.hysteria.toUri
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
-import io.nekohasekai.sagernet.fmt.internal.InternalBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
@@ -48,10 +47,8 @@ import io.nekohasekai.sagernet.fmt.pingtunnel.toUri
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean
 import io.nekohasekai.sagernet.fmt.relaybaton.buildRelayBatonConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.buildShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.shadowsocksr.buildShadowsocksRConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
@@ -317,7 +314,7 @@ data class ProxyEntity(
                             }
                             is NaiveBean -> {
                                 append("\n\n")
-                                append(bean.buildNaiveConfig(port, needMux))
+                                append(bean.buildNaiveConfig(port))
                             }
                             is RelayBatonBean -> {
                                 append("\n\n")

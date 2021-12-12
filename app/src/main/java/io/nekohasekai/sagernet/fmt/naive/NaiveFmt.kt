@@ -65,7 +65,7 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
     return builder.toLink(if (proxyOnly) proto else "naive+$proto", false)
 }
 
-fun NaiveBean.buildNaiveConfig(port: Int, mux: Boolean): String {
+fun NaiveBean.buildNaiveConfig(port: Int): String {
     return JSONObject().also {
         it["listen"] = "socks://$LOCALHOST:$port"
         it["proxy"] = toUri(true)
