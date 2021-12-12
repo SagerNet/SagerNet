@@ -28,7 +28,6 @@ import com.github.shadowsocks.plugin.PluginManager
 import com.google.gson.JsonSyntaxException
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -51,7 +50,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
-import io.nekohasekai.sagernet.ktx.isRunning
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -279,7 +277,7 @@ fun buildV2RayConfig(
                 if (trafficSniffing) {
                     sniffing = InboundObject.SniffingObject().apply {
                         enabled = true
-                        destOverride =  listOf("http", "tls", "quic")
+                        destOverride = listOf("http", "tls", "quic")
                         routeOnly = !destinationOverride
                     }
                 }
@@ -857,7 +855,7 @@ fun buildV2RayConfig(
 
                         pastInboundTag = tag
                     })
-                } else if (bean.canMapping() && proxyEntity.needExternal() && needIncludeSelf) {
+                } else if (bean.canMapping() && proxyEntity.needExternal()) {
                     val mappingPort = mkPort()
                     when (bean) {
                         is BrookBean -> {
