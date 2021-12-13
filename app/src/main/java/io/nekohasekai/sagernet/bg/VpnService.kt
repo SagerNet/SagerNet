@@ -185,7 +185,7 @@ class VpnService : BaseVpnService(),
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
         val needBypassRootUid = data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
-        val needIncludeSelf = data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }
+        val needIncludeSelf = false/*data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }*/
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()

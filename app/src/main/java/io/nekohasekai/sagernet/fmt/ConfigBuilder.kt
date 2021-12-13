@@ -335,12 +335,6 @@ fun buildV2RayConfig(
             }
         }
 
-        val needIncludeSelf = proxy.balancerBean == null && proxies.size > 1 || extraProxies.any { (key, value) ->
-            val (_, balancer) = key
-            val (isBalancer, _) = balancer
-            isBalancer && value.size > 1
-        }
-
         var rootBalancer: RoutingObject.RuleObject? = null
         var rootObserver: MultiObservatoryObject.MultiObservatoryItem? = null
 
