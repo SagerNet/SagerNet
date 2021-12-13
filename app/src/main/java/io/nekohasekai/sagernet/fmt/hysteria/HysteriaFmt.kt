@@ -22,10 +22,7 @@ package io.nekohasekai.sagernet.fmt.hysteria
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.urlSafe
-import io.nekohasekai.sagernet.ktx.wrapUri
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.File
 
@@ -130,7 +127,12 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
             HysteriaBean.TYPE_BASE64 -> it["auth"] = authPayload
             HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload
         }
-        if (sni.isNotBlank()) it["server_name"] = sni
+        if (sni.isBlank() && finalAddress == LOCALHOST && !serverAddress.isIpAddress()) {
+            sni = serverAddress
+        }
+        if (sni.isNotBlank()) {
+            it["server_name"] = sni
+        }
         if (alpn.isNotBlank()) it["alpn"] = alpn
         if (caText.isNotBlank() && cacheFile != null) {
             val caFile = cacheFile()
