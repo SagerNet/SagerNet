@@ -45,10 +45,7 @@ import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import libcore.AppStats
-import libcore.Libcore
-import libcore.TrafficListener
-import libcore.Tun2ray
+import libcore.*
 import java.io.FileDescriptor
 import android.net.VpnService as BaseVpnService
 
@@ -185,7 +182,8 @@ class VpnService : BaseVpnService(),
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
         val needBypassRootUid = data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
-        val needIncludeSelf = false/*data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }*/
+        val tunImplementation = DataStore.tunImplementation
+        val needIncludeSelf = tunImplementation == TunImplementation.SYSTEM /*data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }*/
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
@@ -244,19 +242,24 @@ class VpnService : BaseVpnService(),
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
         conn = builder.establish() ?: throw NullConnectionException()
 
-        tun = Libcore.newTun2ray(
-            conn.fd,
-            VPN_MTU,
-            data.proxy!!.v2rayPoint,
-            PRIVATE_VLAN4_ROUTER,
-            DataStore.tunImplementation == TunImplementation.GVISOR,
-            DataStore.trafficSniffing,
-            DataStore.destinationOverride,
-            DataStore.enableLog,
-            data.proxy!!.config.dumpUid,
-            DataStore.appTrafficStatistics,
-            DataStore.enablePcap
-        )
+        val config = TunConfig().apply {
+            fileDescriptor = conn.fd
+            mtu = VPN_MTU
+            v2Ray = data.proxy!!.v2rayPoint
+            vlaN4Router = PRIVATE_VLAN4_ROUTER
+            implementation = tunImplementation
+            sniffing = DataStore.trafficSniffing
+            overrideDestination = DataStore.destinationOverride
+            debug = DataStore.enableLog
+            dumpUID = data.proxy!!.config.dumpUid
+            trafficStats = DataStore.appTrafficStatistics
+            pCap = DataStore.enablePcap
+            errorHandler = ErrorHandler {
+                stopRunner(false, it)
+            }
+        }
+
+        tun = Libcore.newTun2ray(config)
     }
 
     val appStats = mutableListOf<AppStats>()

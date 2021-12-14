@@ -194,7 +194,7 @@ object Key {
 
 object TunImplementation {
     const val GVISOR = 0
-    const val LWIP = 1
+    const val SYSTEM = 1
 }
 
 object TrojanProvider {

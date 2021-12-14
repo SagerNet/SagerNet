@@ -603,7 +603,7 @@
 
     <string-array name="tun_implementation">
         <item>gVisor</item>
-        <item>LwIP</item>
+        <item>System</item>
     </string-array>
 
 </resources>
