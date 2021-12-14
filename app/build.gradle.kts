@@ -69,7 +69,7 @@ dependencies {
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.mikepenz:aboutlibraries:8.9.4")
     implementation("com.jakewharton:process-phoenix:2.1.2")
-    implementation("com.esotericsoftware:kryo:5.2.0")
+    implementation("com.esotericsoftware:kryo:5.2.1")
     implementation("org.conscrypt:conscrypt-android:2.5.2")
     implementation("com.google.guava:guava:31.0.1-android")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
