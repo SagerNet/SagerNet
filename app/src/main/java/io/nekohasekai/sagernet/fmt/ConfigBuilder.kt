@@ -1132,16 +1132,6 @@ fun buildV2RayConfig(
             })
         }
 
-        for (dns in directDNS) {
-            if (!dns.isIpAddress()) continue
-
-            routing.rules.add(0, RoutingObject.RuleObject().apply {
-                type = "field"
-                outboundTag = TAG_DIRECT
-                ip = listOf(dns)
-            })
-        }
-
         val bypassIP = HashSet<String>()
         val bypassDomain = HashSet<String>()
 
@@ -1187,7 +1177,7 @@ fun buildV2RayConfig(
             dns.servers.addAll(directDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
-                        address = it
+                        address = if (!it.contains("://")) "udp+local://$it" else it
                         domains = bypassDomain.toList()
                         skipFallback = true
                     }

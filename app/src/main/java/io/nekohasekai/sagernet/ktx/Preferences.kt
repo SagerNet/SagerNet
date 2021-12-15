@@ -28,6 +28,15 @@ fun PreferenceDataStore.string(
     defaultValue: () -> String = { "" },
 ) = PreferenceProxy(name, defaultValue, ::getString, ::putString)
 
+fun PreferenceDataStore.stringNotBlack(
+    name: String,
+    defaultValue: () -> String = { "" },
+) = PreferenceProxy(name, defaultValue, { key, default ->
+    getString(key, default)?.takeIf { it.isNotBlank() } ?: default
+}, { key, value ->
+    putString(key, value.takeIf { it.isNotBlank() } ?: defaultValue())
+})
+
 fun PreferenceDataStore.boolean(
     name: String,
     defaultValue: () -> Boolean = { false },

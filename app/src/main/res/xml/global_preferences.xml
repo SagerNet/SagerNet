@@ -165,18 +165,15 @@
 
     <PreferenceCategory app:title="@string/cag_dns">
         <EditTextPreference
-            app:defaultValue="https://1.0.0.1/dns-query"
             app:icon="@drawable/ic_action_dns"
             app:key="remoteDns"
             app:title="@string/remote_dns"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="https+local://doh.pub/dns-query"
             app:key="directDns"
             app:title="@string/direct_dns"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="domain:googleapis.cn googleapis.com"
             app:icon="@drawable/ic_baseline_transform_24"
             app:key="dnsHosts"
             app:title="@string/dns_hosts"

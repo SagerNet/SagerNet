@@ -26,6 +26,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.ProxyInfo
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -275,15 +276,25 @@ class VpnService : BaseVpnService(),
         tun = Libcore.newTun2ray(config)
     }
 
+    private var systemDns: String? = null
     fun getSystemDnsServer(): String? {
-        val linkProperties = SagerNet.connectivity.getLinkProperties(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             SagerNet.connectivity.activeNetwork
         } else {
             SagerNet.connectivity.allNetworks.find {
                 SagerNet.connectivity.getNetworkInfo(it)?.isConnected == true
             }
-        } ?: return null) ?: return null
-        return linkProperties.dnsServers.firstOrNull()?.hostAddress
+        } ?: return systemDns
+        if (SagerNet.connectivity.getNetworkCapabilities(network)
+                ?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true
+        ) {
+            return systemDns
+        }
+        val systemDnsServer = network.let { SagerNet.connectivity.getLinkProperties(it) }?.dnsServers?.firstOrNull()?.hostAddress
+        if (!systemDnsServer.isNullOrBlank()) {
+            systemDns = systemDnsServer
+        }
+        return systemDns
     }
 
     val appStats = mutableListOf<AppStats>()

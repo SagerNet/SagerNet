@@ -112,10 +112,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
     // https://github.com/SagerNet/SagerNet/issues/180
-    var remoteDns by configurationStore.string(Key.REMOTE_DNS) { "https://dns.google/dns-query" }
-    var directDns by configurationStore.string(Key.DIRECT_DNS) { "https+local://doh.pub/dns-query" }
+    var remoteDns by configurationStore.stringNotBlack(Key.REMOTE_DNS) { "https://dns.google/dns-query" }
+    var directDns by configurationStore.stringNotBlack(Key.DIRECT_DNS) { "https+local://doh.pub/dns-query" }
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING)
-    var hosts by configurationStore.string(Key.DNS_HOSTS)
+    var hosts by configurationStore.string(Key.DNS_HOSTS) { "full:dns.google 8.8.4.4 2001:4860:4860::8844" }
 
     var securityAdvisory by configurationStore.boolean(Key.SECURITY_ADVISORY) { true }
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
@@ -151,6 +151,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         }
         if (configurationStore.getString(Key.TRANSPROXY_PORT) == null) {
             transproxyPort = transproxyPort
+        }
+        if (configurationStore.getString(Key.DNS_HOSTS) == null) {
+            hosts = hosts
+        }
+        if (configurationStore.getString(Key.REMOTE_DNS).isNullOrBlank()) {
+            remoteDns = remoteDns
+        }
+        if (configurationStore.getString(Key.DIRECT_DNS).isNullOrBlank()) {
+            directDns = directDns
         }
     }
 
@@ -289,7 +298,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 360 }
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
-    var systemDnsFinal by profileCacheStore.string("systemDnsFinal")
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
