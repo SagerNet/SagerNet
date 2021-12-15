@@ -19,23 +19,20 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
-import io.nekohasekai.sagernet.BuildConfig
-import io.nekohasekai.sagernet.bg.test.DebugInstance
 import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.app.observatory.OutboundStatus
+import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.bg.VpnService
+import io.nekohasekai.sagernet.bg.test.DebugInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.isExpert
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
-import libcore.Libcore
 import java.io.IOException
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -47,13 +44,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     lateinit var observatoryJob: Job
 
     override fun init() {
-        if (service is VpnService) {
-            Libcore.setProtector { service.protect(it) }
-            Libcore.setIPv6Mode(DataStore.ipv6Mode)
-        } else {
-            Libcore.setProtector { true }
-        }
-
         super.init()
 
         Logs.d(config.config)
@@ -83,11 +73,11 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             }
         }
 
-         if (BuildConfig.DEBUG) {
-             externalInstances[8964] = DebugInstance().apply {
-                 launch()
-             }
-         }
+        if (BuildConfig.DEBUG) {
+            externalInstances[8964] = DebugInstance().apply {
+                launch()
+            }
+        }
 
         SagerNet.started = true
     }

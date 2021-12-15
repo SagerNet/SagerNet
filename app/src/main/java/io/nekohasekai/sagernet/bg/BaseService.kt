@@ -265,7 +265,7 @@ class BaseService {
                 error("core not started")
             }
             try {
-                return Libcore.urlTestV2ray(
+                return Libcore.urlTest(
                     data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 5000
                 )
             } catch (e: Exception) {

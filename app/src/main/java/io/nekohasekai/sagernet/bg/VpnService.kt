@@ -243,9 +243,12 @@ class VpnService : BaseVpnService(),
 
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
+            protect = needIncludeSelf
+            protector = Protector { protect(it) }
             mtu = VPN_MTU
             v2Ray = data.proxy!!.v2rayPoint
             vlaN4Router = PRIVATE_VLAN4_ROUTER
+            iPv6Mode = ipv6Mode
             implementation = tunImplementation
             sniffing = DataStore.trafficSniffing
             overrideDestination = DataStore.destinationOverride

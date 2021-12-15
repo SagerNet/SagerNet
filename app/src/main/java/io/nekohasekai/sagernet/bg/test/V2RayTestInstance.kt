@@ -45,7 +45,7 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
                     try {
                         init()
                         launch()
-                        c.tryResume(Libcore.urlTestV2ray(v2rayPoint, "", link, timeout))
+                        c.tryResume(Libcore.urlTest(v2rayPoint, "", link, timeout))
                     } catch (e: Exception) {
                         c.tryResumeWithException(e)
                     }
