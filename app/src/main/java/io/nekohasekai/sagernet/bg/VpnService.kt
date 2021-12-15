@@ -31,7 +31,6 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
-import androidx.annotation.RequiresApi
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -181,9 +180,9 @@ class VpnService : BaseVpnService(),
 
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
-        val needBypassRootUid = data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
         val tunImplementation = DataStore.tunImplementation
         val needIncludeSelf = tunImplementation == TunImplementation.SYSTEM /*data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }*/
+        val needBypassRootUid = needIncludeSelf || data.proxy!!.config.outboundTagsAll.values.any { it.ptBean != null }
         if (proxyApps || needBypassRootUid) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
