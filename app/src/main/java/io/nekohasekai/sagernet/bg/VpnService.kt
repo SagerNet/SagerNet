@@ -239,12 +239,23 @@ class VpnService : BaseVpnService(),
         metered = DataStore.meteredNetwork
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
+
+        val systemDns = try {
+            getSystemDnsServer().also {
+                Logs.d("System DNS: $it")
+            }
+        } catch (e: Exception) {
+            Logs.w(e)
+            null
+        }
+
         conn = builder.establish() ?: throw NullConnectionException()
 
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
             protect = needIncludeSelf
             protector = Protector { protect(it) }
+            systemDNS = systemDns
             mtu = VPN_MTU
             v2Ray = data.proxy!!.v2rayPoint
             vlaN4Router = PRIVATE_VLAN4_ROUTER
@@ -262,6 +273,17 @@ class VpnService : BaseVpnService(),
         }
 
         tun = Libcore.newTun2ray(config)
+    }
+
+    fun getSystemDnsServer(): String? {
+        val linkProperties = SagerNet.connectivity.getLinkProperties(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SagerNet.connectivity.activeNetwork
+        } else {
+            SagerNet.connectivity.allNetworks.find {
+                SagerNet.connectivity.getNetworkInfo(it)?.isConnected == true
+            }
+        } ?: return null) ?: return null
+        return linkProperties.dnsServers.firstOrNull()?.hostAddress
     }
 
     val appStats = mutableListOf<AppStats>()
