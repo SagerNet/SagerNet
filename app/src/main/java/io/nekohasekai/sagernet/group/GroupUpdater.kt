@@ -89,9 +89,9 @@ abstract class GroupUpdater {
         }
 
         val dohHttpUrl = dohUrl?.toHttpUrlOrNull() ?: (if (connected) {
-            "https://1.0.0.1/dns-query"
+            "https://dns.google/dns-query"
         } else {
-            "https://223.5.5.5/dns-query"
+            "https://doh.pub/dns-query"
         }).toHttpUrl()
 
         Logs.d("Using doh url $dohHttpUrl")
