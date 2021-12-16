@@ -56,6 +56,11 @@ public class HysteriaBean extends AbstractBean {
     public Boolean disableMtuDiscovery;
 
     @Override
+    public boolean canMapping() {
+        return protocol != PROTOCOL_FAKETCP;
+    }
+
+    @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
         if (authPayloadType == null) authPayloadType = TYPE_NONE;

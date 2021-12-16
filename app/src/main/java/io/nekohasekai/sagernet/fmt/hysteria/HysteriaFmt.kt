@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.fmt.hysteria
 
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONObject
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -147,5 +148,7 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         if (streamReceiveWindow > 0) it["recv_window_conn"] = streamReceiveWindow
         if (connectionReceiveWindow > 0) it["recv_window"] = connectionReceiveWindow
         if (disableMtuDiscovery) it["disable_mtu_discovery"] = true
+
+        it["resolver"] = "127.0.0.1:" + DataStore.localDNSPort
     }.toStringPretty()
 }
