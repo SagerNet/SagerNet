@@ -107,6 +107,13 @@ fun JSONObject.parseHysteria(): HysteriaBean {
             authPayloadType = HysteriaBean.TYPE_STRING
             authPayload = it
         }
+        getStr("protocol")?.also {
+            when (it) {
+                "faketcp" -> {
+                    protocol = HysteriaBean.PROTOCOL_FAKETCP
+                }
+            }
+        }
         sni = getStr("server_name")
         alpn = getStr("alpn")
         allowInsecure = getBool("insecure")

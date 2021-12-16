@@ -437,6 +437,9 @@ object RawUpdater : GroupUpdater() {
 
         if (json is JSONObject) {
             when {
+                json.containsKey("up_mbps") -> {
+                    return listOf(json.parseHysteria())
+                }
                 json.containsKey("protocol_param") -> {
                     return listOf(json.parseShadowsocksR())
                 }
@@ -498,9 +501,6 @@ object RawUpdater : GroupUpdater() {
                 }
                 json.containsKey("remote_addr") -> {
                     return listOf(json.parseTrojanGo())
-                }
-                json.containsKey("up_mbps") -> {
-                    return listOf(json.parseHysteria())
                 }
                 else -> json.forEach { _, it ->
                     if (it is JSON) {
