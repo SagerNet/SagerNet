@@ -348,21 +348,7 @@ fun Project.setupPlugin(projectName: String) {
         flavorDimensions("vendor")
         productFlavors {
             create("oss")
-            create("fdroidArm64") {
-                versionNameSuffix = "-arm64"
-            }
-            create("fdroidArm") {
-                versionCode = verCode - 1
-                versionNameSuffix = "-arm"
-            }
-            create("fdroidX64") {
-                versionCode = verCode - 2
-                versionNameSuffix = "-x64"
-            }
-            create("fdroidX86") {
-                versionCode = verCode - 3
-                versionNameSuffix = "-x86"
-            }
+            create("fdroid")
             create("play") {
                 versionCode = verCode - 4
             }
@@ -467,21 +453,7 @@ fun Project.setupApp() {
         productFlavors {
             create("oss")
             create("expert")
-            create("fdroidArm64") {
-                versionNameSuffix = "-arm64"
-            }
-            create("fdroidArm") {
-                versionCode = verCode - 1
-                versionNameSuffix = "-arm"
-            }
-            create("fdroidX64") {
-                versionCode = verCode - 2
-                versionNameSuffix = "-x64"
-            }
-            create("fdroidX86") {
-                versionCode = verCode - 3
-                versionNameSuffix = "-x86"
-            }
+            create("fdroid")
             create("play") {
                 versionCode = verCode - 4
             }
