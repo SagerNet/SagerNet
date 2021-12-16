@@ -282,7 +282,6 @@
     <string name="copy_failed">Error de copia.</string>
     <string name="app_no_launcher">La aplicación no tiene interfaz.</string>
     <string name="route_for">Regla para %s</string>
-    <string name="foreground_status">Estado de primer plano</string>
     <string name="background">Fondo</string>
     <string name="route_need_vpn">La regla de enrutamiento %s depende de que la VPN esté en vigor, por lo que se ignora.</string>
     <string name="traffic_statistics_summary">Puede aumentar el consumo de energía</string>
@@ -318,7 +317,6 @@
     <string name="subscription">Suscripción</string>
     <string name="group_settings">Configuración de grupo</string>
     <string name="group_basic">Básico</string>
-    <string name="ss_aead_provider">Proveedor de Shadowsocks AEAD</string>
     <string name="trojan_provider">Proveedor de Trojan</string>
     <string name="protocol_settings">Configuración de protocolo</string>
     <string name="bypass_lan_in_core_only_sum">Si la opción Permitir que los clientes de hotspot de Lineage usen VPN no funciona, intente esto.</string>

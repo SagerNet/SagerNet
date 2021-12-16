@@ -368,7 +368,6 @@
     <string name="no_statistics">暫無統計資料</string>
     <string name="traffic_statistics_summary">可能增加電量消耗</string>
     <string name="route_need_vpn">路由規則 %s 需要 VPN 模式以生效，因此被忽略。</string>
-    <string name="foreground_detector_summary">此服務為基於前景狀態的應用程式規則提供支援，如果它未被啟動，結果將永遠為背景。</string>
     <string name="route_for">%s 的規則</string>
     <string name="app_no_launcher">此應用程式沒有介面。</string>
     <string name="copy_failed">複製失敗。</string>
