@@ -193,6 +193,7 @@ fun buildV2RayConfig(
             })
 
             disableFallbackIfMatch = true
+            continueOnError = true
 
             when (ipv6Mode) {
                 IPv6Mode.DISABLE -> {
