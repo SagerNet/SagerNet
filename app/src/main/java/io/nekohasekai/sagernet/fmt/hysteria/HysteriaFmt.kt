@@ -119,6 +119,9 @@ fun JSONObject.parseHysteria(): HysteriaBean {
 fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): String {
     return JSONObject().also {
         it["server"] = wrapUri()
+        if (protocol == HysteriaBean.PROTOCOL_FAKETCP) {
+            it["protocol"] = "faketcp"
+        }
         it["up_mbps"] = uploadMbps
         it["down_mbps"] = downloadMbps
         it["socks5"] = JSONObject(mapOf("listen" to "$LOCALHOST:$port"))

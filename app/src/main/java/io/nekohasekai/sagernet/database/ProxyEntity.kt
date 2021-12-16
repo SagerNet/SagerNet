@@ -263,7 +263,7 @@ data class ProxyEntity(
 
     fun haveStandardLink(): Boolean {
         return haveLink() && when (type) {
-            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_SSH, TYPE_WG -> false
+            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_SSH, TYPE_WG, TYPE_HYSTERIA -> false
             else -> true
         }
     }
@@ -280,13 +280,13 @@ data class ProxyEntity(
             is TrojanGoBean -> toUri()
             is NaiveBean -> toUri()
             is PingTunnelBean -> toUri()
-            is HysteriaBean -> toUri()
 
             is RelayBatonBean -> toUniversalLink()
             is BrookBean -> toUniversalLink()
             is ConfigBean -> toUniversalLink()
             is SSHBean -> toUniversalLink()
             is WireGuardBean -> toUniversalLink()
+            is HysteriaBean -> toUniversalLink()
             else -> null
         }
     }

@@ -38,6 +38,11 @@ public class HysteriaBean extends AbstractBean {
     public Integer authPayloadType;
     public String authPayload;
 
+    public static final int PROTOCOL_UDP = 0;
+    public static final int PROTOCOL_FAKETCP = 1;
+
+    public Integer protocol;
+
     public String obfuscation;
     public String sni;
     public String alpn;
@@ -55,6 +60,7 @@ public class HysteriaBean extends AbstractBean {
         super.initializeDefaultValues();
         if (authPayloadType == null) authPayloadType = TYPE_NONE;
         if (authPayload == null) authPayload = "";
+        if (protocol == null) protocol = PROTOCOL_UDP;
         if (obfuscation == null) obfuscation = "";
         if (sni == null) sni = "";
         if (alpn == null) alpn = "";
@@ -71,10 +77,11 @@ public class HysteriaBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeInt(authPayloadType);
         output.writeString(authPayload);
+        output.writeInt(protocol);
         output.writeString(obfuscation);
         output.writeString(sni);
         output.writeString(alpn);
@@ -96,6 +103,9 @@ public class HysteriaBean extends AbstractBean {
         super.deserialize(input);
         authPayloadType = input.readInt();
         authPayload = input.readString();
+        if (version >= 3) {
+            protocol = input.readInt();
+        }
         obfuscation = input.readString();
         sni = input.readString();
         if (version >= 2) {
