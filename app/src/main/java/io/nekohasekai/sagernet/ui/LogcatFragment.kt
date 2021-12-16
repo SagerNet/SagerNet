@@ -105,11 +105,11 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "libcore:D",
                 "v2ray-core:D",
 
+                "su:D",
                 "libtrojan:D",
                 "libnaive:D",
                 "libbrook:D",
                 "libhysteria:D",
-                "libpingtunnel:D",
                 "librelaybaton:D",
 
                 "*:S"
@@ -141,7 +141,8 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 val context = requireContext()
 
                 runOnDefaultDispatcher {
-                    val logFile = File.createTempFile("SagerNet ",
+                    val logFile = File.createTempFile(
+                        "SagerNet ",
                         ".log",
                         File(app.cacheDir, "log").also { it.mkdirs() })
 
