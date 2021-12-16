@@ -45,10 +45,22 @@ abstract class SagerDatabase : RoomDatabase() {
         private val instance by lazy {
             SagerNet.application.getDatabasePath(Key.DB_PROFILE).parentFile?.mkdirs()
             Room.databaseBuilder(SagerNet.application, SagerDatabase::class.java, Key.DB_PROFILE)
-                .addMigrations(*SagerDatabase_Migrations.build())
+                .addMigrations(
+                    SagerDatabase_Migration_1_2,
+                    SagerDatabase_Migration_2_3,
+                    SagerDatabase_Migration_3_4,
+                    SagerDatabase_Migration_4_5,
+                    SagerDatabase_Migration_5_6,
+                    SagerDatabase_Migration_6_7,
+                    SagerDatabase_Migration_7_8,
+                    SagerDatabase_Migration_8_9,
+                    SagerDatabase_Migration_9_10,
+                    SagerDatabase_Migration_10_11,
+                    SagerDatabase_Migration_11_12
+                )
+                .fallbackToDestructiveMigrationOnDowngrade()
                 .allowMainThreadQueries()
                 .enableMultiInstanceInvalidation()
-                .fallbackToDestructiveMigration()
                 .setQueryExecutor { GlobalScope.launch { it.run() } }
                 .build()
         }
