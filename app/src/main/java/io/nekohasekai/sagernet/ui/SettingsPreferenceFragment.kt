@@ -146,6 +146,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val remoteDns = findPreference<EditTextPreference>(Key.REMOTE_DNS)!!
         val directDns = findPreference<EditTextPreference>(Key.DIRECT_DNS)!!
         val enableDnsRouting = findPreference<SwitchPreference>(Key.ENABLE_DNS_ROUTING)!!
+        val disableDnsExpire = findPreference<SwitchPreference>(Key.DISABLE_DNS_EXPIRE)!!
 
         val requireTransproxy = findPreference<SwitchPreference>(Key.REQUIRE_TRANSPROXY)!!
         val transproxyPort = findPreference<EditTextPreference>(Key.TRANSPROXY_PORT)!!
@@ -222,8 +223,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         remoteDns.onPreferenceChangeListener = reloadListener
         directDns.onPreferenceChangeListener = reloadListener
-        enableDnsRouting.onPreferenceChangeListener = reloadListener
         dnsHosts.onPreferenceChangeListener = reloadListener
+        enableDnsRouting.onPreferenceChangeListener = reloadListener
+        disableDnsExpire.onPreferenceChangeListener = reloadListener
 
         portLocalDns.onPreferenceChangeListener = reloadListener
         ipv6Mode.onPreferenceChangeListener = reloadListener

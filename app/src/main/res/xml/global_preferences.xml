@@ -183,6 +183,11 @@
             app:key="enableDnsRouting"
             app:summary="@string/dns_routing_message"
             app:title="@string/enable_dns_routing" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_import_contacts_24"
+            app:key="disableDnsExpire"
+            app:summary="@string/disable_dns_expire_summary"
+            app:title="@string/disable_dns_expire" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/inbound_settings">

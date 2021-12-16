@@ -483,4 +483,7 @@
     <string name="nat_filtering_address_dependent">`Address dependent`\n\nThis is a middle ground that sysadmins have an easier time justifying, but my impression is that it is harder to configure. Once you have sent a UDP packet to a host on the other side of the NAT, the NAT will allow return UDP traffic from that host, regardless of the port that host sends from, but will not allow inbound UDP traffic from other addresses. If your mapping behavior is configured appropriately, this should function as well as `endpoint independent filtering`.</string>
     <string name="nat_filtering_address_and_port_dependent">`Address and port dependent`\n\nThis is the strictest of the three. Your NAT will only allow return traffic from exactly where you sent your UDP packet. Using this is ***not recommended***, even if you configure mapping behavior correctly, because it will work poorly when the other NAT is misconfigured (fairly common).</string>
 
+    <string name="disable_dns_expire">Disable DNS Expire</string>
+    <string name="disable_dns_expire_summary">Ignore DNS TTL until restart.</string>
+
 </resources>

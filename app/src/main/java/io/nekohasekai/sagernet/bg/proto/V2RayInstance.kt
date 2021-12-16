@@ -328,6 +328,10 @@ abstract class V2RayInstance(
                             "client"
                         )
 
+                        if (bean.protocol == HysteriaBean.PROTOCOL_FAKETCP) {
+                            commands.addAll(0, listOf("su", "-c"))
+                        }
+
                         processes.start(commands)
                     }
                 }

@@ -40,6 +40,7 @@ object Key {
     const val DIRECT_DNS = "directDns"
     const val ENABLE_DNS_ROUTING = "enableDnsRouting"
     const val DNS_HOSTS = "dnsHosts"
+    const val DISABLE_DNS_EXPIRE = "disableDnsExpire"
 
     const val IPV6_MODE = "ipv6Mode"
 

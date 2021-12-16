@@ -89,6 +89,9 @@ public class V2RayConfig {
         public Boolean disableFallback;
         public Boolean disableFallbackIfMatch;
 
+        public Boolean disableExpire;
+        public Boolean continueOnError;
+
     }
 
     public RoutingObject routing;

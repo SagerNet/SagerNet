@@ -24,10 +24,12 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.TAG_DNS_IN
 import io.nekohasekai.sagernet.fmt.TAG_DNS_OUT
+import io.nekohasekai.sagernet.fmt.TAG_SOCKS
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.*
 import io.nekohasekai.sagernet.ktx.isIpAddress
+import io.nekohasekai.sagernet.ktx.mkPort
 import libcore.Libcore
 import libcore.V2RayInstance
 import java.io.Closeable
@@ -46,8 +48,9 @@ class LocalDnsInstance : AbstractInstance,
                 servers = directDNS.map {
                     DnsObject.StringOrServerObject().apply {
                         valueY = DnsObject.ServerObject().apply {
-                            address = it
+                            address = if (!it.contains("://")) "udp+local://$it" else it
                         }
+                        disableExpire = true
                     }
                 }
             }
@@ -61,6 +64,15 @@ class LocalDnsInstance : AbstractInstance,
                         address = "1.0.0.1"
                         network = "tcp,udp"
                         port = 53
+                    })
+            }, InboundObject().apply {
+                tag = TAG_SOCKS
+                listen = LOCALHOST
+                port = mkPort()
+                protocol = "socks"
+                settings = LazyInboundConfigurationObject(this,
+                    SocksInboundConfigurationObject().apply {
+                        auth = "noauth"
                     })
             })
             outbounds = mutableListOf()
@@ -104,6 +116,11 @@ class LocalDnsInstance : AbstractInstance,
         val i = Libcore.newV2rayInstance()
         i.loadConfig(gson.toJson(config))
         i.start()
+
+        try {
+            Libcore.urlTest(i, TAG_SOCKS, DataStore.connectionTestURL, 2333)
+        } catch (ignored: Exception) {
+        }
 
         instance = i
     }
