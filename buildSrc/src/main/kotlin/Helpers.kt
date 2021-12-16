@@ -348,6 +348,7 @@ fun Project.setupPlugin(projectName: String) {
         flavorDimensions("vendor")
         productFlavors {
             create("oss")
+            create("fdroid")
             create("fdroidArm64") {
                 versionNameSuffix = "-arm64"
             }
