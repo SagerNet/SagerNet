@@ -348,7 +348,11 @@ fun Project.setupPlugin(projectName: String) {
         flavorDimensions("vendor")
         productFlavors {
             create("oss")
-            create("fdroid")
+            create("fdroid") {
+                splits.abi {
+                    isEnable = false
+                }
+            }
             create("play") {
                 versionCode = verCode - 4
             }
@@ -453,7 +457,11 @@ fun Project.setupApp() {
         productFlavors {
             create("oss")
             create("expert")
-            create("fdroid")
+            create("fdroid") {
+                splits.abi {
+                    isEnable = false
+                }
+            }
             create("play") {
                 versionCode = verCode - 4
             }
