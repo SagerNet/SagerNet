@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt
 
+import android.net.Uri
 import android.os.Build
 import cn.hutool.core.util.NumberUtil
 import cn.hutool.json.JSONArray
@@ -193,7 +194,6 @@ fun buildV2RayConfig(
             })
 
             disableFallbackIfMatch = true
-            continueOnError = true
 
             when (ipv6Mode) {
                 IPv6Mode.DISABLE -> {
@@ -1089,11 +1089,7 @@ fun buildV2RayConfig(
                 protocol = "dokodemo-door"
                 settings = LazyInboundConfigurationObject(this,
                     DokodemoDoorInboundConfigurationObject().apply {
-                        address = if (!remoteDns.first().isIpAddress()) {
-                            "1.0.0.1"
-                        } else {
-                            remoteDns.first()
-                        }
+                        address = "1.0.0.1"
                         network = "tcp,udp"
                         port = 53
                     })
@@ -1107,29 +1103,18 @@ fun buildV2RayConfig(
                     DNSOutboundConfigurationObject().apply {
                         userLevel = 1
                         var dns = remoteDns.first()
-                        if (dns.contains(":")) {
-                            val lPort = dns.substringAfterLast(":")
-                            dns = dns.substringBeforeLast(":")
-                            if (NumberUtil.isInteger(lPort)) {
-                                port = lPort.toInt()
+                        if (!dns.contains("://")) dns = "udp://$dns"
+                        val uri = Uri.parse(dns)
+                        address = uri.host
+                        if (uri.port > 0) {
+                            port = uri.port
+                        }
+                        uri.scheme?.also {
+                            if (it.startsWith("tcp") || it.startsWith("https")) {
+                                network = "tcp"
                             }
                         }
-                        if (dns.isIpAddress()) {
-                            address = dns
-                        } else if (dns.contains("://")) {
-                            network = "tcp"
-                            address = dns.substringAfter("://")
-                        }
                     })
-            })
-        }
-
-        for (dns in remoteDns) {
-            if (!dns.isIpAddress()) continue
-            routing.rules.add(0, RoutingObject.RuleObject().apply {
-                type = "field"
-                outboundTag = tagProxy
-                ip = listOf(dns)
             })
         }
 
@@ -1162,15 +1147,9 @@ fun buildV2RayConfig(
             }
         }
 
-        remoteDns.forEach {
-            var address = it
-            if (address.contains("://")) {
-                address = address.substringAfter("://")
-            }
-            "https://$address".toHttpUrlOrNull()?.apply {
-                if (!host.isIpAddress()) {
-                    bypassDomain.add("full:$host")
-                }
+        remoteDns.forEach { dns ->
+            Uri.parse(dns).host?.takeIf { !it.isIpAddress() }?.also {
+                bypassDomain.add("full:$it")
             }
         }
 
