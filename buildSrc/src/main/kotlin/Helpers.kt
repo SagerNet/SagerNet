@@ -336,12 +336,16 @@ fun Project.setupPlugin(projectName: String) {
         }
 
         splits.abi {
-            isEnable = true
-            isUniversalApk = false
+            if (requireFlavor().startsWith("Fdroid")) {
+                isEnable = false
+            } else {
+                isEnable = true
+                isUniversalApk = false
 
-            if (targetAbi.isNotBlank()) {
-                reset()
-                include(targetAbi)
+                if (targetAbi.isNotBlank()) {
+                    reset()
+                    include(targetAbi)
+                }
             }
         }
 
@@ -440,12 +444,16 @@ fun Project.setupApp() {
         }
 
         splits.abi {
-            isEnable = true
-            isUniversalApk = false
+            if (requireFlavor().startsWith("Fdroid")) {
+                isEnable = false
+            } else {
+                isEnable = true
+                isUniversalApk = false
 
-            if (targetAbi.isNotBlank()) {
-                reset()
-                include(targetAbi)
+                if (targetAbi.isNotBlank()) {
+                    reset()
+                    include(targetAbi)
+                }
             }
         }
 
