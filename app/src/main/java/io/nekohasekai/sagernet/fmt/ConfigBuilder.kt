@@ -1157,7 +1157,7 @@ fun buildV2RayConfig(
             dns.servers.addAll(directDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
-                        address = if (!it.contains("://")) "udp+local://$it" else it
+                        address = if (!it.contains("://") && it != "localhost") "udp+local://$it" else it
                         domains = bypassDomain.toList()
                         skipFallback = true
                     }
