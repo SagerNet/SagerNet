@@ -25,13 +25,15 @@ import android.Manifest
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.DnsResolver
 import android.net.Network
-import android.net.NetworkCapabilities
 import android.net.ProxyInfo
 import android.os.Build
+import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
+import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -39,20 +41,25 @@ import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.tryResume
+import io.nekohasekai.sagernet.ktx.tryResumeWithException
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import libcore.*
 import java.io.FileDescriptor
+import java.net.InetAddress
+import java.net.UnknownHostException
+import kotlin.coroutines.suspendCoroutine
 import android.net.VpnService as BaseVpnService
 
 class VpnService : BaseVpnService(),
     BaseService.Interface,
-    TrafficListener {
+    TrafficListener,
+    Protector,
+    LocalResolver {
 
     companion object {
         var instance: VpnService? = null
@@ -244,22 +251,11 @@ class VpnService : BaseVpnService(),
         active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
-        val systemDns = try {
-            getSystemDnsServer().also {
-                Logs.d("System DNS: $it")
-            }
-        } catch (e: Exception) {
-            Logs.w(e)
-            null
-        }
-
         conn = builder.establish() ?: throw NullConnectionException()
 
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
             protect = needIncludeSelf
-            protector = Protector { protect(it) }
-            systemDNS = systemDns
             mtu = VPN_MTU
             v2Ray = data.proxy!!.v2rayPoint
             vlaN4Router = PRIVATE_VLAN4_ROUTER
@@ -274,30 +270,81 @@ class VpnService : BaseVpnService(),
             errorHandler = ErrorHandler {
                 stopRunner(false, it)
             }
+
+            protector = this@VpnService
+            localResolver = this@VpnService
         }
 
         tun = Libcore.newTun2ray(config)
     }
 
-    private var systemDns: String? = null
-    fun getSystemDnsServer(): String? {
-        val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            SagerNet.connectivity.activeNetwork
-        } else {
-            SagerNet.connectivity.allNetworks.find {
-                SagerNet.connectivity.getNetworkInfo(it)?.isConnected == true
+    override fun lookupIP(network: String, domain: String): String {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return runBlocking {
+                suspendCoroutine { continuation ->
+                    val signal = CancellationSignal()
+                    val callback = object : DnsResolver.Callback<Collection<InetAddress>> {
+                        @Suppress("ThrowableNotThrown")
+                        override fun onAnswer(answer: Collection<InetAddress>, rcode: Int) {
+                            if (answer.isNotEmpty()) {
+                                continuation.tryResume(answer.mapNotNull { it.hostAddress }
+                                    .joinToString(","))
+                            } else {
+                                continuation.tryResumeWithException(Exception("unknown host"))
+                            }
+                        }
+
+                        override fun onError(error: DnsResolver.DnsException) {
+                            continuation.tryResumeWithException(error)
+                        }
+                    }
+                    val type = when {
+                        network.endsWith("4") -> DnsResolver.TYPE_A
+                        network.endsWith("6") -> DnsResolver.TYPE_AAAA
+                        else -> null
+                    }
+                    if (type != null) {
+                        DnsResolver.getInstance().query(
+                            underlyingNetwork,
+                            domain,
+                            type,
+                            DnsResolver.FLAG_NO_RETRY,
+                            Dispatchers.IO.asExecutor(),
+                            signal,
+                            callback
+                        )
+                    } else {
+                        DnsResolver.getInstance().query(
+                            underlyingNetwork,
+                            domain,
+                            DnsResolver.FLAG_NO_RETRY,
+                            Dispatchers.IO.asExecutor(),
+                            signal,
+                            callback
+                        )
+                    }
+                }
             }
-        } ?: return systemDns
-        if (SagerNet.connectivity.getNetworkCapabilities(network)
-                ?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true
-        ) {
-            return systemDns
+        } else {
+            val underlyingNetwork = underlyingNetwork ?: error("upstream network not found")
+            val answer = try {
+                underlyingNetwork.getAllByName(domain)
+            } catch (e: UnknownHostException) {
+                error("unknown host")
+            }
+            val filtered = mutableListOf<String>()
+            when {
+                network.endsWith("4") -> for (address in answer) {
+                    address.hostAddress?.takeIf { Validator.isIpv4(it) }?.also { filtered.add(it) }
+                }
+                network.endsWith("6") -> for (address in answer) {
+                    address.hostAddress?.takeIf { Validator.isIpv6(it) }?.also { filtered.add(it) }
+                }
+                else -> filtered.addAll(answer.mapNotNull { it.hostAddress })
+            }
+            if (filtered.isEmpty()) error("unknown host")
+            return filtered.joinToString(",")
         }
-        val systemDnsServer = network.let { SagerNet.connectivity.getLinkProperties(it) }?.dnsServers?.firstOrNull()?.hostAddress
-        if (!systemDnsServer.isNullOrBlank()) {
-            systemDns = systemDnsServer
-        }
-        return systemDns
     }
 
     val appStats = mutableListOf<AppStats>()
