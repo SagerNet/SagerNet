@@ -37,6 +37,8 @@ public class NaiveBean extends AbstractBean {
     public String proto;
     public String username;
     public String password;
+    public String sni;
+    public String certificates;
     public String extraHeaders;
     public Integer insecureConcurrency;
 
@@ -47,17 +49,21 @@ public class NaiveBean extends AbstractBean {
         if (proto == null) proto = "https";
         if (username == null) username = "";
         if (password == null) password = "";
+        if (sni == null) sni = "";
+        if (certificates == null) certificates = "";
         if (extraHeaders == null) extraHeaders = "";
         if (insecureConcurrency == null) insecureConcurrency = 0;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(proto);
         output.writeString(username);
         output.writeString(password);
+        output.writeString(sni);
+        output.writeString(certificates);
         output.writeString(extraHeaders);
         output.writeInt(insecureConcurrency);
     }
@@ -69,6 +75,10 @@ public class NaiveBean extends AbstractBean {
         proto = input.readString();
         username = input.readString();
         password = input.readString();
+        if (version >= 2) {
+            sni = input.readString();
+            certificates = input.readString();
+        }
         extraHeaders = input.readString();
         if (version >= 1) {
             insecureConcurrency = input.readInt();
