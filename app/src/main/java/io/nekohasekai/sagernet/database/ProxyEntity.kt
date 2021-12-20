@@ -303,10 +303,11 @@ data class ProxyEntity(
                     name = "${displayName()}.txt"
                 }
 
+                val enableMux = DataStore.enableMux
                 for ((isBalancer, chain) in config.index) {
                     chain.entries.forEachIndexed { index, (port, profile) ->
                         val needChain = !isBalancer && index != chain.size - 1
-                        val needMux = index == 0 && DataStore.enableMux
+                        val needMux = enableMux && (isBalancer || index == chain.size - 1)
                         when (val bean = profile.requireBean()) {
                             is TrojanGoBean -> {
                                 append("\n\n")

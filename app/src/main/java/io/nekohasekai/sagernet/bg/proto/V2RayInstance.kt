@@ -93,10 +93,11 @@ abstract class V2RayInstance(
     open fun init() {
         v2rayPoint = V2RayInstance()
         buildConfig()
+        val enableMux = DataStore.enableMux
         for ((isBalancer, chain) in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val needChain = !isBalancer && index != chain.size - 1
-                val mux = DataStore.enableMux && (isBalancer || chain.size == 0)
+                val needMux = enableMux && (isBalancer || index == chain.size - 1)
 
                 when (val bean = profile.requireBean()) {
                     is TrojanBean -> {
@@ -110,7 +111,7 @@ abstract class V2RayInstance(
                             TrojanProvider.TROJAN_GO -> {
                                 initPlugin("trojan-go-plugin")
                                 pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
-                                    port, mux
+                                    port, needMux
                                 )
                             }
                         }
@@ -118,7 +119,7 @@ abstract class V2RayInstance(
                     is TrojanGoBean -> {
                         initPlugin("trojan-go-plugin")
                         pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
-                            port, mux
+                            port, needMux
                         )
                     }
                     is NaiveBean -> {

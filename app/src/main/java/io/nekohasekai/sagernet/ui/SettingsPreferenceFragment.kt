@@ -130,6 +130,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val trafficSniffing = findPreference<Preference>(Key.TRAFFIC_SNIFFING)!!
         val enableMux = findPreference<Preference>(Key.ENABLE_MUX)!!
         val enableMuxForAll = findPreference<Preference>(Key.ENABLE_MUX_FOR_ALL)!!
+        enableMuxForAll.isEnabled = DataStore.enableMux
+
+        enableMux.setOnPreferenceChangeListener { _, newValue ->
+            enableMuxForAll.isEnabled = newValue as Boolean
+            needReload()
+            true
+        }
+
         val muxConcurrency = findPreference<EditTextPreference>(Key.MUX_CONCURRENCY)!!
         val tcpKeepAliveInterval = findPreference<EditTextPreference>(Key.TCP_KEEP_ALIVE_INTERVAL)!!
 
@@ -215,7 +223,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         showDirectSpeed.onPreferenceChangeListener = reloadListener
         domainStrategy.onPreferenceChangeListener = reloadListener
         trafficSniffing.onPreferenceChangeListener = reloadListener
-        enableMux.onPreferenceChangeListener = reloadListener
         enableMuxForAll.onPreferenceChangeListener = reloadListener
         muxConcurrency.onPreferenceChangeListener = reloadListener
         tcpKeepAliveInterval.onPreferenceChangeListener = reloadListener
