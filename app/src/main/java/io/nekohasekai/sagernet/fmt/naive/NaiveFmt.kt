@@ -36,8 +36,6 @@ fun parseNaive(link: String): NaiveBean {
         serverPort = url.port
         username = url.username
         password = url.password
-        sni = url.queryParameter("sni")
-        certificates = url.queryParameter("cert")
         extraHeaders = url.queryParameter("extra-headers")?.unUrlSafe()?.replace("\r\n", "\n")
         insecureConcurrency = url.queryParameter("insecure-concurrency")?.toIntOrNull()
         name = url.fragment
@@ -54,12 +52,6 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
         }
     }
     if (!proxyOnly) {
-        if (sni.isNotBlank()) {
-            builder.addQueryParameter("sni", sni)
-        }
-        if (certificates.isNotBlank()) {
-            builder.addQueryParameter("cert", certificates)
-        }
         if (extraHeaders.isNotBlank()) {
             builder.addQueryParameter("extra-headers", extraHeaders)
         }
@@ -76,7 +68,6 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
 fun NaiveBean.buildNaiveConfig(port: Int): String {
     return JSONObject().also {
         it["listen"] = "socks://$LOCALHOST:$port"
-        if (sni.isNotBlank()) serverAddress = sni
         it["proxy"] = toUri(true)
         if (extraHeaders.isNotBlank()) {
             it["extra-headers"] = extraHeaders.split("\n").joinToString("\r\n")

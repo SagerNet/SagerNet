@@ -230,26 +230,11 @@ abstract class V2RayInstance(
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val envMap = mutableMapOf<String, String>()
-
-                        if (bean.certificates.isNotBlank()) {
-                            val certFile = File(
-                                context.noBackupFilesDir,
-                                "naive_" + SystemClock.elapsedRealtime() + ".crt"
-                            )
-
-                            certFile.parentFile?.mkdirs()
-                            certFile.writeText(bean.certificates)
-                            cacheFiles.add(certFile)
-
-                            envMap["SSL_CERT_FILE"] = certFile.absolutePath
-                        }
-
                         val commands = mutableListOf(
                             initPlugin("naive-plugin").path, configFile.absolutePath
                         )
 
-                        processes.start(commands, envMap)
+                        processes.start(commands)
                     }
                     bean is PingTunnelBean -> {
                         if (needChain) error("PingTunnel is incompatible with chain")
