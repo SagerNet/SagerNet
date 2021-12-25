@@ -58,8 +58,13 @@ fun parseHysteria(url: String): HysteriaBean {
         link.queryParameter("alpn")?.also {
             alpn = it
         }
-        link.queryParameter("obfs")?.also {
+        link.queryParameter("obfsParam")?.also {
             obfuscation = it
+        }
+        link.queryParameter("protocol")?.also {
+            if (it == "faketcp") {
+                protocol = HysteriaBean.PROTOCOL_FAKETCP
+            }
         }
     }
 }
@@ -82,7 +87,11 @@ fun HysteriaBean.toUri(): String {
         builder.addQueryParameter("alpn", alpn)
     }
     if (obfuscation.isNotBlank()) {
-        builder.addQueryParameter("obfs", obfuscation)
+        builder.addQueryParameter("obfs", "xplus")
+        builder.addQueryParameter("obfsParam", obfuscation)
+    }
+    if (protocol == HysteriaBean.PROTOCOL_FAKETCP) {
+        builder.addQueryParameter("protocol", "faketcp")
     }
     if (name.isNotBlank()) {
         builder.encodedFragment(name.urlSafe())
