@@ -40,6 +40,7 @@ import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.proto.ProxyInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.fmt.Alerts
 import io.nekohasekai.sagernet.fmt.TAG_SOCKS
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
@@ -474,6 +475,11 @@ class BaseService {
                 } catch (e: ShadowsocksPluginPluginManager.PluginNotFoundException) {
                     Logs.d(e.readableMessage)
                     data.binder.missingPlugin("shadowsocks-" + e.plugin)
+                    stopRunner(false, null)
+                } catch (e: Alerts.RouteAlertException) {
+                    data.binder.broadcast {
+                        it.routeAlert(e.alert, e.routeName)
+                    }
                     stopRunner(false, null)
                 } catch (exc: Throwable) {
                     if (exc is ExpectedException) Logs.d(exc.readableMessage) else Logs.w(exc)

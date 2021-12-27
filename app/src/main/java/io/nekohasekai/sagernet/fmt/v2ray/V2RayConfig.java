@@ -119,7 +119,7 @@ public class V2RayConfig {
             // SagerNet private
 
             public List<Integer> uidList;
-            public List<String> appStatus;
+            public List<String> ssidList;
 
         }
 

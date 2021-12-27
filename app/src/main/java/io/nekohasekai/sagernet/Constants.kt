@@ -173,6 +173,8 @@ object Key {
     const val ROUTE_REVERSE = "routeReverse"
     const val ROUTE_REDIRECT = "routeRedirect"
     const val ROUTE_PACKAGES = "routePackages"
+    const val ROUTE_NETWORK_TYPE = "routeNetworkType"
+    const val ROUTE_SSID = "routeSSID"
 
     const val GROUP_NAME = "groupName"
     const val GROUP_TYPE = "groupType"
@@ -251,4 +253,11 @@ object Action {
     const val ABORT = "io.nekohasekai.sagernet.ABORT"
 
     const val EXTRA_PROFILE_ID = "io.nekohasekai.sagernet.EXTRA_PROFILE_ID"
+}
+
+object NetworkType {
+    const val DATA = "data"
+    const val WIFI = "wifi"
+    const val BLUETOOTH = "bluetooth"
+    const val ETHERNET = "ethernet"
 }

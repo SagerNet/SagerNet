@@ -429,7 +429,7 @@
     <string name="app_no_launcher">The app has no interface.</string>
     <string name="route_for">Rule for %s</string>
 
-    <string name="route_need_vpn">Routing rule %s relies on the VPN to be in effect, so it is ignored.</string>
+    <string name="route_need_vpn">Routing rule `%s` relies on the VPN to be in effect, so it is ignored.</string>
 
     <string name="app_traffic_statistics">App Traffic Statistics</string>
     <string name="profile_traffic_statistics">Profile Traffic Statistics</string>
@@ -485,5 +485,14 @@
 
     <string name="disable_dns_expire">Disable DNS Expire</string>
     <string name="disable_dns_expire_summary">Ignore DNS TTL until restart.</string>
+    <string name="route_ssid">Wi-Fi SSID</string>
+    <string name="missing_permission">Missing Permission</string>
+    <string name="location_disabled">Location Disabled</string>
+    <string name="route_need_ssid">Routing rule `%s` requires access to your **Wi-Fi SSID**, but this requires **background location permission** and **location enabled** on Android 8.0 or above</string>
+    <string name="network_type">Network Type</string>
+    <string name="network_data">Mobile Data</string>
+    <string name="network_wifi">Wi-Fi</string>
+    <string name="network_bt">Bluetooth</string>
+    <string name="network_eth">Ethernet</string>
 
 </resources>

@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.database
 
 import android.os.Parcelable
 import androidx.room.*
+import io.nekohasekai.sagernet.NetworkType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import kotlinx.parcelize.Parcelize
@@ -44,10 +45,12 @@ data class RuleEntity(
     var reverse: Boolean = false,
     var redirect: String = "",
     var packages: List<String> = listOf(),
+    @ColumnInfo(defaultValue = "") var ssid: String = "",
+    @ColumnInfo(defaultValue = "") var networkType: String = "",
 ) : Parcelable {
 
     fun isBypassRule(): Boolean {
-        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && port.isBlank() && sourcePort.isBlank() && network.isBlank() && source.isBlank() && protocol.isBlank() && attrs.isBlank() && !reverse && redirect.isBlank() && outbound == -1L && packages.isEmpty()
+        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && port.isBlank() && sourcePort.isBlank() && network.isBlank() && source.isBlank() && protocol.isBlank() && attrs.isBlank() && !reverse && redirect.isBlank() && outbound == -1L && packages.isEmpty() && ssid.isBlank() && networkType.isBlank()
     }
 
     fun displayName(): String {
@@ -67,6 +70,17 @@ data class RuleEntity(
         if (packages.isNotEmpty()) summary += app.getString(
             R.string.apps_message, packages.size
         ) + "\n"
+        if (ssid.isNotBlank()) summary += "$ssid\n"
+        if (networkType.isNotBlank()) {
+            summary += app.getString(
+                when (networkType) {
+                    NetworkType.WIFI -> R.string.network_wifi
+                    NetworkType.BLUETOOTH -> R.string.network_bt
+                    NetworkType.ETHERNET -> R.string.network_eth
+                    else -> R.string.network_data
+                }
+            ) + "\n"
+        }
         val lines = summary.trim().split("\n")
         return if (lines.size > 3) {
             lines.subList(0, 3).joinToString("\n", postfix = "\n...")

@@ -25,6 +25,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.RemoteException
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.widget.Toast
@@ -46,6 +47,7 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.databinding.LayoutMainBinding
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.Alerts
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
@@ -53,6 +55,7 @@ import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.widget.ListHolderListener
+import io.noties.markwon.Markwon
 import com.github.shadowsocks.plugin.PluginManager as ShadowsocksPluginPluginManager
 
 class MainActivity : ThemedActivity(),
@@ -397,13 +400,44 @@ class MainActivity : ThemedActivity(),
     }
 
     override fun routeAlert(type: Int, routeName: String) {
+        val markwon = Markwon.create(this)
         when (type) {
-            0 -> {
-                // need vpn
-
-                Toast.makeText(
-                    this, getString(R.string.route_need_vpn, routeName), Toast.LENGTH_SHORT
-                ).show()
+            Alerts.ROUTE_ALERT_NOT_VPN -> {
+                val message = markwon.toMarkdown(getString(R.string.route_need_vpn, routeName))
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+            Alerts.ROUTE_ALERT_NEED_BACKGROUND_LOCATION_ACCESS -> {
+                val message = markwon.toMarkdown(getString(R.string.route_need_ssid, routeName))
+                MaterialAlertDialogBuilder(this).setTitle(R.string.missing_permission)
+                    .setMessage(message)
+                    .setNeutralButton(R.string.open_settings) { _, _ ->
+                        try {
+                            startActivity(Intent().apply {
+                                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                data = Uri.fromParts(
+                                    "package", packageName, null
+                                )
+                            })
+                        } catch (e: Exception) {
+                            snackbar(e.readableMessage).show()
+                        }
+                    }
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+            }
+            Alerts.ROUTE_ALERT_LOCATION_DISABLED -> {
+                val message = markwon.toMarkdown(getString(R.string.route_need_ssid, routeName))
+                MaterialAlertDialogBuilder(this).setTitle(R.string.location_disabled)
+                    .setMessage(message)
+                    .setNeutralButton(R.string.open_settings) { _, _ ->
+                        try {
+                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        } catch (e: Exception) {
+                            snackbar(e.readableMessage).show()
+                        }
+                    }
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
             }
         }
     }

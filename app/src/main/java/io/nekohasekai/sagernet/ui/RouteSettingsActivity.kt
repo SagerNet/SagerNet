@@ -41,7 +41,9 @@ import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.NetworkType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
@@ -93,6 +95,8 @@ class RouteSettingsActivity(
         DataStore.routeReverse = reverse
         DataStore.routeRedirect = redirect
         DataStore.routePackages = packages.joinToString("\n")
+        DataStore.routeNetworkType = networkType
+        DataStore.routeSSID = ssid
     }
 
     fun RuleEntity.serialize() {
@@ -114,6 +118,8 @@ class RouteSettingsActivity(
         reverse = DataStore.routeReverse
         redirect = DataStore.routeRedirect
         packages = DataStore.routePackages.split("\n").filter { it.isNotBlank() }
+        networkType = DataStore.routeNetworkType
+        ssid = DataStore.routeSSID
 
         if (DataStore.editingId == 0L) {
             enabled = true
@@ -122,7 +128,7 @@ class RouteSettingsActivity(
 
     fun needSave(): Boolean {
         if (!DataStore.dirty) return false
-        if (DataStore.routePackages.isBlank() && DataStore.routeDomain.isBlank() && DataStore.routeIP.isBlank() && DataStore.routePort.isBlank() && DataStore.routeSourcePort.isBlank() && DataStore.routeNetwork.isBlank() && DataStore.routeSource.isBlank() && DataStore.routeProtocol.isBlank() && DataStore.routeAttrs.isBlank() && !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank())) {
+        if (DataStore.routePackages.isBlank() && DataStore.routeDomain.isBlank() && DataStore.routeIP.isBlank() && DataStore.routePort.isBlank() && DataStore.routeSourcePort.isBlank() && DataStore.routeNetwork.isBlank() && DataStore.routeSource.isBlank() && DataStore.routeProtocol.isBlank() && DataStore.routeAttrs.isBlank() && !(DataStore.routeReverse && DataStore.routeRedirect.isNotBlank()) && DataStore.routeSSID.isBlank() && DataStore.routeNetworkType.isNotBlank()) {
             return false
         }
         return true
@@ -161,12 +167,16 @@ class RouteSettingsActivity(
     lateinit var reverse: SwitchPreference
     lateinit var redirect: EditTextPreference
     lateinit var apps: AppListPreference
+    lateinit var networkType: SimpleMenuPreference
+    lateinit var ssid: EditTextPreference
 
     fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
         outbound = findPreference(Key.ROUTE_OUTBOUND)!!
         reverse = findPreference(Key.ROUTE_REVERSE)!!
         redirect = findPreference(Key.ROUTE_REDIRECT)!!
         apps = findPreference(Key.ROUTE_PACKAGES)!!
+        networkType = findPreference(Key.ROUTE_NETWORK_TYPE)!!
+        ssid = findPreference(Key.ROUTE_SSID)!!
 
         fun updateReverse(enabled: Boolean = outbound.value == "3") {
             reverse.isVisible = enabled
@@ -202,6 +212,17 @@ class RouteSettingsActivity(
                     this@RouteSettingsActivity, AppListActivity::class.java
                 )
             )
+            true
+        }
+
+        fun updateNetwork(newValue: String = networkType.value) {
+            ssid.isVisible = newValue == NetworkType.WIFI
+        }
+
+        updateNetwork()
+
+        networkType.setOnPreferenceChangeListener { _, newValue ->
+            updateNetwork(newValue as String)
             true
         }
     }

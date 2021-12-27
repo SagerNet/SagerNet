@@ -611,4 +611,20 @@
         <item>FakeTCP (Root Required)</item>
     </string-array>
 
+    <string-array name="network_type_entry">
+        <item>@string/not_set</item>
+        <item>@string/network_data</item>
+        <item>@string/network_wifi</item>
+        <item>@string/network_bt</item>
+        <item>@string/network_eth</item>
+    </string-array>
+
+    <string-array name="network_type_value">
+        <item />
+        <item>data</item>
+        <item>wifi</item>
+        <item>bluetooth</item>
+        <item>ethernet</item>
+    </string-array>
+
 </resources>

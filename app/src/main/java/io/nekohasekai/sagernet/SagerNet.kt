@@ -31,7 +31,12 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.location.LocationManager
 import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.wifi.WifiInfo
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.StrictMode
 import android.os.UserManager
@@ -158,6 +163,8 @@ class SagerNet : Application(),
         val notification by lazy { application.getSystemService<NotificationManager>()!! }
         val user by lazy { application.getSystemService<UserManager>()!! }
         val uiMode by lazy { application.getSystemService<UiModeManager>()!! }
+        val wifi by lazy { application.getSystemService<WifiManager>()!! }
+        val location by lazy { application.getSystemService<LocationManager>()!! }
         val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
         val directBootSupported by lazy {
             Build.VERSION.SDK_INT >= 24 && try {
@@ -204,6 +211,38 @@ class SagerNet : Application(),
                     )
                 )
             }
+        }
+
+        fun reloadNetworkType(network: Network?) {
+            val capabilities = connectivity.getNetworkCapabilities(network) ?: return
+            val networkType = when {
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "wifi"
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI_AWARE) -> "wifi"
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> "bluetooth"
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> "ethernet"
+                else -> "data"
+            }
+            Libcore.setNetworkType(networkType)
+        }
+
+        fun reloadSSID(network: Network?) {
+            var ssid: String? = null
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                when (val transportInfo = connectivity.getNetworkCapabilities(network)?.transportInfo) {
+                    is WifiInfo -> {
+                        ssid = transportInfo.ssid
+                        Logs.d("Updated Wi-Fi SSID from transportInfo: ${transportInfo.ssid}")
+                    }
+                    else -> {
+                        Logs.d("transportInfo is ${transportInfo?.javaClass?.simpleName}")
+                    }
+                }
+            } else {
+                val wifiInfo = wifi.connectionInfo
+                ssid = wifiInfo?.ssid
+                Logs.d("Updated Wi-Fi SSID from WifiManager: ${wifiInfo.ssid}")
+            }
+            Libcore.setWifiSSID(ssid?.trim { it == '"' } ?: "")
         }
 
         fun startService() = ContextCompat.startForegroundService(

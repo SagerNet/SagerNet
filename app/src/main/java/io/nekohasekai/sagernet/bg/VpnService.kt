@@ -143,7 +143,11 @@ class VpnService : BaseVpnService(),
         return Service.START_NOT_STICKY
     }
 
-    override suspend fun preInit() = DefaultNetworkListener.start(this) { underlyingNetwork = it }
+    override suspend fun preInit() = DefaultNetworkListener.start(this) {
+        underlyingNetwork = it
+        SagerNet.reloadSSID(it)
+        SagerNet.reloadNetworkType(it)
+    }
 
     inner class NullConnectionException : NullPointerException(),
         BaseService.ExpectedException {
