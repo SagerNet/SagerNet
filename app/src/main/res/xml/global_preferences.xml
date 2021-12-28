@@ -175,7 +175,7 @@
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_transform_24"
-            app:key="dnsHosts"
+            app:key="dnsHosts0"
             app:title="@string/dns_hosts"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
