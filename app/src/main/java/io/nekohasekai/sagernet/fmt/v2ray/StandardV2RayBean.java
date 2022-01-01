@@ -245,6 +245,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 break;
             }
         }
+
+        if (this instanceof VMessBean) {
+            output.writeBoolean(((VMessBean) this).experimentalAuthenticatedLength);
+            output.writeBoolean(((VMessBean) this).experimentalNoTerminationSignal);
+        }
     }
 
     @Override
