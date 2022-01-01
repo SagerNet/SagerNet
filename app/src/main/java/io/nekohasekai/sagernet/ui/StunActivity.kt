@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutStunBinding
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
@@ -59,7 +60,7 @@ class StunActivity : ThemedActivity() {
         binding.resultLayout.isVisible = false
         runOnDefaultDispatcher {
             val result = try {
-                Libcore.stunTest("")
+                Libcore.stunTest("", DataStore.socksPort)
             } catch (e: Exception) {
                 onMainDispatcher {
                     AlertDialog.Builder(this@StunActivity)
