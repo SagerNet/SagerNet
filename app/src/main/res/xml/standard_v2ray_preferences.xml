@@ -23,11 +23,6 @@
             app:icon="@drawable/ic_baseline_person_24"
             app:key="serverUserId"
             app:title="@string/uuid" />
-        <EditTextPreference
-            app:icon="@drawable/ic_maps_360"
-            app:key="serverAlterId"
-            app:title="@string/alter_id"
-            app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/vmess_encryption_entry"
             app:entryValues="@array/vmess_encryption_value"

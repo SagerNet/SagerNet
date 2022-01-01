@@ -45,7 +45,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
 
         var protocol = url.username
         bean.type = protocol
-        bean.alterId = url.password.substringAfterLast('-').toInt()
+//        bean.alterId = url.password.substringAfterLast('-').toInt()
         bean.uuid = url.password.substringBeforeLast('-')
 
         if (protocol.endsWith("+tls")) {
@@ -214,7 +214,7 @@ fun parseV2RayN(link: String): VMessBean {
     bean.serverPort = json.getInt("port") ?: 1080
     bean.encryption = json.getStr("scy") ?: ""
     bean.uuid = json.getStr("id") ?: ""
-    bean.alterId = json.getInt("aid") ?: 0
+//    bean.alterId = json.getInt("aid") ?: 0
     bean.type = json.getStr("net") ?: ""
     bean.headerType = json.getStr("type") ?: ""
     bean.host = json.getStr("host") ?: ""
@@ -318,7 +318,7 @@ fun VMessBean.toV2rayN(): String {
         it["add"] = serverAddress
         it["port"] = serverPort
         it["id"] = uuid
-        it["aid"] = alterId
+//        it["aid"] = alterId
         it["net"] = type
         it["host"] = host
         it["path"] = path
@@ -346,7 +346,7 @@ fun VMessBean.toV2rayN(): String {
 }
 
 fun StandardV2RayBean.toUri(standard: Boolean = true): String {
-    if (this is VMessBean && alterId > 0) return toV2rayN()
+//    if (this is VMessBean && alterId > 0) return toV2rayN()
 
     val builder = linkBuilder().username(uuid).host(serverAddress).port(serverPort)
         .addQueryParameter("type", type).addQueryParameter("encryption", encryption)

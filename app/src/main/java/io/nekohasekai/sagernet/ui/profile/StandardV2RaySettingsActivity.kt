@@ -45,9 +45,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverPort = serverPort
         DataStore.serverUserId = uuid
         DataStore.serverEncryption = encryption
-        if (this is VMessBean) {
-            DataStore.serverAlterId = alterId
-        }
         DataStore.serverNetwork = type
         DataStore.serverHeader = headerType
         DataStore.serverHost = host
@@ -79,9 +76,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         serverPort = DataStore.serverPort
         uuid = DataStore.serverUserId
         encryption = DataStore.serverEncryption
-        if (this is VMessBean) {
-            alterId = DataStore.serverAlterId
-        }
         type = DataStore.serverNetwork
         headerType = DataStore.serverHeader
         host = DataStore.serverHost
@@ -137,10 +131,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         securityCategory = findPreference(Key.SERVER_SECURITY_CATEGORY)!!
         wsCategory = findPreference(Key.SERVER_WS_CATEGORY)!!
 
-        val alterId = findPreference<EditTextPreference>(Key.SERVER_ALTER_ID)!!
         if (bean is VLESSBean) {
-            alterId.isVisible = false
-
             encryption.setEntries(R.array.vless_encryption_entry)
             encryption.setEntryValues(R.array.vless_encryption_value)
 
@@ -149,8 +140,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 encryption.value = vev[0]
             }
         } else {
-            alterId.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
-
             encryption.setEntries(R.array.vmess_encryption_entry)
             encryption.setEntryValues(R.array.vmess_encryption_value)
 

@@ -102,7 +102,6 @@
     <string name="obfs">Obfs</string>
     <string name="obfs_param">Obfs Param</string>
     <string name="uuid">User ID</string>
-    <string name="alter_id">Alter ID</string>
     <string name="security">Transport layer encryption</string>
     <string name="network">Network</string>
     <string name="header_type">Header Type</string>
@@ -340,8 +339,6 @@
     <string name="delete_group_prompt">Are you sure you want to remove this group?</string>
     <string name="force_resolve">Force Resolve</string>
     <string name="force_resolve_sum">Resolve all domain names to IP addresses when updating. Host and SNI will be automatically appended if possible</string>
-    <string name="force_vmess_aead">Force VMess AEAD</string>
-    <string name="force_vmess_aead_sum">Rewrite VMess configuration with insecure authentication method to AEAD (alterId 0)</string>
     <string name="deduplication_sum">Remove duplicate configurations when updating</string>
     <string name="raw">Raw</string>
     <string name="update_settings">Update Settings</string>

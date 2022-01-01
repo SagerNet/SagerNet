@@ -64,7 +64,6 @@ class GroupSettingsActivity(
         DataStore.subscriptionToken = subscription.token
         DataStore.subscriptionForceResolve = subscription.forceResolve
         DataStore.subscriptionDeduplication = subscription.deduplication
-        DataStore.subscriptionForceVMessAEAD = subscription.forceVMessAEAD
         DataStore.subscriptionUpdateWhenConnectedOnly = subscription.updateWhenConnectedOnly
         DataStore.subscriptionUserAgent = subscription.customUserAgent
         DataStore.subscriptionAutoUpdate = subscription.autoUpdate
@@ -85,7 +84,6 @@ class GroupSettingsActivity(
                 token = DataStore.subscriptionToken
                 forceResolve = DataStore.subscriptionForceResolve
                 deduplication = DataStore.subscriptionDeduplication
-                forceVMessAEAD = DataStore.subscriptionForceVMessAEAD
                 updateWhenConnectedOnly = DataStore.subscriptionUpdateWhenConnectedOnly
                 customUserAgent = DataStore.subscriptionUserAgent
                 autoUpdate = DataStore.subscriptionAutoUpdate
@@ -123,14 +121,12 @@ class GroupSettingsActivity(
         val subscriptionType = findPreference<SimpleMenuPreference>(Key.SUBSCRIPTION_TYPE)!!
         val subscriptionLink = findPreference<EditTextPreference>(Key.SUBSCRIPTION_LINK)!!
         val subscriptionToken = findPreference<EditTextPreference>(Key.SUBSCRIPTION_TOKEN)!!
-        val subscriptionForceVMessAEAD = findPreference<SwitchPreference>(Key.SUBSCRIPTION_FORCE_VMESS_AEAD)!!
         val subscriptionUserAgent = findPreference<UserAgentPreference>(Key.SUBSCRIPTION_USER_AGENT)!!
 
         fun updateSubscriptionType(subscriptionType: Int = DataStore.subscriptionType) {
             val isRaw = subscriptionType == SubscriptionType.RAW
             val isOOCv1 = subscriptionType == SubscriptionType.OOCv1
 
-            subscriptionForceVMessAEAD.isVisible = isRaw
             subscriptionLink.isVisible = !isOOCv1
             subscriptionToken.isVisible = isOOCv1
             subscriptionUserAgent.isOOCv1 = isOOCv1

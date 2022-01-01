@@ -40,7 +40,6 @@ public class SubscriptionBean extends Serializable {
     public String token;
     public Boolean forceResolve;
     public Boolean deduplication;
-    public Boolean forceVMessAEAD;
     public Boolean updateWhenConnectedOnly;
     public String customUserAgent;
     public Boolean autoUpdate;
@@ -67,7 +66,7 @@ public class SubscriptionBean extends Serializable {
 
     @Override
     public void serializeToBuffer(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
 
         output.writeInt(type);
 
@@ -79,7 +78,6 @@ public class SubscriptionBean extends Serializable {
 
         output.writeBoolean(forceResolve);
         output.writeBoolean(deduplication);
-        output.writeBoolean(forceVMessAEAD);
         output.writeBoolean(updateWhenConnectedOnly);
         output.writeString(customUserAgent);
         output.writeBoolean(autoUpdate);
@@ -103,7 +101,7 @@ public class SubscriptionBean extends Serializable {
     }
 
     public void serializeForShare(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
 
         output.writeInt(type);
 
@@ -115,7 +113,6 @@ public class SubscriptionBean extends Serializable {
 
         output.writeBoolean(forceResolve);
         output.writeBoolean(deduplication);
-        output.writeBoolean(forceVMessAEAD);
         output.writeBoolean(updateWhenConnectedOnly);
         output.writeString(customUserAgent);
 
@@ -144,7 +141,7 @@ public class SubscriptionBean extends Serializable {
         }
         forceResolve = input.readBoolean();
         deduplication = input.readBoolean();
-        forceVMessAEAD = input.readBoolean();
+        if (version < 2) input.readBoolean();
         updateWhenConnectedOnly = input.readBoolean();
         customUserAgent = input.readString();
         autoUpdate = input.readBoolean();
@@ -181,7 +178,7 @@ public class SubscriptionBean extends Serializable {
         }
         forceResolve = input.readBoolean();
         deduplication = input.readBoolean();
-        forceVMessAEAD = input.readBoolean();
+        if (version < 1) input.readBoolean();
         updateWhenConnectedOnly = input.readBoolean();
         customUserAgent = input.readString();
 
@@ -204,7 +201,6 @@ public class SubscriptionBean extends Serializable {
         if (token == null) token = "";
         if (forceResolve == null) forceResolve = false;
         if (deduplication == null) deduplication = false;
-        if (forceVMessAEAD == null) forceVMessAEAD = false;
         if (updateWhenConnectedOnly == null) updateWhenConnectedOnly = false;
         if (customUserAgent == null) customUserAgent = "";
         if (autoUpdate == null) autoUpdate = false;

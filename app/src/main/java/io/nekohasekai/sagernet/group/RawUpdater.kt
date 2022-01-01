@@ -105,10 +105,6 @@ object RawUpdater : GroupUpdater() {
 
         if (subscription.forceResolve) forceResolve(httpClient, proxies, proxyGroup.id)
 
-        if (subscription.forceVMessAEAD) {
-            proxies.filterIsInstance<VMessBean>().forEach { it.alterId = 0 }
-        }
-
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
@@ -288,7 +284,7 @@ object RawUpdater : GroupUpdater() {
                                     "server" -> bean.serverAddress = opt.value as String
                                     "port" -> bean.serverPort = opt.value.toString().toInt()
                                     "uuid" -> bean.uuid = opt.value as String
-                                    "alterId" -> bean.alterId = opt.value.toString().toInt()
+//                                    "alterId" -> bean.alterId = opt.value.toString().toInt()
                                     "cipher" -> bean.encryption = opt.value as String
                                     "network" -> bean.type = opt.value as String
                                     "tls" -> bean.security = if (opt.value?.toString() == "true") "tls" else ""
@@ -701,7 +697,7 @@ object RawUpdater : GroupUpdater() {
                                 proxies.add(vmessBean.clone().apply {
                                     uuid = user.id
                                     encryption = user.security
-                                    alterId = user.alterId
+//                                    alterId = user.alterId
                                     name = tag ?: displayName() + " - ${user.security} - ${user.id}"
                                 })
                             }

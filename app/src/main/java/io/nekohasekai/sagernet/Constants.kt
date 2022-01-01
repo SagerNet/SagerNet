@@ -116,7 +116,6 @@ object Key {
     const val SERVER_OBFS_PARAM = "serverObfsParam"
 
     const val SERVER_USER_ID = "serverUserId"
-    const val SERVER_ALTER_ID = "serverAlterId"
     const val SERVER_SECURITY = "serverSecurity"
     const val SERVER_NETWORK = "serverNetwork"
     const val SERVER_HEADER = "serverHeader"
@@ -186,7 +185,6 @@ object Key {
     const val SUBSCRIPTION_TOKEN = "subscriptionToken"
     const val SUBSCRIPTION_FORCE_RESOLVE = "subscriptionForceResolve"
     const val SUBSCRIPTION_DEDUPLICATION = "subscriptionDeduplication"
-    const val SUBSCRIPTION_FORCE_VMESS_AEAD = "subscriptionForceVMessAEAD"
     const val SUBSCRIPTION_UPDATE = "subscriptionUpdate"
     const val SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY = "subscriptionUpdateWhenConnectedOnly"
     const val SUBSCRIPTION_USER_AGENT = "subscriptionUserAgent"

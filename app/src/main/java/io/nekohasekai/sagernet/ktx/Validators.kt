@@ -73,7 +73,6 @@ fun AbstractBean.isInsecure(): ValidateResult {
             return ResultInsecure(R.raw.mkcp_no_seed)
         }
         if (allowInsecure) return ResultInsecure(R.raw.insecure)
-        if (alterId > 0) return ResultDeprecated(R.raw.vmess_md5_auth)
     } else if (this is VLESSBean) {
         if (security in arrayOf("", "none")) {
             return ResultInsecure(R.raw.not_encrypted)

@@ -58,14 +58,7 @@
             app:key="subscriptionDeduplication"
             app:summary="@string/deduplication_sum"
             app:title="@string/deduplication" />
-
-        <SwitchPreference
-            app:defaultValue="true"
-            app:icon="@drawable/ic_baseline_legend_toggle_24"
-            app:key="subscriptionForceVMessAEAD"
-            app:summary="@string/force_vmess_aead_sum"
-            app:title="@string/force_vmess_aead" />
-
+        
     </PreferenceCategory>
 
     <PreferenceCategory

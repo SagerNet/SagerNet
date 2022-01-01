@@ -225,7 +225,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverObfsParam by profileCacheStore.string(Key.SERVER_OBFS_PARAM)
 
     var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)
-    var serverAlterId by profileCacheStore.stringToInt(Key.SERVER_ALTER_ID)
     var serverSecurity by profileCacheStore.string(Key.SERVER_SECURITY)
     var serverNetwork by profileCacheStore.string(Key.SERVER_NETWORK)
     var serverHeader by profileCacheStore.string(Key.SERVER_HEADER)
@@ -294,7 +293,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var subscriptionToken by profileCacheStore.string(Key.SUBSCRIPTION_TOKEN)
     var subscriptionForceResolve by profileCacheStore.boolean(Key.SUBSCRIPTION_FORCE_RESOLVE)
     var subscriptionDeduplication by profileCacheStore.boolean(Key.SUBSCRIPTION_DEDUPLICATION)
-    var subscriptionForceVMessAEAD by profileCacheStore.boolean(Key.SUBSCRIPTION_FORCE_VMESS_AEAD) { true }
     var subscriptionUpdateWhenConnectedOnly by profileCacheStore.boolean(Key.SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY)
     var subscriptionUserAgent by profileCacheStore.string(Key.SUBSCRIPTION_USER_AGENT)
     var subscriptionAutoUpdate by profileCacheStore.boolean(Key.SUBSCRIPTION_AUTO_UPDATE)
