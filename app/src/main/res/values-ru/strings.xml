@@ -150,7 +150,6 @@
     <string name="force_resolve_sum">При обновлении преобразовать все доменные имена в IP-адреса. Хост и SNI будут добавлены автоматически, если это возможно</string>
     <string name="raw">Обычный</string>
     <string name="deduplication_sum">Удалить повторяющиеся конфигурации при обновлении</string>
-    <string name="force_vmess_aead_sum">Перезапись конфигурации VMess с небезопасным методом аутентификации AEAD (alterId 0)</string>
     <string name="force_vmess_aead">Принудительно использовать VMess AEAD</string>
     <string name="force_resolve">Принудительно разрешать доменные имена</string>
     <string name="delete_group_prompt">Вы уверены, что хотите удалить эту группу\?</string>
@@ -319,7 +318,7 @@
     <string name="route_name">Название маршрута</string>
     <string name="delete_route_prompt">Вы уверены, что хотите удалить этот маршрут\?</string>
     <string name="route_add">Создать маршрут</string>
-    <string name="menu_route">Маршрут</string>
+    <string name="menu_route">Маршруты</string>
     <string name="metered_summary">Подсказывать системе, что VPN следует рассматривать как сеть с лимитным тарифным планом</string>
     <string name="metered">Подсказка о соединении с лимитным тарифным планом</string>
     <string name="only">Исключительно</string>
@@ -343,7 +342,6 @@
     <string name="http_host">HTTP-хост</string>
     <string name="ws_path">Путь к WebSocket</string>
     <string name="ws_host">Хост WebSocket</string>
-    <string name="alter_id">Изменить ID</string>
     <string name="uuid">Логин пользователя</string>
     <string name="obfs_param">Параметры Obfs</string>
     <string name="obfs">Obfs</string>
@@ -358,7 +356,7 @@
     <string name="experimental_no_termination_signal">Не отправлять одинарный дуплексный сигнал завершения соединения для TCP-соединения при передаче через VMess. Это нарушит работу некоторых приложений.</string>
     <string name="experimental_authenticated_length">Сделать длину каждого сегмента полезной нагрузки постоянной. Этот эксперимент требует, чтобы сервер и клиент использовали одну и ту же версию v2ray-core. Ожидаются новые важные обновления по этому эксперименту.</string>
     <string name="experimental_settings">Экспериментальный</string>
-    <string name="route_need_vpn">Правило маршрутизации %s зависит от VPN, поэтому игнорируется.</string>
+    <string name="route_need_vpn">Правило маршрутизации `%s` зависит от VPN, поэтому игнорируется.</string>
     <string name="route_for">Правило для %s</string>
     <string name="app_no_launcher">У приложения нет интерфейса.</string>
     <string name="copy_failed">Не удалось скопировать.</string>
@@ -434,7 +432,7 @@
     <string name="disable_dns_expire">Отключить устаревание кэша DNS</string>
     <string name="disable_dns_expire_summary">Игнорировать TTL кэша DNS до перезапуска.</string>
     <string name="stun_test_summary">Определить поведение сопоставления адресов NAT и поведение фильтрации NAT в соответствии с RFC 5780 при помощи STUN.</string>
-    <string name="warp_license">[CloudFlare Wrap](https://blog.cloudflare.com/1111-warp-better-vpn/) - это бесплатный провайдер WireGuard VPN. Используя его, вы соглашаетесь с [условиями использования](https://www.cloudflare.com/application/terms/).</string>
+    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) - это бесплатный провайдер WireGuard VPN. Используя его, вы соглашаетесь с [условиями использования](https://www.cloudflare.com/application/terms/).</string>
     <string name="nat_filtering_endpoint_independent">`Endpoint-Independent Mapping`
 \n
 \nЭто самое разрешающее поведение NAT из трех вариантов. Как только вы отправили UDP-пакет куда-либо по другую сторону NAT, все хосты по ту сторону NAT могут отправлять UDP-пакеты обратно вам на этот порт. Эта политика фильтрации вызывает ночные кошмары у сисадминов, но RFC 4787 рекомендует использовать ее, когда передача данных в реальном времени (или другие вещи, требующие прозрачности приложений, например, игры) является приоритетной. Обратите внимание, что данное поведение не очень хорошо компенсирует неверную настройку NAT. Правильная настройка поведения сопоставления адресов играет более важную роль.</string>
@@ -443,11 +441,20 @@
 \nЭто золотая середина, которую системным администраторам легче обосновать, но, из моего опыта, это поведение сложнее настроить. Как только вы отправили UDP пакет на узел по другую сторону NAT, NAT разрешит обратный UDP трафик с этого узла, независимо от порта, с которого он отправляет, но не разрешит входящий UDP трафик с других адресов. Если поведение сопоставления адресов настроено должным образом, то оно должно работать так же хорошо, как и `Endpoint-Independent Mapping`.</string>
     <string name="nat_mapping_endpoint_independent">`%s`
 \n
-\nЕсли вы отправите два UDP-пакета с одного и того же порта в разные места по другую сторону NAT, NAT будет использовать один и тот же порт для отправки этих пакетов. Это единственное поведение сопоставления адресов, совместимое с RTC, и RFC 4787 требует этого в качестве наилучшей практики (REQ-1) на всех NAT. Если оба NAT используют это, ICE сможет подключаться напрямую, при всех описанных ниже способах фильтрации. Это самый важный параметр, который необходимо правильно настроить. Этот тип сопоставления адресов соответствует коническому NAT в классическом STUN, определенном в [RFC 3489 глава 5] (https://tools.ietf.org/html/rfc3489#section-5).</string>
+\nЕсли вы отправите два UDP-пакета с одного и того же порта в разные места по другую сторону NAT, NAT будет использовать один и тот же порт для отправки этих пакетов. Это единственное поведение сопоставления адресов, совместимое с RTC, и RFC 4787 требует этого в качестве наилучшей практики (REQ-1) на всех NAT. Если оба NAT используют это, ICE сможет подключаться напрямую, при всех описанных ниже способах фильтрации. Это самый важный параметр, который необходимо правильно настроить. Этот тип сопоставления адресов соответствует коническому NAT в классическом STUN, определенном в [RFC 3489 глава 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
     <string name="nat_filtering_address_and_port_dependent">`Address and Port-Dependent Mapping`
 \n
 \nЭто самый ограничивающий из трех вариантов. Ваш NAT будет разрешать обратный трафик только с того места, куда вы отправили UDP пакет. Использовать его ***не рекомендуется***, даже если вы правильно настроите поведение сопоставления, потому что он будет плохо работать, если другой NAT неправильно настроен (довольно частое явление).</string>
     <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
 \n
 \nЕсли вы отправите два UDP-пакета с одного и того же порта в разные места по другую сторону NAT, NAT будет использовать один и тот же порт для отправки этих пакетов, если адрес назначения один и тот же; порт назначения не имеет значения. При отправке на два разных хоста будут использоваться разные порты. Это потребует использования сервера TURN, если обе стороны используют данный метод, за исключением случаев, когда ни одна из сторон не выполняет фильтрацию по конкретным портам, и по крайней мере одна сторона выполняет `Endpoint-Independent Filtering`. Если вам нужен webrtc или что-то еще, использующее P2P UDP сети, ***не настраивайте ваш NAT таким образом***. Этот тип сопоставления адресов (в общих чертах) соответствует симметричным NAT в классическом STUN, определенном в [RFC 3489 глава 5] (https://tools.ietf.org/html/rfc3489#section-5).</string>
+    <string name="route_ssid">Wi-Fi SSID</string>
+    <string name="missing_permission">Отсутствует разрешение</string>
+    <string name="location_disabled">Местоположение отключено</string>
+    <string name="network_type">Тип сети</string>
+    <string name="network_data">Мобильные данные</string>
+    <string name="network_wifi">Wi-Fi</string>
+    <string name="network_bt">Bluetooth</string>
+    <string name="network_eth">Ethernet</string>
+    <string name="route_need_ssid">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого необходимо **разрешение на определение местоположения в фоне** и **включенное определение местоположения** на Android 8.0 или выше</string>
 </resources>

@@ -75,7 +75,6 @@
     <string name="obfs">混淆</string>
     <string name="obfs_param">混淆參數</string>
     <string name="uuid">使用者 ID</string>
-    <string name="alter_id">替代 ID</string>
     <string name="network">網路</string>
     <string name="header_type">標頭類型</string>
     <string name="tls">使用 TLS</string>
@@ -315,7 +314,6 @@
     <string name="delete_group_prompt">您真的希望移除此群組嗎？</string>
     <string name="force_resolve">強制解析</string>
     <string name="force_resolve_sum">在更新時將所有網域解析為 IP。主機名和伺服器名稱指示將在可能時被自動附加</string>
-    <string name="force_vmess_aead">強制 VMess AEAD</string>
     <string name="force_vmess_aead_sum">重寫使用不安全驗證方式的 VMess 設定檔至 AEAD 驗證（alterId 0）</string>
     <string name="deduplication_sum">在更新時移除重複的設定檔</string>
     <string name="raw">原始</string>
@@ -410,7 +408,7 @@
     <string name="wireguard_local_address">本機位址</string>
     <string name="wireguard_public_key">節點公開金鑰</string>
     <string name="wireguard_psk">節點預先共用金鑰</string>
-    <string name="warp_license">[CloudFlare Wrap](https://blog.cloudflare.com/1111-warp-better-vpn/) 是一個免費的 WireGuard VPN 提供者。使用此服務表示您同意其 [服務條款](https://www.cloudflare.com/application/terms/)。</string>
+    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) 是一個免費的 WireGuard VPN 提供者。使用此服務表示您同意其 [服務條款](https://www.cloudflare.com/application/terms/)。</string>
     <string name="warp_generate">產生設定檔</string>
     <string name="generating">正在產生……</string>
     <string name="enable_pcap">啟用 Pcap</string>
