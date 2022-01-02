@@ -289,12 +289,6 @@ object RawUpdater : GroupUpdater() {
                                     "network" -> bean.type = opt.value as String
                                     "tls" -> bean.security = if (opt.value?.toString() == "true") "tls" else ""
                                     "skip-cert-verify" -> if (isExpert) bean.allowInsecure = opt.value == "true"
-                                    "ws-path" -> bean.path = opt.value as String
-                                    "ws-headers" -> for (wsHeader in (opt.value as Map<String, Any>)) {
-                                        when (wsHeader.key.lowercase()) {
-                                            "host" -> bean.host = wsHeader.value as String
-                                        }
-                                    }
                                     "ws-opts" -> for (wsOpt in (opt.value as Map<String, Any>)) {
                                         when (wsOpt.key.lowercase()) {
                                             "max-early-data" -> {
