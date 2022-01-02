@@ -24,10 +24,7 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.isIpAddress
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.urlSafe
+import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 // WTF
@@ -50,6 +47,10 @@ fun parseTrojan(server: String): TrojanBean {
         sni = link.queryParameter("sni") ?: link.queryParameter("peer")
         alpn = link.queryParameter("alpn")
         name = link.fragment
+        if (isExpert) {
+            allowInsecure = !link.queryParameter("allowInsecure").isNullOrBlank()
+        }
+
     }
 
 }
@@ -63,6 +64,10 @@ fun TrojanBean.toUri(): String {
     }
     if (alpn.isNotBlank()) {
         builder.addQueryParameter("alpn", alpn)
+    }
+    if (isExpert && allowInsecure) {
+        // bad format from where?
+        builder.addQueryParameter("allowInsecure", "1")
     }
 
     when (security) {
