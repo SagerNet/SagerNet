@@ -76,7 +76,6 @@
     <string name="obfs">混淆</string>
     <string name="obfs_param">混淆参数</string>
     <string name="uuid">用户ID</string>
-    <string name="alter_id">替代 ID</string>
     <string name="security">传输层加密</string>
     <string name="network">传输协议</string>
     <string name="header_type">伪装类型</string>
@@ -309,7 +308,6 @@
     <string name="delete_group_prompt">您确定要删除该分组吗 \?</string>
     <string name="force_resolve">强制解析</string>
     <string name="force_resolve_sum">更新时解析所有域名到 IP 地址. 如果可能, 主机与服务器名称指示值将被自动覆盖</string>
-    <string name="force_vmess_aead">强制 VMess AEAD</string>
     <string name="force_vmess_aead_sum">重写带有不安全的认证方式的 VMess 配置到 AEAD 认证</string>
     <string name="deduplication_sum">更新时移除重复配置</string>
     <string name="raw">原始</string>
@@ -413,7 +411,7 @@
     <string name="tun_implementation">TUN 实现</string>
     <string name="generating">正在生成…</string>
     <string name="warp_generate">生成配置</string>
-    <string name="warp_license">[CloudFlare Wrap](https://blog.cloudflare.com/1111-warp-better-vpn/) 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意其 [服务条款](https://www.cloudflare.com/application/terms/)。</string>
+    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) 是一个免费的 WireGuard VPN 提供源. 使用它, 代表您同意其 [服务条款](https://www.cloudflare.com/application/terms/)。</string>
     <string name="profile_traffic_statistics_summary">禁用后将不统计使用的流量</string>
     <string name="app_statistics_disabled">应用流量统计已禁用</string>
     <string name="enable_pcap">启用 Pcap</string>
