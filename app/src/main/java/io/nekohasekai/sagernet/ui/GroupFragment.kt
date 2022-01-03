@@ -82,13 +82,23 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         ) {
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
+                viewHolder: RecyclerView.ViewHolder
             ): Int {
                 val proxyGroup = (viewHolder as GroupHolder).proxyGroup
                 if (proxyGroup.ungrouped || proxyGroup.id in GroupUpdater.updating) {
                     return 0
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder)
+            }
+
+            override fun getDragDirs(
+                recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                val proxyGroup = (viewHolder as GroupHolder).proxyGroup
+                if (proxyGroup.ungrouped || proxyGroup.id in GroupUpdater.updating) {
+                    return 0
+                }
+                return super.getDragDirs(recyclerView, viewHolder)
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -127,31 +137,30 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
 
     private lateinit var selectedGroup: ProxyGroup
 
-    private val exportProfiles =
-        registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
-            if (data != null) {
-                runOnDefaultDispatcher {
-                    val profiles = SagerDatabase.proxyDao.getByGroup(selectedGroup.id)
-                    val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
-                    try {
-                        (requireActivity() as MainActivity).contentResolver.openOutputStream(
-                            data
-                        )!!.bufferedWriter().use {
-                            it.write(links)
-                        }
-                        onMainDispatcher {
-                            snackbar(getString(R.string.action_export_msg)).show()
-                        }
-                    } catch (e: Exception) {
-                        Logs.w(e)
-                        onMainDispatcher {
-                            snackbar(e.readableMessage).show()
-                        }
+    private val exportProfiles = registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
+        if (data != null) {
+            runOnDefaultDispatcher {
+                val profiles = SagerDatabase.proxyDao.getByGroup(selectedGroup.id)
+                val links = profiles.mapNotNull { it.toLink() }.joinToString("\n")
+                try {
+                    (requireActivity() as MainActivity).contentResolver.openOutputStream(
+                        data
+                    )!!.bufferedWriter().use {
+                        it.write(links)
                     }
-
+                    onMainDispatcher {
+                        snackbar(getString(R.string.action_export_msg)).show()
+                    }
+                } catch (e: Exception) {
+                    Logs.w(e)
+                    onMainDispatcher {
+                        snackbar(e.readableMessage).show()
+                    }
                 }
+
             }
         }
+    }
 
     inner class GroupAdapter : RecyclerView.Adapter<GroupHolder>(),
         GroupManager.Listener,
@@ -338,7 +347,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             fun export(link: String) {
                 val success = SagerNet.trySetPrimaryClip(link)
                 (activity as MainActivity).snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
-                        .show()
+                    .show()
             }
 
             when (item.itemId) {
@@ -363,14 +372,14 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 }
                 R.id.action_clear -> {
                     MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.confirm)
-                            .setMessage(R.string.clear_profiles_message)
-                            .setPositiveButton(R.string.yes) { _, _ ->
-                                runOnDefaultDispatcher {
-                                    GroupManager.clearGroup(proxyGroup.id)
-                                }
+                        .setMessage(R.string.clear_profiles_message)
+                        .setPositiveButton(R.string.yes) { _, _ ->
+                            runOnDefaultDispatcher {
+                                GroupManager.clearGroup(proxyGroup.id)
                             }
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show()
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
                 }
             }
 
