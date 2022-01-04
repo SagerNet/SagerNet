@@ -290,11 +290,11 @@ class VpnService : BaseVpnService(),
                     val callback = object : DnsResolver.Callback<Collection<InetAddress>> {
                         @Suppress("ThrowableNotThrown")
                         override fun onAnswer(answer: Collection<InetAddress>, rcode: Int) {
-                            if (answer.isNotEmpty()) {
+                            if (rcode == 0)  {
                                 continuation.tryResume(answer.mapNotNull { it.hostAddress }
                                     .joinToString(","))
                             } else {
-                                continuation.tryResumeWithException(Exception("unknown host"))
+                                continuation.tryResumeWithException(Exception("rcode $rcode"))
                             }
                         }
 
@@ -334,7 +334,7 @@ class VpnService : BaseVpnService(),
             val answer = try {
                 underlyingNetwork.getAllByName(domain)
             } catch (e: UnknownHostException) {
-                error("unknown host")
+                return ""
             }
             val filtered = mutableListOf<String>()
             when {
@@ -346,7 +346,6 @@ class VpnService : BaseVpnService(),
                 }
                 else -> filtered.addAll(answer.mapNotNull { it.hostAddress })
             }
-            if (filtered.isEmpty()) error("unknown host")
             return filtered.joinToString(",")
         }
     }
