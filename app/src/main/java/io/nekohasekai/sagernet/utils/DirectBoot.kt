@@ -43,7 +43,7 @@ object DirectBoot : BroadcastReceiver() {
     private var registered = false
 
     fun getDeviceProfile(): ProxyEntity? = try {
-        file.readBytes().unmarshall(::ProxyEntity)
+        file.readBytes().unmarshall { ProxyEntity.CREATOR.createFromParcel(it) }
     } catch (_: IOException) {
         null
     }

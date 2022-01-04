@@ -125,7 +125,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             }
             R.id.action_reset_route -> {
                 runOnDefaultDispatcher {
-                    SagerDatabase.rulesDao.deleteAll()
+                    SagerDatabase.rulesDao.reset()
                     DataStore.rulesFirstCreate = false
                     ruleAdapter.reload()
                 }

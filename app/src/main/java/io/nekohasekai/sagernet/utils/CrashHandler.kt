@@ -75,7 +75,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     .putExtra(
                         Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                            app, BuildConfig.APPLICATION_ID + ".log", logFile
+                            app, BuildConfig.APPLICATION_ID + ".cache", logFile
                         )
                     ), app.getString(R.string.abc_shareactionprovider_share_with)
             )

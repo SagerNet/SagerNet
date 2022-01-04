@@ -21,12 +21,14 @@
 
 package io.nekohasekai.sagernet.database.preference
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.*
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 @Entity
-class KeyValuePair() {
+class KeyValuePair() : Parcelable {
     companion object {
         const val TYPE_UNINITIALIZED = 0
         const val TYPE_BOOLEAN = 1
@@ -37,6 +39,17 @@ class KeyValuePair() {
         const val TYPE_LONG = 4
         const val TYPE_STRING = 5
         const val TYPE_STRING_SET = 6
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<KeyValuePair> {
+            override fun createFromParcel(parcel: Parcel): KeyValuePair {
+                return KeyValuePair(parcel)
+            }
+
+            override fun newArray(size: Int): Array<KeyValuePair?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 
     @androidx.room.Dao
@@ -44,9 +57,6 @@ class KeyValuePair() {
 
         @Query("SELECT * FROM `KeyValuePair`")
         fun all(): List<KeyValuePair>
-
-        @Query("DELETE FROM `KeyValuePair`")
-        fun deleteAll(): Int
 
         @Query("SELECT * FROM `KeyValuePair` WHERE `key` = :key")
         operator fun get(key: String): KeyValuePair?
@@ -56,6 +66,12 @@ class KeyValuePair() {
 
         @Query("DELETE FROM `KeyValuePair` WHERE `key` = :key")
         fun delete(key: String): Int
+
+        @Query("DELETE FROM `KeyValuePair`")
+        fun reset(): Int
+
+        @Insert
+        fun insert(list: List<KeyValuePair>)
     }
 
     @PrimaryKey
@@ -154,6 +170,22 @@ class KeyValuePair() {
             TYPE_STRING_SET -> stringSet
             else -> null
         }?.toString() ?: "null"
+    }
+
+    constructor(parcel: Parcel) : this() {
+        key = parcel.readString()!!
+        valueType = parcel.readInt()
+        value = parcel.createByteArray()!!
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(key)
+        parcel.writeInt(valueType)
+        parcel.writeByteArray(value)
+    }
+
+    override fun describeContents(): Int {
+        return 0
     }
 
 }

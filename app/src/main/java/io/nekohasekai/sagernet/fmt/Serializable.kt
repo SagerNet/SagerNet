@@ -33,18 +33,14 @@ abstract class Serializable : Parcelable {
     override fun describeContents() = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        val byteArray = KryoConverters.serialize(this)
-        dest.writeInt(byteArray.size)
-        dest.writeByteArray(byteArray)
+        dest.writeByteArray(KryoConverters.serialize(this))
     }
 
     abstract class CREATOR<T : Serializable> : Parcelable.Creator<T> {
         abstract fun newInstance(): T
 
         override fun createFromParcel(source: Parcel): T {
-            val byteArray = ByteArray(source.readInt())
-            source.readByteArray(byteArray)
-            return KryoConverters.deserialize(newInstance(), byteArray)
+            return KryoConverters.deserialize(newInstance(), source.createByteArray())
         }
     }
 

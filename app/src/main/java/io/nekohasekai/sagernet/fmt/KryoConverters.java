@@ -68,6 +68,7 @@ public class KryoConverters {
     }
 
     public static <T extends Serializable> T deserialize(T bean, byte[] bytes) {
+        if (bytes == null) return bean;
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
         ByteBufferInput buffer = KryosKt.byteBuffer(input);
         try {

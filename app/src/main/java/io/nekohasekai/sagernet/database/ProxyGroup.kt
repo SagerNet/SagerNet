@@ -67,6 +67,7 @@ data class ProxyGroup(
             if (type == GroupType.SUBSCRIPTION) {
                 subscription?.serializeToBuffer(output)
             }
+            output.writeInt(order)
         }
     }
 
@@ -95,6 +96,7 @@ data class ProxyGroup(
 
                 subscription.deserializeFromBuffer(input)
             }
+            order = input.readInt()
         }
     }
 
@@ -132,16 +134,25 @@ data class ProxyGroup(
         @Update
         fun updateGroup(group: ProxyGroup)
 
+        @Query("DELETE FROM proxy_groups")
+        fun reset()
+
+        @Insert
+        fun insert(groupList: List<ProxyGroup>)
+
     }
 
-    companion object CREATOR : Serializable.CREATOR<ProxyGroup>() {
+    companion object {
+        @JvmField
+        val CREATOR = object : Serializable.CREATOR<ProxyGroup>() {
 
-        override fun newInstance(): ProxyGroup {
-            return ProxyGroup()
-        }
+            override fun newInstance(): ProxyGroup {
+                return ProxyGroup()
+            }
 
-        override fun newArray(size: Int): Array<ProxyGroup?> {
-            return arrayOfNulls(size)
+            override fun newArray(size: Int): Array<ProxyGroup?> {
+                return arrayOfNulls(size)
+            }
         }
     }
 

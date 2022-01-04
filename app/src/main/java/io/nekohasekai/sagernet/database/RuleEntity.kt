@@ -139,7 +139,10 @@ data class RuleEntity(
         fun updateRules(rules: List<RuleEntity>)
 
         @Query("DELETE FROM rules")
-        fun deleteAll()
+        fun reset()
+
+        @Insert
+        fun insert(rules: List<RuleEntity>)
 
     }
 

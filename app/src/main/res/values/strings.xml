@@ -491,5 +491,17 @@
     <string name="network_wifi">Wi-Fi</string>
     <string name="network_bt">Bluetooth</string>
     <string name="network_eth">Ethernet</string>
+    <string name="tools_network">Network</string>
+
+    <string name="backup">Backup</string>
+    <string name="backup_groups_and_configurations">Groups and configurations</string>
+    <string name="backup_rules">Routing rules</string>
+    <string name="backup_settings">Settings</string>
+    <string name="backup_summary">If the routing settings are not backed up with configurations, then custom outbounds will be lost.</string>
+    <string name="backup_not_file">Not an backup file: excepted .json, but %s</string>
+    <string name="invalid_backup_file">Invalid backup file</string>
+    <string name="backup_import">Import</string>
+    <string name="backup_import_summary">Importing will overwrite the existing data.</string>
+    <string name="backup_importing">Importing…</string>
 
 </resources>
