@@ -155,8 +155,9 @@ fun buildV2RayConfig(
 
     val remoteDns = DataStore.remoteDns.split("\n")
         .mapNotNull { dns -> dns.trim().takeIf { it.isNotBlank() && !it.startsWith("#") } }
-    val directDNS = DataStore.directDns.split("\n")
+    var directDNS = DataStore.directDns.split("\n")
         .mapNotNull { dns -> dns.trim().takeIf { it.isNotBlank() && !it.startsWith("#") } }
+    if (DataStore.useLocalDnsAsDirectDns) directDNS = listOf("localhost")
     val enableDnsRouting = DataStore.enableDnsRouting
     val trafficSniffing = DataStore.trafficSniffing
     val indexMap = ArrayList<IndexEntity>()

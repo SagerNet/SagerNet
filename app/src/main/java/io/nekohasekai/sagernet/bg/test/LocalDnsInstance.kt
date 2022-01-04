@@ -41,8 +41,9 @@ class LocalDnsInstance : AbstractInstance,
 
     override fun launch() {
         val bind = LOCALHOST
-        val directDNS = DataStore.directDns.split("\n")
+        var directDNS = DataStore.directDns.split("\n")
             .mapNotNull { dns -> dns.trim().takeIf { it.isNotBlank() && !it.startsWith("#") } }
+        if (DataStore.useLocalDnsAsDirectDns) directDNS = listOf("localhost")
         val config = V2RayConfig().apply {
             dns = DnsObject().apply {
                 servers = directDNS.map {
@@ -59,7 +60,8 @@ class LocalDnsInstance : AbstractInstance,
                 listen = bind
                 port = DataStore.localDNSPort
                 protocol = "dokodemo-door"
-                settings = LazyInboundConfigurationObject(this,
+                settings = LazyInboundConfigurationObject(
+                    this,
                     DokodemoDoorInboundConfigurationObject().apply {
                         address = "1.0.0.1"
                         network = "tcp,udp"
@@ -70,7 +72,8 @@ class LocalDnsInstance : AbstractInstance,
                 listen = LOCALHOST
                 port = mkPort()
                 protocol = "socks"
-                settings = LazyInboundConfigurationObject(this,
+                settings = LazyInboundConfigurationObject(
+                    this,
                     SocksInboundConfigurationObject().apply {
                         auth = "noauth"
                     })
@@ -78,7 +81,8 @@ class LocalDnsInstance : AbstractInstance,
             outbounds = mutableListOf()
             outbounds.add(OutboundObject().apply {
                 protocol = "freedom"
-                settings = LazyOutboundConfigurationObject(this,
+                settings = LazyOutboundConfigurationObject(
+                    this,
                     FreedomOutboundConfigurationObject().apply {
                         domainStrategy = "UseIP"
                     })
@@ -86,7 +90,8 @@ class LocalDnsInstance : AbstractInstance,
             outbounds.add(OutboundObject().apply {
                 protocol = "dns"
                 tag = TAG_DNS_OUT
-                settings = LazyOutboundConfigurationObject(this,
+                settings = LazyOutboundConfigurationObject(
+                    this,
                     DNSOutboundConfigurationObject().apply {
                         var dns = directDNS.first()
                         if (dns.contains(":")) {

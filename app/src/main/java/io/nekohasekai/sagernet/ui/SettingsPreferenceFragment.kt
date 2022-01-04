@@ -153,6 +153,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val remoteDns = findPreference<EditTextPreference>(Key.REMOTE_DNS)!!
         val directDns = findPreference<EditTextPreference>(Key.DIRECT_DNS)!!
+        val useLocalDnsAsDirectDns = findPreference<SwitchPreference>(Key.USE_LOCAL_DNS_AS_DIRECT_DNS)!!
+
+        directDns.isEnabled = !DataStore.useLocalDnsAsDirectDns
+        useLocalDnsAsDirectDns.setOnPreferenceChangeListener { _, newValue ->
+            directDns.isEnabled = newValue == false
+            true
+        }
+
         val enableDnsRouting = findPreference<SwitchPreference>(Key.ENABLE_DNS_ROUTING)!!
         val disableDnsExpire = findPreference<SwitchPreference>(Key.DISABLE_DNS_EXPIRE)!!
 
