@@ -24,11 +24,15 @@ import android.content.Intent
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
+import com.esotericsoftware.kryo.Kryo
+import com.esotericsoftware.kryo.io.ByteBufferInput
+import com.esotericsoftware.kryo.io.ByteBufferOutput
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
+import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -99,7 +103,7 @@ data class ProxyEntity(
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
     var balancerBean: BalancerBean? = null
-) : Parcelable {
+) : Serializable() {
 
     companion object {
         const val TYPE_SOCKS = 0
@@ -130,9 +134,10 @@ data class ProxyEntity(
         private val placeHolderBean = SOCKSBean().applyDefaultValues()
 
         @JvmField
-        val CREATOR = object : Parcelable.Creator<ProxyEntity> {
-            override fun createFromParcel(parcel: Parcel): ProxyEntity {
-                return ProxyEntity(parcel)
+        val CREATOR = object : Serializable.CREATOR<ProxyEntity>() {
+
+            override fun newInstance(): ProxyEntity {
+                return ProxyEntity()
             }
 
             override fun newArray(size: Int): Array<ProxyEntity?> {
@@ -149,19 +154,48 @@ data class ProxyEntity(
     @Transient
     var stats: TrafficStats? = null
 
-    constructor(parcel: Parcel) : this(
-        parcel.readLong(),
-        parcel.readLong(),
-        parcel.readInt(),
-        parcel.readLong(),
-        parcel.readLong(),
-        parcel.readLong()
-    ) {
-        dirty = parcel.readByte() > 0
-        val byteArray = ByteArray(parcel.readInt())
-        parcel.readByteArray(byteArray)
-        putByteArray(byteArray)
+    override fun initializeDefaultValues() {
     }
+
+    override fun serializeToBuffer(output: ByteBufferOutput) {
+        output.writeInt(0)
+
+        output.writeLong(id)
+        output.writeLong(groupId)
+        output.writeInt(type)
+        output.writeLong(userOrder)
+        output.writeLong(tx)
+        output.writeLong(rx)
+        output.writeInt(status)
+        output.writeInt(ping)
+        output.writeString(uuid)
+        output.writeString(error)
+
+        val data = KryoConverters.serialize(requireBean())
+        output.writeVarInt(data.size,true)
+        output.writeBytes(data)
+
+        output.writeBoolean(dirty)
+    }
+
+    override fun deserializeFromBuffer(input: ByteBufferInput) {
+        val version = input.readInt()
+
+        id = input.readLong()
+        groupId = input.readLong()
+        type = input.readInt()
+        userOrder = input.readLong()
+        tx = input.readLong()
+        rx = input.readLong()
+        status = input.readInt()
+        ping = input.readInt()
+        uuid = input.readString()
+        error = input.readString()
+        putByteArray(input.readBytes(input.readVarInt(true)))
+
+        dirty = input.readBoolean()
+    }
+
 
     fun putByteArray(byteArray: ByteArray) {
         when (type) {
@@ -185,19 +219,6 @@ data class ProxyEntity(
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_BALANCER -> balancerBean = KryoConverters.balancerBeanDeserialize(byteArray)
         }
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(id)
-        parcel.writeLong(groupId)
-        parcel.writeInt(type)
-        parcel.writeLong(userOrder)
-        parcel.writeLong(tx)
-        parcel.writeLong(rx)
-        parcel.writeByte(if (dirty) 1 else 0)
-        val byteArray = KryoConverters.serialize(requireBean())
-        parcel.writeInt(byteArray.size)
-        parcel.writeByteArray(byteArray)
     }
 
     fun displayType() = when (type) {
@@ -494,6 +515,9 @@ data class ProxyEntity(
     @androidx.room.Dao
     interface Dao {
 
+        @Query("select * from proxy_entities")
+        fun getAll(): List<ProxyEntity>
+
         @Query("SELECT id FROM proxy_entities WHERE groupId = :groupId ORDER BY userOrder")
         fun getIdsByGroup(groupId: Long): List<Long>
 
@@ -536,13 +560,18 @@ data class ProxyEntity(
         @Insert
         fun addProxy(proxy: ProxyEntity): Long
 
+        @Insert
+        fun insert(proxies: List<ProxyEntity>)
+
         @Query("DELETE FROM proxy_entities WHERE groupId = :groupId")
         fun deleteAll(groupId: Long): Int
+
+        @Query("DELETE FROM proxy_entities")
+        fun reset()
 
     }
 
     override fun describeContents(): Int {
         return 0
     }
-
 }

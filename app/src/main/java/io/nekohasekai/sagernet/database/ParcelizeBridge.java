@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2021 by nekohasekai <contact-git@sekai.icu>                  *
+ * Copyright (C) 2022 by nekohasekai <contact-git@sekai.icu>                  *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -16,17 +16,16 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ui
+package io.nekohasekai.sagernet.database;
 
-import androidx.fragment.app.Fragment
+import android.os.Parcel;
 
-abstract class NamedFragment : Fragment {
+/**
+ * see: https://youtrack.jetbrains.com/issue/KT-19853
+ */
+public class ParcelizeBridge {
 
-    constructor() : super()
-    constructor(contentLayoutId: Int) : super(contentLayoutId)
-
-    private val name by lazy { name0() }
-    fun name() = name
-    protected abstract fun name0(): String
-
+    public static RuleEntity createRule(Parcel parcel) {
+        return (RuleEntity) RuleEntity.CREATOR.createFromParcel(parcel);
+    }
 }

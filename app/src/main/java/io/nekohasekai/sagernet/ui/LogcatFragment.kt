@@ -169,7 +169,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 .putExtra(
                                     Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                                        context, BuildConfig.APPLICATION_ID + ".log", logFile
+                                        context, BuildConfig.APPLICATION_ID + ".cache", logFile
                                     )
                                 ), context.getString(R.string.abc_shareactionprovider_share_with)
                         )
