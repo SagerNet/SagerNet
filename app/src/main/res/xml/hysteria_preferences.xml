@@ -39,7 +39,7 @@
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="https"
             app:entries="@array/hysteria_protocol"
-            app:entryValues="@array/int_array_2"
+            app:entryValues="@array/int_array_3"
             app:icon="@drawable/ic_baseline_layers_24"
             app:key="serverProtocol"
             app:title="@string/protocol"

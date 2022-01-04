@@ -609,6 +609,7 @@
     <string-array name="hysteria_protocol">
         <item>UDP</item>
         <item>FakeTCP (Root Required)</item>
+        <item>WeChat Video</item>
     </string-array>
 
     <string-array name="network_type_entry">
