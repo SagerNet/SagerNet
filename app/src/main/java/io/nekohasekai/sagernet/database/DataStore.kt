@@ -114,6 +114,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     // https://github.com/SagerNet/SagerNet/issues/180
     var remoteDns by configurationStore.stringNotBlack(Key.REMOTE_DNS) { "https://dns.google/dns-query" }
     var directDns by configurationStore.stringNotBlack(Key.DIRECT_DNS) { "https+local://doh.pub/dns-query" }
+    var useLocalDnsAsDirectDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_DIRECT_DNS)
     var hosts by configurationStore.string(Key.DNS_HOSTS)
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING)
     var disableDnsExpire by configurationStore.boolean(Key.DISABLE_DNS_EXPIRE)

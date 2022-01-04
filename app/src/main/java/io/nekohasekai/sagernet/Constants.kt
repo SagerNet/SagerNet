@@ -38,6 +38,7 @@ object Key {
 
     const val REMOTE_DNS = "remoteDns"
     const val DIRECT_DNS = "directDns"
+    const val USE_LOCAL_DNS_AS_DIRECT_DNS = "useLocalDnsAsDirectDns"
     const val ENABLE_DNS_ROUTING = "enableDnsRouting"
     const val DNS_HOSTS = "dnsHosts0"
     const val DISABLE_DNS_EXPIRE = "disableDnsExpire"

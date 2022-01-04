@@ -490,5 +490,6 @@
     <string name="backup_import">Import</string>
     <string name="backup_import_summary">Importing will overwrite the existing data.</string>
     <string name="backup_importing">Importing…</string>
+    <string name="use_local_dns_as_direct_dns">Use Local DNS as Direct DNS</string>
 
 </resources>

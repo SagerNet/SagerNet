@@ -239,9 +239,6 @@ class SagerNet : Application(),
             }
             ssid = ssid?.trim { it == '"' } ?: ""
             Libcore.setWifiSSID(ssid)
-            if (ssid.isNotBlank()) {
-                Logs.d("Updated ssid: $ssid")
-            }
         }
 
         fun startService() = ContextCompat.startForegroundService(

@@ -164,12 +164,18 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">
-        <EditTextPreference
+        <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
+            app:defaultValue="https://dns.google/dns-query"
             app:icon="@drawable/ic_action_dns"
             app:key="remoteDns"
             app:title="@string/remote_dns"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_home_24"
+            app:key="useLocalDnsAsDirectDns"
+            app:title="@string/use_local_dns_as_direct_dns" />
+        <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
+            app:defaultValue="https+local://doh.pub/dns-query"
             app:key="directDns"
             app:title="@string/direct_dns"
             app:useSimpleSummaryProvider="true" />
