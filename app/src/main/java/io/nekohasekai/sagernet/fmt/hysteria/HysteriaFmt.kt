@@ -90,6 +90,14 @@ fun HysteriaBean.toUri(): String {
         builder.addQueryParameter("obfs", "xplus")
         builder.addQueryParameter("obfsParam", obfuscation)
     }
+    when (protocol) {
+        HysteriaBean.PROTOCOL_FAKETCP -> {
+            builder.addQueryParameter("protocol", "faketcp")
+        }
+        HysteriaBean.PROTOCOL_WECHAT_VIDEO -> {
+            builder.addQueryParameter("protocol", "wechat-video")
+        }
+    }
     if (protocol == HysteriaBean.PROTOCOL_FAKETCP) {
         builder.addQueryParameter("protocol", "faketcp")
     }
@@ -121,6 +129,9 @@ fun JSONObject.parseHysteria(): HysteriaBean {
                 "faketcp" -> {
                     protocol = HysteriaBean.PROTOCOL_FAKETCP
                 }
+                "wechat-video" -> {
+                    protocol = HysteriaBean.PROTOCOL_WECHAT_VIDEO
+                }
             }
         }
         sni = getStr("server_name")
@@ -136,8 +147,13 @@ fun JSONObject.parseHysteria(): HysteriaBean {
 fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): String {
     return JSONObject().also {
         it["server"] = wrapUri()
-        if (protocol == HysteriaBean.PROTOCOL_FAKETCP) {
-            it["protocol"] = "faketcp"
+        when (protocol) {
+            HysteriaBean.PROTOCOL_FAKETCP -> {
+                it["protocol"] = "faketcp"
+            }
+            HysteriaBean.PROTOCOL_WECHAT_VIDEO -> {
+                it["protocol"] = "wechat-video"
+            }
         }
         it["up_mbps"] = uploadMbps
         it["down_mbps"] = downloadMbps

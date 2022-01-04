@@ -40,6 +40,7 @@ public class HysteriaBean extends AbstractBean {
 
     public static final int PROTOCOL_UDP = 0;
     public static final int PROTOCOL_FAKETCP = 1;
+    public static final int PROTOCOL_WECHAT_VIDEO = 2;
 
     public Integer protocol;
 
