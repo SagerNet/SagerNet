@@ -843,23 +843,22 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             runOnDefaultDispatcher {
-                groupList = ArrayList(SagerDatabase.groupDao.allGroups())
-                if (groupList.isEmpty()) {
+                var newGroupList = ArrayList(SagerDatabase.groupDao.allGroups())
+                if (newGroupList.isEmpty()) {
                     SagerDatabase.groupDao.createGroup(ProxyGroup(ungrouped = true))
-                    groupList = ArrayList(SagerDatabase.groupDao.allGroups())
+                    newGroupList = ArrayList(SagerDatabase.groupDao.allGroups())
                 }
-                groupList.find { it.ungrouped }?.let {
+                newGroupList.find { it.ungrouped }?.let {
                     if (SagerDatabase.proxyDao.countByGroup(it.id) == 0L) {
-                        groupList.remove(it)
+                        newGroupList.remove(it)
                     }
                 }
 
                 var selectedGroup = selectedItem?.groupId ?: DataStore.currentGroupId()
+                var set = false
                 if (selectedGroup > 0L) {
-                    selectedGroupIndex = groupList.indexOfFirst { it.id == selectedGroup }
-                    onMainDispatcher {
-                        groupPager.setCurrentItem(selectedGroupIndex, false)
-                    }
+                    selectedGroupIndex = newGroupList.indexOfFirst { it.id == selectedGroup }
+                    set = true
                 } else if (groupList.size == 1) {
                     selectedGroup = groupList[0].id
                     if (DataStore.selectedGroup != selectedGroup) {
@@ -868,16 +867,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 groupPager.post {
-                    if (!select) {
-                        groupPager.registerOnPageChangeCallback(updateSelectedCallback)
-                    }
-                }
-
-                onMainDispatcher {
+                    groupList = newGroupList
                     notifyDataSetChanged()
+                    if (set) groupPager.setCurrentItem(selectedGroupIndex, false)
                     val hideTab = groupList.size < 2
                     tabLayout.isGone = hideTab
                     toolbar.elevation = if (hideTab) 0F else dp2px(4).toFloat()
+                    if (!select) {
+                        groupPager.registerOnPageChangeCallback(updateSelectedCallback)
+                    }
                 }
             }
         }
