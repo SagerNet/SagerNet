@@ -1505,7 +1505,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 runOnDefaultDispatcher {
                     val selected = (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
-                    val started = selected && SagerNet.started && DataStore.currentProfile == proxyEntity.id
+                    val started = selected && SagerNet.started && DataStore.startedProfile == proxyEntity.id
                     onMainDispatcher {
                         editButton.isEnabled = !started
                         selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE

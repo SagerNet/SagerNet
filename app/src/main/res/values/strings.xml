@@ -490,4 +490,11 @@
     <string name="backup_import_summary">Importing will overwrite the existing data.</string>
     <string name="backup_importing">Importing…</string>
     <string name="use_local_dns_as_direct_dns">Use Local DNS as Direct DNS</string>
+
+    <string name="tasker_settings">Tasker Settings</string>
+    <string name="tasker_action">Action</string>
+    <string name="tasker_action_start_service">Start service</string>
+    <string name="tasker_action_stop_service">Stop service</string>
+    <string name="tasker_start_current_profile">Current profile</string>
+    <string name="tasker_blurb_start_profile">Start profile %s</string>
 </resources>

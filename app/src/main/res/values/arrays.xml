@@ -628,4 +628,14 @@
         <item>ethernet</item>
     </string-array>
 
+    <string-array name="tasker_action_entry">
+        <item>@string/tasker_action_start_service</item>
+        <item>@string/tasker_action_stop_service</item>
+    </string-array>
+
+    <string-array name="tasker_outbound_entry">
+        <item>@string/tasker_start_current_profile</item>
+        <item>@string/route_profile</item>
+    </string-array>
+
 </resources>

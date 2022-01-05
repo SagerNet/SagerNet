@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:defaultValue="0"
+        app:entries="@array/tasker_action_entry"
+        app:entryValues="@array/int_array_2"
+        app:icon="@drawable/ic_baseline_layers_24"
+        app:key="taskerAction"
+        app:title="@string/tasker_action"
+        app:useSimpleSummaryProvider="true" />
+
+    <io.nekohasekai.sagernet.widget.TaskerProfilePreference
+        app:icon="@drawable/ic_hardware_router"
+        app:key="taskerProfile"
+        app:title="@string/menu_configuration"
+        app:useSimpleSummaryProvider="true" />
+
+</PreferenceScreen>
