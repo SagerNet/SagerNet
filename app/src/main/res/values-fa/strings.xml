@@ -99,7 +99,6 @@
     <string name="protocol_param">پارامترهای پروتکل</string>
     <string name="protocol">پروتکل</string>
     <string name="enc_method">نوع رمزنگاری</string>
-    <string name="alter_id">شماره تغییر</string>
     <string name="uuid">شناسه کاربر</string>
     <string name="obfs_param">پارامترهای Obfs</string>
     <string name="obfs">پروتکل Obfs</string>
@@ -346,7 +345,6 @@
     <string name="update_settings">بروزرسانی تنظیمات</string>
     <string name="raw">خام</string>
     <string name="deduplication_sum">هنگام به روزرسانی، پیکربندی های تکراری را حذف کنید</string>
-    <string name="force_vmess_aead_sum">بازنویسی پیکربندی VMess با روش تأیید ناامن به AEAD (تغییر 0)</string>
     <string name="force_vmess_aead">اجبار VMess AEAD</string>
     <string name="hysteria_download_mbps">حداکثر سرعت بارگیری (در مگابیت بر ثانیه)</string>
     <string name="hysteria_upload_mbps">حداکثر سرعت بارگذاری (در مگابیت بر ثانیه)</string>

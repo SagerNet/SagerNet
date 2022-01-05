@@ -314,7 +314,6 @@
     <string name="delete_group_prompt">您真的希望移除此群組嗎？</string>
     <string name="force_resolve">強制解析</string>
     <string name="force_resolve_sum">在更新時將所有網域解析為 IP。主機名和伺服器名稱指示將在可能時被自動附加</string>
-    <string name="force_vmess_aead_sum">重寫使用不安全驗證方式的 VMess 設定檔至 AEAD 驗證（alterId 0）</string>
     <string name="deduplication_sum">在更新時移除重複的設定檔</string>
     <string name="raw">原始</string>
     <string name="update_settings">更新設定</string>

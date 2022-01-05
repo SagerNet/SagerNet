@@ -429,7 +429,7 @@
     <string name="ssh_public_key">Public Key</string>
     <string name="ssh_private_key">Private Key</string>
     <string name="ssh_private_key_passphrase">Private Key Passphrase</string>
-    <string name="translate_platform">Translate Platform</string>
+    <string name="translate_platform">Translation Platform</string>
     <string name="menu_tools">Tools</string>
     <string name="menu_log">Logs</string>
     <string name="clear_logcat">Clear Logcat</string>
@@ -479,7 +479,6 @@
     <string name="network_bt">Bluetooth</string>
     <string name="network_eth">Ethernet</string>
     <string name="tools_network">Network</string>
-
     <string name="backup">Backup</string>
     <string name="backup_groups_and_configurations">Groups and configurations</string>
     <string name="backup_rules">Routing rules</string>
@@ -491,5 +490,4 @@
     <string name="backup_import_summary">Importing will overwrite the existing data.</string>
     <string name="backup_importing">Importing…</string>
     <string name="use_local_dns_as_direct_dns">Use Local DNS as Direct DNS</string>
-
 </resources>

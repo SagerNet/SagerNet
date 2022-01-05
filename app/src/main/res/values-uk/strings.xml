@@ -110,7 +110,6 @@
     <string name="header_type">Тип заголовка</string>
     <string name="network">Мережа</string>
     <string name="security">Шифрування транспортного рівня</string>
-    <string name="alter_id">Змінити ідентифікатор</string>
     <string name="uuid">ідентифікатор користувача</string>
     <string name="protocol_param">Протокол Param</string>
     <string name="protocol">Протокол</string>

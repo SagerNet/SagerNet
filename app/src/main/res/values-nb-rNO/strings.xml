@@ -54,7 +54,6 @@
     <string name="http_path">HTTP-sti</string>
     <string name="header_type">Hodetype</string>
     <string name="network">Nettverk</string>
-    <string name="alter_id">Alt-ID</string>
     <string name="group_diff">Forskjell (%s)</string>
     <string name="group_show_diff">Forskjell</string>
     <string name="group_updated">%s: Oppdaterte %d mellomtjenere</string>
@@ -136,7 +135,6 @@
     <string name="update_settings">Oppdater innstillinger</string>
     <string name="raw">Rå</string>
     <string name="deduplication_sum">Fjern dupliserte konfigurasjoner ved oppdatering</string>
-    <string name="force_vmess_aead_sum">Skriv om VMess -konfigurasjon med usikker autentiseringsmetode til AEAD (alterId 0)</string>
     <string name="force_vmess_aead">Tving VMess AEAD</string>
     <string name="force_resolve_sum">Løs alle domenenavn til IP -adresser når du oppdaterer. Vert og SNI blir automatisk lagt til hvis mulig</string>
     <string name="force_resolve">Tving løsning</string>
@@ -370,7 +368,6 @@
     <string name="traffic_statistics_summary">Kan øke strømforbruket</string>
     <string name="group_order_origin">Opprinnelse</string>
     <string name="group_order">Rekkefølge</string>
-    <string name="foreground_detector">Forgrunnsoppdager</string>
     <string name="traffic_holder">Åpne VPN for å registrere trafikkstatistikk</string>
     <string name="tcp_connections">%d TCP-tilkoblinger</string>
     <string name="traffic_stats">Statistikk</string>

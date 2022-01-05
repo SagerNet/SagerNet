@@ -13,7 +13,6 @@
     <string name="header_type">Тып загалоўка</string>
     <string name="network">Сетка</string>
     <string name="security">Шыфраванне транспартнага ўзроўню</string>
-    <string name="alter_id">Змяніць ID</string>
     <string name="uuid">Ідентифікатор карыстальніка</string>
     <string name="obfs_param">Obfs Парам</string>
     <string name="obfs">Obfs</string>

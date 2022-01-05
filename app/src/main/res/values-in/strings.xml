@@ -205,5 +205,4 @@
     <string name="ws_host">Host Soket Web</string>
     <string name="header_type">Jenis Tajuk</string>
     <string name="security">Enkripsi lapisan transportasi</string>
-    <string name="alter_id">Ubah ID</string>
 </resources>

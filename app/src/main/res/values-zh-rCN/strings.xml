@@ -308,7 +308,6 @@
     <string name="delete_group_prompt">您确定要删除该分组吗 \?</string>
     <string name="force_resolve">强制解析</string>
     <string name="force_resolve_sum">更新时解析所有域名到 IP 地址. 如果可能, 主机与服务器名称指示值将被自动覆盖</string>
-    <string name="force_vmess_aead_sum">重写带有不安全的认证方式的 VMess 配置到 AEAD 认证</string>
     <string name="deduplication_sum">更新时移除重复配置</string>
     <string name="raw">原始</string>
     <string name="update_settings">更新设置</string>
@@ -421,4 +420,60 @@
     <string name="profile_traffic_statistics">配置流量统计</string>
     <string name="group_filter_owners">拥有者</string>
     <string name="group_filter_owners_nf">该订阅中没有拥有者</string>
+    <string name="stun_test_summary">使用 STUN 确定客户端的 NAT 映射行为和 RFC 5780 中定义的 NAT 过滤行为。</string>
+    <string name="nat_mapping_behaviour">NAT 映射行为</string>
+    <string name="endpoint_independent">端点独立</string>
+    <string name="address_dependent">地址依赖</string>
+    <string name="address_and_port_dependent">地址和端口依赖</string>
+    <string name="endpoint_independent_no_nat">端点独立 （无 NAT）</string>
+    <string name="nat_filtering_behaviour">NAT 过滤行为</string>
+    <string name="nat_filtering_address_and_port_dependent">`地址和端口依赖`
+\n
+\n这是三种方式中最严格的一种。你的 NAT 将只允许从你发送 UDP 数据包的确切位置返回流量。不建议使用这种方式，即使你正确地配置了映射行为，因为当其他 NAT 配置错误时（相当普遍），它的效果会很差。</string>
+    <string name="stun_test">NAT 行为发现</string>
+    <string name="start">开始</string>
+    <string name="stun_attest_loading">这可能需要几分钟的时间…</string>
+    <string name="recheck">重新测试</string>
+    <string name="disable_dns_expire_summary">忽略 DNS TTL，直到重新启动。</string>
+    <string name="route_play_store">%s Play 商店规则</string>
+    <string name="route_opt_block_analysis">屏蔽跟踪器</string>
+    <string name="naive_insecure_concurrency">不安全并发</string>
+    <string name="naive_insecure_concurrency_summary">使用N个并发的隧道连接，在恶劣的网络条件下更加强大。更多的连接使隧道更容易被发现，安全性更低。这个项目力求对流量分析有最强的安全性。以不安全的方式使用它就违背了它的目的。
+\n
+\n如果你必须使用它，先试试N=2，看看是否能解决你的问题。强烈建议不要在这里使用超过4个连接。</string>
+    <string name="disable_dns_expire">禁用 DNS 过期</string>
+    <string name="route_ssid">Wi-Fi SSID</string>
+    <string name="missing_permission">缺少权限</string>
+    <string name="location_disabled">位置已禁用</string>
+    <string name="route_need_ssid">路由规则 `%s 需要访问您的 **Wi-Fi SSID**，但这需要获得 **后台定位** 权限并启用定位在Android 8.0或以上系统中</string>
+    <string name="network_type">网络类型</string>
+    <string name="network_data">移动数据</string>
+    <string name="network_wifi">Wi-Fi</string>
+    <string name="network_bt">蓝牙</string>
+    <string name="network_eth">以太网</string>
+    <string name="probe_url">自定义测试链接</string>
+    <string name="tools_network">网络</string>
+    <string name="backup">备份</string>
+    <string name="backup_groups_and_configurations">分组和配置</string>
+    <string name="backup_import">导入</string>
+    <string name="use_local_dns_as_direct_dns">使用本地 DNS 作为直连 DNS</string>
+    <string name="nat_filtering_endpoint_independent">`端点独立`
+\n
+\n这是三种方式中最宽松的一种。一旦你向 NAT 另一端的任何地方发送了 UDP 数据包，NAT 另一端的任何其他东西都可以在该端口上向你发送 UDP 数据包。这种过滤策略让系统管理员惊出一身冷汗，但 RFC 4787 建议，当实时通信（或其他需要应用透明度的东西，如游戏）是一个优先事项时，可以使用它。请注意，如果你的 NAT 的映射行为被错误地配置了，这不会做一个很好的补偿工作。更重要的是，要把映射行为搞对。</string>
+    <string name="backup_settings">设置</string>
+    <string name="backup_summary">如果路由规则与配置一起备份，则自定义出站将丢失。</string>
+    <string name="nat_filtering_address_dependent">`地址依赖`
+\n
+\n这是一个中间地带，系统管理员更容易证明，但我的印象是，它更难配置。一旦你向 NAT 另一边的主机发送了一个 UDP 数据包，NAT 将允许从该主机返回 UDP 流量，无论该主机从哪个端口发送，但不允许从其他地址进入的 UDP 流量。如果你的映射行为配置得当，这应该和 `终端独立` 的功能一样好。</string>
+    <string name="backup_rules">路由规则</string>
+    <string name="backup_not_file">不是一个备份文件，预期 .json，但 %s</string>
+    <string name="invalid_backup_file">无效的备份文件</string>
+    <string name="backup_import_summary">导入将覆盖现有的数据。</string>
+    <string name="backup_importing">正导入…</string>
+    <string name="nat_mapping_endpoint_independent">`%s`
+\n
+\n如果你从同一端口发送两个 UDP 数据包到 NAT 另一端的不同地方，NAT 将使用相同的端口来发送这些数据包。这是唯一有利于 RTC 的映射行为，RFC 4787 要求它作为所有 NAT 的最佳实践（REQ-1）。如果两个NAT都这样做，ICE将能够直接连接，对于下面描述的所有过滤行为。这是最重要的设置，要弄清楚。这种映射类型对应于 [RFC 3489第5节](https://tools.ietf.org/html/rfc3489#section-5) 中定义的经典STUN中的锥形 NAT。</string>
+    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
+\n
+\n如果你从相同的端口发送两个 UDP 数据包到 NAT 另一侧的不同地方，NAT 将使用相同的端口来发送这些数据包，如果目标地址是相同的；目标端口并不重要。发送到两个不同的主机将使用不同的端口。如果双方都使用它，这就需要使用 TURN 服务器，除非双方都不做特定端口过滤，而且至少有一方为 `端点独立`。如果你想使用 webrtc 或其他使用 P2P UDP 网络的东西，***不要像这样配置你的 NAT***。这种映射类型（松散地）对应于 [RFC 3489第5节](https://tools.ietf.org/html/rfc3489#section-5) 中定义的经典 STUN 中的对称 NATs。</string>
 </resources>

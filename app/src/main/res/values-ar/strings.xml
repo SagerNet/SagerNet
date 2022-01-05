@@ -59,7 +59,6 @@
     <string name="header_type">نوع الرأس</string>
     <string name="network">شبكة</string>
     <string name="security">تشفير طبقة النقل</string>
-    <string name="alter_id">تغيير رقم التعريف</string>
     <string name="uuid">معرف المستخدم</string>
     <string name="obfs_param">Obfs بارام</string>
     <string name="obfs">Obfs(أو بی اِف اِس)</string>
@@ -267,7 +266,6 @@
     <string name="update_settings">تحديث الاعدادات</string>
     <string name="raw">الخام</string>
     <string name="deduplication_sum">قم بإزالة التكوينات المكررة عند التحديث</string>
-    <string name="force_vmess_aead_sum">أعد كتابة تكوين VMess بطريقة المصادقة غير الآمنة إلى AEAD (alterId 0)</string>
     <string name="force_vmess_aead">فرض VMess AEAD</string>
     <string name="force_resolve_sum">حل جميع أسماء المجالات إلى عناوين IP عند التحديث. سيتم إلحاق المضيف و SNI تلقائيًا إن أمكن</string>
     <string name="force_resolve">الحل القسري</string>
@@ -365,7 +363,6 @@
     <string name="experimental_authenticated_length">لم يعد طول كل شحنة مرنًا. يتطلب هذا الاختبار خادمًا ويستخدم العميل نفس إصدار v2ray-core. من المتوقع المزيد من التحديثات الفورية في هذا الاختبار.</string>
     <string name="experimental_settings">تجريبي</string>
     <string name="route_need_vpn">تعتمد قاعدة التوجيه %s على أن تكون VPN سارية المفعول، لذلك يتم تجاهلها.</string>
-    <string name="foreground">المقدمة</string>
     <string name="route_for">حكم ل %s</string>
     <string name="app_no_launcher">التطبيق ليس له واجهة.</string>
     <string name="copy_failed">فشل النسخ.</string>

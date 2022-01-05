@@ -141,7 +141,6 @@
     <string name="route_opt_bypass_lan">Yerel Ağı Atlat</string>
     <string name="route_bypass">Atlat</string>
     <string name="route_need_vpn">%s yönlendirme kuralı VPN\'in etkin olmasına bağlıdır ve bu nedenle görmezden gelindi.</string>
-    <string name="foreground_detector_summary">Bu servis uygulamaların önplan durumuna göre rota kuralları desteği sağlar. Eğer başlatılmadıysa sonuç her zaman arkaplandadır.</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Eklentisi)</string>
     <string name="shadowsocks_plugin_simple_obfs">Basit Şaşırtmaca (Shadowsocks Android Eklentisi)</string>
     <string name="hysteria_connection_receive_window">QUIC Bağlantı Alım Penceresi</string>
@@ -228,7 +227,6 @@
     <string name="update_settings">Güncelleme Ayarları</string>
     <string name="raw">Ham</string>
     <string name="deduplication_sum">Güncellerken tekrarlanan yapılandırmaları kaldır</string>
-    <string name="force_vmess_aead">VMess AEAD\'i Zorla</string>
     <string name="force_resolve">Çözmeye Zorla</string>
     <string name="delete_group_prompt">Bu grubu kaldırmak istediğinize emin misiniz\?</string>
     <string name="subscription_type">Abonelik Türü</string>
@@ -367,7 +365,6 @@
     <string name="route_asset_no_update">Güncelleme yok</string>
     <string name="route_asset_status">Yerel sürüm: %s</string>
     <string name="route_rules_official">Resmi</string>
-    <string name="alter_id">Alternatif ID</string>
     <string name="obfs">Şaşırtmaca</string>
     <string name="tcp_keep_alive_interval">TCP aktif paket teslim koruma aralığı</string>
     <string name="route_not_asset">Varlık dosyası değil: .dat beklendi ama %s</string>
@@ -381,7 +378,6 @@
     <string name="experimental_authenticated_length">Her yük bölümünun uzunluğunu artık biçimlendirilebilir yapma. Bu deneysel özellik istemci ve sunucunun aynı v2ray-core sürümünü kullanmasını gerektirir. Bu deneysel özellik için daha fazla bozucu güncelleme bekleniyor.</string>
     <string name="hysteria_auth_payload">Doğrulama Yükü</string>
     <string name="hysteria_obfs">Şaşırtmaca Parolası</string>
-    <string name="force_vmess_aead_sum">VMess yapılandırmasını güvenliksiz doğrulama metoduyla AEAD\'ye yeniden yaz (alterId 0)</string>
     <string name="no_statistics">Henüz istatistik yok</string>
     <string name="traffic_statistics_summary">Güç tüketimini arttırabilir</string>
     <string name="clear_logcat">Günlüğü Temizle</string>
