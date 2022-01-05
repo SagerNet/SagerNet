@@ -75,8 +75,7 @@ object RawUpdater : GroupUpdater() {
             val response = httpClient.newCall(Request.Builder()
                 .url(subscription.link.toHttpUrl())
                 .header("User-Agent",
-                    subscription.customUserAgent.takeIf { it.isNotBlank() }
-                        ?: USER_AGENT)
+                    subscription.customUserAgent.takeIf { it.isNotBlank() } ?: USER_AGENT)
                 .build()).execute().apply {
                 if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
                 if (body == null) error("ERROR: Empty response")
@@ -260,10 +259,33 @@ object RawUpdater : GroupUpdater() {
                         "ss" -> {
                             var pluginStr = ""
                             if (proxy.contains("plugin")) {
-                                val opts = PluginOptions()
-                                opts.id = proxy["plugin"] as String
-                                opts.putAll(proxy["plugin-opts"] as Map<String, String?>)
-                                pluginStr = opts.toString(false)
+                                val opts = proxy["plugin-opts"] as Map<String, Any?>
+                                val pluginOpts = PluginOptions()
+                                fun put(clash: String, origin: String = clash) {
+                                    opts[clash]?.let {
+                                        pluginOpts[origin] = it.toString()
+                                    }
+                                }
+                                when (proxy["plugin"]) {
+                                    "obfs" -> {
+                                        pluginOpts.id = "obfs-local"
+                                        put("mode", "obfs")
+                                        put("host", "obfs-host")
+                                    }
+                                    "v2ray-plugin" -> {
+                                        pluginOpts.id = "v2ray-plugin"
+                                        put("mode")
+                                        if (opts["tls"]?.toString() == "true") {
+                                            pluginOpts["tls"] = null
+                                        }
+                                        put("host")
+                                        put("path")
+                                        if (opts["mux"]?.toString() == "true") {
+                                            pluginOpts["mux"] = "8"
+                                        }
+                                    }
+                                }
+                                pluginStr = pluginOpts.toString(false)
                             }
                             proxies.add(ShadowsocksBean().apply {
                                 serverAddress = proxy["server"] as String
@@ -321,7 +343,7 @@ object RawUpdater : GroupUpdater() {
                                     }
                                     "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
                                         when (grpcOpt.key.lowercase()) {
-                                            "grpc-service-name" -> bean.path = grpcOpt.value as String
+                                            "grpc-service-name" -> bean.grpcServiceName = grpcOpt.value?.toString()
                                         }
                                     }
                                 }
