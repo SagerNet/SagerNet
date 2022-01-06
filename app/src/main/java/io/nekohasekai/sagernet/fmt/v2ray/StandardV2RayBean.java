@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import com.v2ray.core.common.net.packetaddr.PacketAddrType;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
@@ -158,6 +159,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public Boolean wsUseBrowserForwarder;
     public Boolean allowInsecure;
+    public Integer packetEncoding;
 
     @Override
     public void initializeDefaultValues() {
@@ -186,12 +188,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
         if (earlyDataHeaderName == null) earlyDataHeaderName = "";
         if (allowInsecure == null) allowInsecure = false;
+        if (packetEncoding == null) packetEncoding = PacketAddrType.None_VALUE;
 
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(6);
+        output.writeInt(7);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -250,6 +253,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
             output.writeBoolean(((VMessBean) this).experimentalAuthenticatedLength);
             output.writeBoolean(((VMessBean) this).experimentalNoTerminationSignal);
         }
+
+        output.writeInt(packetEncoding);
     }
 
     @Override
@@ -318,6 +323,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (this instanceof VMessBean && version >= 4) {
             ((VMessBean) this).experimentalAuthenticatedLength = input.readBoolean();
             ((VMessBean) this).experimentalNoTerminationSignal = input.readBoolean();
+        }
+        if (version >= 7) {
+            packetEncoding = input.readInt();
         }
     }
 

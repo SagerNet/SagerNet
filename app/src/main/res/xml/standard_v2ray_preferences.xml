@@ -31,6 +31,13 @@
             app:title="@string/encryption"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/packet_encoding_entry"
+            app:entryValues="@array/int_array_3"
+            app:icon="@drawable/baseline_widgets_24"
+            app:key="serverPacketEncoding"
+            app:title="@string/packet_encoding"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/networks_entry"
             app:entryValues="@array/networks_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"

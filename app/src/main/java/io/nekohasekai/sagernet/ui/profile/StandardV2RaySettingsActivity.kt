@@ -24,6 +24,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceCategory
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
+import com.v2ray.core.common.net.packetaddr.PacketAddrType
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -67,6 +68,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
         DataStore.serverWsBrowserForwarding = wsUseBrowserForwarder
         DataStore.serverAllowInsecure = allowInsecure
+        DataStore.serverPacketEncoding = packetEncoding
 
     }
 
@@ -96,6 +98,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
         wsUseBrowserForwarder = DataStore.serverWsBrowserForwarding
         allowInsecure = DataStore.serverAllowInsecure
+        packetEncoding = DataStore.serverPacketEncoding
     }
 
     lateinit var encryption: SimpleMenuPreference

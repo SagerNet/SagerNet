@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.fmt.v2ray
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
+import com.v2ray.core.common.net.packetaddr.PacketAddrType
 import io.nekohasekai.sagernet.ktx.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -195,6 +196,14 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 }
             }
         }
+
+        url.queryParameter("packetEncoding")?.let {
+            when (it) {
+                "packet" -> bean.packetEncoding = PacketAddrType.Packet_VALUE
+                "xudp" -> bean.packetEncoding = PacketAddrType.XUDP_VALUE
+            }
+        }
+
     }
 
     Logs.d(formatObject(bean))
@@ -348,8 +357,11 @@ fun VMessBean.toV2rayN(): String {
 fun StandardV2RayBean.toUri(standard: Boolean = true): String {
 //    if (this is VMessBean && alterId > 0) return toV2rayN()
 
-    val builder = linkBuilder().username(uuid).host(serverAddress).port(serverPort)
-        .addQueryParameter("type", type).addQueryParameter("encryption", encryption)
+    val builder = linkBuilder().username(uuid)
+        .host(serverAddress)
+        .port(serverPort)
+        .addQueryParameter("type", type)
+        .addQueryParameter("encryption", encryption)
 
     when (type) {
         "tcp" -> {
@@ -429,6 +441,15 @@ fun StandardV2RayBean.toUri(standard: Boolean = true): String {
                     builder.addQueryParameter("chain", pinnedPeerCertificateChainSha256)
                 }
             }
+        }
+    }
+
+    when (packetEncoding) {
+        PacketAddrType.Packet_VALUE -> {
+            builder.addQueryParameter("packetEncoding", "packet")
+        }
+        PacketAddrType.XUDP_VALUE -> {
+            builder.addQueryParameter("packetEncoding", "xudp")
         }
     }
 

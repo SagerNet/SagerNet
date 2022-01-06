@@ -30,6 +30,7 @@ import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.google.gson.JsonSyntaxException
+import com.v2ray.core.common.net.packetaddr.PacketAddrType
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.SagerNet
@@ -399,14 +400,15 @@ fun buildV2RayConfig(
                     }
                 }
 
+                var currentDomainStrategy = outboundDomainStrategy
+
                 if (proxyEntity.needExternal()) {
                     val localPort = mkPort()
                     chainMap[localPort] = proxyEntity
                     currentOutbound.apply {
                         protocol = "socks"
                         settings = LazyOutboundConfigurationObject(
-                            this,
-                            SocksOutboundConfigurationObject().apply {
+                            this, SocksOutboundConfigurationObject().apply {
                                 servers = listOf(
                                     SocksOutboundConfigurationObject.ServerObject()
                                         .apply {
@@ -521,23 +523,40 @@ fun buildV2RayConfig(
                                                             if (experimental.isBlank()) experimental = null;
                                                         })
                                                 })
+                                        when (bean.packetEncoding) {
+                                            PacketAddrType.Packet_VALUE -> {
+                                                packetEncoding = "packet"
+                                                if (currentDomainStrategy == "AsIs") {
+                                                    currentDomainStrategy = "UseIP"
+                                                }
+                                            }
+                                            PacketAddrType.XUDP_VALUE -> packetEncoding = "xudp"
+                                        }
                                     })
                             } else if (bean is VLESSBean) {
                                 protocol = "vless"
                                 settings = LazyOutboundConfigurationObject(
                                     this,
                                     VLESSOutboundConfigurationObject().apply {
-                                        vnext = listOf(
-                                            VLESSOutboundConfigurationObject.ServerObject()
-                                                .apply {
-                                                    address = bean.serverAddress
-                                                    port = bean.serverPort
-                                                    users = listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
-                                                        .apply {
-                                                            id = bean.uuidOrGenerate()
-                                                            encryption = bean.encryption
-                                                        })
-                                                })
+                                        vnext = listOf(VLESSOutboundConfigurationObject.ServerObject()
+                                            .apply {
+                                                address = bean.serverAddress
+                                                port = bean.serverPort
+                                                users = listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
+                                                    .apply {
+                                                        id = bean.uuidOrGenerate()
+                                                        encryption = bean.encryption
+                                                    })
+                                            })
+                                        when (bean.packetEncoding) {
+                                            PacketAddrType.Packet_VALUE -> {
+                                                packetEncoding = "packet"
+                                                if (currentDomainStrategy == "AsIs") {
+                                                    currentDomainStrategy = "UseIP"
+                                                }
+                                            }
+                                            PacketAddrType.XUDP_VALUE -> packetEncoding = "xudp"
+                                        }
                                     })
                             }
 
@@ -829,7 +848,7 @@ fun buildV2RayConfig(
                 }
 
                 currentOutbound.tag = tagIn
-                currentOutbound.domainStrategy = outboundDomainStrategy
+                currentOutbound.domainStrategy = currentDomainStrategy
 
                 if (!isBalancer && index > 0) {
                     if (!pastExternal) {

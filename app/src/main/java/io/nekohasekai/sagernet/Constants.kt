@@ -134,6 +134,7 @@ object Key {
     const val SERVER_WS_BROWSER_FORWARDING = "serverWsBrowserForwarding"
     const val SERVER_EARLY_DATA_HEADER_NAME = "serverEarlyDataHeaderName"
     const val SERVER_CONFIG = "serverConfig"
+    const val SERVER_PACKET_ENCODING = "serverPacketEncoding"
 
     const val SERVER_SECURITY_CATEGORY = "serverSecurityCategory"
     const val SERVER_WS_CATEGORY = "serverWsCategory"
