@@ -345,7 +345,6 @@
     <string name="update_settings">بروزرسانی تنظیمات</string>
     <string name="raw">خام</string>
     <string name="deduplication_sum">هنگام به روزرسانی، پیکربندی های تکراری را حذف کنید</string>
-    <string name="force_vmess_aead">اجبار VMess AEAD</string>
     <string name="hysteria_download_mbps">حداکثر سرعت بارگیری (در مگابیت بر ثانیه)</string>
     <string name="hysteria_upload_mbps">حداکثر سرعت بارگذاری (در مگابیت بر ثانیه)</string>
     <string name="hysteria_auth_payload">ظرفیت بار احراز هویت</string>

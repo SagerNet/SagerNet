@@ -266,7 +266,6 @@
     <string name="update_settings">تحديث الاعدادات</string>
     <string name="raw">الخام</string>
     <string name="deduplication_sum">قم بإزالة التكوينات المكررة عند التحديث</string>
-    <string name="force_vmess_aead">فرض VMess AEAD</string>
     <string name="force_resolve_sum">حل جميع أسماء المجالات إلى عناوين IP عند التحديث. سيتم إلحاق المضيف و SNI تلقائيًا إن أمكن</string>
     <string name="force_resolve">الحل القسري</string>
     <string name="delete_group_prompt">هل أنت متأكد أنك تريد إزالة هذه المجموعة؟</string>

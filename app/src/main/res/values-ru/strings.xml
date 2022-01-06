@@ -237,7 +237,7 @@
     <string name="action_export_msg">Успешно экспортировано!</string>
     <string name="action_import_file">Импортировать из файла</string>
     <string name="action_import">Импорт из буфера обмена</string>
-    <string name="action_export">Экспорт</string>
+    <string name="action_export">Экспортировать</string>
     <string name="action_export_clipboard">Экспорт в буфер обмена</string>
     <string name="action_export_file">Экспорт в файл</string>
     <string name="action_scan_china_apps">Сканировать китайские приложения</string>
@@ -387,7 +387,7 @@
     <string name="clear_logcat">Очистить Logcat</string>
     <string name="menu_log">Логи</string>
     <string name="menu_tools">Инструменты</string>
-    <string name="translate_platform">Перевести платформу</string>
+    <string name="translate_platform">Платформа локализации</string>
     <string name="ssh_private_key_passphrase">Парольная фраза закрытого ключа</string>
     <string name="ssh_private_key">Закрытый ключ</string>
     <string name="ssh_public_key">Открытый ключ</string>
@@ -456,4 +456,16 @@
     <string name="network_bt">Bluetooth</string>
     <string name="network_eth">Ethernet</string>
     <string name="route_need_ssid">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого необходимо **разрешение на определение местоположения в фоне** и **включенное определение местоположения** на Android 8.0 или выше</string>
+    <string name="tools_network">Сеть</string>
+    <string name="backup">Бекап</string>
+    <string name="backup_rules">Правила маршрутизации</string>
+    <string name="backup_settings">Настройки</string>
+    <string name="backup_not_file">Не файл резервной копии: ожидался .json, а не %s</string>
+    <string name="invalid_backup_file">Недействительный файл резервной копии</string>
+    <string name="backup_import_summary">При импорте существующие данные будут перезаписаны.</string>
+    <string name="backup_importing">Импортирование…</string>
+    <string name="backup_import">Импортировать</string>
+    <string name="use_local_dns_as_direct_dns">Использовать локальный DNS как прямой DNS</string>
+    <string name="backup_groups_and_configurations">Группы и конфигурации</string>
+    <string name="backup_summary">Если правила маршрутизации резервируются без конфигураций, то пользовательские исходящие соединения будут потеряны.</string>
 </resources>

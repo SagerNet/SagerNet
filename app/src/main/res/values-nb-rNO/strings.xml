@@ -135,7 +135,6 @@
     <string name="update_settings">Oppdater innstillinger</string>
     <string name="raw">Rå</string>
     <string name="deduplication_sum">Fjern dupliserte konfigurasjoner ved oppdatering</string>
-    <string name="force_vmess_aead">Tving VMess AEAD</string>
     <string name="force_resolve_sum">Løs alle domenenavn til IP -adresser når du oppdaterer. Vert og SNI blir automatisk lagt til hvis mulig</string>
     <string name="force_resolve">Tving løsning</string>
     <string name="delete_group_prompt">Er du sikker på at du vil fjerne denne gruppen\?</string>
