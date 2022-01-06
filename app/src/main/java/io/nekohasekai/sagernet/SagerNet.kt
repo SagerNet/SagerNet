@@ -53,10 +53,7 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
-import io.nekohasekai.sagernet.utils.CrashHandler
-import io.nekohasekai.sagernet.utils.DeviceStorageApp
-import io.nekohasekai.sagernet.utils.PackageCache
-import io.nekohasekai.sagernet.utils.Theme
+import io.nekohasekai.sagernet.utils.*
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
@@ -85,11 +82,11 @@ class SagerNet : Application(),
         Seq.setContext(this)
 
         externalAssets.mkdirs()
-        Libcore.initializeV2Ray(
-            filesDir.absolutePath + "/", externalAssets.absolutePath + "/", "v2ray/"
-        ) {
-            DataStore.rulesProvider == 0
-        }
+        Libcore.initializeV2Ray(filesDir.absolutePath + "/",
+            externalAssets.absolutePath + "/",
+            "v2ray/",
+            { DataStore.rulesProvider == 0 },
+            { DataStore.providerRootCA == RootCAProvider.SYSTEM })
         Libcore.setenv("v2ray.conf.geoloader", "memconservative")
         Libcore.setUidDumper(UidDumper)
 

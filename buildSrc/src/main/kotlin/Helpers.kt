@@ -482,6 +482,7 @@ fun Project.setupApp() {
                 requireFlavor().endsWith("Debug")
             }
             doLast {
+                downloadRootCAList()
                 downloadAssets()
             }
         }

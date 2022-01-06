@@ -26,6 +26,7 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.TrojanProvider
 import io.nekohasekai.sagernet.bg.AbstractInstance
@@ -175,12 +176,20 @@ abstract class V2RayInstance(
     @SuppressLint("SetJavaScriptEnabled")
     override fun launch() {
         val context = if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
+        val useSystemCACerts = DataStore.providerRootCA == RootCAProvider.SYSTEM
+        val rootCaPem by lazy { File(app.filesDir, "root_ca_certs.pem").canonicalPath }
 
         for ((isBalancer, chain) in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
                 val bean = profile.requireBean()
                 val needChain = !isBalancer && index != chain.size - 1
                 val (profileType, config) = pluginConfigs[port] ?: 0 to ""
+                val env = mutableMapOf<String, String>()
+                if (!useSystemCACerts) {
+                    env["SSL_CERT_FILE"] = rootCaPem
+                    // disable system directories
+                    env["SSL_CERT_DIR"] = "/dev/null"
+                }
 
                 when {
                     externalInstances.containsKey(port) -> {
@@ -203,7 +212,7 @@ abstract class V2RayInstance(
                             }.path, "--config", configFile.absolutePath
                         )
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                     bean is TrojanGoBean || bean is ConfigBean && bean.type == "trojan-go" -> {
                         val configFile = File(
@@ -218,7 +227,7 @@ abstract class V2RayInstance(
                             initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
                         )
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                     bean is NaiveBean -> {
                         val configFile = File(
@@ -234,7 +243,7 @@ abstract class V2RayInstance(
                             initPlugin("naive-plugin").path, configFile.absolutePath
                         )
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                     bean is PingTunnelBean -> {
                         if (needChain) error("PingTunnel is incompatible with chain")
@@ -258,7 +267,7 @@ abstract class V2RayInstance(
                             commands.add(bean.key)
                         }
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                     bean is RelayBatonBean -> {
                         val configFile = File(
@@ -277,7 +286,7 @@ abstract class V2RayInstance(
                             configFile.absolutePath
                         )
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                     bean is BrookBean -> {
                         val commands = mutableListOf(initPlugin("brook-plugin").path)
@@ -307,7 +316,7 @@ abstract class V2RayInstance(
                         commands.add("--socks5")
                         commands.add("$LOCALHOST:$port")
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                     bean is HysteriaBean -> {
                         val configFile = File(
@@ -333,7 +342,7 @@ abstract class V2RayInstance(
                             commands.addAll(0, listOf("su", "-c"))
                         }
 
-                        processes.start(commands)
+                        processes.start(commands, env)
                     }
                 }
             }

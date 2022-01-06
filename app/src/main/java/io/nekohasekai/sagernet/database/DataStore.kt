@@ -205,6 +205,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     // protocol
 
     var providerTrojan by configurationStore.stringToInt(Key.PROVIDER_TROJAN)
+    var providerRootCA by configurationStore.stringToInt(Key.PROVIDER_ROOT_CA)
 
     // cache
 

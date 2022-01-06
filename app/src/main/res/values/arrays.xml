@@ -638,4 +638,9 @@
         <item>@string/route_profile</item>
     </string-array>
 
+    <string-array name="root_ca_provider_entry">
+        <item>@string/root_ca_mozilla</item>
+        <item>@string/root_ca_system</item>
+    </string-array>
+
 </resources>

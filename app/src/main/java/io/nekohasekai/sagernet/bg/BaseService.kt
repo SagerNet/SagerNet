@@ -334,6 +334,10 @@ class BaseService {
             return (data?.proxy?.service as? VpnService)?.getTun()?.trafficStatsEnabled ?: false
         }
 
+        override fun updateSystemRoots(useSystem: Boolean) {
+            Libcore.updateSystemRoots(useSystem)
+        }
+
         override fun close() {
             callbacks.kill()
             cancel()
@@ -352,6 +356,7 @@ class BaseService {
         fun forceLoad() {
             if (DataStore.selectedProxy == 0L) {
                 stopRunner(false, (this as Context).getString(R.string.profile_empty))
+                return
             }
             val s = data.state
             when {

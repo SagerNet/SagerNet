@@ -497,4 +497,8 @@
     <string name="tasker_action_stop_service">Stop service</string>
     <string name="tasker_start_current_profile">Current profile</string>
     <string name="tasker_blurb_start_profile">Start profile %s</string>
+
+    <string name="root_ca_provider">Root CA Certificates Provider</string>
+    <string name="root_ca_mozilla">Mozilla</string>
+    <string name="root_ca_system">System</string>
 </resources>

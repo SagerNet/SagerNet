@@ -155,11 +155,20 @@
 
     <PreferenceCategory app:title="@string/protocol_settings">
         <com.takisoft.preferencex.SimpleMenuPreference
+            android:icon="@drawable/baseline_flight_takeoff_24"
             app:defaultValue="0"
             app:entries="@array/trojan_provider_experimental"
             app:entryValues="@array/int_array_3"
             app:key="providerTrojan"
             app:title="@string/trojan_provider"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            android:icon="@drawable/ic_baseline_push_pin_24"
+            app:defaultValue="0"
+            app:entries="@array/root_ca_provider_entry"
+            app:entryValues="@array/int_array_2"
+            app:key="providerRootCA"
+            app:title="@string/root_ca_provider"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
@@ -207,6 +216,7 @@
             app:title="@string/port_local_dns"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_http_24"
             app:key="requireHttp"
             app:title="@string/require_http" />

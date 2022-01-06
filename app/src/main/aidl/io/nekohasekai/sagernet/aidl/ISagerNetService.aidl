@@ -16,5 +16,6 @@ interface ISagerNetService {
   int urlTest();
   oneway void resetTrafficStats();
   boolean getTrafficStatsEnabled();
+  oneway void updateSystemRoots(boolean useSystem);
 
 }

@@ -88,6 +88,7 @@ object Key {
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
 
     const val PROVIDER_TROJAN = "providerTrojan"
+    const val PROVIDER_ROOT_CA = "providerRootCA"
 
     const val TUN_IMPLEMENTATION = "tunImplementation"
     const val ENABLE_PCAP = "enablePcap"
@@ -207,6 +208,11 @@ object TrojanProvider {
     const val V2RAY = 0
     const val TROJAN = 1
     const val TROJAN_GO = 2
+}
+
+object RootCAProvider {
+    const val MOZILLA = 0
+    const val SYSTEM = 1
 }
 
 object IPv6Mode {
