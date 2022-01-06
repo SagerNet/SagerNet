@@ -209,6 +209,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         speedInterval.isEnabled = profileTrafficStatistics.isChecked
         profileTrafficStatistics.setOnPreferenceChangeListener { _, newValue ->
             speedInterval.isEnabled = newValue as Boolean
+            needReload()
             true
         }
 
