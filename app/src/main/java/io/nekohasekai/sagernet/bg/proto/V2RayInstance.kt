@@ -177,7 +177,7 @@ abstract class V2RayInstance(
     override fun launch() {
         val context = if (Build.VERSION.SDK_INT < 24 || SagerNet.user.isUserUnlocked) SagerNet.application else SagerNet.deviceStorage
         val useSystemCACerts = DataStore.providerRootCA == RootCAProvider.SYSTEM
-        val rootCaPem by lazy { File(app.filesDir, "root_ca_certs.pem").canonicalPath }
+        val rootCaPem by lazy { File(app.filesDir, "mozilla_included.pem").canonicalPath }
 
         for ((isBalancer, chain) in config.index) {
             chain.entries.forEachIndexed { index, (port, profile) ->
@@ -188,7 +188,7 @@ abstract class V2RayInstance(
                 if (!useSystemCACerts) {
                     env["SSL_CERT_FILE"] = rootCaPem
                     // disable system directories
-                    env["SSL_CERT_DIR"] = "/dev/null"
+                    env["SSL_CERT_DIR"] = "/not_exists"
                 }
 
                 when {
