@@ -124,7 +124,8 @@ fun Project.setupCommon() {
                     "com/**",
                     "org/**",
                     "**/*.java",
-                    "**/*.proto"
+                    "**/*.proto",
+                    "*.json"
                 )
             )
         }

@@ -432,6 +432,7 @@ public class V2RayConfig {
 
             public Boolean enabled;
             public Integer concurrency;
+            public String packetEncoding;
 
         }
 

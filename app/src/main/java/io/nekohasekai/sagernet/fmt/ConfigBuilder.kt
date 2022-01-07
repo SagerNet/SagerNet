@@ -842,6 +842,16 @@ fun buildV2RayConfig(
                             mux = OutboundObject.MuxObject().apply {
                                 enabled = true
                                 concurrency = DataStore.muxConcurrency
+                                if (bean is StandardV2RayBean) {
+                                    when (bean.packetEncoding) {
+                                        PacketAddrType.Packet_VALUE -> {
+                                            packetEncoding = "packet"
+                                        }
+                                        PacketAddrType.XUDP_VALUE -> {
+                                            packetEncoding = "xudp"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
