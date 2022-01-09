@@ -903,6 +903,14 @@ public class V2RayConfig {
         }
     }
 
+    public static class PingObject {
+        public String protocol;
+        public String gateway4;
+        public String gateway6;
+        public Boolean disableIPv6;
+    }
+
+    public PingObject ping;
 
     public void init() {
         if (inbounds != null) {

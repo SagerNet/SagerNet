@@ -34,6 +34,8 @@ import com.v2ray.core.common.net.packetaddr.PacketAddrType
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TunImplementation
+import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -380,7 +382,7 @@ fun buildV2RayConfig(
                     needGlobal = false
                 }
 
-                if (index == profileList.lastIndex) {
+                if (index == 0) {
                     chainOutbound = tagIn
                 }
 
@@ -1031,12 +1033,12 @@ fun buildV2RayConfig(
             }
         }
 
-        val notVpn = DataStore.serviceMode != Key.MODE_VPN
+        val isVpn = DataStore.serviceMode == Key.MODE_VPN
 
         for (rule in extraRules) {
             if (rule.packages.isNotEmpty()) {
                 dumpUid = true
-                if (notVpn) {
+                if (!isVpn) {
                     alerts.add(Alerts.ROUTE_ALERT_NOT_VPN to rule.displayName())
                     continue
                 }
@@ -1274,6 +1276,11 @@ fun buildV2RayConfig(
         if (rootBalancer != null) routing.rules.add(rootBalancer)
 
         if (trafficStatistics) stats = emptyMap()
+
+        ping = PingObject().apply {
+            protocol = "unprivileged"
+            disableIPv6 = DataStore.ipv6Mode == IPv6Mode.DISABLE
+        }
 
         result = V2rayBuildResult(
             gson.toJson(this),

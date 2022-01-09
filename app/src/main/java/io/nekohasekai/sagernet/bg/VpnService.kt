@@ -33,6 +33,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
+import android.util.Log
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
@@ -50,6 +51,7 @@ import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.*
 import libcore.*
 import java.io.FileDescriptor
+import java.io.IOException
 import java.net.InetAddress
 import java.net.UnknownHostException
 import kotlin.coroutines.suspendCoroutine
@@ -66,9 +68,9 @@ class VpnService : BaseVpnService(),
 
         const val VPN_MTU = 1500
         const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
-        const val PRIVATE_VLAN4_ROUTER = "172.19.0.2"
+        const val PRIVATE_VLAN4_GATEWAY = "172.19.0.2"
         const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
-        const val PRIVATE_VLAN6_ROUTER = "fdfe:dcba:9876::2"
+        const val PRIVATE_VLAN6_GATEWAY = "fdfe:dcba:9876::2"
 
         private fun <T> FileDescriptor.use(block: (FileDescriptor) -> T) = try {
             block(this)
@@ -147,6 +149,11 @@ class VpnService : BaseVpnService(),
         underlyingNetwork = it
         SagerNet.reloadSSID(it)
         SagerNet.reloadNetworkType(it)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            SagerNet.connectivity.getLinkProperties(it)?.interfaceName?.also { interfaceName ->
+                Libcore.bindNetworkName(interfaceName)
+            }
+        }
     }
 
     inner class NullConnectionException : NullPointerException(),
@@ -174,10 +181,11 @@ class VpnService : BaseVpnService(),
                 val subnet = Subnet.fromString(it)!!
                 builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
             }
-            builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
+            builder.addRoute(PRIVATE_VLAN4_GATEWAY, 32)
             // https://issuetracker.google.com/issues/149636790
             if (ipv6Mode != IPv6Mode.DISABLE) {
                 builder.addRoute("2000::", 3)
+                builder.addRoute(PRIVATE_VLAN6_GATEWAY, 128)
             }
         } else {
             builder.addRoute("0.0.0.0", 0)
@@ -245,7 +253,7 @@ class VpnService : BaseVpnService(),
             builder.addDisallowedApplication(packageName)
         }
 
-        builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
+        builder.addDnsServer(PRIVATE_VLAN4_GATEWAY)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && DataStore.appendHttpProxy && DataStore.requireHttp) {
             builder.setHttpProxy(ProxyInfo.buildDirectProxy(LOCALHOST, DataStore.httpPort))
@@ -262,7 +270,8 @@ class VpnService : BaseVpnService(),
             protect = needIncludeSelf
             mtu = VPN_MTU
             v2Ray = data.proxy!!.v2rayPoint
-            vlaN4Router = PRIVATE_VLAN4_ROUTER
+            gateway4 = PRIVATE_VLAN4_GATEWAY
+            gateway6 = PRIVATE_VLAN6_GATEWAY
             iPv6Mode = ipv6Mode
             implementation = tunImplementation
             sniffing = DataStore.trafficSniffing
@@ -273,6 +282,19 @@ class VpnService : BaseVpnService(),
             pCap = DataStore.enablePcap
             errorHandler = ErrorHandler {
                 stopRunner(false, it)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                bindUpstream = Protector {
+                    protect(it)
+                    try {
+                        val fd = ParcelFileDescriptor.fromFd(it)
+                        underlyingNetwork?.bindSocket(fd.fileDescriptor)
+                        fd.close()
+                    } catch (e: IOException) {
+                        Log.e("VpnService", "failed to bind socket to upstream", e)
+                    }
+                    true
+                }
             }
 
             protector = this@VpnService
@@ -290,7 +312,7 @@ class VpnService : BaseVpnService(),
                     val callback = object : DnsResolver.Callback<Collection<InetAddress>> {
                         @Suppress("ThrowableNotThrown")
                         override fun onAnswer(answer: Collection<InetAddress>, rcode: Int) {
-                            if (rcode == 0)  {
+                            if (rcode == 0) {
                                 continuation.tryResume(answer.mapNotNull { it.hostAddress }
                                     .joinToString(","))
                             } else {
