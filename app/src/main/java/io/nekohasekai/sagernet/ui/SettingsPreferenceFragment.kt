@@ -223,6 +223,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
         val enablePcap = findPreference<SwitchPreference>(Key.ENABLE_PCAP)!!
         val providerRootCA = findPreference<SimpleMenuPreference>(Key.PROVIDER_ROOT_CA)!!
+
+        val mtu = findPreference<EditTextPreference>(Key.MTU)!!
+        mtu.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+
         providerRootCA.setOnPreferenceChangeListener { _, newValue ->
             val useSystem = (newValue as String) == "${RootCAProvider.SYSTEM}"
             Libcore.updateSystemRoots(useSystem)
@@ -264,6 +268,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tunImplementation.onPreferenceChangeListener = reloadListener
         destinationOverride.onPreferenceChangeListener = reloadListener
         resolveDestination.onPreferenceChangeListener = reloadListener
+        mtu.onPreferenceChangeListener = reloadListener
+
+
         enablePcap.setOnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
                 val path = File(app.externalAssets, "pcap").absolutePath

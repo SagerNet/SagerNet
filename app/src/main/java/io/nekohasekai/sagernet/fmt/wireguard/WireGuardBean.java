@@ -34,6 +34,7 @@ public class WireGuardBean extends AbstractBean {
     public String privateKey;
     public String peerPublicKey;
     public String peerPreSharedKey;
+    public Integer mtu;
 
     @Override
     public void initializeDefaultValues() {
@@ -42,16 +43,19 @@ public class WireGuardBean extends AbstractBean {
         if (privateKey == null) privateKey = "";
         if (peerPublicKey == null) peerPublicKey = "";
         if (peerPreSharedKey == null) peerPreSharedKey = "";
+        // wireguard default mtu
+        if (mtu == null) mtu = 1420;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(localAddress);
         output.writeString(privateKey);
         output.writeString(peerPublicKey);
         output.writeString(peerPreSharedKey);
+        output.writeInt(mtu);
     }
 
     @Override
@@ -62,6 +66,9 @@ public class WireGuardBean extends AbstractBean {
         privateKey = input.readString();
         peerPublicKey = input.readString();
         peerPreSharedKey = input.readString();
+        if (version >= 1) {
+            mtu = input.readInt();
+        }
     }
 
     @NotNull

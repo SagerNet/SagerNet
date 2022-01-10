@@ -92,6 +92,7 @@ object Key {
 
     const val TUN_IMPLEMENTATION = "tunImplementation"
     const val ENABLE_PCAP = "enablePcap"
+    const val MTU = "mtu"
 
     const val APP_TRAFFIC_STATISTICS = "appTrafficStatistics"
     const val PROFILE_TRAFFIC_STATISTICS = "profileTrafficStatistics"
@@ -156,6 +157,7 @@ object Key {
     const val SERVER_PRIVATE_KEY = "serverPrivateKey"
     const val SERVER_LOCAL_ADDRESS = "serverLocalAddress"
     const val SERVER_INSECURE_CONCURRENCY = "serverInsecureConcurrency"
+    const val SERVER_MTU = "serverMTU"
 
     const val BALANCER_TYPE = "balancerType"
     const val BALANCER_GROUP = "balancerGroup"

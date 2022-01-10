@@ -41,6 +41,11 @@
             app:key="tunImplementation"
             app:title="@string/tun_implementation"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/baseline_public_24"
+            app:key="mtu"
+            app:title="@string/mtu"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="appTrafficStatistics"

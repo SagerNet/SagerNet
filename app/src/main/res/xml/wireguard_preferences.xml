@@ -27,7 +27,6 @@
             app:key="serverPort"
             app:title="@string/server_port"
             app:useSimpleSummaryProvider="true" />
-
         <EditTextPreference
             app:icon="@drawable/ic_action_copyright"
             app:key="serverCertificates"
@@ -38,6 +37,11 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/wireguard_psk" />
+        <EditTextPreference
+            app:icon="@drawable/baseline_public_24"
+            app:key="serverMTU"
+            app:title="@string/mtu"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>

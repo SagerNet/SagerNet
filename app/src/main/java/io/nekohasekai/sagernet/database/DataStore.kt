@@ -25,6 +25,7 @@ import android.os.Binder
 import android.os.Build
 import androidx.preference.PreferenceDataStore
 import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
@@ -163,6 +164,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         if (configurationStore.getString(Key.DIRECT_DNS).isNullOrBlank()) {
             directDns = directDns
         }
+        if (configurationStore.getString(Key.MTU).isNullOrBlank()) {
+            mtu = mtu
+        }
     }
 
 
@@ -198,6 +202,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
     var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
+    var mtu by configurationStore.stringToInt(Key.MTU) { VpnService.DEFAULT_MTU }
 
     var appTrafficStatistics by configurationStore.boolean(Key.APP_TRAFFIC_STATISTICS)
     var profileTrafficStatistics by configurationStore.boolean(Key.PROFILE_TRAFFIC_STATISTICS) { true }
@@ -260,6 +265,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverPrivateKey by profileCacheStore.string(Key.SERVER_PRIVATE_KEY)
     var serverLocalAddress by profileCacheStore.string(Key.SERVER_LOCAL_ADDRESS)
     var serverInsecureConcurrency by profileCacheStore.stringToInt(Key.SERVER_INSECURE_CONCURRENCY)
+    var serverMTU by profileCacheStore.stringToInt(Key.SERVER_MTU)
 
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)

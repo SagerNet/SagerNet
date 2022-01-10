@@ -66,7 +66,7 @@ class VpnService : BaseVpnService(),
     companion object {
         var instance: VpnService? = null
 
-        const val VPN_MTU = 1500
+        const val DEFAULT_MTU = 1500
         const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
         const val PRIVATE_VLAN4_GATEWAY = "172.19.0.2"
         const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
@@ -167,7 +167,7 @@ class VpnService : BaseVpnService(),
         val profile = data.proxy!!.profile
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
             .setSession(profile.displayName())
-            .setMtu(VPN_MTU)
+            .setMtu(DataStore.mtu)
         val ipv6Mode = DataStore.ipv6Mode
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
@@ -268,7 +268,7 @@ class VpnService : BaseVpnService(),
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
             protect = needIncludeSelf
-            mtu = VPN_MTU
+            mtu = DataStore.mtu
             v2Ray = data.proxy!!.v2rayPoint
             gateway4 = PRIVATE_VLAN4_GATEWAY
             gateway6 = PRIVATE_VLAN6_GATEWAY

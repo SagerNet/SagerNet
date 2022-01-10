@@ -43,6 +43,8 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
 
         DataStore.serverCertificates = peerPublicKey
         DataStore.serverPassword = peerPreSharedKey
+
+        DataStore.serverMTU = mtu
     }
 
     override fun WireGuardBean.serialize() {
@@ -56,6 +58,8 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
 
         peerPublicKey = DataStore.serverCertificates
         peerPreSharedKey = DataStore.serverPassword
+
+        mtu = DataStore.serverMTU
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -68,6 +72,9 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+        findPreference<EditTextPreference>(Key.SERVER_MTU)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
     }
 

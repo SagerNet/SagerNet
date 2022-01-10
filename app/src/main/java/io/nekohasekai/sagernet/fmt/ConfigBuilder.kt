@@ -794,6 +794,7 @@ fun buildV2RayConfig(
                                         privateKey = bean.privateKey
                                         peerPublicKey = bean.peerPublicKey
                                         preSharedKey = bean.peerPreSharedKey
+                                        mtu = bean.mtu
                                     })
                                 streamSettings = StreamSettingsObject().apply {
                                     if (needKeepAliveInterval) {

@@ -503,5 +503,6 @@
     <string name="root_ca_system">System</string>
 
     <string name="packet_encoding">Packet Encoding</string>
+    <string name="mtu">MTU</string>
 
 </resources>
