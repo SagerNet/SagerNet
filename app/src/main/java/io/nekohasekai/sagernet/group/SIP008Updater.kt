@@ -27,11 +27,9 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.USER_AGENT
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import libcore.Libcore
 
 object SIP008Updater : GroupUpdater() {
 
@@ -39,7 +37,6 @@ object SIP008Updater : GroupUpdater() {
         proxyGroup: ProxyGroup,
         subscription: SubscriptionBean,
         userInterface: GroupManager.Interface?,
-        httpClient: OkHttpClient,
         byUser: Boolean
     ) {
 
@@ -54,19 +51,19 @@ object SIP008Updater : GroupUpdater() {
                 ?: error(app.getString(R.string.no_proxies_found_in_subscription))
         } else {
 
-            val response = httpClient.newCall(Request.Builder()
-                .url(subscription.link)
-                .header("User-Agent",
-                    subscription.customUserAgent.takeIf { it.isNotBlank() } ?: USER_AGENT)
-                .build()).execute().apply {
-                if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
-                if (body == null) error("ERROR: Empty response")
-            }
+            val response = Libcore.newHttpClient().apply {
+                modernTLS()
+                trySocks5(DataStore.socksPort)
+            }.newRequest().apply {
+                setURL(subscription.link)
+                if (subscription.customUserAgent.isNotBlank()) {
+                    setUserAgent(subscription.customUserAgent)
+                } else {
+                    randomUserAgent()
+                }
+            }.execute()
 
-            Logs.d(response.toString())
-
-            sip008Response = JSONObject(response.body!!.string())
-
+            sip008Response = JSONObject(response.contentString)
         }
 
         subscription.bytesUsed = sip008Response.getLong("bytesUsed", -1)
@@ -83,7 +80,7 @@ object SIP008Updater : GroupUpdater() {
             profiles.add(bean)
         }
 
-        if (subscription.forceResolve) forceResolve(httpClient, profiles, proxyGroup.id)
+        if (subscription.forceResolve) forceResolve(profiles, proxyGroup.id)
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()

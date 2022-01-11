@@ -27,10 +27,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.databinding.LayoutNetworkBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
-import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.readableMessage
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.Cloudflare
 import io.noties.markwon.Markwon
 import kotlinx.coroutines.Job
@@ -91,6 +88,7 @@ class NetworkFragment : NamedFragment(R.layout.layout_network) {
                     ProfileManager.createProfile(groupId, bean)
                 }
             } catch (e: Exception) {
+                Logs.w(e)
                 onMainDispatcher {
                     if (isActive) {
                         dialog.dismiss()

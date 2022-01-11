@@ -41,9 +41,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import libcore.Libcore
 import org.ini4j.Ini
 import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
@@ -57,7 +55,6 @@ object RawUpdater : GroupUpdater() {
         proxyGroup: ProxyGroup,
         subscription: SubscriptionBean,
         userInterface: GroupManager.Interface?,
-        httpClient: OkHttpClient,
         byUser: Boolean
     ) {
 
@@ -72,17 +69,18 @@ object RawUpdater : GroupUpdater() {
                 ?: error(app.getString(R.string.no_proxies_found_in_subscription))
         } else {
 
-            val response = httpClient.newCall(Request.Builder()
-                .url(subscription.link.toHttpUrl())
-                .header("User-Agent",
-                    subscription.customUserAgent.takeIf { it.isNotBlank() } ?: USER_AGENT)
-                .build()).execute().apply {
-                if (!isSuccessful) error("ERROR: HTTP $code\n\n${body?.string() ?: ""}")
-                if (body == null) error("ERROR: Empty response")
-            }
+            val response = Libcore.newHttpClient().apply {
+                trySocks5(DataStore.socksPort)
+            }.newRequest().apply {
+                setURL(subscription.link)
+                if (subscription.customUserAgent.isNotBlank()) {
+                    setUserAgent(subscription.customUserAgent)
+                } else {
+                    randomUserAgent()
+                }
+            }.execute()
 
-            Logs.d(response.toString())
-            proxies = parseRaw(response.body!!.string())
+            proxies = parseRaw(response.contentString)
                 ?: error(app.getString(R.string.no_proxies_found))
 
         }
@@ -102,7 +100,7 @@ object RawUpdater : GroupUpdater() {
         }
         proxies = proxiesMap.values.toList()
 
-        if (subscription.forceResolve) forceResolve(httpClient, proxies, proxyGroup.id)
+        if (subscription.forceResolve) forceResolve(proxies, proxyGroup.id)
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()

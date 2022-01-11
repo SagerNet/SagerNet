@@ -30,7 +30,7 @@ import android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
 import android.content.pm.Signature
 import android.os.Build
 import android.os.Process
-import cn.hutool.crypto.digest.DigestUtil
+import libcore.Libcore
 
 val devKeys = arrayOf(
     "32250A4B5F3A6733DF57A3B9EC16C38D2C7FC5F2F693A9636F8F7B3BE3549641"
@@ -48,7 +48,7 @@ fun Context.getSignature(): Signature {
 }
 
 fun Context.getSha256Signature(): String {
-    return DigestUtil.sha256Hex(getSignature().toByteArray()).uppercase()
+    return Libcore.sha256Hex(getSignature().toByteArray())
 }
 
 fun Context.isVerified(): Boolean {

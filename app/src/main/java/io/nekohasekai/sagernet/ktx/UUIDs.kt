@@ -21,8 +21,7 @@ package io.nekohasekai.sagernet.ktx
 
 import cn.hutool.core.lang.UUID
 import cn.hutool.core.util.ArrayUtil
-import cn.hutool.crypto.digest.DigestUtil
-import java.io.ByteArrayInputStream
+import libcore.Libcore
 import java.io.ByteArrayOutputStream
 import kotlin.experimental.and
 import kotlin.experimental.or
@@ -31,7 +30,7 @@ fun uuid5(text: String): String {
     val data = ByteArrayOutputStream()
     data.write(ByteArray(16))
     data.write(text.toByteArray())
-    val hash = DigestUtil.sha1(ByteArrayInputStream(data.toByteArray()))
+    val hash = Libcore.sha1(data.toByteArray())
     val result = ArrayUtil.sub(hash, 0, 16)
     result[6] = result[6] and 0x0F.toByte()
     result[6] = result[6] or 0x50.toByte()

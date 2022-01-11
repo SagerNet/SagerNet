@@ -19,16 +19,16 @@
 package io.nekohasekai.sagernet.utils
 
 import com.wireguard.crypto.KeyPair
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.ktx.createProxyClient
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.utils.cf.DeviceResponse
 import io.nekohasekai.sagernet.utils.cf.RegisterRequest
 import io.nekohasekai.sagernet.utils.cf.UpdateDeviceRequest
-import okhttp3.MediaType.Companion.toMediaType
+import libcore.Libcore
+import okhttp3.OkHttp
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.closeQuietly
 
 // kang from wgcf
 object Cloudflare {
@@ -41,31 +41,36 @@ object Cloudflare {
 
     fun makeWireGuardConfiguration(): WireGuardBean {
         val keyPair = KeyPair()
-        val okhttpClient = createProxyClient()
-        var body = RegisterRequest.newRequest(keyPair.publicKey)
-        var response = okhttpClient.newCall(
-            Request.Builder()
-                .url("$API_URL/$API_VERSION/reg")
-                .header("Accept", "application/json")
-                .header(CLIENT_VERSION_KEY, CLIENT_VERSION)
-                .post(body.toRequestBody("application/json".toMediaType()))
-                .build()
-        ).execute()
-        if (!response.isSuccessful) error(response)
-        val device = gson.fromJson(response.body!!.string(), DeviceResponse::class.java)
-        val accessToken = device.token
-        body = UpdateDeviceRequest.newRequest()
-        response = okhttpClient.newCall(
-            Request.Builder()
-                .url(API_URL + "/" + API_VERSION + "/reg/" + device.id + "/account/reg/" + device.id)
-                .header("Authorization", "Bearer $accessToken")
-                .header("Accept", "application/json")
-                .header(CLIENT_VERSION_KEY, CLIENT_VERSION)
-                .patch(body.toRequestBody("application/json".toMediaType()))
-                .build()
-        ).execute()
+        val client = Libcore.newHttpClient().apply {
+            pinnedTLS12()
+            trySocks5(DataStore.socksPort)
+        }
+
         try {
-            if (!response.isSuccessful) error(response)
+            val response = client.newRequest().apply {
+                setMethod("POST")
+                setURL("$API_URL/$API_VERSION/reg")
+                setHeader(CLIENT_VERSION_KEY, CLIENT_VERSION)
+                setHeader("Accept", "application/json")
+                setHeader("Content-Type", "application/json")
+                setContentString(RegisterRequest.newRequest(keyPair.publicKey))
+                setUserAgent("okhttp/3.12.1")
+            }.execute()
+
+            val device = gson.fromJson(response.contentString, DeviceResponse::class.java)
+            val accessToken = device.token
+
+            client.newRequest().apply {
+                setMethod("PATCH")
+                setURL(API_URL + "/" + API_VERSION + "/reg/" + device.id + "/account/reg/" + device.id)
+                setHeader("Accept", "application/json")
+                setHeader("Content-Type", "application/json")
+                setHeader("Authorization", "Bearer $accessToken")
+                setHeader(CLIENT_VERSION_KEY, CLIENT_VERSION)
+                setContentString(UpdateDeviceRequest.newRequest())
+                setUserAgent("okhttp/3.12.1")
+            }.execute()
+
             val peer = device.config.peers[0]
             val localAddresses = device.config.interfaceX.addresses
             return WireGuardBean().apply {
@@ -77,7 +82,7 @@ object Cloudflare {
                 localAddress = localAddresses.v4 + "\n" + localAddresses.v6
             }
         } finally {
-            response.body?.closeQuietly()
+            client.close()
         }
     }
 

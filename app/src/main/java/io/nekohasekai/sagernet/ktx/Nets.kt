@@ -21,46 +21,14 @@
 
 package io.nekohasekai.sagernet.ktx
 
-import android.os.Build
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.VpnService
-import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.LOCALHOST
-import okhttp3.ConnectionSpec
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import java.net.InetAddress
 import java.net.InetSocketAddress
-import java.net.Proxy
 import java.net.Socket
-
-val okHttpClient = OkHttpClient.Builder()
-    .followRedirects(true)
-    .followSslRedirects(true)
-    .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT, ConnectionSpec.RESTRICTED_TLS))
-    .build()
-
-private lateinit var proxyClient: OkHttpClient
-fun createProxyClient(): OkHttpClient {
-    if (!SagerNet.started) return okHttpClient
-
-    if (!::proxyClient.isInitialized) {
-        proxyClient = okHttpClient.newBuilder().proxy(requireProxy()).build()
-    }
-    return proxyClient
-}
-
-
-fun requireProxy(): Proxy {
-    return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-        Proxy(Proxy.Type.SOCKS, InetSocketAddress(LOCALHOST, DataStore.socksPort))
-    } else {
-        Proxy(Proxy.Type.HTTP, InetSocketAddress(LOCALHOST, DataStore.httpPort))
-    }
-}
 
 fun linkBuilder() = HttpUrl.Builder().scheme("https")
 

@@ -53,12 +53,13 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
-import io.nekohasekai.sagernet.utils.*
+import io.nekohasekai.sagernet.utils.CrashHandler
+import io.nekohasekai.sagernet.utils.DeviceStorageApp
+import io.nekohasekai.sagernet.utils.PackageCache
+import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
-import org.conscrypt.Conscrypt
-import java.security.Security
 import androidx.work.Configuration as WorkConfiguration
 
 class SagerNet : Application(),
@@ -97,8 +98,6 @@ class SagerNet : Application(),
 
         Theme.apply(this)
         Theme.applyNightTheme()
-
-        Security.insertProviderAt(Conscrypt.newProvider(), 1)
 
         if (BuildConfig.DEBUG) StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()

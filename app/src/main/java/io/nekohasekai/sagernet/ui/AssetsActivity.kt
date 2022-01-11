@@ -275,8 +275,6 @@ class AssetsActivity : ThemedActivity() {
     }
 
     suspend fun updateAsset(file: File, versionFile: File, localVersion: String) {
-        val okHttpClient = createProxyClient()
-
         val repo: String
         var fileName = file.name
         if (DataStore.rulesProvider == 0) {
@@ -291,54 +289,57 @@ class AssetsActivity : ThemedActivity() {
             repo = "Loyalsoldier/v2ray-rules-dat"
         }
 
-        var response = okHttpClient.newCall(
-            Request.Builder().url("https://api.github.com/repos/$repo/releases/latest").build()
-        ).execute()
-
-        if (!response.isSuccessful) {
-            error("Error when fetching latest release of $repo : HTTP ${response.code}\n\n${response.body?.string()}")
+        val client = Libcore.newHttpClient().apply {
+            modernTLS()
+            keepAlive()
+            trySocks5(DataStore.socksPort)
         }
 
-        val release = JSONObject(response.body!!.string())
-        val tagName = release.getStr("tag_name")
+        try {
+            var response = client.newRequest().apply {
+                setURL("https://api.github.com/repos/$repo/releases/latest")
+            }.execute()
 
-        if (tagName == localVersion) {
-            onMainDispatcher {
-                snackbar(R.string.route_asset_no_update).show()
+            val release = JSONObject(response.contentString)
+            val tagName = release.getStr("tag_name")
+
+            if (tagName == localVersion) {
+                onMainDispatcher {
+                    snackbar(R.string.route_asset_no_update).show()
+                }
+                return
             }
-            return
-        }
 
-        val releaseAssets = release.getJSONArray("assets").filterIsInstance<JSONObject>()
-        val assetToDownload = releaseAssets.find { it.getStr("name") == fileName }
-            ?: error("File $fileName not found in release ${release["url"]}")
-        val browserDownloadUrl = assetToDownload.getStr("browser_download_url")
+            val releaseAssets = release.getJSONArray("assets").filterIsInstance<JSONObject>()
+            val assetToDownload = releaseAssets.find { it.getStr("name") == fileName }
+                ?: error("File $fileName not found in release ${release["url"]}")
+            val browserDownloadUrl = assetToDownload.getStr("browser_download_url")
 
-        response = okHttpClient.newCall(
-            Request.Builder().url(browserDownloadUrl).build()
-        ).execute()
+            response = client.newRequest().apply {
+                setURL(browserDownloadUrl)
+            }.execute()
 
-        if (!response.isSuccessful) {
-            error("Error when downloading $browserDownloadUrl : HTTP ${response.code}")
-        }
+            val cacheFile = File(file.parentFile, file.name + ".tmp")
+            cacheFile.parentFile?.mkdirs()
 
-        val cacheFile = File(file.parentFile, file.name + ".tmp")
-        response.body!!.use { body ->
-            body.byteStream().use(cacheFile.outputStream())
-        }
-        if (fileName.endsWith(".xz")) {
-            Libcore.unxz(cacheFile.absolutePath, file.absolutePath)
-            cacheFile.delete()
-        } else {
-            cacheFile.renameTo(file)
-        }
+            response.writeTo(cacheFile.canonicalPath)
 
-        versionFile.writeText(tagName)
+            if (fileName.endsWith(".xz")) {
+                Libcore.unxz(cacheFile.absolutePath, file.absolutePath)
+                cacheFile.delete()
+            } else {
+                cacheFile.renameTo(file)
+            }
 
-        adapter.reloadAssets()
+            versionFile.writeText(tagName)
 
-        onMainDispatcher {
-            snackbar(R.string.route_asset_updated).show()
+            adapter.reloadAssets()
+
+            onMainDispatcher {
+                snackbar(R.string.route_asset_updated).show()
+            }
+        } finally {
+            client.close()
         }
     }
 
