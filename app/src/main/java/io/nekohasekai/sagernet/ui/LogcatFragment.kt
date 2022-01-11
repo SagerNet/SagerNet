@@ -93,27 +93,38 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         terminalView.mTermSession?.also {
             it.finishIfRunning()
         }
+        val args = mutableListOf(
+            "-C",
+            "-v",
+            "tag,color",
+        )
+        if (!isExpert) {
+            args.addAll(
+                arrayOf(
+                    "AndroidRuntime:D",
+                    "ProxyInstance:D",
+                    "GuardedProcessPool:D",
+                    "VpnService:D",
+                    "libcore:D",
+                    "v2ray-core:D",
+                    "su:D",
+                    "libtrojan:D",
+                    "libnaive:D",
+                    "libbrook:D",
+                    "libhysteria:D",
+                    "librelaybaton:D",
+                    "*:E",
+                )
+            )
+        }
+
         val session = TerminalSession(
-            "/system/bin/logcat", app.cacheDir.absolutePath, arrayOf(
-                "-C",
-                "-v",
-                "tag,color",
-                "AndroidRuntime:D",
-                "ProxyInstance:D",
-                "GuardedProcessPool:D",
-                "VpnService:D",
-                "libcore:D",
-                "v2ray-core:D",
-
-                "su:D",
-                "libtrojan:D",
-                "libnaive:D",
-                "libbrook:D",
-                "libhysteria:D",
-                "librelaybaton:D",
-
-                "*:S"
-            ), arrayOf(), 3000, this
+            "/system/bin/logcat",
+            app.cacheDir.absolutePath,
+            args.toTypedArray(),
+            arrayOf(),
+            3000,
+            this
         )
         terminalView.attachSession(session)
         terminalView.updateSize()
