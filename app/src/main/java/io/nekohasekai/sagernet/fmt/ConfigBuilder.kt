@@ -864,6 +864,9 @@ fun buildV2RayConfig(
                             type = "field"
                             inboundTag = listOf(pastInboundTag)
                             outboundTag = tagIn
+                            if (currentOutbound.domainStrategy == "AsIS") {
+                                currentOutbound.domainStrategy = "UseIP"
+                            }
                         })
                     }
                 }
