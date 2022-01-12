@@ -22,13 +22,10 @@ import com.wireguard.crypto.KeyPair
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.utils.cf.DeviceResponse
 import io.nekohasekai.sagernet.utils.cf.RegisterRequest
 import io.nekohasekai.sagernet.utils.cf.UpdateDeviceRequest
 import libcore.Libcore
-import okhttp3.OkHttp
-import okhttp3.Request
 
 // kang from wgcf
 object Cloudflare {

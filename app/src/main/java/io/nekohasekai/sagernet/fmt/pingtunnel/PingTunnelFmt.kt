@@ -19,10 +19,8 @@
 
 package io.nekohasekai.sagernet.fmt.pingtunnel
 
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import libcore.Libcore
 
 
 /**
@@ -32,8 +30,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
  */
 
 fun parsePingTunnel(server: String): PingTunnelBean {
-    val link = server.replace("ping-tunnel://", "https://").toHttpUrlOrNull()
-        ?: error("invalid PingTunnel link $server")
+    val link = Libcore.parseURL(server)
     return PingTunnelBean().apply {
         serverAddress = link.host
         key = link.username
@@ -45,12 +42,13 @@ fun parsePingTunnel(server: String): PingTunnelBean {
 }
 
 fun PingTunnelBean.toUri(): String {
-    val builder = linkBuilder().host(serverAddress)
+    val builder = Libcore.newURL("ping-tunnel")
+    builder.host = serverAddress
     if (key.isNotBlank() && key != "1") {
-        builder.encodedUsername(key.urlSafe())
+        builder.username = key
     }
     if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+        builder.setRawFragment(name.urlSafe())
     }
-    return builder.toLink("ping-tunnel", false)
+    return builder.string
 }

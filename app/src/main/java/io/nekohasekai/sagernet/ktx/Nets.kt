@@ -25,23 +25,21 @@ import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import okhttp3.HttpUrl
+import libcore.URL
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 
-fun linkBuilder() = HttpUrl.Builder().scheme("https")
-
-fun HttpUrl.Builder.toLink(scheme: String, appendDefaultPort: Boolean = true): String {
-    var url = build()
-    val defaultPort = HttpUrl.defaultPort(url.scheme)
-    var replace = false
-    if (appendDefaultPort && url.port == defaultPort) {
-        url = url.newBuilder().port(14514).build()
-        replace = true
+fun URL.queryParameter(key: String) = queryParameterNotBlank(key).takeIf { it.isNotBlank() }
+var URL.pathSegments: List<String>
+    get() = path.split("/").filter { it.isNotBlank() }
+    set(value) {
+        path = value.joinToString("/")
     }
-    return url.toString().replace("${url.scheme}://", "$scheme://").let {
-        if (replace) it.replace(":14514", ":$defaultPort") else it
+
+fun URL.addPathSegments(vararg segments: String) {
+    pathSegments = pathSegments.toMutableList().apply {
+        addAll(segments)
     }
 }
 

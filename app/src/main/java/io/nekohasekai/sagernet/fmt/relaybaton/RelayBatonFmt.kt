@@ -20,14 +20,11 @@
 package io.nekohasekai.sagernet.fmt.relaybaton
 
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.ktx.linkBuilder
-import io.nekohasekai.sagernet.ktx.toLink
 import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import libcore.Libcore
 
 fun parseRelayBaton(link: String): RelayBatonBean {
-    val url = (link.replace("relaybaton://", "https://")).toHttpUrlOrNull()
-        ?: error("Invalid relaybaton link: $link")
+    val url = Libcore.parseURL(link)
     return RelayBatonBean().apply {
         serverAddress = url.host
         username = url.username
@@ -38,13 +35,16 @@ fun parseRelayBaton(link: String): RelayBatonBean {
 }
 
 fun RelayBatonBean.toUri(): String {
-    val builder = linkBuilder().host(serverAddress).username(username).password(password)
+    val builder = Libcore.newURL("relaybaton")
+    builder.host = serverAddress
+    builder.username = username
+    builder.password = password
 
     if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+        builder.setRawFragment(name.urlSafe())
     }
 
-    return builder.toLink("relaybaton", false)
+    return builder.string
 }
 
 fun RelayBatonBean.buildRelayBatonConfig(port: Int): String {

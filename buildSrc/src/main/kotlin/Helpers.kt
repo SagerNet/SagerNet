@@ -125,7 +125,6 @@ fun Project.setupCommon() {
                     "org/**",
                     "**/*.java",
                     "**/*.proto",
-                    "okhttp3/**"
                 )
             )
         }

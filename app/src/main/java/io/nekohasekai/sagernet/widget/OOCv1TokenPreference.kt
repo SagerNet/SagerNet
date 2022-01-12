@@ -28,7 +28,8 @@ import com.google.android.material.textfield.TextInputLayout
 import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.readableMessage
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import libcore.Libcore
+import java.net.URL
 
 class OOCv1TokenPreference : EditTextPreference {
 
@@ -83,7 +84,7 @@ class OOCv1TokenPreference : EditTextPreference {
                                 linkLayout.error = "Protocol scheme must be https"
                             }
                             else -> try {
-                                baseUrl.toHttpUrl()
+                                Libcore.parseURL(baseUrl)
                             } catch (e: Exception) {
                                 isValid = false
                                 linkLayout.error = e.readableMessage
@@ -104,13 +105,11 @@ class OOCv1TokenPreference : EditTextPreference {
                             when {
                                 certSha256.length != 64 -> {
                                     isValid = false
-                                    linkLayout.error =
-                                        "certSha256 must be a SHA-256 hexadecimal string"
+                                    linkLayout.error = "certSha256 must be a SHA-256 hexadecimal string"
                                 }
                                 !certSha256.all { CharUtil.isLetterLower(it) || CharUtil.isNumber(it) } -> {
                                     isValid = false
-                                    linkLayout.error =
-                                        "certSha256 must be a hexadecimal string with lowercase letters"
+                                    linkLayout.error = "certSha256 must be a hexadecimal string with lowercase letters"
                                 }
                             }
                         }

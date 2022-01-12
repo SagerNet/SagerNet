@@ -28,7 +28,7 @@ import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.readableMessage
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import libcore.Libcore
 
 class LinkOrContentPreference : EditTextPreference {
 
@@ -56,14 +56,18 @@ class LinkOrContentPreference : EditTextPreference {
                 }
 
                 try {
-                    if (Uri.parse(link.toString()).scheme == "content") {
+                    val uri = Uri.parse(link.toString())
+
+                    if (uri.scheme.isNullOrBlank()) {
+                        error("Missing scheme in url")
+                    } else if (uri.scheme == "content") {
                         linkLayout.isErrorEnabled = false
                         return
-                    }
-                    val url = link.toString().toHttpUrl()
-                    if ("http".equals(url.scheme, true)) {
+                    } else if (uri.scheme == "http") {
                         linkLayout.error = app.getString(R.string.cleartext_http_warning)
                         linkLayout.isErrorEnabled = true
+                    } else if (uri.scheme != "https") {
+                        error("Invalid scheme ${uri.scheme}")
                     } else {
                         linkLayout.isErrorEnabled = false
                     }

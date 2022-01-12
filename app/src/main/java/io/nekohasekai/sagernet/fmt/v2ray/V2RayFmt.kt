@@ -23,19 +23,19 @@ import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import com.v2ray.core.common.net.packetaddr.PacketAddrType
 import io.nekohasekai.sagernet.ktx.*
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import libcore.Libcore
 
 fun parseV2Ray(link: String): StandardV2RayBean {
     if (!link.contains("@")) {
         return parseV2RayN(link)
     }
 
-    val bean = if (!link.startsWith("vless://")) {
+    val url = Libcore.parseURL(link)
+    val bean = if (url.scheme == "vmess") {
         VMessBean()
     } else {
         VLESSBean()
     }
-    val url = link.replace("vmess://", "https://").replace("vless://", "https://").toHttpUrl()
 
     bean.serverAddress = url.host
     bean.serverPort = url.port
@@ -110,9 +110,6 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     } else { // https://github.com/XTLS/Xray-core/issues/91
 
         bean.uuid = url.username
-        if (url.pathSegments.size > 1 || url.pathSegments[0].isNotBlank()) {
-            bean.path = url.pathSegments.joinToString("/")
-        }
 
         val protocol = url.queryParameter("type") ?: "tcp"
         bean.type = protocol
@@ -354,14 +351,16 @@ fun VMessBean.toV2rayN(): String {
 
 }
 
-fun StandardV2RayBean.toUri(standard: Boolean = true): String {
+fun StandardV2RayBean.toUri(): String {
 //    if (this is VMessBean && alterId > 0) return toV2rayN()
 
-    val builder = linkBuilder().username(uuid)
-        .host(serverAddress)
-        .port(serverPort)
-        .addQueryParameter("type", type)
-        .addQueryParameter("encryption", encryption)
+    val builder = Libcore.newURL(if (this is VMessBean) "vmess" else "vless")
+    builder.host = serverAddress
+    builder.port = serverPort
+
+
+    builder.addQueryParameter("type", type)
+    builder.addQueryParameter("encryption", encryption)
 
     when (type) {
         "tcp" -> {
@@ -372,11 +371,7 @@ fun StandardV2RayBean.toUri(standard: Boolean = true): String {
                     builder.addQueryParameter("host", host)
                 }
                 if (path.isNotBlank()) {
-                    if (standard) {
-                        builder.addQueryParameter("path", path)
-                    } else {
-                        builder.encodedPath(path.pathSafe())
-                    }
+                    builder.addQueryParameter("path", path)
                 }
             }
         }
@@ -393,11 +388,7 @@ fun StandardV2RayBean.toUri(standard: Boolean = true): String {
                 builder.addQueryParameter("host", host)
             }
             if (path.isNotBlank()) {
-                if (standard) {
-                    builder.addQueryParameter("path", path)
-                } else {
-                    builder.encodedPath(path.pathSafe())
-                }
+                builder.addQueryParameter("path", path)
             }
             if (type == "ws") {
                 if (wsMaxEarlyData > 0) {
@@ -454,9 +445,9 @@ fun StandardV2RayBean.toUri(standard: Boolean = true): String {
     }
 
     if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+        builder.setRawFragment(name.urlSafe())
     }
 
-    return builder.toLink(if (this is VMessBean) "vmess" else "vless")
+    return builder.string
 
 }

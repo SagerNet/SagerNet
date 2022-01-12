@@ -24,16 +24,15 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import libcore.Libcore
 import java.io.File
 
 
 // hysteria://host:port?auth=123456&peer=sni.domain&insecure=1|0&upmbps=100&downmbps=100&alpn=hysteria&obfs=xplus&obfsParam=123456#remarks
 
 fun parseHysteria(url: String): HysteriaBean {
-    val link = url.replace("hysteria://", "https://").toHttpUrlOrNull() ?: error(
-        "invalid hysteria link $url"
-    )
+    val link = Libcore.parseURL(url)
+
     return HysteriaBean().apply {
         serverAddress = link.host
         serverPort = link.port
@@ -70,7 +69,10 @@ fun parseHysteria(url: String): HysteriaBean {
 }
 
 fun HysteriaBean.toUri(): String {
-    val builder = linkBuilder().host(serverAddress).port(serverPort)
+    val builder = Libcore.newURL("hysteria")
+    builder.host = serverAddress
+    builder.port = serverPort
+
     if (sni.isNotBlank()) {
         builder.addQueryParameter("peer", sni)
     }
@@ -102,9 +104,9 @@ fun HysteriaBean.toUri(): String {
         builder.addQueryParameter("protocol", "faketcp")
     }
     if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+        builder.setRawFragment(name.urlSafe())
     }
-    return builder.toLink("hysteria")
+    return builder.string
 }
 
 fun JSONObject.parseHysteria(): HysteriaBean {

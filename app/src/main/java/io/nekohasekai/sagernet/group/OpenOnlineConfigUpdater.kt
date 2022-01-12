@@ -29,13 +29,9 @@ import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.USER_AGENT_ORIGIN
-import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import libcore.URL
 
 object OpenOnlineConfigUpdater : GroupUpdater() {
 
@@ -46,7 +42,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         byUser: Boolean
     ) {
         val apiToken: JSONObject
-        var baseLink: HttpUrl
+        val baseLink: URL
         val certSha256: String?
         try {
             apiToken = JSONObject(subscription.token)
@@ -70,18 +66,15 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 !baseUrl.startsWith("https://") -> {
                     error("Protocol scheme must be https")
                 }
-                else -> baseLink = baseUrl.toHttpUrl()
+                else -> baseLink = Libcore.parseURL(baseUrl)
             }
             val secret = apiToken.getStr("secret")
             if (secret.isNullOrBlank()) error("Missing field: secret")
-            baseLink = baseLink.newBuilder()
-                .addPathSegments(secret)
-                .addPathSegments("ooc/v1")
-                .build()
+            baseLink.addPathSegments(secret, "ooc/v1")
 
             val userId = apiToken.getStr("userId")
             if (userId.isNullOrBlank()) error("Missing field: userId")
-            baseLink = baseLink.newBuilder().addPathSegment(userId).build()
+            baseLink.addPathSegments(userId)
             certSha256 = apiToken.getStr("certSha256")
             if (!certSha256.isNullOrBlank()) {
                 when {
@@ -102,7 +95,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
             restrictedTLS()
             if (certSha256 != null) pinnedSHA256(certSha256)
         }.newRequest().apply {
-            setURL(baseLink.toString())
+            setURL(baseLink.string)
             setUserAgent(subscription.customUserAgent.takeIf { it.isNotBlank() }
                 ?: USER_AGENT_ORIGIN)
         }.execute()

@@ -71,7 +71,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import libcore.Libcore
-import okhttp3.internal.closeQuietly
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -200,7 +199,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         RawUpdater.parseRaw(fileText)?.let { pl -> proxies.addAll(pl) }
                         zip.closeEntry()
                     }
-                    zip.closeQuietly()
+                    runCatching {
+                        zip.close()
+                    }
                 } else {
                     val fileText = requireContext().contentResolver.openInputStream(file)!!.use {
                         it.bufferedReader().readText()
@@ -703,7 +704,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                                     profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
                                     test.update(profile)
                                 } finally {
-                                    socket.closeQuietly()
+                                    runCatching {
+                                        socket.close()
+                                    }
                                 }
                             }
                         } catch (e: Exception) {
@@ -814,14 +817,18 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             testJobs.joinAll()
-            dnsInstance.closeQuietly()
+            runCatching {
+                dnsInstance.close()
+            }
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
                 dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
             }
         }
         test.cancel = {
-            dnsInstance.closeQuietly()
+            runCatching {
+                dnsInstance.close()
+            }
             mainJob.cancel()
             runOnDefaultDispatcher {
                 GroupManager.postReload(DataStore.currentGroupId())

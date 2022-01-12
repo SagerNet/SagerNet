@@ -19,44 +19,42 @@
 
 package io.nekohasekai.sagernet.fmt.http
 
+import io.nekohasekai.sagernet.ktx.queryParameter
 import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import libcore.Libcore
 
 fun parseHttp(link: String): HttpBean {
-    val httpUrl = link.toHttpUrlOrNull() ?: error("Invalid http(s) link: $link")
-
-    if (httpUrl.encodedPath != "/") error("Not http proxy")
+    val url = Libcore.parseURL(link)
+    if (url.rawPath != "/") error("Not http proxy")
 
     return HttpBean().apply {
-        serverAddress = httpUrl.host
-        serverPort = httpUrl.port
-        username = httpUrl.username
-        password = httpUrl.password
-        sni = httpUrl.queryParameter("sni")
-        name = httpUrl.fragment
-        tls = httpUrl.scheme == "https"
+        serverAddress = url.host
+        serverPort = url.port
+        username = url.username
+        password = url.password
+        sni = url.queryParameter("sni")
+        name = url.fragment
+        tls = url.scheme == "https"
     }
 }
 
 fun HttpBean.toUri(): String {
-    val builder = HttpUrl.Builder()
-        .scheme(if (tls) "https" else "http")
-        .host(serverAddress)
-        .port(serverPort)
+    val builder = Libcore.newURL(if (tls) "https" else "http")
+    builder.host = serverAddress
+    builder.port = serverPort
 
     if (username.isNotBlank()) {
-        builder.username(username)
+        builder.username = username
     }
     if (password.isNotBlank()) {
-        builder.password(password)
+        builder.password = password
     }
     if (sni.isNotBlank()) {
         builder.addQueryParameter("sni", sni)
     }
     if (name.isNotBlank()) {
-        builder.encodedFragment(name.urlSafe())
+        builder.setRawFragment(name.urlSafe())
     }
 
-    return builder.toString()
+    return builder.string
 }

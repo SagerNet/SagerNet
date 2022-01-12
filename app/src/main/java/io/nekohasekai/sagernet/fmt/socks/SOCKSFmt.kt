@@ -20,34 +20,26 @@
 package io.nekohasekai.sagernet.fmt.socks
 
 import cn.hutool.core.codec.Base64
-import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
-import io.nekohasekai.sagernet.ktx.toLink
+import io.nekohasekai.sagernet.ktx.queryParameter
 import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import libcore.Libcore
 
 fun parseSOCKS(link: String): SOCKSBean {
     if (!link.substringAfter("://").contains(":")) {
         // v2rayN shit format
-        var url = link.substringAfter("://")
-        if (url.contains("#")) {
-            url = url.substringBeforeLast("#")
-        }
-        url = url.decodeBase64UrlSafe()
-        val httpUrl = "http://$url".toHttpUrlOrNull() ?: error("Invalid v2rayN link content: $url")
+        val url = Libcore.parseURL(link)
         return SOCKSBean().apply {
-            serverAddress = httpUrl.host
-            serverPort = httpUrl.port
-            username = httpUrl.username.takeIf { it != "null" } ?: ""
-            password = httpUrl.password.takeIf { it != "null" } ?: ""
+            serverAddress = url.host
+            serverPort = url.port
+            username = url.username.takeIf { it != "null" } ?: ""
+            password = url.password.takeIf { it != "null" } ?: ""
             if (link.contains("#")) {
                 name = link.substringAfter("#").unUrlSafe()
             }
         }
     } else {
-        val url = ("http://" + link.substringAfter("://")).toHttpUrlOrNull()
-            ?: error("Not supported: $link")
+        val url = Libcore.parseURL(link)
 
         return SOCKSBean().apply {
             protocol = when {
@@ -67,18 +59,19 @@ fun parseSOCKS(link: String): SOCKSBean {
 }
 
 fun SOCKSBean.toUri(): String {
-
-    val builder = HttpUrl.Builder().scheme("http").host(serverAddress).port(serverPort)
-    if (!username.isNullOrBlank()) builder.username(username)
-    if (!password.isNullOrBlank()) builder.password(password)
+    val builder = Libcore.newURL("socks${protocolVersion()}")
+    builder.host = serverAddress
+    builder.port = serverPort
+    if (!username.isNullOrBlank()) builder.username = username
+    if (!password.isNullOrBlank()) builder.password = password
     if (tls) {
         builder.addQueryParameter("tls", "true")
         if (sni.isNotBlank()) {
             builder.addQueryParameter("sni", sni)
         }
     }
-    if (!name.isNullOrBlank()) builder.encodedFragment(name.urlSafe())
-    return builder.toLink("socks${protocolVersion()}")
+    if (!name.isNullOrBlank()) builder.setRawFragment(name.urlSafe())
+    return builder.string
 
 }
 

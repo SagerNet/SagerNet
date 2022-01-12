@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet.widget
 
 import android.content.Context
+import android.net.Uri
 import android.util.AttributeSet
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
@@ -27,7 +28,7 @@ import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.readableMessage
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import libcore.Libcore
 
 class LinkPreference : EditTextPreference {
 
@@ -78,10 +79,15 @@ class LinkPreference : EditTextPreference {
                     return
                 }
                 try {
-                    val url = link.toString().toHttpUrl()
-                    if ("http".equals(url.scheme, true)) {
+                    val uri = Uri.parse(link.toString())
+
+                    if (uri.scheme.isNullOrBlank()) {
+                        error("Missing scheme in url")
+                    } else if (uri.scheme == "http") {
                         linkLayout.error = app.getString(R.string.cleartext_http_warning)
                         linkLayout.isErrorEnabled = true
+                    } else if (uri.scheme != "https") {
+                        error("Invalid scheme ${uri.scheme}")
                     } else {
                         linkLayout.isErrorEnabled = false
                     }
@@ -101,7 +107,7 @@ class LinkPreference : EditTextPreference {
                 text = defaultValue
                 false
             } else try {
-                newValue.toHttpUrl()
+                Libcore.parseURL(newValue)
                 true
             } catch (ignored: Exception) {
                 false

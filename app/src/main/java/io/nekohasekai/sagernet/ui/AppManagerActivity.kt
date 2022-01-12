@@ -61,7 +61,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import okhttp3.internal.closeQuietly
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
 import org.jf.dexlib2.iface.DexFile
 import java.io.File
@@ -435,7 +434,9 @@ class AppManagerActivity : ThemedActivity() {
                                         app to app.applicationInfo.loadLabel(packageManager)
                                             .toString()
                                     )
-                                    zipFile.closeQuietly()
+                                    runCatching {
+                                        zipFile.close()
+                                    }
 
                                     if (bypass) {
                                         changed = !proxiedUids[app.applicationInfo.uid]
@@ -449,7 +450,9 @@ class AppManagerActivity : ThemedActivity() {
                             }
                         }
                     }
-                    zipFile.closeQuietly()
+                    runCatching {
+                        zipFile.close()
+                    }
 
                     if (bypass) {
                         proxiedUids.delete(app.applicationInfo.uid)
