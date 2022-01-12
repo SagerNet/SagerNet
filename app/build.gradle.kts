@@ -55,7 +55,6 @@ dependencies {
 
     implementation("com.google.android.material:material:1.4.0")
     implementation("cn.hutool:hutool-core:$hutoolVersion")
-    implementation("cn.hutool:hutool-cache:$hutoolVersion")
     implementation("cn.hutool:hutool-json:$hutoolVersion")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.google.zxing:core:3.4.1")

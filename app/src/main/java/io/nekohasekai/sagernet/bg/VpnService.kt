@@ -33,7 +33,9 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
+import android.system.OsConstants
 import android.util.Log
+import androidx.annotation.RequiresApi
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
@@ -53,6 +55,7 @@ import libcore.*
 import java.io.FileDescriptor
 import java.io.IOException
 import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.net.UnknownHostException
 import kotlin.coroutines.suspendCoroutine
 import android.net.VpnService as BaseVpnService

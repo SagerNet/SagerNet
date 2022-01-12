@@ -45,7 +45,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
-import io.nekohasekai.sagernet.bg.proto.UidDumper
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
@@ -60,9 +59,13 @@ import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
+import libcore.UidDumper
+import libcore.UidInfo
+import java.net.InetSocketAddress
 import androidx.work.Configuration as WorkConfiguration
 
 class SagerNet : Application(),
+    UidDumper,
     WorkConfiguration.Provider {
 
     override fun attachBaseContext(base: Context) {
@@ -89,7 +92,6 @@ class SagerNet : Application(),
             { DataStore.rulesProvider == 0 },
             { DataStore.providerRootCA == RootCAProvider.SYSTEM })
         Libcore.setenv("v2ray.conf.geoloader", "memconservative")
-        Libcore.setUidDumper(UidDumper)
 
         runOnDefaultDispatcher {
             PackageCache.register()
@@ -99,6 +101,8 @@ class SagerNet : Application(),
         Theme.apply(this)
         Theme.applyNightTheme()
 
+        Libcore.setUidDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+
         if (BuildConfig.DEBUG) StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()
                 .detectLeakedSqlLiteObjects()
@@ -107,6 +111,36 @@ class SagerNet : Application(),
                 .penaltyLog()
                 .build()
         )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun dumpUid(
+        ipProto: Int, srcIp: String, srcPort: Int, destIp: String, destPort: Int
+    ): Int {
+        return SagerNet.connectivity.getConnectionOwnerUid(
+            ipProto, InetSocketAddress(srcIp, srcPort), InetSocketAddress(destIp, destPort)
+        )
+    }
+
+    override fun getUidInfo(uid: Int): UidInfo {
+        PackageCache.awaitLoadSync()
+
+        if (uid <= 1000L) {
+            val uidInfo = UidInfo()
+            uidInfo.label = PackageCache.loadLabel("android")
+            uidInfo.packageName = "android"
+            return uidInfo
+        }
+
+        val packageNames = PackageCache.uidMap[uid.toInt()]
+        if (!packageNames.isNullOrEmpty()) for (packageName in packageNames) {
+            val uidInfo = UidInfo()
+            uidInfo.label = PackageCache.loadLabel(packageName)
+            uidInfo.packageName = packageName
+            return uidInfo
+        }
+
+        error("unknown uid $uid")
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
