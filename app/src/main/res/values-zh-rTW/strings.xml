@@ -420,4 +420,9 @@
     <string name="probe_url">自定義測試 URL</string>
     <string name="group_filter_owners">擁有者</string>
     <string name="route_opt_block_analysis">封鎖分析</string>
+    <string name="route_play_store">%s 谷歌Play商店規則</string>
+    <string name="group_filter_owners_nf">此訂閱無擁有者</string>
+    <string name="naive_insecure_concurrency">不安全並發</string>
+    <string name="stun_test">NAT 行為發現</string>
+    <string name="naive_insecure_concurrency_summary">使用N個並發的隧道能使網路條件較差时更加可用。但數量越多，越易被偵測，安全性越低。由於本項目致力於面對流量分析的安全性，以不安全的方式使用違背了其初忠。如一定要使用，請先嘗試 N=2，觀察其是否解決了您的問題。強烈反對於此使用多於4個隧道。</string>
 </resources>

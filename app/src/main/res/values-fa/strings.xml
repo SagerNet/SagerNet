@@ -410,4 +410,6 @@
     <string name="profile_traffic_statistics_summary">در صورت غیرفعال بودن، ترافیک استفاده شده محاسبه نمی شود</string>
     <string name="pcap_notice">فایل های Pcap در %s ذخیره می شوند</string>
     <string name="probe_url">تست سفارشی URL</string>
+    <string name="naive_insecure_concurrency">همزمانی ناامن</string>
+    <string name="route_opt_block_analysis">آنالیز بلاک</string>
 </resources>

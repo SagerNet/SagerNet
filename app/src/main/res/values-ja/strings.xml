@@ -99,4 +99,5 @@
     <string name="key_opt">キー（オプション）</string>
     <string name="network">ネットワーク</string>
     <string name="probe_url">カスタムテストURL</string>
+    <string name="speed_interval">速度通知のアップデート間隔</string>
 </resources>
