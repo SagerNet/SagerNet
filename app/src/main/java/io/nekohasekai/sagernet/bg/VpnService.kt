@@ -33,9 +33,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
-import android.system.OsConstants
 import android.util.Log
-import androidx.annotation.RequiresApi
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
@@ -55,7 +53,7 @@ import libcore.*
 import java.io.FileDescriptor
 import java.io.IOException
 import java.net.InetAddress
-import java.net.InetSocketAddress
+import java.net.NetworkInterface
 import java.net.UnknownHostException
 import kotlin.coroutines.suspendCoroutine
 import android.net.VpnService as BaseVpnService
@@ -148,13 +146,25 @@ class VpnService : BaseVpnService(),
         return Service.START_NOT_STICKY
     }
 
+    var upstreamInterfaceMTU = 0
     override suspend fun preInit() = DefaultNetworkListener.start(this) {
         underlyingNetwork = it
-        SagerNet.reloadSSID(it)
-        SagerNet.reloadNetworkType(it)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            SagerNet.connectivity.getLinkProperties(it)?.interfaceName?.also { interfaceName ->
-                Libcore.bindNetworkName(interfaceName)
+        SagerNet.reloadNetwork(it)
+        SagerNet.connectivity.getLinkProperties(it)?.also { link ->
+            var mtu = 0
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mtu = link.mtu
+            }
+            if (mtu == 0) {
+                mtu = NetworkInterface.getByName(link.interfaceName).mtu
+            }
+            if (upstreamInterfaceMTU != mtu) {
+                upstreamInterfaceMTU = mtu
+                Logs.d("Updated upstream network MTU: $upstreamInterfaceMTU")
+                if (data.state.canStop) forceLoad()
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                Libcore.bindNetworkName(link.interfaceName)
             }
         }
     }
@@ -164,13 +174,72 @@ class VpnService : BaseVpnService(),
         override fun getLocalizedMessage() = getString(R.string.reboot_required)
     }
 
+    fun getMTU(network: Network): Int {
+        var mtu = 0
+        SagerNet.connectivity.getLinkProperties(network)?.also { link ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mtu = link.mtu
+            }
+            if (mtu == 0) {
+                mtu = NetworkInterface.getByName(link.interfaceName).mtu
+            }
+        }
+        return mtu
+    }
+
+    fun getActiveNetworkUnder23(): Network? {
+        val activeInfo = SagerNet.connectivity.activeNetworkInfo ?: return null
+        for (network in SagerNet.connectivity.allNetworks) {
+            val info = SagerNet.connectivity.getNetworkInfo(network) ?: continue
+            if (info.type != activeInfo.type) continue
+            if (info.isConnected != activeInfo.isConnected) continue
+            if (info.isAvailable != activeInfo.isAvailable) continue
+            return network
+        }
+        return null
+    }
+
     private fun startVpn() {
         instance = this
+
+        var mtuFinal = 0
+        val useUpstreamInterfaceMTU = DataStore.useUpstreamInterfaceMTU
+        if (useUpstreamInterfaceMTU) {
+            if (upstreamInterfaceMTU > 0) {
+                mtuFinal = upstreamInterfaceMTU
+                Logs.d("Use MTU of upstream network: $upstreamInterfaceMTU")
+            } else {
+                val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    SagerNet.connectivity.activeNetwork
+                } else {
+                    getActiveNetworkUnder23()
+                }
+                if (network != null) {
+                    try {
+                        mtuFinal = getMTU(network)
+                        upstreamInterfaceMTU = mtuFinal
+                        Logs.d("Use MTU of upstream network: $mtuFinal")
+                    } catch (e: Exception) {
+                        Logs.w("Failed to get MTU of current network", e)
+                    }
+                } else {
+                    Logs.d("Failed to get current network")
+                }
+                if (mtuFinal == 0) {
+                    mtuFinal = DataStore.mtu
+                }
+            }
+        } else {
+            upstreamInterfaceMTU = DataStore.mtu
+            Logs.d("Use MTU: $upstreamInterfaceMTU")
+        }
 
         val profile = data.proxy!!.profile
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
             .setSession(profile.displayName())
-            .setMtu(DataStore.mtu)
+        if (!useUpstreamInterfaceMTU) {
+            builder.setMtu(mtuFinal)
+        }
         val ipv6Mode = DataStore.ipv6Mode
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
@@ -263,15 +332,15 @@ class VpnService : BaseVpnService(),
         }
 
         metered = DataStore.meteredNetwork
-        active = true   // possible race condition here?
         if (Build.VERSION.SDK_INT >= 29) builder.setMetered(metered)
 
         conn = builder.establish() ?: throw NullConnectionException()
+        active = true   // possible race condition here?
 
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
             protect = needIncludeSelf
-            mtu = DataStore.mtu
+            mtu = mtuFinal
             v2Ray = data.proxy!!.v2rayPoint
             gateway4 = PRIVATE_VLAN4_GATEWAY
             gateway6 = PRIVATE_VLAN6_GATEWAY

@@ -504,5 +504,9 @@
 
     <string name="packet_encoding">Packet Encoding</string>
     <string name="mtu">MTU</string>
+    <string name="experimental_reduced_iv_head_entropy">This is GFWReport\'s proposal for a countermeasure for the random stream like protocol blocking behaviour observed on GFW.
+\n\nThis option remap the first 6 bytes of IV to printable characters, it\'s possible for anyone on the privileged network path to identify the protocol when enabled.</string>
+    <string name="auto_mtu">Auto MTU</string>
+    <string name="auto_mtu_summary">Use MTU of the upstream network interface</string>
 
 </resources>

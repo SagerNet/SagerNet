@@ -31,21 +31,28 @@
             app:title="@string/password" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        app:title="@string/plugin">
+    <PreferenceCategory app:title="@string/plugin">
 
         <com.github.shadowsocks.preference.PluginPreference
             app:key="serverPlugin"
             app:persistent="false"
             app:title="@string/plugin"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:key="serverPluginConfigure"
             app:icon="@drawable/ic_action_settings"
+            app:key="serverPluginConfigure"
             app:persistent="false"
             app:title="@string/plugin_configure"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_grid_3x3_24"
+        app:title="@string/experimental_settings">
+        <com.takisoft.preferencex.SwitchPreferenceCompat
+            app:key="serverReducedIvHeadEntropy"
+            app:summary="@string/experimental_reduced_iv_head_entropy"
+            app:title="ReducedIvHeadEntropy" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -36,8 +36,7 @@ class ProxyService : Service(), BaseService.Interface {
         ServiceNotification(this, profileName, "service-proxy", true)
 
     override suspend fun preInit() = DefaultNetworkListener.start(this) {
-        SagerNet.reloadSSID(it)
-        SagerNet.reloadNetworkType(it)
+        SagerNet.reloadNetwork(it)
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")

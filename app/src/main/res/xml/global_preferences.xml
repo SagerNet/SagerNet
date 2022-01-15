@@ -41,6 +41,12 @@
             app:key="tunImplementation"
             app:title="@string/tun_implementation"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_hardware_router"
+            app:key="useUpstreamInterfaceMTU"
+            app:summary="@string/auto_mtu_summary"
+            app:title="@string/auto_mtu" />
         <EditTextPreference
             app:icon="@drawable/baseline_public_24"
             app:key="mtu"

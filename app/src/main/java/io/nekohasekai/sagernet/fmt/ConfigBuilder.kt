@@ -707,6 +707,7 @@ fun buildV2RayConfig(
                                                     is ShadowsocksBean -> {
                                                         method = bean.method
                                                         password = bean.password
+                                                        experimentReducedIvHeadEntropy = bean.experimentReducedIvHeadEntropy
                                                     }
                                                     is ShadowsocksRBean -> {
                                                         method = bean.method

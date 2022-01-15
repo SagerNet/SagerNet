@@ -243,7 +243,7 @@ class SagerNet : Application(),
             }
         }
 
-        fun reloadNetworkType(network: Network?) {
+        fun reloadNetwork(network: Network?) {
             val capabilities = connectivity.getNetworkCapabilities(network) ?: return
             val networkType = when {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "wifi"
@@ -253,12 +253,9 @@ class SagerNet : Application(),
                 else -> "data"
             }
             Libcore.setNetworkType(networkType)
-        }
-
-        fun reloadSSID(network: Network?) {
             var ssid: String? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                when (val transportInfo = connectivity.getNetworkCapabilities(network)?.transportInfo) {
+                when (val transportInfo = capabilities.transportInfo) {
                     is WifiInfo -> {
                         ssid = transportInfo.ssid
                     }
@@ -267,8 +264,7 @@ class SagerNet : Application(),
                 val wifiInfo = wifi.connectionInfo
                 ssid = wifiInfo?.ssid
             }
-            ssid = ssid?.trim { it == '"' } ?: ""
-            Libcore.setWifiSSID(ssid)
+            Libcore.setWifiSSID(ssid?.trim { it == '"' } ?: "")
         }
 
         fun startService() = ContextCompat.startForegroundService(
