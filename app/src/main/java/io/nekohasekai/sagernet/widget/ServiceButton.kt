@@ -52,7 +52,7 @@ class ServiceButton @JvmOverloads constructor(
     FloatingActionButton(context, attrs, defStyleAttr), DynamicAnimation.OnAnimationEndListener {
     companion object {
         private val springAnimator by lazy {
-            DeterminateDrawable::class.java.getDeclaredField("springAnimator")
+            DeterminateDrawable::class.java.getDeclaredField("springAnimation")
                 .apply { isAccessible = true }
         }
     }

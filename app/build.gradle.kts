@@ -41,11 +41,11 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.4.0")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.work:work-multiprocess:2.7.1")
 
@@ -53,7 +53,7 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-simplemenu"))
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.material:material:1.5.0")
     implementation("cn.hutool:hutool-core:$hutoolVersion")
     implementation("cn.hutool:hutool-json:$hutoolVersion")
     implementation("com.google.code.gson:gson:2.8.9")
@@ -78,9 +78,9 @@ dependencies {
         exclude(group = "com.google.guava", module = "guava")
     }
 
-    implementation("androidx.room:room-runtime:2.4.0")
-    kapt("androidx.room:room-compiler:2.4.0")
-    implementation("androidx.room:room-ktx:2.4.0")
+    implementation("androidx.room:room-runtime:2.4.1")
+    kapt("androidx.room:room-compiler:2.4.1")
+    implementation("androidx.room:room-ktx:2.4.1")
     implementation("com.github.MatrixDev.Roomigrant:RoomigrantLib:0.3.4")
     kapt("com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4")
 
