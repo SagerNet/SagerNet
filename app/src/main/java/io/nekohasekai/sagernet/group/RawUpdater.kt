@@ -289,7 +289,7 @@ object RawUpdater : GroupUpdater() {
                                 serverAddress = proxy["server"] as String
                                 serverPort = proxy["port"].toString().toInt()
                                 password = proxy["password"] as String
-                                method = proxy["cipher"] as String
+                                method = clashCipher(proxy["cipher"] as String)
                                 plugin = pluginStr
                                 name = proxy["name"] as String?
 
@@ -370,7 +370,7 @@ object RawUpdater : GroupUpdater() {
                                     "name" -> entity.name = opt.value as String
                                     "server" -> entity.serverAddress = opt.value as String
                                     "port" -> entity.serverPort = opt.value.toString().toInt()
-                                    "cipher" -> entity.method = opt.value as String
+                                    "cipher" -> entity.method = clashCipher(opt.value as String)
                                     "password" -> entity.password = opt.value as String
                                     "obfs" -> entity.obfs = opt.value as String
                                     "protocol" -> entity.protocol = opt.value as String
@@ -418,6 +418,13 @@ object RawUpdater : GroupUpdater() {
         }
 
         return null
+    }
+
+    fun clashCipher(cipher: String): String {
+        return when (cipher) {
+            "dummy" -> "none"
+            else -> cipher
+        }
     }
 
     fun parseWireGuard(conf: String): List<WireGuardBean> {
