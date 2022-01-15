@@ -77,7 +77,7 @@ object SIP008Updater : GroupUpdater() {
         for (profile in servers) {
             val bean = profile.parseShadowsocks()
             appendExtraInfo(profile, bean)
-            profiles.add(bean)
+            profiles.add(bean.applyDefaultValues())
         }
 
         if (subscription.forceResolve) forceResolve(profiles, proxyGroup.id)

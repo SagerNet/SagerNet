@@ -48,7 +48,7 @@ fun parseNaive(link: String): NaiveBean {
 fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
     val builder = Libcore.newURL(if (proxyOnly) proto else "naive+$proto")
     builder.host = serverAddress
-    builder.port = serverPort
+    builder.port = finalPort
     if (username.isNotBlank()) {
         builder.username = username
         if (password.isNotBlank()) {

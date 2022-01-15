@@ -185,7 +185,7 @@
 
     <PreferenceCategory app:title="@string/cag_dns">
         <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
-            app:defaultValue="https://dns.google/dns-query"
+            app:defaultValue="tls://dns.google"
             app:icon="@drawable/ic_action_dns"
             app:key="remoteDns"
             app:title="@string/remote_dns"
@@ -195,7 +195,7 @@
             app:key="useLocalDnsAsDirectDns"
             app:title="@string/use_local_dns_as_direct_dns" />
         <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
-            app:defaultValue="https+local://doh.pub/dns-query"
+            app:defaultValue="tls+local://dot.pub"
             app:key="directDns"
             app:title="@string/direct_dns"
             app:useSimpleSummaryProvider="true" />

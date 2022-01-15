@@ -805,7 +805,7 @@ fun buildV2RayConfig(
                                         }
                                     }
                                 }
-                                if (currentDomainStrategy == "AsIS") {
+                                if (currentDomainStrategy == "AsIs") {
                                     currentDomainStrategy = "UseIP"
                                 }
                             } else if (bean is SSHBean) {
@@ -869,7 +869,7 @@ fun buildV2RayConfig(
                             type = "field"
                             inboundTag = listOf(pastInboundTag)
                             outboundTag = tagIn
-                            if (currentOutbound.domainStrategy == "AsIS") {
+                            if (currentOutbound.domainStrategy == "AsIs") {
                                 currentOutbound.domainStrategy = "UseIP"
                             }
                         })
@@ -1204,7 +1204,7 @@ fun buildV2RayConfig(
         val bypassIP = HashSet<String>()
         val bypassDomain = HashSet<String>()
 
-        (proxies + extraProxies.values.flatten()).filter { !it.requireBean().isChain }.forEach {
+        (proxies + extraProxies.values.flatten()).forEach {
             it.requireBean().apply {
                 if (!serverAddress.isIpAddress()) {
                     bypassDomain.add("full:$serverAddress")

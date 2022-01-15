@@ -55,20 +55,6 @@ fun PluginConfiguration.fixInvalidParams() {
 
     }
 
-    if (selected == "obfs-local") {
-        val options = pluginsOptions["obfs-local"]
-        if (options != null) {
-            if (options.containsKey("mode")) {
-                options["obfs"] = options["mode"]
-                options.remove("mode")
-            }
-            if (options.containsKey("host")) {
-                options["obfs-host"] = options["host"]
-                options.remove("host")
-            }
-        }
-    }
-
 }
 
 fun ShadowsocksBean.fixInvalidParams() {

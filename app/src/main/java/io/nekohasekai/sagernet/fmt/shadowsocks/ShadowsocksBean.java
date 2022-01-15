@@ -71,6 +71,13 @@ public class ShadowsocksBean extends AbstractBean {
         }
     }
 
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof ShadowsocksBean)) return;
+        ShadowsocksBean bean = ((ShadowsocksBean) other);
+        bean.experimentReducedIvHeadEntropy = experimentReducedIvHeadEntropy;
+    }
+
     @NotNull
     @Override
     public ShadowsocksBean clone() {
