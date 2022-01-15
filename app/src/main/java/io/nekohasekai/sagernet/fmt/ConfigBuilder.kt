@@ -803,6 +803,9 @@ fun buildV2RayConfig(
                                         }
                                     }
                                 }
+                                if (currentDomainStrategy == "AsIS") {
+                                    currentDomainStrategy = "UseIP"
+                                }
                             } else if (bean is SSHBean) {
                                 protocol = "ssh"
                                 settings = LazyOutboundConfigurationObject(this,
