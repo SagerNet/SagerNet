@@ -70,6 +70,7 @@ public class V2RayConfig {
             public Boolean skipFallback;
             public List<String> domains;
             public List<String> expectIPs;
+            public boolean concurrency;
 
         }
 

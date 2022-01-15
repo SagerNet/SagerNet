@@ -196,6 +196,7 @@ fun buildV2RayConfig(
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
                         address = it
+                        concurrency = true
                     }
                 }
             })
@@ -1241,6 +1242,7 @@ fun buildV2RayConfig(
                         address = if (!it.contains("://") && it != "localhost") "udp+local://$it" else it
                         domains = bypassDomain.toList()
                         skipFallback = true
+                        concurrency = true
                     }
                 }
             })
