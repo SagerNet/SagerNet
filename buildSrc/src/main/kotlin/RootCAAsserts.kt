@@ -7,6 +7,10 @@ import java.io.File
 
 fun Project.downloadRootCAList() {
     val assets = File(projectDir, "src/main/assets")
+    val pem = File(assets, "mozilla_included.pem")
+    if (pem.isFile && !requireFlavor().endsWith("Release")) {
+        return
+    }
     val csv = HttpUtil.get("https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReportPEMCSV")
     val data = CsvUtil.getReader(CsvReadConfig().setContainsHeader(true)).readFromStr(csv)
     val list = mutableListOf<String>()
@@ -19,7 +23,6 @@ fun Project.downloadRootCAList() {
         val cert = row.getByName("PEM Info")
         list.add("$name\n" + cert.substring(1, cert.length - 1))
     }
-    val pem = File(assets, "mozilla_included.pem")
     pem.writeText(list.joinToString("\n\n"))
     File(pem.parent, pem.name + ".sha256sum").writeText(DigestUtil.sha256Hex(pem))
 }
