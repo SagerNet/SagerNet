@@ -903,7 +903,7 @@ fun buildV2RayConfig(
 
                         pastInboundTag = tag
                     })
-                } else if ((needIncludeSelf || !bean.serverAddress.isIpAddress()) && bean.canMapping() && proxyEntity.needExternal()) {
+                } else if (bean.canMapping() && proxyEntity.needExternal()) {
                     val mappingPort = mkPort()
                     when (bean) {
                         is BrookBean -> {
