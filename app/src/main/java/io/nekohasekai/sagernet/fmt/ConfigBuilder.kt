@@ -38,7 +38,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult.IndexEntity
-import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
@@ -878,14 +877,7 @@ fun buildV2RayConfig(
 
                 if (proxyEntity.needExternal() && !isBalancer && index != profileList.lastIndex) {
                     val mappingPort = mkPort()
-                    when (bean) {
-                        is BrookBean -> {
-                            dns.hosts[bean.serverAddress] = LOCALHOST
-                        }
-                        else -> {
-                            bean.finalAddress = LOCALHOST
-                        }
-                    }
+                    bean.finalAddress = LOCALHOST
                     bean.finalPort = mappingPort
                     bean.isChain = true
 
@@ -905,14 +897,7 @@ fun buildV2RayConfig(
                     })
                 } else if (bean.canMapping() && proxyEntity.needExternal()) {
                     val mappingPort = mkPort()
-                    when (bean) {
-                        is BrookBean -> {
-                            dns.hosts[bean.serverAddress] = LOCALHOST
-                        }
-                        else -> {
-                            bean.finalAddress = LOCALHOST
-                        }
-                    }
+                    bean.finalAddress = LOCALHOST
                     bean.finalPort = mappingPort
 
                     inbounds.add(InboundObject().apply {
@@ -947,9 +932,7 @@ fun buildV2RayConfig(
             if (isBalancer) {
                 val balancerBean = balancer()!!
                 val observatory = ObservatoryObject().apply {
-                    probeUrl = if (balancerBean.probeUrl.isNotBlank()) {
-                        balancerBean.probeUrl
-                    } else {
+                    probeUrl = balancerBean.probeUrl.ifBlank {
                         DataStore.connectionTestURL
                     }
                     if (balancerBean.probeInterval > 0) {
