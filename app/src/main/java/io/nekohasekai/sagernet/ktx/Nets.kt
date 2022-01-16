@@ -62,6 +62,14 @@ fun AbstractBean.wrapUri(): String {
     }
 }
 
+fun AbstractBean.wrapUriWithOriginHost(): String {
+    return if (Validator.isIpv6(serverAddress)) {
+        "[$serverAddress]:$finalPort"
+    } else {
+        "$serverAddress:$finalPort"
+    }
+}
+
 fun parseAddress(addressArray: ByteArray) = InetAddress.getByAddress(addressArray)
 val INET_TUN = InetAddress.getByName(VpnService.PRIVATE_VLAN4_CLIENT)
 val INET6_TUN = InetAddress.getByName(VpnService.PRIVATE_VLAN6_CLIENT)

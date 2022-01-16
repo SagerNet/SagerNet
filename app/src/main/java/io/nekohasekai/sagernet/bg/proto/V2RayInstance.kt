@@ -307,6 +307,11 @@ abstract class V2RayInstance(
 
                         commands.add(bean.internalUri())
 
+                        if (bean.protocol.startsWith("ws")) {
+                            commands.add("--serverAddress")
+                            commands.add(bean.wrapUri())
+                        }
+
                         if (bean.password.isNotBlank()) {
                             commands.add("--password")
                             commands.add(bean.password)

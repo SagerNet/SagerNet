@@ -21,9 +21,7 @@ package io.nekohasekai.sagernet.fmt.brook
 
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.ktx.pathSafe
-import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.wrapUri
+import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 
 fun parseBrook(text: String): AbstractBean {
@@ -142,12 +140,11 @@ fun BrookBean.toUri(): String {
 }
 
 fun BrookBean.internalUri(): String {
-    var server = wrapUri()
-    server = when (protocol) {
-        "ws" -> "ws://"
-        "wss" -> "wss://"
-        else -> return server
-    } + server
+    var server = when (protocol) {
+        "ws" -> "ws://" + wrapUriWithOriginHost()
+        "wss" -> "wss://" + wrapUriWithOriginHost()
+        else -> return wrapUri()
+    }
     if (wsPath.isNotBlank()) {
         if (!wsPath.startsWith("/")) {
             server += "/"
