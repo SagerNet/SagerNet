@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
+import libcore.Libcore
 import java.io.IOException
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -79,6 +80,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             }
         }
 
+        Libcore.setCurrentDomainNameSystemQueryInstance(v2rayPoint)
         SagerNet.started = true
     }
 
@@ -166,6 +168,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     }
 
     override fun close() {
+        Libcore.setCurrentDomainNameSystemQueryInstance(null)
         SagerNet.started = false
 
         persistStats()
