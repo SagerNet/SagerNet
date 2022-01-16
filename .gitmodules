@@ -12,7 +12,7 @@
 	url = https://github.com/iyouport-org/relaybaton
 [submodule "plugin/brook/src/main/go/brook"]
 	path = plugin/brook/src/main/go/brook
-	url = https://github.com/txthinking/brook
+	url = https://github.com/SagerNet/brook
 [submodule "external/editorkit"]
 	path = external/editorkit
 	url = https://github.com/SagerNet/editorkit
