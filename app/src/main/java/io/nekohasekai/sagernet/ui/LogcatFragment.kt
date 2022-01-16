@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
@@ -93,28 +94,30 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         terminalView.mTermSession?.also {
             it.finishIfRunning()
         }
-        val args = mutableListOf(
-            "-C",
-            "-v",
-            "tag,color",
-        )
+        val args = mutableListOf("-C")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            args += arrayOf(
+                "-v",
+                "tag,color",
+            )
+        }
+
         if (!isExpert) {
-            args.addAll(
-                arrayOf(
-                    "AndroidRuntime:D",
-                    "ProxyInstance:D",
-                    "GuardedProcessPool:D",
-                    "VpnService:D",
-                    "libcore:D",
-                    "v2ray-core:D",
-                    "su:D",
-                    "libtrojan:D",
-                    "libnaive:D",
-                    "libbrook:D",
-                    "libhysteria:D",
-                    "librelaybaton:D",
-                    "*:E",
-                )
+            args += arrayOf(
+                "AndroidRuntime:D",
+                "ProxyInstance:D",
+                "GuardedProcessPool:D",
+                "VpnService:D",
+                "libcore:D",
+                "v2ray-core:D",
+                "su:D",
+                "libtrojan:D",
+                "libnaive:D",
+                "libbrook:D",
+                "libhysteria:D",
+                "librelaybaton:D",
+                "*:E",
             )
         }
 
