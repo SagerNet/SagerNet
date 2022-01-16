@@ -202,7 +202,11 @@ class BaseService {
                     }
                     AidlAppStats(
                         packageName,
-                        uid, it.tcpConn, it.udpConn, it.tcpConnTotal, it.udpConnTotal,
+                        uid,
+                        it.tcpConn,
+                        it.udpConn,
+                        it.tcpConnTotal,
+                        it.udpConnTotal,
                         it.uplink / sinceLastQueryInSeconds,
                         it.downlink / sinceLastQueryInSeconds,
                         it.uplinkTotal,
@@ -267,14 +271,18 @@ class BaseService {
             }
             try {
                 return Libcore.urlTest(
-                    data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 5000
+                    data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 3000
                 )
             } catch (e: Exception) {
                 var msg = e.readableMessage
-                if (msg.lowercase().contains("timeout")) {
-                    msg = app.getString(R.string.connection_test_timeout)
-                } else if (msg.lowercase().contains("refused")) {
-                    msg = app.getString(R.string.connection_test_refused)
+                val msgL = msg.lowercase()
+                when {
+                    msgL.contains("timeout") || msg.contains("deadline") -> {
+                        msg = app.getString(R.string.connection_test_timeout)
+                    }
+                    msg.contains("refused") || msgL.contains("closed pipe") -> {
+                        msg = app.getString(R.string.connection_test_refused)
+                    }
                 }
                 error(msg)
             }
