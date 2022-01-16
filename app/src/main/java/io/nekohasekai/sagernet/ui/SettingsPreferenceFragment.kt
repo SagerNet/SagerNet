@@ -36,6 +36,7 @@ import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
+import kotlinx.coroutines.delay
 import libcore.Libcore
 import java.io.File
 
@@ -205,7 +206,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         serviceMode.setOnPreferenceChangeListener { _, _ ->
-            if (SagerNet.started) SagerNet.stopService()
+            if (SagerNet.started) {
+                SagerNet.stopService()
+                runOnMainDispatcher {
+                    delay(300)
+                    SagerNet.startService()
+                }
+            }
+
             true
         }
 
