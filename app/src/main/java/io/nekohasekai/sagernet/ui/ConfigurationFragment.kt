@@ -102,6 +102,18 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            parentFragmentManager.beginTransaction()
+                .setReorderingAllowed(false)
+                .detach(this)
+                .attach(this)
+                .commit()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (!select) {
