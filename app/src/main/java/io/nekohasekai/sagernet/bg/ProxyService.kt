@@ -23,24 +23,36 @@ package io.nekohasekai.sagernet.bg
 
 import android.app.Service
 import android.content.Intent
+import android.net.Network
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import libcore.Libcore
 
-class ProxyService : Service(), BaseService.Interface {
+class ProxyService : Service(),
+    BaseService.Interface,
+    LocalResolver {
     override val data = BaseService.Data(this)
     override val tag: String get() = "SagerNetProxyService"
     override fun createNotification(profileName: String): ServiceNotification =
         ServiceNotification(this, profileName, "service-proxy", true)
 
-    override suspend fun preInit() = DefaultNetworkListener.start(this) {
-        SagerNet.reloadNetwork(it)
+    @Volatile
+    override var underlyingNetwork: Network? = null
+    override suspend fun preInit() {
+        DefaultNetworkListener.start(this) {
+            SagerNet.reloadNetwork(it)
+            underlyingNetwork = it
+        }
+        Libcore.setLocalhostResolver(this)
     }
+
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
+        Libcore.setLocalhostResolver(null)
         super.killProcesses()
         GlobalScope.launch(Dispatchers.Default) { DefaultNetworkListener.stop(this) }
     }

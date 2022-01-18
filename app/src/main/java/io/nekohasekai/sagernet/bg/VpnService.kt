@@ -25,16 +25,13 @@ import android.Manifest
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.DnsResolver
 import android.net.Network
 import android.net.ProxyInfo
 import android.os.Build
-import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import android.util.Log
-import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -42,20 +39,17 @@ import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.tryResume
-import io.nekohasekai.sagernet.ktx.tryResumeWithException
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import libcore.*
 import java.io.FileDescriptor
 import java.io.IOException
-import java.net.InetAddress
 import java.net.NetworkInterface
-import java.net.UnknownHostException
-import kotlin.coroutines.suspendCoroutine
 import android.net.VpnService as BaseVpnService
 
 class VpnService : BaseVpnService(),
@@ -94,7 +88,7 @@ class VpnService : BaseVpnService(),
     private var metered = false
 
     @Volatile
-    private var underlyingNetwork: Network? = null
+    override var underlyingNetwork: Network? = null
         set(value) {
             field = value
             if (active && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -114,6 +108,7 @@ class VpnService : BaseVpnService(),
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
+        Libcore.setLocalhostResolver(null)
         getTun()?.close()
         if (::conn.isInitialized) conn.close()
         super.killProcesses()
@@ -147,26 +142,29 @@ class VpnService : BaseVpnService(),
     }
 
     var upstreamInterfaceMTU = 0
-    override suspend fun preInit() = DefaultNetworkListener.start(this) {
-        underlyingNetwork = it
-        SagerNet.reloadNetwork(it)
-        SagerNet.connectivity.getLinkProperties(it)?.also { link ->
-            var mtu = 0
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                mtu = link.mtu
-            }
-            if (mtu == 0) {
-                mtu = NetworkInterface.getByName(link.interfaceName).mtu
-            }
-            if (upstreamInterfaceMTU != mtu) {
-                upstreamInterfaceMTU = mtu
-                Logs.d("Updated upstream network MTU: $upstreamInterfaceMTU")
-                if (data.state.canStop) forceLoad()
-            }
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                Libcore.bindNetworkName(link.interfaceName)
+    override suspend fun preInit() {
+        DefaultNetworkListener.start(this) {
+            underlyingNetwork = it
+            SagerNet.reloadNetwork(it)
+            SagerNet.connectivity.getLinkProperties(it)?.also { link ->
+                var mtu = 0
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    mtu = link.mtu
+                }
+                if (mtu == 0) {
+                    mtu = NetworkInterface.getByName(link.interfaceName).mtu
+                }
+                if (upstreamInterfaceMTU != mtu) {
+                    upstreamInterfaceMTU = mtu
+                    Logs.d("Updated upstream network MTU: $upstreamInterfaceMTU")
+                    if (data.state.canStop) forceLoad()
+                }
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    Libcore.bindNetworkName(link.interfaceName)
+                }
             }
         }
+        Libcore.setLocalhostResolver(this)
     }
 
     inner class NullConnectionException : NullPointerException(),
@@ -201,6 +199,7 @@ class VpnService : BaseVpnService(),
 
     private fun startVpn() {
         instance = this
+        Libcore.setLocalhostResolver(this)
 
         var mtuFinal = 0
         val useUpstreamInterfaceMTU = DataStore.useUpstreamInterfaceMTU
@@ -370,78 +369,9 @@ class VpnService : BaseVpnService(),
             }
 
             protector = this@VpnService
-            localResolver = this@VpnService
         }
 
         tun = Libcore.newTun2ray(config)
-    }
-
-    override fun lookupIP(network: String, domain: String): String {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return runBlocking {
-                suspendCoroutine { continuation ->
-                    val signal = CancellationSignal()
-                    val callback = object : DnsResolver.Callback<Collection<InetAddress>> {
-                        @Suppress("ThrowableNotThrown")
-                        override fun onAnswer(answer: Collection<InetAddress>, rcode: Int) {
-                            if (rcode == 0) {
-                                continuation.tryResume(answer.mapNotNull { it.hostAddress }
-                                    .joinToString(","))
-                            } else {
-                                continuation.tryResumeWithException(Exception("rcode $rcode"))
-                            }
-                        }
-
-                        override fun onError(error: DnsResolver.DnsException) {
-                            continuation.tryResumeWithException(error)
-                        }
-                    }
-                    val type = when {
-                        network.endsWith("4") -> DnsResolver.TYPE_A
-                        network.endsWith("6") -> DnsResolver.TYPE_AAAA
-                        else -> null
-                    }
-                    if (type != null) {
-                        DnsResolver.getInstance().query(
-                            underlyingNetwork,
-                            domain,
-                            type,
-                            DnsResolver.FLAG_NO_RETRY,
-                            Dispatchers.IO.asExecutor(),
-                            signal,
-                            callback
-                        )
-                    } else {
-                        DnsResolver.getInstance().query(
-                            underlyingNetwork,
-                            domain,
-                            DnsResolver.FLAG_NO_RETRY,
-                            Dispatchers.IO.asExecutor(),
-                            signal,
-                            callback
-                        )
-                    }
-                }
-            }
-        } else {
-            val underlyingNetwork = underlyingNetwork ?: error("upstream network not found")
-            val answer = try {
-                underlyingNetwork.getAllByName(domain)
-            } catch (e: UnknownHostException) {
-                return ""
-            }
-            val filtered = mutableListOf<String>()
-            when {
-                network.endsWith("4") -> for (address in answer) {
-                    address.hostAddress?.takeIf { Validator.isIpv4(it) }?.also { filtered.add(it) }
-                }
-                network.endsWith("6") -> for (address in answer) {
-                    address.hostAddress?.takeIf { Validator.isIpv6(it) }?.also { filtered.add(it) }
-                }
-                else -> filtered.addAll(answer.mapNotNull { it.hostAddress })
-            }
-            return filtered.joinToString(",")
-        }
     }
 
     val appStats = mutableListOf<AppStats>()
