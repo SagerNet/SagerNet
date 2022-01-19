@@ -347,7 +347,7 @@ fun VMessBean.toV2rayN(): String {
         it["sni"] = sni
         it["scy"] = encryption
 
-    }.toString().let { Base64.encodeUrlSafe(it) }
+    }.toString().let { Base64.encode(it) }
 
 }
 
@@ -357,6 +357,7 @@ fun StandardV2RayBean.toUri(): String {
     val builder = Libcore.newURL(if (this is VMessBean) "vmess" else "vless")
     builder.host = serverAddress
     builder.port = serverPort
+    builder.username = uuid
 
 
     builder.addQueryParameter("type", type)
