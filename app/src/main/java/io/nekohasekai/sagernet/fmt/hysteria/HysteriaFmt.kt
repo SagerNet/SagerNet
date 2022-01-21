@@ -61,8 +61,13 @@ fun parseHysteria(url: String): HysteriaBean {
             obfuscation = it
         }
         link.queryParameter("protocol")?.also {
-            if (it == "faketcp") {
-                protocol = HysteriaBean.PROTOCOL_FAKETCP
+            when (it) {
+                "faketcp" -> {
+                    protocol = HysteriaBean.PROTOCOL_FAKETCP
+                }
+                "wechat-video" -> {
+                    protocol = HysteriaBean.PROTOCOL_WECHAT_VIDEO
+                }
             }
         }
     }
