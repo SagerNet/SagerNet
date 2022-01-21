@@ -104,9 +104,13 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .build())
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_airplanemode_active_24)
-                        .text(getString(R.string.version_x, "v2ray-core"))
+                        .text(getString(R.string.version_x, "SagerNet/v2ray-core"))
                         .subText("v" + Libcore.getV2RayVersion())
-                        .setOnClickAction { }
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(
+                                "https://github.com/SagerNet/v2ray-core/releases"
+                            )
+                        }
                         .build())
                     .apply {
                         val m = enumValues<PluginEntry>().associateBy { it.pluginId }
