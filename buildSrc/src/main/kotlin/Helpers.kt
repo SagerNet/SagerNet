@@ -496,6 +496,7 @@ fun Project.setupApp() {
     dependencies {
 
         add("implementation", kotlin("stdlib", "${rootProject.extra["kotlinVersion"]}"))
+        add("implementation", kotlin("reflect", "${rootProject.extra["kotlinVersion"]}"))
         add("implementation", project(":plugin:api"))
         add("testImplementation", "junit:junit:4.13.2")
         add("androidTestImplementation", "androidx.test.ext:junit:1.1.3")

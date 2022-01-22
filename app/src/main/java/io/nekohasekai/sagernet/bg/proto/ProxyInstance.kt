@@ -36,6 +36,7 @@ import kotlinx.coroutines.runBlocking
 import libcore.Libcore
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.timerTask
 
 class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : V2RayInstance(
@@ -113,7 +114,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     }
 
     val updateTimer by lazy { Timer("Observatory Timer") }
-    val updateTasks by lazy { hashMapOf<Long, TimerTask>() }
+    val updateTasks by lazy { ConcurrentHashMap<Long, TimerTask>() }
 
     fun sendObservatoryResult(statusPb: ByteArray?) {
         if (statusPb == null || statusPb.isEmpty()) {
@@ -146,7 +147,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                     Logs.d("Send result for #$profileId ${profile.displayName()}")
 
                     val groupId = profile.groupId
-                    updateTasks.put(groupId, timerTask {
+                    val task = timerTask {
                         synchronized(this@ProxyInstance) {
                             if (updateTasks[groupId] == this) {
                                 service.data.binder.broadcast {
@@ -155,9 +156,9 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                                 updateTasks.remove(profile.groupId)
                             }
                         }
-                    }.also {
-                        updateTimer.schedule(it, 2333L)
-                    })?.cancel()
+                    }
+                    updateTimer.schedule(task, 2000L)
+                    updateTasks.put(groupId, task)?.cancel()
                 }
             } else {
                 Logs.d("Profile with id #$profileId not found")
@@ -174,6 +175,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         persistStats()
         super.close()
 
+        if ((::updateTimer.getDelegate() as Lazy<*>).isInitialized()) updateTimer.cancel()
         if (::observatoryJob.isInitialized) observatoryJob.cancel()
     }
 
