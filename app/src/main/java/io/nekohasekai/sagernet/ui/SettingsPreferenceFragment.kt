@@ -233,8 +233,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val mtu = findPreference<EditTextPreference>(Key.MTU)!!
         mtu.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        mtu.isEnabled = !DataStore.useUpstreamInterfaceMTU
 
         val useUpstreamInterfaceMTU = findPreference<SwitchPreference>(Key.USE_UPSTREAM_INTERFACE_MTU)!!
+        useUpstreamInterfaceMTU.setOnPreferenceChangeListener { _, newValue ->
+            mtu.isEnabled = !(newValue as Boolean)
+            needReload()
+            true
+        }
 
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
@@ -270,7 +276,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         destinationOverride.onPreferenceChangeListener = reloadListener
         resolveDestination.onPreferenceChangeListener = reloadListener
         mtu.onPreferenceChangeListener = reloadListener
-        useUpstreamInterfaceMTU.onPreferenceChangeListener = reloadListener
 
         enablePcap.setOnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {

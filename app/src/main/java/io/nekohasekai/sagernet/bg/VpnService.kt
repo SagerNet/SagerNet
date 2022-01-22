@@ -229,7 +229,7 @@ class VpnService : BaseVpnService(),
                 }
             }
         } else {
-            upstreamInterfaceMTU = DataStore.mtu
+            mtuFinal = DataStore.mtu
             Logs.d("Use MTU: $upstreamInterfaceMTU")
         }
 
