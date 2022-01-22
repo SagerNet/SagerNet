@@ -113,7 +113,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }
     }
 
-    val updateTimer by lazy { Timer("Observatory Timer") }
+    val updateTimer = lazy { Timer("Observatory Timer") }
     val updateTasks by lazy { ConcurrentHashMap<Long, TimerTask>() }
 
     fun sendObservatoryResult(statusPb: ByteArray?) {
@@ -157,7 +157,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                             }
                         }
                     }
-                    updateTimer.schedule(task, 2000L)
+                    updateTimer.value.schedule(task, 2000L)
                     updateTasks.put(groupId, task)?.cancel()
                 }
             } else {
@@ -175,7 +175,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         persistStats()
         super.close()
 
-        if ((::updateTimer.getDelegate() as Lazy<*>).isInitialized()) updateTimer.cancel()
+        if (updateTimer.isInitialized()) updateTimer.value.cancel()
         if (::observatoryJob.isInitialized) observatoryJob.cancel()
     }
 
