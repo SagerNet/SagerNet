@@ -179,7 +179,7 @@ class VpnService : BaseVpnService(),
                 mtu = link.mtu
             }
             if (mtu == 0) {
-                mtu = NetworkInterface.getByName(link.interfaceName).mtu
+                mtu = NetworkInterface.getByName(link.interfaceName)?.mtu ?: DEFAULT_MTU
             }
         }
         return mtu
