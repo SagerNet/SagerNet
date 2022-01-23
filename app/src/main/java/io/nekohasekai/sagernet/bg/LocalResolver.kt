@@ -97,7 +97,8 @@ interface LocalResolver : LocalResolver {
                         @Suppress("ThrowableNotThrown")
                         override fun onAnswer(answer: Collection<InetAddress>, rcode: Int) {
                             if (rcode == 0) {
-                                ctx.success(answer.mapNotNull { it.hostAddress }.joinToString("\n"))
+                                ctx.success((answer as Collection<InetAddress?>).mapNotNull { it?.hostAddress }
+                                    .joinToString("\n"))
                             } else {
                                 ctx.errorCode(rcode)
                             }
