@@ -46,7 +46,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           stable: false
-          go-version: 1.18.0-beta1
+          go-version: 1.18.0-beta2
       - name: Gradle cache
         uses: actions/cache@v2
         if: steps.cache.outputs.cache-hit != 'true'
