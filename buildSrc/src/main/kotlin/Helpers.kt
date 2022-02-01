@@ -1,8 +1,8 @@
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.RuntimeUtil
 import cn.hutool.crypto.digest.DigestUtil
+import com.android.build.api.dsl.*
 import com.android.build.gradle.AbstractAppExtension
-import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import com.github.triplet.gradle.play.PlayPublisherExtension
 import org.apache.tools.ant.filters.StringInputStream
@@ -16,7 +16,11 @@ import java.io.File
 import java.util.*
 import kotlin.system.exitProcess
 
-private val Project.android get() = extensions.getByName<BaseExtension>("android")
+private val Project.android
+    get() = extensions.getByName<CommonExtension<BuildFeatures, BuildType, DefaultConfig, ProductFlavor>>(
+        "android"
+    )
+private val Project.androidApp get() = android as ApplicationExtension
 
 private val javaVersion = JavaVersion.VERSION_1_8
 private lateinit var metadata: Properties
@@ -89,11 +93,10 @@ fun Project.requireTargetAbi(): String {
 
 fun Project.setupCommon() {
     android.apply {
-        buildToolsVersion("30.0.3")
-        compileSdkVersion(31)
+        buildToolsVersion = "30.0.3"
+        compileSdk = 31
         defaultConfig {
             minSdk = 21
-            targetSdk = 31
         }
         buildTypes {
             getByName("release") {
@@ -104,29 +107,31 @@ fun Project.setupCommon() {
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
         }
-        lintOptions {
-            isShowAll = true
-            isCheckAllWarnings = true
-            isCheckReleaseBuilds = false
-            isWarningsAsErrors = true
+        lint {
+            showAll = true
+            checkAllWarnings = true
+            checkReleaseBuilds = false
+            warningsAsErrors = true
             textOutput = project.file("build/lint.txt")
             htmlOutput = project.file("build/lint.html")
         }
         packagingOptions {
-            excludes.addAll(
-                listOf(
-                    "**/*.kotlin_*",
-                    "/META-INF/*.version",
-                    "/META-INF/native/**",
-                    "/META-INF/native-image/**",
-                    "/META-INF/INDEX.LIST",
-                    "DebugProbesKt.bin",
-                    "com/**",
-                    "org/**",
-                    "**/*.java",
-                    "**/*.proto",
+            resources {
+                excludes.addAll(
+                    listOf(
+                        "**/*.kotlin_*",
+                        "/META-INF/*.version",
+                        "/META-INF/native/**",
+                        "/META-INF/native-image/**",
+                        "/META-INF/INDEX.LIST",
+                        "DebugProbesKt.bin",
+                        "com/**",
+                        "org/**",
+                        "**/*.java",
+                        "**/*.proto",
+                    )
                 )
-            )
+            }
         }
         packagingOptions {
             jniLibs.useLegacyPackaging = true
@@ -145,6 +150,11 @@ fun Project.setupCommon() {
                     ).replace("-release", "").replace("-oss", "")
                 }
             }
+        }
+    }
+    (android as? ApplicationExtension)?.apply {
+        defaultConfig {
+            targetSdk = 31
         }
     }
 }
@@ -216,7 +226,7 @@ fun Project.setupPlay() {
 private fun Project.setupPlayInternal(): PlayPublisherExtension {
     apply(plugin = "com.github.triplet.play")
     return (extensions.getByName("play") as PlayPublisherExtension).apply {
-        if (android.defaultConfig.versionName?.contains("beta") == true) {
+        if (androidApp.defaultConfig.versionName?.contains("beta") == true) {
             track.set("beta")
         } else {
             track.set("production")
@@ -234,14 +244,14 @@ fun Project.setupAppCommon() {
     val alias = lp.getProperty("ALIAS_NAME") ?: System.getenv("ALIAS_NAME")
     val pwd = lp.getProperty("ALIAS_PASS") ?: System.getenv("ALIAS_PASS")
 
-    android.apply {
+    androidApp.apply {
         if (keystorePwd != null) {
             signingConfigs {
                 create("release") {
-                    storeFile(rootProject.file("release.keystore"))
-                    storePassword(keystorePwd)
-                    keyAlias(alias)
-                    keyPassword(pwd)
+                    storeFile = rootProject.file("release.keystore")
+                    storePassword = keystorePwd
+                    keyAlias = alias
+                    keyPassword = pwd
                 }
             }
         } else if (requireFlavor().contains("(Oss|Expert|Play)Release".toRegex())) {
@@ -310,7 +320,7 @@ fun Project.setupPlugin(projectName: String) {
     val projName = projectName.toLowerCase(Locale.ROOT)
     val verName = requireMetadata().getProperty("${propPrefix}_VERSION_NAME")
     val verCode = requireMetadata().getProperty("${propPrefix}_VERSION").toInt() * 5
-    android.defaultConfig {
+    androidApp.defaultConfig {
         applicationId = "io.nekohasekai.sagernet.plugin.$projName"
 
         versionName = verName
@@ -323,7 +333,7 @@ fun Project.setupPlugin(projectName: String) {
 
     val targetAbi = requireTargetAbi()
 
-    android.apply {
+    androidApp.apply {
         this as AbstractAppExtension
 
         buildTypes {
@@ -349,7 +359,7 @@ fun Project.setupPlugin(projectName: String) {
             }
         }
 
-        flavorDimensions("vendor")
+        flavorDimensions.add("vendor")
         productFlavors {
             create("oss")
             create("fdroid")
@@ -418,8 +428,8 @@ fun Project.setupPlugin(projectName: String) {
 fun Project.setupApp() {
     val pkgName = requireMetadata().getProperty("PACKAGE_NAME")
     val verName = requireMetadata().getProperty("VERSION_NAME")
-    val verCode = (requireMetadata().getProperty("VERSION_CODE").toInt()) * 5
-    android.apply {
+    val verCode = 153 * 5 + (requireMetadata().getProperty("VERSION_CODE").toInt() - 153) * 2
+    androidApp.apply {
         defaultConfig {
             applicationId = pkgName
             versionCode = verCode
@@ -431,7 +441,7 @@ fun Project.setupApp() {
 
     val targetAbi = requireTargetAbi()
 
-    android.apply {
+    androidApp.apply {
         this as AbstractAppExtension
 
         buildTypes {
@@ -457,13 +467,13 @@ fun Project.setupApp() {
             }
         }
 
-        flavorDimensions("vendor")
+        flavorDimensions.add("vendor")
         productFlavors {
             create("oss")
             create("expert")
             create("fdroid")
             create("play") {
-                versionCode = verCode - 4
+                versionCode = verCode - 1
             }
         }
 
