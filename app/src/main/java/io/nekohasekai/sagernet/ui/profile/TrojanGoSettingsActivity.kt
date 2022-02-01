@@ -236,12 +236,13 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         }.showAllowingStateLoss(supportFragmentManager, Key.SERVER_PLUGIN_CONFIGURE)
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean = try {
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean = try {
         val selected = pluginConfiguration.selected
-        pluginConfiguration = PluginConfiguration((pluginConfiguration.pluginsOptions +
-                (pluginConfiguration.selected to PluginOptions(selected,
-                    newValue as? String?))).toMutableMap(),
-            selected)
+        pluginConfiguration = PluginConfiguration(
+            (pluginConfiguration.pluginsOptions + (pluginConfiguration.selected to PluginOptions(
+                selected, newValue as? String?
+            ))).toMutableMap(), selected
+        )
         DataStore.serverPlugin = pluginConfiguration.toString()
         DataStore.dirty = true
         true
@@ -256,7 +257,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
                 Activity.RESULT_OK -> {
                     val options = data?.getStringExtra(PluginContract.EXTRA_OPTIONS)
                     pluginConfigure.text = options
-                    onPreferenceChange(null, options)
+                    onPreferenceChange(pluginConfigure, options)
                 }
                 PluginContract.RESULT_FALLBACK -> showPluginEditor()
             }

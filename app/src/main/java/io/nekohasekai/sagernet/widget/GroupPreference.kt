@@ -43,9 +43,10 @@ class GroupPreference : SimpleMenuPreference {
         entryValues = groups.map { "${it.id}" }.toTypedArray()
     }
 
-    override fun getSummary(): CharSequence {
-        if (value != "0") {
-            return SagerDatabase.groupDao.getById(value.toLong())?.displayName() ?: super.getSummary()
+    override fun getSummary(): CharSequence? {
+        if (!value.isNullOrBlank() && value != "0") {
+            return SagerDatabase.groupDao.getById(value.toLong())?.displayName()
+                ?: super.getSummary()
         }
         return super.getSummary()
     }

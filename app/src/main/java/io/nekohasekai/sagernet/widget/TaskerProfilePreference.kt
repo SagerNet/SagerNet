@@ -43,7 +43,7 @@ class TaskerProfilePreference : SimpleMenuPreference {
         setEntryValues(R.array.int_array_2)
     }
 
-    override fun getSummary(): CharSequence {
+    override fun getSummary(): CharSequence? {
         if (value == "1") {
             val taskerProfileId = DataStore.taskerProfileId
             if (taskerProfileId > 0) {

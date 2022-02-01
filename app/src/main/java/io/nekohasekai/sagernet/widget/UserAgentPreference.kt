@@ -43,7 +43,7 @@ class UserAgentPreference : EditTextPreference {
         super.notifyChanged()
     }
 
-    override fun getSummary(): CharSequence {
+    override fun getSummary(): CharSequence? {
         if (text.isNullOrBlank()) {
             return if (isOOCv1) USER_AGENT_ORIGIN else USER_AGENT
         }

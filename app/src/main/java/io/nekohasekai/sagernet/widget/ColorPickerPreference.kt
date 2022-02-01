@@ -126,7 +126,7 @@ class ColorPickerPreference @JvmOverloads constructor(
         )
     }
 
-    override fun onSaveInstanceState(): Parcelable {
+    override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
         if (isPersistent) {
             // No need to save instance state since it's persistent
@@ -137,8 +137,8 @@ class ColorPickerPreference @JvmOverloads constructor(
         return myState
     }
 
-    override fun onRestoreInstanceState(state: Parcelable) {
-        if (state.javaClass != SavedState::class.java) {
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state?.javaClass != SavedState::class.java) {
             // Didn't save state for us in onSaveInstanceState
             super.onRestoreInstanceState(state)
             return

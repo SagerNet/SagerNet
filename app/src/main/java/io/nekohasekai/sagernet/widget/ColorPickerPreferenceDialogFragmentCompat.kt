@@ -53,7 +53,7 @@ class ColorPickerPreferenceDialogFragmentCompat : PreferenceDialogFragmentCompat
 
     override fun onColorSelected(color: Int) {
         pickedColor = color
-        super.onClick(dialog, DialogInterface.BUTTON_POSITIVE)
+        super.onClick(dialog as DialogInterface, DialogInterface.BUTTON_POSITIVE)
     }
 
     val colorPickerPreference: ColorPickerPreference

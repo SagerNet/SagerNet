@@ -48,7 +48,7 @@ class OutboundPreference : SimpleMenuPreference {
         setEntryValues(R.array.outbound_value)
     }
 
-    override fun getSummary(): CharSequence {
+    override fun getSummary(): CharSequence? {
         if (value == "3") {
             val routeOutbound = DataStore.routeOutboundRule
             if (routeOutbound > 0) {
