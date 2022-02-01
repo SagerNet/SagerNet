@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.database
 
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
-import dev.matrix.roomigrant.GenerateRoomMigrations
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.preference.KeyValuePair
@@ -31,15 +30,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, StatsEntity::class, KeyValuePair::class],
-    version = 14,
+    entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class, StatsEntity::class],
+    version = 15,
     autoMigrations = [AutoMigration(
         from = 12,
         to = 14,
+    ), AutoMigration(
+        from = 14, to = 15, spec = SagerDatabase_Migration_14_15::class
     )]
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
-@GenerateRoomMigrations
 abstract class SagerDatabase : RoomDatabase() {
 
     companion object {
@@ -67,7 +67,6 @@ abstract class SagerDatabase : RoomDatabase() {
                 .build()
         }
 
-        val profileCacheDao get() = instance.profileCacheDao()
         val groupDao get() = instance.groupDao()
         val proxyDao get() = instance.proxyDao()
         val rulesDao get() = instance.rulesDao()
@@ -75,7 +74,6 @@ abstract class SagerDatabase : RoomDatabase() {
 
     }
 
-    abstract fun profileCacheDao(): KeyValuePair.Dao
     abstract fun groupDao(): ProxyGroup.Dao
     abstract fun proxyDao(): ProxyEntity.Dao
     abstract fun rulesDao(): RuleEntity.Dao

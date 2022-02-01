@@ -1,8 +1,6 @@
 /******************************************************************************
  *                                                                            *
- * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
- * Copyright (C) 2021 by Max Lv <max.c.lv@gmail.com>                          *
- * Copyright (C) 2021 by Mygod Studio <contact-shadowsocks-android@mygod.be>  *
+ * Copyright (C) 2022 by nekohasekai <contact-sagernet@sekai.icu>             *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -26,22 +24,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.ktx.app
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
     entities = [KeyValuePair::class], version = 1
 )
-abstract class PublicDatabase : RoomDatabase() {
+abstract class InMemoryDatabase : RoomDatabase() {
     companion object {
-        @Suppress("EXPERIMENTAL_API_USAGE")
         private val instance by lazy {
-            SagerNet.deviceStorage.getDatabasePath(Key.DB_PROFILE).parentFile?.mkdirs()
-            Room.databaseBuilder(SagerNet.deviceStorage, PublicDatabase::class.java, Key.DB_PUBLIC)
+            Room.inMemoryDatabaseBuilder(app, InMemoryDatabase::class.java)
                 .allowMainThreadQueries()
-                .enableMultiInstanceInvalidation()
-                .fallbackToDestructiveMigration()
-                .setQueryExecutor { GlobalScope.launch { it.run() } }
                 .build()
         }
 

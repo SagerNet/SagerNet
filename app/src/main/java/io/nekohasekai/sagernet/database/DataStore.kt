@@ -26,6 +26,7 @@ import android.os.Build
 import androidx.preference.PreferenceDataStore
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.bg.VpnService
+import io.nekohasekai.sagernet.database.preference.InMemoryDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
@@ -35,7 +36,7 @@ import io.nekohasekai.sagernet.utils.DirectBoot
 object DataStore : OnPreferenceDataStoreChangeListener {
 
     val configurationStore = RoomPreferenceDataStore(PublicDatabase.kvPairDao)
-    val profileCacheStore = RoomPreferenceDataStore(SagerDatabase.profileCacheDao)
+    val profileCacheStore = RoomPreferenceDataStore(InMemoryDatabase.kvPairDao)
 
     fun init() {
         if (Build.VERSION.SDK_INT >= 24) {

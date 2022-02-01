@@ -81,8 +81,6 @@ dependencies {
     implementation("androidx.room:room-runtime:2.4.1")
     kapt("androidx.room:room-compiler:2.4.1")
     implementation("androidx.room:room-ktx:2.4.1")
-    implementation("com.github.MatrixDev.Roomigrant:RoomigrantLib:0.3.4")
-    kapt("com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4")
 
     implementation("editorkit:editorkit:2.0.0")
     implementation("editorkit:feature-editor:2.0.0")
