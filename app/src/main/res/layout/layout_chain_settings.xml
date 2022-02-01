@@ -30,11 +30,11 @@
         android:padding="4dp"
         android:overScrollMode="never"
         app:fastScrollAutoHide="true"
-        app:fastScrollPopupBgColor="?colorOnPrimarySurface"
+        app:fastScrollPopupBgColor="?colorPrimarySurface"
         app:fastScrollPopupTextColor="?colorPrimary"
         app:fastScrollThumbColor="?colorPrimary"
         app:fastScrollThumbInactiveColor="?colorPrimary"
-        app:fastScrollTrackColor="?colorOnPrimarySurface"
+        app:fastScrollTrackColor="?colorPrimarySurface"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>

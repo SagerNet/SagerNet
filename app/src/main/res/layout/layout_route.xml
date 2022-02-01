@@ -20,7 +20,7 @@
             app:fastScrollAutoHide="true"
             app:fastScrollThumbColor="?colorPrimary"
             app:fastScrollThumbInactiveColor="?colorPrimary"
-            app:fastScrollTrackColor="?colorOnPrimarySurface">
+            app:fastScrollTrackColor="?colorPrimarySurface">
 
         </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
 
