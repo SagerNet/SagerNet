@@ -461,7 +461,7 @@
 \n
 \n这是三种方式中最宽松的一种。一旦你向 NAT 另一端的任何地方发送了 UDP 数据包，NAT 另一端的任何其他东西都可以在该端口上向你发送 UDP 数据包。这种过滤策略让系统管理员惊出一身冷汗，但 RFC 4787 建议，当实时通信（或其他需要应用透明度的东西，如游戏）是一个优先事项时，可以使用它。请注意，如果你的 NAT 的映射行为被错误地配置了，这不会做一个很好的补偿工作。更重要的是，要把映射行为搞对。</string>
     <string name="backup_settings">设置</string>
-    <string name="backup_summary">如果路由规则与配置一起备份，则自定义出站将丢失。</string>
+    <string name="backup_summary">如果路由规则不与配置一起备份，则自定义出站将丢失。</string>
     <string name="nat_filtering_address_dependent">`地址依赖`
 \n
 \n这是一个中间地带，系统管理员更容易证明，但我的印象是，它更难配置。一旦你向 NAT 另一边的主机发送了一个 UDP 数据包，NAT 将允许从该主机返回 UDP 流量，无论该主机从哪个端口发送，但不允许从其他地址进入的 UDP 流量。如果你的映射行为配置得当，这应该和 `终端独立` 的功能一样好。</string>
@@ -476,4 +476,5 @@
     <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
 \n
 \n如果你从相同的端口发送两个 UDP 数据包到 NAT 另一侧的不同地方，NAT 将使用相同的端口来发送这些数据包，如果目标地址是相同的；目标端口并不重要。发送到两个不同的主机将使用不同的端口。如果双方都使用它，这就需要使用 TURN 服务器，除非双方都不做特定端口过滤，而且至少有一方为 `端点独立`。如果你想使用 webrtc 或其他使用 P2P UDP 网络的东西，***不要像这样配置你的 NAT***。这种映射类型（松散地）对应于 [RFC 3489第5节](https://tools.ietf.org/html/rfc3489#section-5) 中定义的经典 STUN 中的对称 NATs。</string>
+    <string name="tasker_settings">Tasker 设置</string>
 </resources>

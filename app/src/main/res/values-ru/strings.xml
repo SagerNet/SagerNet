@@ -457,7 +457,7 @@
     <string name="network_eth">Ethernet</string>
     <string name="route_need_ssid">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого необходимо **разрешение на определение местоположения в фоне** и **включенное определение местоположения** на Android 8.0 или выше</string>
     <string name="tools_network">Сеть</string>
-    <string name="backup">Бекап</string>
+    <string name="backup">Бэкап</string>
     <string name="backup_rules">Правила маршрутизации</string>
     <string name="backup_settings">Настройки</string>
     <string name="backup_not_file">Не файл резервной копии: ожидался .json, а не %s</string>
@@ -468,4 +468,20 @@
     <string name="use_local_dns_as_direct_dns">Использовать локальный DNS как прямой DNS</string>
     <string name="backup_groups_and_configurations">Группы и конфигурации</string>
     <string name="backup_summary">Если правила маршрутизации резервируются без конфигураций, то пользовательские исходящие соединения будут потеряны.</string>
+    <string name="tasker_action_stop_service">Остановить сервис</string>
+    <string name="auto_mtu">Автоматический MTU</string>
+    <string name="auto_mtu_summary">Использовать MTU восходящего сетевого интерфейса</string>
+    <string name="experimental_reduced_iv_head_entropy">Это предложение GFWReport по контрмерам блокировке потоковых протоколов случайных данных, наблюдаемой на GFW.
+\n
+\nЭта опция заменяет первые 6 байт вектора инициализации на буквенные символы, что позволяет кому угодно в сети провайдера идентифицировать протокол когда опция включена.</string>
+    <string name="tasker_action_start_service">Запустить сервис</string>
+    <string name="tasker_start_current_profile">Текущий профиль</string>
+    <string name="tasker_blurb_start_profile">Запустить профиль %s</string>
+    <string name="root_ca_provider">Корневой центр сертификации</string>
+    <string name="root_ca_mozilla">Mozilla</string>
+    <string name="mtu">MTU</string>
+    <string name="root_ca_system">Система</string>
+    <string name="packet_encoding">Кодирование пакетов</string>
+    <string name="tasker_settings">Настройки Заданий</string>
+    <string name="tasker_action">Действие</string>
 </resources>

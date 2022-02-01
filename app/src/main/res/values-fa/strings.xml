@@ -76,10 +76,8 @@
     <string name="connection_test_available">موفقیت: ارتباط با HTTPS\t%d میلی ثانیه طول کشید</string>
     <string name="connection_test_testing">در حال بررسی…</string>
     <string name="speed">%s/s</string>
-    <string name="speed_detail">پروکسی:
-\n\t%1$s↑ %2$s↓
-\nمستقیم:
-\n\t%3$s↑ %4$s↓</string>
+    <string name="speed_detail">پروکسی:\t%1$s↑ %2$s↓
+\nمستقیم:\t%3$s↑ %4$s↓</string>
     <string name="traffic">%1$s↑ %2$s↓</string>
     <string name="allow_insecure_sum">غیرفعال سازی بررسی گواهینامه امنیتی. در صورت فعال شدن این گزینه، تنظیمات فعلی امن نبوده و قابل شنود خواهند بود</string>
     <string name="allow_insecure">اجازه شکل گرفتن اتصال های غیرامن</string>
@@ -353,7 +351,7 @@
     <string name="experimental_no_termination_signal">هنگام انتقال از طریق VMess، سیگنال ختم دو طرفه اتصال را برای اتصال TCP ارسال نکنید. این باعث خرابی برخی از برنامه ها می شود.</string>
     <string name="experimental_authenticated_length">طول هر بخش محموله دیگر قابل انعطاف نیست. این آزمایش نیاز به سرور دارد و سرویس گیرنده از نسخه مشابه v2ray-core استفاده می کند. انتظار می رود بروزرسانی های فوری بیشتری در مورد این آزمایش ارائه شود.</string>
     <string name="experimental_settings">آزمایشی</string>
-    <string name="route_need_vpn">قانون مسیریابی %s متکی به در دسترس بودن VPN است، بنابراین نادیده گرفته می شود.</string>
+    <string name="route_need_vpn">قانون مسیریابی` %s` متکی به در دسترس بودن VPN است، بنابراین نادیده گرفته می شود.</string>
     <string name="route_for">قانون برای %s</string>
     <string name="app_no_launcher">برنامه فاقد رابط کاربری است.</string>
     <string name="copy_failed">کپی نشد.</string>
@@ -412,4 +410,74 @@
     <string name="probe_url">تست سفارشی URL</string>
     <string name="naive_insecure_concurrency">همزمانی ناامن</string>
     <string name="route_opt_block_analysis">آنالیز بلاک</string>
+    <string name="stun_test">کشف رفتار NAT</string>
+    <string name="nat_filtering_behaviour">رفتار فیلتر NAT</string>
+    <string name="disable_dns_expire_summary">تا زمان راه‌اندازی مجدد DNS TTL را نادیده بگیر.</string>
+    <string name="disable_dns_expire">غیرفعال کردن انقضای DNS</string>
+    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) یک ارائه‌دهنده رایگان فیلترشکن وایرگارد است. استفاده از آن به معنی پذیرش [قوانین‌شون](https://www.cloudflare.com/application/terms/).</string>
+    <string name="naive_insecure_concurrency_summary">از N اتصال تونل همزمان برای قوی‌تر بودن در شرایط بد شبکه استفاده کنید. اتصالات بیشتر تشخیص تونل را آسان‌تر و ناامن میکند. این پروژه برای قویترین امنیت در برابر تجزیه و شنود ترافیک تلاش می‌کند. استفاده از آن به روش ناامن، اهداف آن را از بین می‌برد.
+\n
+\nاگر باید از این استفاده کنید، ابتدا N=2 را امتحان کنید تا ببینید آیا مشکلات شما حل می شود یا خیر. اکیداً توصیه می شود از بیش از 4 اتصال استفاده نکنید.</string>
+    <string name="stun_test_summary">تشخیص رفتار نقشه‌برداری NAT کلاینت و رفتار فیلترینگ NAT تعریف شده در RFC5780 با استفاده از STUN.</string>
+    <string name="missing_permission">مجوز اعطا نشده</string>
+    <string name="nat_mapping_endpoint_independent">`%s`
+\n
+\nاگر دو بسته UDP را از یک پورت به مکان‌های مختلف در طرف دیگر NAT ارسال کنید، NAT از همان پورت برای ارسال آن بسته ها استفاده می کند. این تنها رفتار سازگار با RTC است و RFC4787 آنرا به عنوان بهترین روش (REQ-1) در همه NAT ها لازم دارد. اگر هر دو NAT این کار را انجام دهند، ICE قادر خواهد بود به طور مستقیم برای همه رفتارهای فیلتر که در زیر توضیح داده شده است، متصل شود. این مهمترین تنظیم برای درست کردن است. این نوع نگاشت مربوط به NATهای مخروطی در STUN کلاسیک تعریف شده در [RFC3489 بخش 5] (https://tools.ietf.org/html/rfc3489#section-5) است.</string>
+    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
+\n
+\nاگر دو بسته UDP را از یک پورت به مکان‌های مختلف در طرف دیگر NAT ارسال کنید، NAT از همان پورت برای ارسال آن بسته‌ها استفاده می‌کند تا آدرس مقصد یکسان باشد. پورت مقصد مهم نیست ارسال به دو هاست مختلف از پورت‌های متفاوتی استفاده می‌کند. در صورتی که هر دو طرف از سرور TURN استفاده کنند، نیاز به استفاده از سرور TURN دارد، مگر اینکه هیچ یک از طرفین فیلترینگ پورت خاص را انجام ندهند، و حداقل یکی از آنها «فیلتر کردن مستقل نقطه پایانی» را انجام دهد. اگر می خواهید webrtc یا هر چیز دیگری که از شبکه P2P UDP استفاده می کند، ***NAT خود را به این صورت پیکربندی نکنید***. این نوع نگاشت (به طور ضعیف) با NATهای متقارن در STUN کلاسیک تعریف شده در [RFC3489 بخش 5] (https://tools.ietf.org/html/rfc3489#section-5) مطابقت دارد.</string>
+    <string name="nat_filtering_address_dependent">`وابسته به آدرس`
+\n
+\nاین حد وسطی است که sysadminها زمان آسان‌تری برای توجیه آن دارند، اما تصور من این است که پیکربندی آن سخت‌تر است. هنگامی که یک بسته UDP را به میزبانی در طرف دیگر NAT ارسال کردید، NAT بدون در نظر گرفتن پورتی که میزبان از آن ارسال میکند، اجازه ترافیک UDP برگشتی از آن میزبان را می‌دهد، اما به ترافیک UDP ورودی از آدرس های دیگر اجازه نمی‌دهد. اگر رفتار نگاشت شما به درستی پیکربندی شده باشد، باید مانند «فیلتر مستقل از نقطه پایانی» عمل کند.</string>
+    <string name="nat_filtering_endpoint_independent">`مستقل از نقطه پایانی`
+\n
+\nاین سهل‌گیرانه‌ترین از بین سه مورد است. هنگامی که یک بسته UDP را به هر جایی در طرف دیگر NAT ارسال کردید، هر چیز دیگری در طرف دیگر NAT می تواند بسته های UDP را در آن پورت برای شما ارسال کند. این خط‌مشی فیلتر کردن به sysadmin‌ها عرق سرد می‌دهد، اما RFC4787 استفاده از آن را در زمانی که ارتباط بلادرنگ (یا سایر مواردی که به شفافیت برنامه نیاز دارند، به عنوان مثال گیم) در اولویت است، توصیه می‌کند. توجه داشته باشید که اگر رفتار نگاشت NAT شما به درستی پیکربندی نشده باشد، این کار جبران خوبی نخواهد داشت. مهمتر است که رفتار نقشه برداری درست باشد.</string>
+    <string name="nat_filtering_address_and_port_dependent">`وابسته به آدرس و پورت`
+\n
+\nاین سختگیرترین از میان این سه مورد است. NAT شما فقط به ترافیک برگشتی از جایی که بسته UDP خود را ارسال کرده‌اید اجازه می‌دهد. استفاده از این ***توصیه نمی‌شود***، حتی اگر رفتار نگاشت را به درستی پیکربندی کنید، زیرا زمانی که NAT دیگر به اشتباه پیکربندی شود، ضعیف عمل می‌کند (نسبتا رایج است).</string>
+    <string name="route_need_ssid">قانون مسیریابی `%s` نیازمند دسترسی به ** SSID Wi-Fi** شماست، اما در Android 8 یا بالاتر برای این کار **مجوز موقعیت‌مکانی پس‌زمینه** و **فعال‌کردن موقعیت‌مکانی** لازم است</string>
+    <string name="root_ca_mozilla">Mozilla</string>
+    <string name="experimental_reduced_iv_head_entropy">این پیشنهاد GFWReport برای یک اقدام متقابل برای جریان تصادفی مانند رفتار مسدود کردن پروتکل مشاهده شده در GFW است.
+\n
+\nاین گزینه 6 بایت اول IV را به کاراکترهای قابل چاپ مجددا تبدیل می‌کند، این امکان در صورت فعال بودن باعث می‌شود هر کسی که در مسیر شبکه است بتواند پروتکل را شناسایی کند.</string>
+    <string name="auto_mtu_summary">نمایش MTU ارسالی شبکه</string>
+    <string name="invalid_backup_file">فایل پشتیبان نامعتبر است</string>
+    <string name="tasker_action_stop_service">توقف سرویس</string>
+    <string name="auto_mtu">MTU خودکار</string>
+    <string name="tasker_settings">تنظیمات وظیفه‌دهنده</string>
+    <string name="tasker_action">اقدام</string>
+    <string name="tasker_action_start_service">شروع سرویس</string>
+    <string name="tasker_start_current_profile">نمایه فعلی</string>
+    <string name="tasker_blurb_start_profile">شروع نمایه %s</string>
+    <string name="root_ca_provider">ارائه دهنده گواهینامه‌های CA ریشه</string>
+    <string name="root_ca_system">سیستم</string>
+    <string name="packet_encoding">کدکننده پکت‌ها</string>
+    <string name="mtu">MTU</string>
+    <string name="recheck">بررسی مجدد</string>
+    <string name="stun_attest_loading">این ممکن است چند دقیقه طول بکشد…</string>
+    <string name="nat_mapping_behaviour">رفتار نقشه‌برداری NAT</string>
+    <string name="endpoint_independent_no_nat">مستقل از نقطه پایانی (بدونNAT)</string>
+    <string name="endpoint_independent">مستقل از نقطه پایانی</string>
+    <string name="address_dependent">بستگی به آدرس</string>
+    <string name="address_and_port_dependent">بستگی به آدرس و پورت</string>
+    <string name="route_play_store">قانون گوگل‌پلی برای %s</string>
+    <string name="start">شروع</string>
+    <string name="location_disabled">لوکیشن غیرفعال شده</string>
+    <string name="network_type">نوع شبکه</string>
+    <string name="network_data">داده موبایل</string>
+    <string name="network_wifi">وایفای</string>
+    <string name="network_bt">بلوتوث</string>
+    <string name="network_eth">شبکه محلی</string>
+    <string name="route_ssid">SSID وایفای</string>
+    <string name="tools_network">شبکه</string>
+    <string name="backup">پشتیبان‌گیری</string>
+    <string name="backup_groups_and_configurations">گروه‌ها و پیکربندی‌ها</string>
+    <string name="backup_rules">قوانین مسیردهی</string>
+    <string name="backup_settings">تنظیمات</string>
+    <string name="backup_summary">اگر از تنظیمات مسیردهی با پیکربندی‌ها پشتیبان‌گیری نشود، خروجی‌های سفارشی از بین خواهند رفت.</string>
+    <string name="backup_not_file">فایل پشتیبان وجود نداره: انتظار میرف json. باشه ولی %s</string>
+    <string name="backup_import">وارد كردن</string>
+    <string name="backup_import_summary">وارد کردن داده‌های موجود را بازنویسی می‌کند.</string>
+    <string name="backup_importing">در حال وارد کردن…</string>
+    <string name="use_local_dns_as_direct_dns">استفاده از LocalDNS بعنوان DirectDNS</string>
 </resources>
