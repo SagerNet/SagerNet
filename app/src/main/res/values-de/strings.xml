@@ -8,7 +8,7 @@
     <string name="group_default">Ungruppiert</string>
     <string name="document">Dokument</string>
     <string name="theme">Style</string>
-    <string name="menu_about">über</string>
+    <string name="menu_about">Über</string>
     <string name="menu_group">Gruppe</string>
     <string name="menu_configuration">Konfiguration</string>
     <string name="app_version">Version</string>
@@ -24,4 +24,16 @@
     <string name="group_create">Erstellen Gruppe</string>
     <string name="group_name_required">Gruppen Name benötigt</string>
     <string name="group_delete_confirm_prompt">Bist du dir sicher das du diese Gruppe entfernen möchtest\?</string>
+    <string name="license">Lizenz</string>
+    <string name="lines">%d Linien</string>
+    <string name="auto">Automatisch</string>
+    <string name="api_port">API-Port</string>
+    <string name="night_mode">Nachtmodus</string>
+    <string name="follow_system">System folgen</string>
+    <string name="enable">Aktivieren</string>
+    <string name="disable">Deaktivieren</string>
+    <string name="enable_log">Aktiviere Protokoll</string>
+    <string name="list">Liste</string>
+    <string name="random">Zufällig</string>
+    <string name="enable_log_sum">Für Debugging-Zwecken</string>
 </resources>

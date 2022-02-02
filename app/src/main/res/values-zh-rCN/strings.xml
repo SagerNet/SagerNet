@@ -477,4 +477,14 @@
 \n
 \n如果你从相同的端口发送两个 UDP 数据包到 NAT 另一侧的不同地方，NAT 将使用相同的端口来发送这些数据包，如果目标地址是相同的；目标端口并不重要。发送到两个不同的主机将使用不同的端口。如果双方都使用它，这就需要使用 TURN 服务器，除非双方都不做特定端口过滤，而且至少有一方为 `端点独立`。如果你想使用 webrtc 或其他使用 P2P UDP 网络的东西，***不要像这样配置你的 NAT***。这种映射类型（松散地）对应于 [RFC 3489第5节](https://tools.ietf.org/html/rfc3489#section-5) 中定义的经典 STUN 中的对称 NATs。</string>
     <string name="tasker_settings">Tasker 设置</string>
+    <string name="auto_mtu_summary">使用上游网络接口的 MTU</string>
+    <string name="auto_mtu">自动 MTU</string>
+    <string name="tasker_action_start_service">启动服务</string>
+    <string name="tasker_action_stop_service">停止服务</string>
+    <string name="tasker_start_current_profile">当前配置</string>
+    <string name="tasker_blurb_start_profile">启动配置 %s</string>
+    <string name="root_ca_mozilla">Mozilla</string>
+    <string name="mtu">MTU</string>
+    <string name="root_ca_provider">根证书提供商</string>
+    <string name="root_ca_system">系统</string>
 </resources>
