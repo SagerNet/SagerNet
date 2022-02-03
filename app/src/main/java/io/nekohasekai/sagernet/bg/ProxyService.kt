@@ -21,9 +21,11 @@
 
 package io.nekohasekai.sagernet.bg
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.net.Network
+import android.os.PowerManager
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +51,13 @@ class ProxyService : Service(),
         Libcore.setLocalhostResolver(this)
     }
 
+    override var wakeLock: PowerManager.WakeLock? = null
+
+    @SuppressLint("WakelockTimeout")
+    override fun acquireWakeLock() {
+        wakeLock = SagerNet.power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "sagernet:proxy")
+            .apply { acquire() }
+    }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {

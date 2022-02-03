@@ -508,5 +508,9 @@
 \n\nThis option remap the first 6 bytes of IV to printable characters, it\'s possible for anyone on the privileged network path to identify the protocol when enabled.</string>
     <string name="auto_mtu">Auto MTU</string>
     <string name="auto_mtu_summary">Use MTU of the upstream network interface</string>
+    <string name="acquire_wake_lock">Acquire WakeLock</string>
+    <string name="release_wake_lock">Release WakeLock</string>
+    <string name="acquire_wake_lock_summary">Keep the CPU on</string>
+    <string name="action_switch">Switch</string>
 
 </resources>

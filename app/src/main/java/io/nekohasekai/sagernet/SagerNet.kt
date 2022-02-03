@@ -38,6 +38,7 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
+import android.os.PowerManager
 import android.os.StrictMode
 import android.os.UserManager
 import androidx.annotation.RequiresApi
@@ -195,6 +196,8 @@ class SagerNet : Application(),
         val uiMode by lazy { application.getSystemService<UiModeManager>()!! }
         val wifi by lazy { application.getSystemService<WifiManager>()!! }
         val location by lazy { application.getSystemService<LocationManager>()!! }
+        val power by lazy { application.getSystemService<PowerManager>()!! }
+
         val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
         val directBootSupported by lazy {
             Build.VERSION.SDK_INT >= 24 && try {

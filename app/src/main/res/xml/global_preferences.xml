@@ -13,6 +13,11 @@
             app:key="directBootAware"
             app:summary="@string/direct_boot_aware_summary"
             app:title="@string/direct_boot_aware" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_developer_board_24"
+            app:key="acquireWakeLock"
+            app:summary="@string/acquire_wake_lock_summary"
+            app:title="@string/acquire_wake_lock" />
         <io.nekohasekai.sagernet.widget.ColorPickerPreference
             android:title="@string/theme"
             app:icon="@drawable/ic_baseline_color_lens_24"
@@ -92,11 +97,6 @@
             app:summary="@string/show_direct_speed_sum"
             app:title="@string/show_direct_speed"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_multiple_stop_24"
-            app:key="showStopButton"
-            app:summary="@string/show_stop_sum"
-            app:title="@string/show_stop" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_nat_24"
             app:key="allowAccess"

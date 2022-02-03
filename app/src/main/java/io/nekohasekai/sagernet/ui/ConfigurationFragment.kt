@@ -79,11 +79,14 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.zip.ZipInputStream
 
 class ConfigurationFragment @JvmOverloads constructor(
-    val select: Boolean = false,
-    val selectedItem: ProxyEntity? = null,
+    val select: Boolean = false, val selectedItem: ProxyEntity? = null, val titleRes: Int = 0
 ) : ToolbarFragment(R.layout.layout_group_list),
     PopupMenu.OnMenuItemClickListener,
     Toolbar.OnMenuItemClickListener {
+
+    interface SelectCallback {
+        fun returnProfile(profileId: Long)
+    }
 
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
@@ -120,7 +123,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             toolbar.inflateMenu(R.menu.add_profile_menu)
             toolbar.setOnMenuItemClickListener(this)
         } else {
-            toolbar.setTitle(R.string.select_profile)
+            toolbar.setTitle(titleRes)
             toolbar.setNavigationIcon(R.drawable.ic_navigation_close)
             toolbar.setNavigationOnClickListener {
                 requireActivity().finish()
@@ -1413,7 +1416,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
                 if (select) {
                     view.setOnClickListener {
-                        (requireActivity() as ProfileSelectActivity).returnProfile(proxyEntity.id)
+                        (requireActivity() as SelectCallback).returnProfile(proxyEntity.id)
                     }
                 } else {
                     val pa = activity as MainActivity

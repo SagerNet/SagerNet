@@ -125,6 +125,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
     var enableLog by configurationStore.boolean(Key.ENABLE_LOG) { BuildConfig.DEBUG }
     var enablePcap by configurationStore.boolean(Key.ENABLE_PCAP)
+    var acquireWakeLock by configurationStore.boolean(Key.ACQUIRE_WAKE_LOCK)
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
@@ -188,7 +189,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var enableMux by configurationStore.boolean(Key.ENABLE_MUX)
     var enableMuxForAll by configurationStore.boolean(Key.ENABLE_MUX_FOR_ALL)
     var muxConcurrency by configurationStore.stringToInt(Key.MUX_CONCURRENCY) { 8 }
-    var showStopButton by configurationStore.boolean(Key.SHOW_STOP_BUTTON)
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED)
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
