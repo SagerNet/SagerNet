@@ -860,7 +860,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         var selectedGroupIndex = 0
         var groupList: ArrayList<ProxyGroup> = ArrayList()
 
-        fun reload() {
+        fun reload(now: Boolean = false) {
 
             if (!select) {
                 groupPager.unregisterOnPageChangeCallback(updateSelectedCallback)
@@ -890,7 +890,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
 
-                groupPager.post {
+                val runFunc = if (now) requireActivity()::runOnUiThread else groupPager::post
+                runFunc {
                     groupList = newGroupList
                     notifyDataSetChanged()
                     if (set) groupPager.setCurrentItem(selectedGroupIndex, false)
@@ -905,7 +906,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         init {
-            reload()
+            reload(true)
         }
 
         override fun getItemCount(): Int {
