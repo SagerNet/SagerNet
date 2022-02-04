@@ -615,14 +615,15 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     }
 
-    fun stopService() {
+    suspend fun stopService() {
         if (SagerNet.started) SagerNet.stopService()
+        while (SagerNet.started) {
+            delay(100L)
+        }
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     fun pingTest(icmpPing: Boolean) {
-        stopService()
-
         val test = TestDialog()
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
@@ -645,6 +646,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
+            stopService()
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
             repeat(5) {
@@ -776,8 +778,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     fun urlTest() {
-        stopService()
-
         val test = TestDialog()
         val dialog = test.builder.show()
         val testJobs = mutableListOf<Job>()
@@ -804,6 +804,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
             val urlTest = UrlTest()
+
+            stopService()
             dnsInstance.launch()
 
             repeat(5) {
@@ -1028,8 +1030,8 @@ class ConfigurationFragment @JvmOverloads constructor(
         lateinit var layoutManager: LinearLayoutManager
         lateinit var configurationListView: RecyclerView
 
-        val select by lazy { (parentFragment as ConfigurationFragment).select }
-        val selectedItem by lazy { (parentFragment as ConfigurationFragment).selectedItem }
+        val parent get() = parentFragment as? ConfigurationFragment
+        fun requirePrent() = requireParentFragment() as ConfigurationFragment
 
         override fun onResume() {
             super.onResume()
@@ -1047,9 +1049,9 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         fun checkOrderMenu() {
-            if (select) return
+            if (parent?.select == true) return
 
-            val pf = requireParentFragment() as? ToolbarFragment ?: return
+            val pf = parentFragment as? ToolbarFragment ?: return
             val menu = pf.toolbar.menu
             val origin = menu.findItem(R.id.action_order_origin)
             val byName = menu.findItem(R.id.action_order_by_name)
@@ -1092,6 +1094,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            val parent = parent ?: return
             if (!::proxyGroup.isInitialized) return
 
             configurationListView = view.findViewById(R.id.configuration_list)
@@ -1103,7 +1106,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             configurationListView.adapter = adapter
             configurationListView.setItemViewCacheSize(20)
 
-            if (!select && proxyGroup.type == GroupType.BASIC) {
+            if (!parent.select && proxyGroup.type == GroupType.BASIC) {
 
                 undoManager = UndoSnackbarManager(activity as MainActivity, adapter)
 
@@ -1335,6 +1338,13 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             fun reloadProfiles() {
+                val selectedItem = try {
+                    requirePrent().selectedItem
+                } catch (ignored: IllegalStateException) {
+                    return
+                }
+
+
                 var newProfiles = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
                 val subscription = proxyGroup.subscription
                 if (subscription != null) {
@@ -1410,11 +1420,11 @@ class ConfigurationFragment @JvmOverloads constructor(
             val shareButton: ImageView = view.findViewById(R.id.shareIcon)
 
             fun bind(proxyEntity: ProxyEntity) {
-                val pf = parentFragment as? ConfigurationFragment ?: return
+                val parent = parent ?: return
 
                 entity = proxyEntity
 
-                if (select) {
+                if (parent.select) {
                     view.setOnClickListener {
                         (requireActivity() as SelectCallback).returnProfile(proxyEntity.id)
                     }
@@ -1479,7 +1489,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     address = address.substring(0, 27) + "..."
                 }
 
-                if (proxyEntity.requireBean().name.isBlank() || !pf.alwaysShowAddress) {
+                if (proxyEntity.requireBean().name.isBlank() || !parent.alwaysShowAddress) {
                     address = ""
                 }
 
@@ -1521,10 +1531,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                     )
                 }
 
-                editButton.isGone = select
+                editButton.isGone = parent.select
 
                 runOnDefaultDispatcher {
-                    val selected = (selectedItem?.id ?: DataStore.selectedProxy) == proxyEntity.id
+                    val selected = (parent.selectedItem?.id
+                        ?: DataStore.selectedProxy) == proxyEntity.id
                     val started = selected && SagerNet.started && DataStore.startedProfile == proxyEntity.id
                     onMainDispatcher {
                         editButton.isEnabled = !started
@@ -1561,9 +1572,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         popup.show()
                     }
 
-                    if (!select) {
+                    if (!parent.select) {
 
-                        val validateResult = if (pf.securityAdvisory) {
+                        val validateResult = if (parent.securityAdvisory) {
                             proxyEntity.requireBean().isInsecure()
                         } else ResultLocal
 
