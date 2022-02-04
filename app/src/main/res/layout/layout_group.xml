@@ -19,8 +19,7 @@
             android:scrollbarSize="0dp"
             app:fastScrollAutoHide="true"
             app:fastScrollThumbColor="?colorPrimary"
-            app:fastScrollThumbInactiveColor="?colorPrimary"
-            app:fastScrollTrackColor="?colorPrimarySurface">
+            app:fastScrollThumbInactiveColor="?colorPrimary">
 
         </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
 

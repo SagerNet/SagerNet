@@ -32,7 +32,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?colorPrimarySurface"
                 android:orientation="vertical"
                 android:paddingTop="56dp">
 
@@ -101,11 +100,9 @@
         android:scrollbarSize="0dp"
         android:visibility="gone"
         app:fastScrollAutoHide="true"
-        app:fastScrollPopupBgColor="?colorPrimarySurface"
         app:fastScrollPopupTextColor="?colorPrimary"
         app:fastScrollThumbColor="?colorPrimary"
         app:fastScrollThumbInactiveColor="?colorPrimary"
-        app:fastScrollTrackColor="?colorPrimarySurface"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/layout_apps_item" />
 
