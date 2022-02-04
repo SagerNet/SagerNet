@@ -54,7 +54,6 @@ public class HysteriaBean extends AbstractBean {
     public Boolean allowInsecure;
     public Integer streamReceiveWindow;
     public Integer connectionReceiveWindow;
-    public Boolean disableMtuDiscovery;
 
     @Override
     public boolean canMapping() {
@@ -78,12 +77,11 @@ public class HysteriaBean extends AbstractBean {
 
         if (streamReceiveWindow == null) streamReceiveWindow = 0;
         if (connectionReceiveWindow == null) connectionReceiveWindow = 0;
-        if (disableMtuDiscovery == null) disableMtuDiscovery = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeInt(authPayloadType);
         output.writeString(authPayload);
@@ -99,7 +97,6 @@ public class HysteriaBean extends AbstractBean {
         output.writeString(caText);
         output.writeInt(streamReceiveWindow);
         output.writeInt(connectionReceiveWindow);
-        output.writeBoolean(disableMtuDiscovery);
 
     }
 
@@ -124,7 +121,9 @@ public class HysteriaBean extends AbstractBean {
             caText = input.readString();
             streamReceiveWindow = input.readInt();
             connectionReceiveWindow = input.readInt();
-            disableMtuDiscovery = input.readBoolean();
+            if (version <= 3) {
+                input.readBoolean();
+            }
         }
     }
 
@@ -135,7 +134,6 @@ public class HysteriaBean extends AbstractBean {
         bean.uploadMbps = uploadMbps;
         bean.downloadMbps = downloadMbps;
         bean.allowInsecure = allowInsecure;
-        bean.disableMtuDiscovery = disableMtuDiscovery;
     }
 
     @NotNull
