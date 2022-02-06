@@ -22,6 +22,9 @@ import android.os.Bundle
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.ProfileManager
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 
 class SwitchActivity : ThemedActivity(R.layout.layout_empty),
     ConfigurationFragment.SelectCallback {
@@ -31,14 +34,21 @@ class SwitchActivity : ThemedActivity(R.layout.layout_empty),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_holder, ConfigurationFragment(true, null, R.string.action_switch))
-            .commitAllowingStateLoss()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_holder, ConfigurationFragment(true, null, R.string.action_switch)
+        ).commitAllowingStateLoss()
     }
 
     override fun returnProfile(profileId: Long) {
-        DataStore.selectedProxy = profileId
-        SagerNet.reloadService()
+        runOnDefaultDispatcher {
+            val lastProxy = DataStore.selectedProxy
+            DataStore.selectedProxy = profileId
+            ProfileManager.postUpdate(lastProxy)
+            ProfileManager.postUpdate(profileId)
+            onMainDispatcher {
+                SagerNet.reloadService()
+            }
+        }
         finish()
     }
 }
