@@ -226,7 +226,7 @@ fun parseV2RayN(link: String): VMessBean {
     bean.host = json.getStr("host") ?: ""
     bean.path = json.getStr("path") ?: ""
 
-    when (bean.headerType) {
+    when (bean.type) {
         "quic" -> {
             bean.quicSecurity = bean.host
             bean.quicKey = bean.path
