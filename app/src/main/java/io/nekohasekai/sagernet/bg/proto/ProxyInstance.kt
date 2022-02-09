@@ -148,13 +148,13 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
                     val groupId = profile.groupId
                     val task = timerTask {
-                        synchronized(this@ProxyInstance) {
-                            if (updateTasks[groupId] == this) {
+                        if (updateTasks[groupId] == this) {
+                            runOnDefaultDispatcher {
                                 service.data.binder.broadcast {
-                                    it.observatoryResultsUpdated(profile.groupId)
+                                    it.observatoryResultsUpdated(groupId)
                                 }
-                                updateTasks.remove(profile.groupId)
                             }
+                            updateTasks.remove(groupId)
                         }
                     }
                     updateTimer.value.schedule(task, 2000L)
@@ -179,7 +179,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         if (::observatoryJob.isInitialized) observatoryJob.cancel()
     }
 
-    // ------------- stats -------------
+// ------------- stats -------------
 
     private suspend fun queryStats(tag: String, direct: String): Long {
         return v2rayPoint.queryStats(tag, direct)

@@ -43,6 +43,8 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.utils.PackageCache
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import libcore.AppStats
 import libcore.Libcore
 import libcore.TrafficListener
@@ -117,18 +119,21 @@ class BaseService {
             cb.updateWakeLockStatus(data?.proxy?.service?.wakeLock != null)
         }
 
-        fun broadcast(work: (ISagerNetServiceCallback) -> Unit) {
-            val count = callbacks.beginBroadcast()
-            try {
-                repeat(count) {
-                    try {
-                        work(callbacks.getBroadcastItem(it))
-                    } catch (_: RemoteException) {
-                    } catch (e: Exception) {
+        private val broadcastLock = Mutex()
+        suspend fun broadcast(work: (ISagerNetServiceCallback) -> Unit) {
+            broadcastLock.withLock {
+                val count = callbacks.beginBroadcast()
+                try {
+                    repeat(count) {
+                        try {
+                            work(callbacks.getBroadcastItem(it))
+                        } catch (_: RemoteException) {
+                        } catch (e: Exception) {
+                        }
                     }
+                } finally {
+                    callbacks.finishBroadcast()
                 }
-            } finally {
-                callbacks.finishBroadcast()
             }
         }
 
@@ -437,21 +442,23 @@ class BaseService {
         var wakeLock: PowerManager.WakeLock?
         fun acquireWakeLock()
         fun switchWakeLock() {
-            wakeLock?.apply {
-                release()
-                wakeLock = null
-                data.binder.broadcast {
-                    it.updateWakeLockStatus(false)
-                }
-            } ?: apply {
-                acquireWakeLock()
-                data.binder.broadcast {
-                    it.updateWakeLockStatus(true)
+            runOnMainDispatcher {
+                wakeLock?.apply {
+                    release()
+                    wakeLock = null
+                    data.binder.broadcast {
+                        it.updateWakeLockStatus(false)
+                    }
+                } ?: apply {
+                    acquireWakeLock()
+                    data.binder.broadcast {
+                        it.updateWakeLockStatus(true)
+                    }
                 }
             }
         }
 
-        fun lateInit() {
+        suspend fun lateInit() {
             wakeLock?.apply {
                 release()
                 wakeLock = null
