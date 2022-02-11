@@ -36,6 +36,7 @@ val devKeys = arrayOf(
     "32250A4B5F3A6733DF57A3B9EC16C38D2C7FC5F2F693A9636F8F7B3BE3549641"
 )
 
+@Suppress("DEPRECATION")
 fun Context.getSignature(): Signature {
     val appInfo = packageManager.getPackageInfo(
         packageName, if (Build.VERSION.SDK_INT >= 28) GET_SIGNING_CERTIFICATES else GET_SIGNATURES
@@ -52,7 +53,7 @@ fun Context.getSha256Signature(): String {
 }
 
 fun Context.isVerified(): Boolean {
-    when (val s = getSha256Signature()) {
+    when (val s = getSha256Signature().uppercase()) {
         in devKeys,
         -> return true
         else -> {
