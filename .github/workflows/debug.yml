@@ -56,7 +56,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17.1
+          go-version: 1.17.7
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin trojan_go
@@ -112,7 +112,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.16
+          go-version: 1.17.7
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin pingtunnel
@@ -135,7 +135,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.16
+          go-version: 1.17.7
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin relaybaton
@@ -158,7 +158,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17.6
+          go-version: 1.17.7
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin brook
@@ -181,7 +181,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17.5
+          go-version: 1.17.7
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin hysteria
