@@ -6,7 +6,7 @@
     <string name="version_x">Versión (%s)</string>
     <string name="app_version">Versión</string>
     <string name="always_show_address_sum">Mostrar siempre la dirección del servidor en la tarjeta de configuración</string>
-    <string name="enable_log">Habilitar registro</string>
+    <string name="enable_log">Activar registro</string>
     <string name="disable">Desactivar</string>
     <string name="enable">Permitir</string>
     <string name="night_mode">Modo nocturno</string>
@@ -100,7 +100,7 @@
     <string name="reboot_required">No se pudo iniciar el servicio VPN. Es posible que deba reiniciar su dispositivo.</string>
     <string name="vpn_permission_denied">Permiso denegado para crear un servicio VPN</string>
     <string name="cag_ws">Configuración de WebSocket</string>
-    <string name="require_http">Habilitar HTTP entrante</string>
+    <string name="require_http">Activar HTTP entrante</string>
     <string name="general_settings">Ajustes de la Aplicacion</string>
     <string name="hysteria_obfs">Contraseña de Obfuscation</string>
     <string name="route_reverse_redirect">Redireccionamiento inverso</string>
@@ -142,7 +142,7 @@
     <string name="protocol_param">Parámetros de protocolo</string>
     <string name="protocol">Protocolo</string>
     <string name="dns_routing_message">Resuelva dominios en rutas de bypass con Direct DNS. Tenga en cuenta las posibles fugas de DNS</string>
-    <string name="enable_dns_routing">Habilitar el enrutamiento DNS</string>
+    <string name="enable_dns_routing">Activar el enrutamiento DNS</string>
     <string name="direct_dns">DNS directo</string>
     <string name="remote_dns">DNS remoto</string>
     <string name="cag_dns">Configuración de DNS</string>
@@ -152,7 +152,7 @@
     <string name="connection_test_available_http">Éxito: el protocolo de enlace HTTP tomó %dms</string>
     <string name="connection_test_available">Éxito: el protocolo de enlace HTTPS tomó %dms</string>
     <string name="connection_test_testing">Comprobando…</string>
-    <string name="allow_insecure_sum">Desactive la verificación de certificados. Cuando está habilitada, esta configuración es tan segura como el texto sin formato</string>
+    <string name="allow_insecure_sum">Desactiva la verificación de certificados. Cuando está activada, esta configuración es tan segura como el texto sin formato</string>
     <string name="allow_insecure">Permitir inseguro</string>
     <string name="allow_access">Permitir conexiones desde la LAN</string>
     <string name="group_status_empty_subscription">Aún no está actualizado</string>
@@ -171,8 +171,8 @@
     <string name="mux_for_all">Habilite Mux para todos los posibles protocolos admitidos</string>
     <string name="mux_concurrency">Conexiones concurrentes de Mux</string>
     <string name="mux_sum">Mux está diseñado para reducir la latencia del protocolo de enlace de TCP, no para aumentar el rendimiento de la conexión. Usar Mux para ver videos, descargar o realizar pruebas de velocidad suele ser contraproducente</string>
-    <string name="enable_mux">Habilitar multiplexor</string>
-    <string name="traffic_sniffing">Habilitar el rastreo de tráfico</string>
+    <string name="enable_mux">Activar multiplexor</string>
+    <string name="traffic_sniffing">Activar rastreo de tráfico</string>
     <string name="domain_strategy">Estrategia de resolución de dominio</string>
     <string name="route_opt_block_ads">Bloquear anuncios</string>
     <string name="route_not_asset">No es un archivo de activos: excepto .dat, pero %s</string>
@@ -211,7 +211,7 @@
     <string name="profile_name">Nombre de perfil</string>
     <string name="connection_test_url">URL de prueba de conexión</string>
     <string name="transproxy_mode">Modo transproxy</string>
-    <string name="require_transproxy">Habilitar Transproxy Inbound</string>
+    <string name="require_transproxy">Activar transproxy entrante</string>
     <string name="speed_detail">Proxy : %1$s↑ %2$s↓
 \nDirecto : %3$s↑ %4$s↓</string>
     <string name="security_settings">Configuraciones de seguridad</string>
@@ -261,7 +261,6 @@
     <string name="hysteria_stream_receive_window">Ventana de recepción QUIC Stream</string>
     <string name="experimental_no_termination_signal">No envíe una señal de terminación dúplex simple de conexión para la conexión TCP cuando se transfiera a través de VMess. Esto romperá alguna aplicación.</string>
     <string name="hysteria_connection_receive_window">Ventana de recepción de la conexión QUIC</string>
-    <string name="hysteria_disable_mtu_discovery">Deshabilitar el descubrimiento de MTU de ruta</string>
     <string name="group_order">Pedido</string>
     <string name="group_order_origin">Origen</string>
     <string name="group_order_by_name">Por nombre</string>
@@ -279,14 +278,14 @@
     <string name="copy_failed">Error de copia.</string>
     <string name="app_no_launcher">La aplicación no tiene interfaz.</string>
     <string name="route_for">Regla para %s</string>
-    <string name="route_need_vpn">La regla de enrutamiento %s depende de que la VPN esté en vigor, por lo que se ignora.</string>
+    <string name="route_need_vpn">La regla de enrutamiento `%s` depende de que la VPN esté en vigor, por lo que se ignora.</string>
     <string name="traffic_statistics_summary">Puede aumentar el consumo de energía</string>
     <string name="no_statistics">Aún no hay estadísticas</string>
     <string name="ssh_auth_type_none">Ninguno</string>
     <string name="ssh_public_key">Llave pública</string>
     <string name="ssh_private_key">Llave privada</string>
     <string name="ssh_private_key_passphrase">Frase de contraseña de clave privada</string>
-    <string name="translate_platform">Traducir plataforma</string>
+    <string name="translate_platform">Plataforma de traducción</string>
     <string name="menu_tools">Herramientas</string>
     <string name="menu_log">Registros</string>
     <string name="clear_logcat">Borrar Logcat</string>
@@ -371,7 +370,7 @@
     <string name="proxy_chain">Cadena de proxy</string>
     <string name="vpn_error">%s</string>
     <string name="stopping">Apagando…</string>
-    <string name="stop">Detenido</string>
+    <string name="stop">Detener</string>
     <string name="service_failed">Fallido:</string>
     <string name="invalid_server">Nombre de servidor no válido</string>
     <string name="forward_success">Proxy iniciado.</string>
@@ -390,4 +389,97 @@
     <string name="group_deleted">Eliminado:
 \n%s</string>
     <string name="group_status_proxies_subscription">%d Proxys | Actualizado en %s</string>
+    <string name="stun_test">Descubrimiento del comportamiento NAT</string>
+    <string name="stun_test_summary">Determinar el comportamiento de asignación NAT del cliente y el comportamiento de filtrado NAT definido en RFC 5780 mediante STUN.</string>
+    <string name="nat_mapping_behaviour">Comportamiento de mapeo NAT</string>
+    <string name="endpoint_independent_no_nat">Independiente del punto final (sin NAT)</string>
+    <string name="endpoint_independent">Independiente del punto final</string>
+    <string name="auto_mtu">MTU automático</string>
+    <string name="naive_insecure_concurrency">Concurrencia insegura</string>
+    <string name="nat_mapping_endpoint_independent">%s
+\n
+\nSi envía dos paquetes UDP desde el mismo puerto a diferentes lugares al otro lado de la NAT, la NAT usará el mismo puerto para enviar esos paquetes. Este es el único comportamiento de mapeo compatible con RTC, y RFC 4787 lo requiere como una práctica recomendada (REQ-1) en todas las NAT. Si ambas NAT hacen esto, ICE podrá conectarse directamente, para todos los comportamientos de filtrado que se describen a continuación. Este es el ajuste más importante para acertar. Este tipo de mapeo corresponde a las NATs de cono en el STUN clásico definido en [RFC 3489 sección 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
+    <string name="nat_filtering_address_dependent">`Dependiente de la dirección`
+\n
+\nEste es un término medio que los administradores de sistemas tienen más fácil de justificar, pero mi impresión es que es más difícil de configurar. Una vez que haya enviado un paquete UDP a un host al otro lado de la NAT, la NAT permitirá devolver el tráfico UDP desde ese host, independientemente del puerto desde el que envíe el host, pero no permitirá el tráfico UDP entrante desde otras direcciones. Si su comportamiento de asignación está configurado adecuadamente, esto debería funcionar tan bien como el `filtrado independiente del punto final`.</string>
+    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
+\n
+\nSi envía dos paquetes UDP desde el mismo puerto a diferentes lugares al otro lado de la NAT, la NAT usará el mismo puerto para enviar esos paquetes si la dirección de destino es la misma; el puerto de destino no importa. El envío a dos hosts diferentes utilizará puertos diferentes. Esto requerirá el uso de un servidor TURN si ambos lados lo están usando, a menos que ninguno de los lados esté realizando un filtrado específico del puerto y al menos uno esté haciendo un `filtrado independiente del punto final`. Si desea webrtc o cualquier otra cosa que use redes P2P UDP, ***no configure su NAT de esta manera***. Este tipo de mapeo (vagamente) corresponde a las NATs simétricas en el STUN clásico definido en [RFC 3489 sección 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
+    <string name="tasker_action">Acción</string>
+    <string name="tasker_settings">Ajustes de Tasker</string>
+    <string name="packet_encoding">Codificación de paquetes</string>
+    <string name="experimental_reduced_iv_head_entropy">Esta es la propuesta de GFWReport para una contramedida para el flujo aleatorio como el comportamiento de bloqueo de protocolo observado en GFW.
+\n
+\nEsta opción reasigna los primeros 6 bytes de IV a caracteres imprimibles, es posible que cualquier persona en la ruta de red privilegiada identifique el protocolo cuando está activado.</string>
+    <string name="probe_url">URL de prueba personalizada</string>
+    <string name="mtu">MTU</string>
+    <string name="group_filter_owners_nf">No hay propietarios en esta suscripción</string>
+    <string name="destination_override_summary">Usar el dominio olfateado para sobrescribir la dirección de destino, no solo para el enrutamiento</string>
+    <string name="resolve_destination">Resolver destino</string>
+    <string name="route_play_store">Regla de la Play Store para %s</string>
+    <string name="route_opt_block_analysis">Bloquear analítica</string>
+    <string name="group_filter_owners">Propietarios</string>
+    <string name="nat_filtering_address_and_port_dependent">`Dependiente de la dirección y el puerto`
+\n
+\nEste es el más estricto de los tres. Su NAT solo permitirá el tráfico de retorno desde exactamente donde envió su paquete UDP. El uso de esto es ***no recomendado***, incluso si configura el comportamiento de asignación correctamente, ya que funcionará mal cuando la otra NAT esté mal configurada (bastante común).</string>
+    <string name="missing_permission">Permiso faltante</string>
+    <string name="location_disabled">Ubicación desactivada</string>
+    <string name="route_need_ssid">La regla de enrutamiento `%s` requiere acceso a su **SSID Wi-Fi**, pero esto requiere **permiso de ubicación en segundo plano** y **ubicación activada** en Android 8.0 o superior</string>
+    <string name="route_ssid">SSID Wi-Fi</string>
+    <string name="network_type">Tipo de red</string>
+    <string name="network_data">Datos móviles</string>
+    <string name="naive_insecure_concurrency_summary">Usa N conexiones de túnel concurrentes para ser más robusto en malas condiciones de red. Más conexiones hacen que el túnel sea más fácil de detectar y menos seguro. Este proyecto se esfuerza por lograr la mayor seguridad contra el análisis de tráfico. Usarlo de una manera insegura derrota su propósito.
+\n
+\nSi debe usar esto, pruebe N = 2 primero para ver si resuelve sus problemas. Se recomienda encarecidamente no usar más de 4 conexiones aquí.</string>
+    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) es un proveedor gratuito de la VPN WireGuard. Al usarlo, usted acepta los [TOS](https://www.cloudflare.com/application/terms/).</string>
+    <string name="enable_pcap">Activar Pcap</string>
+    <string name="use_local_dns_as_direct_dns">Usar DNS local como DNS directo</string>
+    <string name="profile_traffic_statistics_summary">Cuando se desactiva, el tráfico utilizado no se contará</string>
+    <string name="app_traffic_statistics">Estadísticas de tráfico de apps</string>
+    <string name="profile_traffic_statistics">Estadísticas de tráfico de perfil</string>
+    <string name="app_statistics_disabled">Estadísticas de tráfico de apps desactivado</string>
+    <string name="warp_generate">Generar configuración</string>
+    <string name="generating">Generando…</string>
+    <string name="tun_implementation">Implementación de TUN</string>
+    <string name="destination_override">Anular destino</string>
+    <string name="resolve_destination_summary">Si la dirección de destino es un dominio, se distribuye en función de la estrategia IPv6.</string>
+    <string name="pcap_summary">Guardar tráfico en un archivo .pcap</string>
+    <string name="pcap_notice">Los archivos Pcap se guardarán en %s</string>
+    <string name="start">Empezar</string>
+    <string name="recheck">Revisión</string>
+    <string name="stun_attest_loading">Esto puede tardar unos minutos…</string>
+    <string name="address_dependent">Dependiente de la dirección</string>
+    <string name="address_and_port_dependent">Dependiente de la dirección y el puerto</string>
+    <string name="nat_filtering_behaviour">Comportamiento de filtrado NAT</string>
+    <string name="nat_filtering_endpoint_independent">`Independiente del punto final`
+\n
+\nEste es el más permisivo de los tres. Una vez que haya enviado un paquete UDP a cualquier lugar del otro lado de la NAT, cualquier otra cosa en el otro lado de la NAT puede enviarle paquetes UDP en ese puerto. Esta política de filtrado da a los administradores de sistemas sudores fríos, pero RFC 4787 recomienda su uso cuando la comunicación en tiempo real (u otras cosas que requieren transparencia de la aplicación; por ejemplo, juegos) es una prioridad. Tenga en cuenta que esto no hará un muy buen trabajo de compensación si el comportamiento de asignación de su NAT está mal configurado. Es más importante obtener el comportamiento de mapeo correcto.</string>
+    <string name="disable_dns_expire">Desactivar caducidad de DNS</string>
+    <string name="disable_dns_expire_summary">Ignorar DNS TTL hasta que reinicie.</string>
+    <string name="network_wifi">Wi-Fi</string>
+    <string name="network_bt">Bluetooth</string>
+    <string name="network_eth">Ethernet</string>
+    <string name="tools_network">Red</string>
+    <string name="backup">Respaldo</string>
+    <string name="backup_groups_and_configurations">Grupos y configuraciones</string>
+    <string name="backup_rules">Reglas de enrutamiento</string>
+    <string name="backup_settings">Ajustes</string>
+    <string name="backup_summary">Si no se realiza un respaldo de los ajustes de enrutamiento con las configuraciones, se perderán las salidas personalizadas.</string>
+    <string name="backup_not_file">No es un archivo de respaldo: se esperaba .json, pero %s</string>
+    <string name="invalid_backup_file">Archivo de respaldo no válido</string>
+    <string name="backup_import">Importar</string>
+    <string name="backup_import_summary">La importación sobrescribirá los datos existentes.</string>
+    <string name="backup_importing">Importando…</string>
+    <string name="tasker_action_start_service">Iniciar servicio</string>
+    <string name="tasker_action_stop_service">Detener servicio</string>
+    <string name="tasker_start_current_profile">Perfil actual</string>
+    <string name="tasker_blurb_start_profile">Iniciar perfil %s</string>
+    <string name="root_ca_provider">Proveedor de certificados de CA raíz</string>
+    <string name="root_ca_mozilla">Mozilla</string>
+    <string name="root_ca_system">Sistema</string>
+    <string name="acquire_wake_lock">Adquirir WakeLock</string>
+    <string name="auto_mtu_summary">Usar MTU de la interfaz de red ascendente</string>
+    <string name="release_wake_lock">Liberar WakeLock</string>
+    <string name="acquire_wake_lock_summary">Mantener la CPU encendida</string>
+    <string name="action_switch">Cambiar</string>
 </resources>
