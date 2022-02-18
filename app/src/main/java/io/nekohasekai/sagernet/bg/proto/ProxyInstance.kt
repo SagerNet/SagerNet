@@ -75,12 +75,6 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             }
         }
 
-        if (BuildConfig.DEBUG) {
-            externalInstances[8964] = DebugInstance().apply {
-                launch()
-            }
-        }
-
         Libcore.setCurrentDomainNameSystemQueryInstance(v2rayPoint)
         SagerNet.started = true
     }

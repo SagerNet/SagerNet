@@ -46,11 +46,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import go.Seq
 import io.nekohasekai.sagernet.bg.SagerConnection
+import io.nekohasekai.sagernet.bg.test.DebugInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.checkMT
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.CrashHandler
@@ -86,23 +86,32 @@ class SagerNet : Application(),
         updateNotificationChannels()
         Seq.setContext(this)
 
+        runOnDefaultDispatcher {
+            PackageCache.register()
+        }
+
+        val isMainProcess = ActivityThread.currentProcessName() == BuildConfig.APPLICATION_ID
+
+        if (!isMainProcess) {
+            Libcore.setUidDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+            if (BuildConfig.DEBUG) {
+                DebugInstance().launch()
+            }
+        }
+
+        Libcore.setenv("v2ray.conf.geoloader", "memconservative")
         externalAssets.mkdirs()
-        Libcore.initializeV2Ray(filesDir.absolutePath + "/",
+        Libcore.initializeV2Ray(
+            filesDir.absolutePath + "/",
             externalAssets.absolutePath + "/",
             "v2ray/",
             { DataStore.rulesProvider == 0 },
-            { DataStore.providerRootCA == RootCAProvider.SYSTEM })
-        Libcore.setenv("v2ray.conf.geoloader", "memconservative")
-
-        runOnDefaultDispatcher {
-            PackageCache.register()
-            checkMT()
-        }
+            { DataStore.providerRootCA == RootCAProvider.SYSTEM },
+            isMainProcess
+        )
 
         Theme.apply(this)
         Theme.applyNightTheme()
-
-        Libcore.setUidDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
 
         if (BuildConfig.DEBUG) StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()

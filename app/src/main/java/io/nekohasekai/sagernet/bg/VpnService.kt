@@ -34,6 +34,7 @@ import android.os.PowerManager
 import android.system.ErrnoException
 import android.system.Os
 import android.util.Log
+import go.Seq
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -80,11 +81,7 @@ class VpnService : BaseVpnService(),
     }
 
     lateinit var conn: ParcelFileDescriptor
-    private lateinit var tun: Tun2ray
-    fun getTun(): Tun2ray? {
-        if (!::tun.isInitialized) return null
-        return tun
-    }
+    var tun: Tun2ray? = null
 
     private var active = false
     private var metered = false
@@ -119,7 +116,11 @@ class VpnService : BaseVpnService(),
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
         Libcore.setLocalhostResolver(null)
-        getTun()?.close()
+        tun?.apply {
+            close()
+            Seq.destroyRef(refnum)
+            tun = null
+        }
         if (::conn.isInitialized) conn.close()
         super.killProcesses()
         persistAppStats()
@@ -392,7 +393,7 @@ class VpnService : BaseVpnService(),
 
     fun persistAppStats() {
         if (!DataStore.appTrafficStatistics) return
-        val tun = getTun() ?: return
+        val tun = tun ?: return
         appStats.clear()
         tun.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()

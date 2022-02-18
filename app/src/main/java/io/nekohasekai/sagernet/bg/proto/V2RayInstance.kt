@@ -26,6 +26,7 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import go.Seq
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.TrojanProvider
@@ -389,8 +390,12 @@ abstract class V2RayInstance(
 
     }
 
+    private var isClosed = false
+
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun close() {
+        if (isClosed) return
+
         for (instance in externalInstances.values) {
             runCatching {
                 instance.close()
@@ -413,6 +418,10 @@ abstract class V2RayInstance(
         if (::v2rayPoint.isInitialized) {
             v2rayPoint.close()
         }
+
+        Seq.destroyRef(v2rayPoint.refnum)
+
+        isClosed = true
     }
 
 }

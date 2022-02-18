@@ -230,28 +230,29 @@ object RawUpdater : GroupUpdater() {
                 }.loadAs(text, Map::class.java)["proxies"] as? (List<Map<String, Any?>>) ?: error(
                     app.getString(R.string.no_proxies_found_in_file)
                 ))) {
+                    // Note: YAML numbers parsed as "Long"
 
                     when (proxy["type"] as String) {
                         "socks5" -> {
                             proxies.add(SOCKSBean().apply {
                                 serverAddress = proxy["server"] as String
                                 serverPort = proxy["port"].toString().toInt()
-                                username = proxy["username"] as String?
-                                password = proxy["password"] as String?
+                                username = proxy["username"]?.toString()
+                                password = proxy["password"]?.toString()
                                 tls = proxy["tls"]?.toString() == "true"
-                                sni = proxy["sni"] as String?
-                                name = proxy["name"] as String?
+                                sni = proxy["sni"]?.toString()
+                                name = proxy["name"]?.toString()
                             })
                         }
                         "http" -> {
                             proxies.add(HttpBean().apply {
                                 serverAddress = proxy["server"] as String
                                 serverPort = proxy["port"].toString().toInt()
-                                username = proxy["username"] as String?
-                                password = proxy["password"] as String?
+                                username = proxy["username"]?.toString()
+                                password = proxy["password"]?.toString()
                                 tls = proxy["tls"]?.toString() == "true"
-                                sni = proxy["sni"] as String?
-                                name = proxy["name"] as String?
+                                sni = proxy["sni"]?.toString()
+                                name = proxy["name"]?.toString()
                             })
                         }
                         "ss" -> {
@@ -288,10 +289,10 @@ object RawUpdater : GroupUpdater() {
                             proxies.add(ShadowsocksBean().apply {
                                 serverAddress = proxy["server"] as String
                                 serverPort = proxy["port"].toString().toInt()
-                                password = proxy["password"] as String
+                                password = proxy["password"]?.toString()
                                 method = clashCipher(proxy["cipher"] as String)
                                 plugin = pluginStr
-                                name = proxy["name"] as String?
+                                name = proxy["name"]?.toString()
 
                                 fixInvalidParams()
                             })
@@ -300,7 +301,7 @@ object RawUpdater : GroupUpdater() {
                             val bean = VMessBean()
                             for (opt in proxy) {
                                 when (opt.key) {
-                                    "name" -> bean.name = opt.value as String
+                                    "name" -> bean.name = opt.value?.toString()
                                     "server" -> bean.serverAddress = opt.value as String
                                     "port" -> bean.serverPort = opt.value.toString().toInt()
                                     "uuid" -> bean.uuid = opt.value as String
@@ -323,15 +324,15 @@ object RawUpdater : GroupUpdater() {
                                                 bean.wsMaxEarlyData = wsOpt.value.toString().toInt()
                                             }
                                             "early-data-header-name" -> {
-                                                bean.earlyDataHeaderName = wsOpt.value as String
+                                                bean.earlyDataHeaderName = wsOpt.value.toString()
                                             }
                                         }
                                     }
-                                    "servername" -> bean.host = opt.value as String
+                                    "servername" -> bean.host = opt.value?.toString()
                                     "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
                                         when (h2Opt.key.lowercase()) {
                                             "host" -> bean.host = (h2Opt.value as List<String>).first()
-                                            "path" -> bean.path = h2Opt.value as String
+                                            "path" -> bean.path = h2Opt.value.toString()
                                         }
                                     }
                                     "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
@@ -341,7 +342,7 @@ object RawUpdater : GroupUpdater() {
                                     }
                                     "grpc-opts" -> for (grpcOpt in (opt.value as Map<String, Any>)) {
                                         when (grpcOpt.key.lowercase()) {
-                                            "grpc-service-name" -> bean.grpcServiceName = grpcOpt.value?.toString()
+                                            "grpc-service-name" -> bean.grpcServiceName = grpcOpt.value.toString()
                                         }
                                     }
                                 }
@@ -352,11 +353,11 @@ object RawUpdater : GroupUpdater() {
                             val bean = TrojanBean()
                             for (opt in proxy) {
                                 when (opt.key) {
-                                    "name" -> bean.name = opt.value as String?
+                                    "name" -> bean.name = opt.value?.toString()
                                     "server" -> bean.serverAddress = opt.value as String
                                     "port" -> bean.serverPort = opt.value.toString().toInt()
-                                    "password" -> bean.password = opt.value as String
-                                    "sni" -> bean.sni = opt.value as String?
+                                    "password" -> bean.password = opt.value?.toString()
+                                    "sni" -> bean.sni = opt.value?.toString()
                                     "skip-cert-verify" -> if (isExpert) bean.allowInsecure = opt.value == "true"
                                 }
                             }
@@ -367,15 +368,15 @@ object RawUpdater : GroupUpdater() {
                             val entity = ShadowsocksRBean()
                             for (opt in proxy) {
                                 when (opt.key) {
-                                    "name" -> entity.name = opt.value as String
+                                    "name" -> entity.name = opt.value?.toString()
                                     "server" -> entity.serverAddress = opt.value as String
                                     "port" -> entity.serverPort = opt.value.toString().toInt()
                                     "cipher" -> entity.method = clashCipher(opt.value as String)
-                                    "password" -> entity.password = opt.value as String
+                                    "password" -> entity.password = opt.value?.toString()
                                     "obfs" -> entity.obfs = opt.value as String
                                     "protocol" -> entity.protocol = opt.value as String
-                                    "obfs-param" -> entity.obfsParam = opt.value as String
-                                    "protocol-param" -> entity.protocolParam = opt.value as String
+                                    "obfs-param" -> entity.obfsParam = opt.value?.toString()
+                                    "protocol-param" -> entity.protocolParam = opt.value?.toString()
                                 }
                             }
                             proxies.add(entity)
