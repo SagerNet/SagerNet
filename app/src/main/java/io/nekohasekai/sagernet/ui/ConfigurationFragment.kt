@@ -33,6 +33,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
@@ -75,8 +76,10 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.UnknownHostException
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.zip.ZipInputStream
+import kotlin.concurrent.timerTask
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false, val selectedItem: ProxyEntity? = null, val titleRes: Int = 0
@@ -91,7 +94,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
     lateinit var groupPager: ViewPager2
-    val selectedGroup get() = if (tabLayout.isGone && adapter.groupList.size > 0 ) adapter.groupList[0] else (if (adapter.groupList.size > 0 && tabLayout.selectedTabPosition > -1) adapter.groupList[tabLayout.selectedTabPosition] else ProxyGroup())
+    val selectedGroup get() = if (tabLayout.isGone && adapter.groupList.size > 0) adapter.groupList[0] else (if (adapter.groupList.size > 0 && tabLayout.selectedTabPosition > -1) adapter.groupList[tabLayout.selectedTabPosition] else ProxyGroup())
     val alwaysShowAddress by lazy { DataStore.alwaysShowAddress }
     val securityAdvisory by lazy { DataStore.securityAdvisory }
 
@@ -529,25 +532,45 @@ class ConfigurationFragment @JvmOverloads constructor(
         val binding = LayoutProgressListBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(requireContext()).setView(binding.root)
             .setNegativeButton(android.R.string.cancel) { _, _ ->
+                close()
                 cancel()
             }
             .setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
         val adapter = TestAdapter()
+        val scrollTimer = Timer("insert timer")
+        var currentTask: TimerTask? = null
 
-        suspend fun insert(profile: ProxyEntity) {
+        fun insert(profile: ProxyEntity) {
             binding.listView.post {
                 results.add(profile)
-                adapter.notifyItemInserted(results.size - 1)
-                binding.listView.scrollToPosition(results.size - 1)
+                val index = results.size - 1
+                adapter.notifyItemInserted(index)
+                scrollTimer.schedule(timerTask {
+                    binding.listView.post {
+                        if (currentTask == this) binding.listView.smoothScrollToPosition(index)
+                    }
+                }.also {
+                    currentTask?.cancel()
+                    currentTask = it
+                }, 500L)
             }
         }
 
-        suspend fun update(profile: ProxyEntity) {
+        fun update(profile: ProxyEntity) {
             binding.listView.post {
                 val index = results.indexOf(profile)
                 adapter.notifyItemChanged(index)
+            }
+        }
+
+        fun close() {
+            try {
+                scrollTimer.schedule(timerTask {
+                    scrollTimer.cancel()
+                }, 0)
+            } catch (ignored: IllegalStateException) {
             }
         }
 
@@ -649,7 +672,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             stopService()
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
             val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            repeat(5) {
+            repeat(6) {
                 testJobs.add(launch(testPool) {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
@@ -759,6 +782,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             testJobs.joinAll()
             testPool.close()
+            test.close()
 
             ProfileManager.updateProfile(test.results.filter { it.status != 0 })
 
@@ -808,7 +832,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             stopService()
             dnsInstance.launch()
 
-            repeat(5) {
+            repeat(6) {
                 testJobs.add(launch {
                     while (isActive) {
                         val profile = profiles.poll() ?: break
@@ -834,6 +858,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             testJobs.joinAll()
+            test.close()
             runCatching {
                 dnsInstance.close()
             }
