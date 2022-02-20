@@ -391,6 +391,7 @@
     <string name="experimental_no_termination_signal">Do not send connection single duplex termination signal for TCP connection when transferred over VMess. This will break some application.</string>
     <string name="hysteria_stream_receive_window">QUIC Stream Receive Window</string>
     <string name="hysteria_connection_receive_window">QUIC Connection Receive Window</string>
+    <string name="hysteria_disable_mtu_discovery">Disable Path MTU Discovery</string>
     <string name="group_order">Order</string>
     <string name="group_order_origin">Origin</string>
     <string name="group_order_by_name">By Name</string>
