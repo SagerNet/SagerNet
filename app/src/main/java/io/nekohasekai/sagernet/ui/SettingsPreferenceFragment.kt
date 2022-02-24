@@ -166,12 +166,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         val providerTrojan = findPreference<SimpleMenuPreference>(Key.PROVIDER_TROJAN)!!
-
-        if (!isExpert) {
-            providerTrojan.setEntries(R.array.trojan_provider)
-            providerTrojan.setEntryValues(R.array.trojan_provider_value)
-        }
-
         val dnsHosts = findPreference<EditTextPreference>(Key.DNS_HOSTS)!!
 
         portLocalDns.setOnBindEditTextListener(EditTextPreferenceModifiers.Port)

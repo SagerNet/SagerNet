@@ -102,20 +102,10 @@ abstract class V2RayInstance(
 
                 when (val bean = profile.requireBean()) {
                     is TrojanBean -> {
-                        when (DataStore.providerTrojan) {
-                            TrojanProvider.TROJAN -> {
-                                initPlugin("trojan-plugin")
-                                pluginConfigs[port] = profile.type to bean.buildTrojanConfig(
-                                    port
-                                )
-                            }
-                            TrojanProvider.TROJAN_GO -> {
-                                initPlugin("trojan-go-plugin")
-                                pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
-                                    port, needMux
-                                )
-                            }
-                        }
+                        initPlugin("trojan-go-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(
+                            port, needMux
+                        )
                     }
                     is TrojanGoBean -> {
                         initPlugin("trojan-go-plugin")
@@ -206,10 +196,7 @@ abstract class V2RayInstance(
                         cacheFiles.add(configFile)
 
                         val commands = listOf(
-                            when (DataStore.providerTrojan) {
-                                TrojanProvider.TROJAN -> initPlugin("trojan-plugin")
-                                else -> initPlugin("trojan-go-plugin")
-                            }.path, "--config", configFile.absolutePath
+                            initPlugin("trojan-go-plugin").path, "--config", configFile.absolutePath
                         )
 
                         processes.start(commands, env)

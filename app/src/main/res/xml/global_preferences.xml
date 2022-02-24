@@ -168,8 +168,8 @@
         <com.takisoft.preferencex.SimpleMenuPreference
             android:icon="@drawable/baseline_flight_takeoff_24"
             app:defaultValue="0"
-            app:entries="@array/trojan_provider_experimental"
-            app:entryValues="@array/int_array_3"
+            app:entries="@array/trojan_provider"
+            app:entryValues="@array/trojan_provider_value"
             app:key="providerTrojan"
             app:title="@string/trojan_provider"
             app:useSimpleSummaryProvider="true" />

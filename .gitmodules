@@ -22,12 +22,6 @@
 [submodule "external/v2ray-core"]
 	path = external/v2ray-core
 	url = https://github.com/SagerNet/v2ray-core
-[submodule "plugin/trojan/src/main/cpp/igniter-libs"]
-	path = plugin/trojan/src/main/cpp/igniter-libs
-	url = https://github.com/trojan-gfw/igniter-libs
-[submodule "plugin/trojan/src/main/cpp/trojan"]
-	path = plugin/trojan/src/main/cpp/trojan
-	url = https://github.com/trojan-gfw/trojan
 [submodule "plugin/hysteria/src/main/go/hysteria"]
 	path = plugin/hysteria/src/main/go/hysteria
 	url = https://github.com/HyNetwork/hysteria

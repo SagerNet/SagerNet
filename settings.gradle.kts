@@ -12,7 +12,6 @@ when {
         include(":plugin:pingtunnel")
         include(":plugin:relaybaton")
         include(":plugin:brook")
-        include(":plugin:trojan")
         include(":plugin:trojan-go")
         include(":plugin:hysteria")
     }
