@@ -78,9 +78,9 @@ dependencies {
         exclude(group = "com.google.guava", module = "guava")
     }
 
-    implementation("androidx.room:room-runtime:2.4.1")
-    kapt("androidx.room:room-compiler:2.4.1")
-    implementation("androidx.room:room-ktx:2.4.1")
+    implementation("androidx.room:room-runtime:2.4.2")
+    kapt("androidx.room:room-compiler:2.4.2")
+    implementation("androidx.room:room-ktx:2.4.2")
 
     implementation("editorkit:editorkit:2.0.0")
     implementation("editorkit:feature-editor:2.0.0")
