@@ -43,6 +43,11 @@ public class TrojanBean extends AbstractBean {
     public Boolean allowInsecure;
 
     @Override
+    public boolean allowInsecure() {
+        return allowInsecure;
+    }
+
+    @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
 

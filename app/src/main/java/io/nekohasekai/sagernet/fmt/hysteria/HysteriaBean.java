@@ -57,6 +57,11 @@ public class HysteriaBean extends AbstractBean {
     public Boolean disableMtuDiscovery;
 
     @Override
+    public boolean allowInsecure() {
+        return allowInsecure;
+    }
+
+    @Override
     public boolean canMapping() {
         return protocol != PROTOCOL_FAKETCP;
     }

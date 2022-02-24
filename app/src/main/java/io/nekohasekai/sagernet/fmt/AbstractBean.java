@@ -190,4 +190,8 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     public void applyFeatureSettings(AbstractBean other) {
     }
 
+    public boolean allowInsecure() {
+        return false;
+    }
+
 }

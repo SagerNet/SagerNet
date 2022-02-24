@@ -162,6 +162,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Integer packetEncoding;
 
     @Override
+    public boolean allowInsecure() {
+        return allowInsecure;
+    }
+
+    @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
 
