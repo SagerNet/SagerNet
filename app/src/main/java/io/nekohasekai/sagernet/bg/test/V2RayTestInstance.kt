@@ -41,14 +41,12 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
                 c.tryResumeWithException(it)
             }
             runOnDefaultDispatcher {
-                use {
-                    try {
-                        init()
-                        launch()
-                        c.tryResume(Libcore.urlTest(v2rayPoint, "", link, timeout))
-                    } catch (e: Exception) {
-                        c.tryResumeWithException(e)
-                    }
+                try {
+                    init()
+                    launch()
+                    c.tryResume(Libcore.urlTest(v2rayPoint, "", link, timeout))
+                } catch (e: Exception) {
+                    c.tryResumeWithException(e)
                 }
             }
         }

@@ -33,7 +33,6 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
@@ -53,8 +52,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.bg.test.LocalDnsInstance
-import io.nekohasekai.sagernet.bg.test.UrlTest
+import io.nekohasekai.sagernet.bg.test.V2RayTestInstance
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.databinding.LayoutProfileListBinding
@@ -805,7 +803,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         val test = TestDialog()
         val dialog = test.builder.show()
         val testJobs = mutableListOf<Job>()
-        val dnsInstance = LocalDnsInstance()
 
         val mainJob = runOnDefaultDispatcher {
             val group = DataStore.currentGroup()
@@ -827,10 +824,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
-            val urlTest = UrlTest()
-
             stopService()
-            dnsInstance.launch()
+
+            val link = DataStore.connectionTestURL
+            val timeout = 5000
 
             repeat(6) {
                 testJobs.add(launch {
@@ -840,7 +837,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                         test.insert(profile)
 
                         try {
-                            val result = urlTest.doTest(profile)
+                            val instance = V2RayTestInstance(profile, link, timeout)
+                            val result = instance.use {
+                                it.doTest()
+                            }
                             profile.status = 1
                             profile.ping = result
                         } catch (e: PluginManager.PluginNotFoundException) {
@@ -859,18 +859,12 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             testJobs.joinAll()
             test.close()
-            runCatching {
-                dnsInstance.close()
-            }
             onMainDispatcher {
                 test.binding.progressCircular.isGone = true
                 dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
             }
         }
         test.cancel = {
-            runCatching {
-                dnsInstance.close()
-            }
             mainJob.cancel()
             runOnDefaultDispatcher {
                 GroupManager.postReload(DataStore.currentGroupId())

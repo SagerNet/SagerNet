@@ -334,7 +334,7 @@ fun buildV2RayConfig(
 
             rules.addAll(wsRules.values)
 
-            if (DataStore.bypassLan && (requireHttp || DataStore.bypassLanInCoreOnly)) {
+            if (!forTest && DataStore.bypassLan && (requireHttp || DataStore.bypassLanInCoreOnly)) {
                 rules.add(RoutingObject.RuleObject().apply {
                     type = "field"
                     outboundTag = TAG_BYPASS
@@ -706,7 +706,9 @@ fun buildV2RayConfig(
                                                     is ShadowsocksBean -> {
                                                         method = bean.method
                                                         password = bean.password
-                                                        experimentReducedIvHeadEntropy = bean.experimentReducedIvHeadEntropy
+                                                        if (bean.experimentReducedIvHeadEntropy) {
+                                                            experimentReducedIvHeadEntropy = true
+                                                        }
                                                     }
                                                     is ShadowsocksRBean -> {
                                                         method = bean.method
@@ -1161,28 +1163,28 @@ fun buildV2RayConfig(
                     })
 
             })
-
-            outbounds.add(OutboundObject().apply {
-                protocol = "dns"
-                tag = TAG_DNS_OUT
-                settings = LazyOutboundConfigurationObject(this,
-                    DNSOutboundConfigurationObject().apply {
-                        userLevel = 1
-                        var dns = remoteDns.first()
-                        if (!dns.contains("://")) dns = "udp://$dns"
-                        val uri = Uri.parse(dns)
-                        address = uri.host
-                        if (uri.port > 0) {
-                            port = uri.port
-                        }
-                        uri.scheme?.also {
-                            if (it.startsWith("tcp") || it.startsWith("https")) {
-                                network = "tcp"
-                            }
-                        }
-                    })
-            })
         }
+
+        outbounds.add(OutboundObject().apply {
+            protocol = "dns"
+            tag = TAG_DNS_OUT
+            settings = LazyOutboundConfigurationObject(this,
+                DNSOutboundConfigurationObject().apply {
+                    userLevel = 1
+                    var dns = remoteDns.first()
+                    if (!dns.contains("://")) dns = "udp://$dns"
+                    val uri = Uri.parse(dns)
+                    address = uri.host
+                    if (uri.port > 0) {
+                        port = uri.port
+                    }
+                    uri.scheme?.also {
+                        if (it.startsWith("tcp") || it.startsWith("https")) {
+                            network = "tcp"
+                        }
+                    }
+                })
+        })
 
         val bypassIP = HashSet<String>()
         val bypassDomain = HashSet<String>()
@@ -1232,19 +1234,20 @@ fun buildV2RayConfig(
             })
         }
 
+        routing.rules.add(0, RoutingObject.RuleObject().apply {
+            type = "field"
+            protocol = listOf("dns")
+            outboundTag = TAG_DNS_OUT
+        })
+
         if (!forTest) {
-            routing.rules.add(0, RoutingObject.RuleObject().apply {
-                type = "field"
-                protocol = listOf("dns")
-                outboundTag = TAG_DNS_OUT
-            })
             routing.rules.add(0, RoutingObject.RuleObject().apply {
                 type = "field"
                 inboundTag = listOf(TAG_DNS_IN)
                 outboundTag = TAG_DNS_OUT
             })
         }
-
+        
         if (allowAccess) {
             // temp: fix crash
             routing.rules.add(RoutingObject.RuleObject().apply {
@@ -1258,7 +1261,7 @@ fun buildV2RayConfig(
 
         if (trafficStatistics) stats = emptyMap()
 
-        ping = PingObject().apply {
+        if (!forTest) ping = PingObject().apply {
             protocol = "unprivileged"
             disableIPv6 = DataStore.ipv6Mode == IPv6Mode.DISABLE
         }
