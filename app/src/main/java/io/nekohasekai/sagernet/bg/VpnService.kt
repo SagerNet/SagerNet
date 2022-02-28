@@ -153,6 +153,7 @@ class VpnService : BaseVpnService(),
     }
 
     var upstreamInterfaceMTU = 0
+    var upstreamInterfaceName: String? = null
     override suspend fun preInit() {
         DefaultNetworkListener.start(this) {
             underlyingNetwork = it
@@ -169,6 +170,13 @@ class VpnService : BaseVpnService(),
                     upstreamInterfaceMTU = mtu
                     Logs.d("Updated upstream network MTU: $upstreamInterfaceMTU")
                     if (useUpstreamInterfaceMTU && data.state.canStop) forceLoad()
+                }
+                val oldName = upstreamInterfaceName
+                if (oldName != link.interfaceName) {
+                    upstreamInterfaceName = link.interfaceName
+                }
+                if (oldName != null && upstreamInterfaceName != null && oldName != upstreamInterfaceName) {
+                    tun?.resetNetwork()
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Libcore.bindNetworkName(link.interfaceName)
