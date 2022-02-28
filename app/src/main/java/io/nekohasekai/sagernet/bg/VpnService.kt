@@ -168,7 +168,7 @@ class VpnService : BaseVpnService(),
                 if (upstreamInterfaceMTU != mtu) {
                     upstreamInterfaceMTU = mtu
                     Logs.d("Updated upstream network MTU: $upstreamInterfaceMTU")
-                    if (data.state.canStop) forceLoad()
+                    if (useUpstreamInterfaceMTU && data.state.canStop) forceLoad()
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Libcore.bindNetworkName(link.interfaceName)
@@ -208,12 +208,13 @@ class VpnService : BaseVpnService(),
         return null
     }
 
+    val useUpstreamInterfaceMTU = DataStore.useUpstreamInterfaceMTU
+
     private fun startVpn() {
         instance = this
         Libcore.setLocalhostResolver(this)
 
         var mtuFinal = 0
-        val useUpstreamInterfaceMTU = DataStore.useUpstreamInterfaceMTU
         if (useUpstreamInterfaceMTU) {
             if (upstreamInterfaceMTU > 0) {
                 mtuFinal = upstreamInterfaceMTU
