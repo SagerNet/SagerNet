@@ -43,10 +43,21 @@ class ProxyService : Service(),
 
     @Volatile
     override var underlyingNetwork: Network? = null
+    var upstreamInterfaceName: String? = null
     override suspend fun preInit() {
         DefaultNetworkListener.start(this) {
             SagerNet.reloadNetwork(it)
             underlyingNetwork = it
+
+            SagerNet.connectivity.getLinkProperties(it)?.also { link ->
+                val oldName = upstreamInterfaceName
+                if (oldName != link.interfaceName) {
+                    upstreamInterfaceName = link.interfaceName
+                }
+                if (oldName != null && upstreamInterfaceName != null && oldName != upstreamInterfaceName) {
+                    Libcore.resetConnections()
+                }
+            }
         }
         Libcore.setLocalhostResolver(this)
     }

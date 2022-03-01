@@ -424,6 +424,9 @@ class BaseService {
                 data.changeState(State.Stopped, msg)
                 DataStore.startedProfile = 0L
                 if (!keepState) DataStore.currentProfile = 0L
+                onDefaultDispatcher {
+                    Libcore.disableConnectionPool()
+                }
                 // stop the service if nothing has bound to it
                 if (restart) startRunner() else { //   BootReceiver.enabled = false
                     stopSelf()
@@ -518,6 +521,7 @@ class BaseService {
                     }
                     DataStore.currentProfile = profile.id
                     DataStore.startedProfile = profile.id
+                    Libcore.enableConnectionPool()
                     startProcesses()
                     data.changeState(State.Connected)
 

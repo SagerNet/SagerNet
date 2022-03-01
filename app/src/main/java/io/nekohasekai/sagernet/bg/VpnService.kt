@@ -176,7 +176,7 @@ class VpnService : BaseVpnService(),
                     upstreamInterfaceName = link.interfaceName
                 }
                 if (oldName != null && upstreamInterfaceName != null && oldName != upstreamInterfaceName) {
-                    tun?.resetNetwork()
+                    Libcore.resetConnections()
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Libcore.bindNetworkName(link.interfaceName)
