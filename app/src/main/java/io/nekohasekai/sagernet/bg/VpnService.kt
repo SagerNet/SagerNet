@@ -118,13 +118,15 @@ class VpnService : BaseVpnService(),
         Libcore.setLocalhostResolver(null)
         tun?.apply {
             close()
-            Seq.destroyRef(refnum)
-            tun = null
         }
         if (::conn.isInitialized) conn.close()
         super.killProcesses()
         persistAppStats()
         active = false
+        tun?.apply {
+            tun = null
+            Seq.destroyRef(refnum)
+        }
         GlobalScope.launch(Dispatchers.Default) { DefaultNetworkListener.stop(this) }
     }
 
@@ -431,10 +433,9 @@ class VpnService : BaseVpnService(),
                 entity.downlink += stats.downlinkTotal
                 toUpdate.add(entity)
             }
-            if (toUpdate.isNotEmpty()) {
-                SagerDatabase.statsDao.update(toUpdate)
-            }
-
+        }
+        if (toUpdate.isNotEmpty()) {
+            SagerDatabase.statsDao.update(toUpdate)
         }
     }
 

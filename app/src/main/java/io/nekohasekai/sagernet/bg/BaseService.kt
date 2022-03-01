@@ -146,7 +146,7 @@ class BaseService {
                 if (delayMs == 0L) return
                 val queryTime = System.currentTimeMillis()
                 val sinceLastQueryInSeconds = (queryTime - lastQueryTime).toDouble() / 1000L
-                val proxy = data?.proxy ?: continue
+                val proxy = data?.proxy ?: return
                 lastQueryTime = queryTime
                 val (statsOut, outs) = proxy.outboundStats()
                 val stats = TrafficStats(
@@ -184,7 +184,7 @@ class BaseService {
 
         private suspend fun loopStats() {
             var lastQueryTime = 0L
-            val tun = (data?.proxy?.service as? VpnService)?.tun ?: return
+            var tun = (data?.proxy?.service as? VpnService)?.tun ?: return
             if (!tun.trafficStatsEnabled) return
 
             while (true) {
@@ -195,6 +195,7 @@ class BaseService {
                 lastQueryTime = queryTime
 
                 appStats.clear()
+                tun = (data?.proxy?.service as? VpnService)?.tun ?: return
                 tun.readAppTraffics(this)
 
                 val statsList = AppStatsList(appStats.map {
@@ -240,7 +241,10 @@ class BaseService {
                     ) == null)
                 ) {
                     check(looper == null)
-                    looper = launch { loop() }
+                    looper = launch {
+                        loop()
+                        looper = null
+                    }
                 }
                 if (data?.state != State.Connected) return@launch
                 val data = data
@@ -299,7 +303,26 @@ class BaseService {
                     ) == null)
                 ) {
                     check(statsLooper == null)
-                    statsLooper = launch { loopStats() }
+                    statsLooper = launch {
+                        loopStats()
+                        statsLooper = null
+                    }
+                }
+            }
+        }
+
+        fun checkLoop() {
+            if (bandwidthListeners.isNotEmpty() && looper == null) {
+                looper = launch {
+                    loop()
+                    looper = null
+                }
+            }
+            if (statsListeners.isNotEmpty() && statsLooper == null) {
+                statsLooper = launch {
+                    loopStats()
+                    statsListeners.clear()
+                    statsLooper = null
                 }
             }
         }
@@ -524,6 +547,7 @@ class BaseService {
                     Libcore.enableConnectionPool()
                     startProcesses()
                     data.changeState(State.Connected)
+                    data.binder.checkLoop()
 
                     for ((type, routeName) in proxy.config.alerts) {
                         data.binder.broadcast {
