@@ -164,6 +164,7 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
             binding.menu.setOnClickListener {
                 val popup = PopupMenu(requireContext(), it)
                 popup.menuInflater.inflate(R.menu.traffic_item_menu, popup.menu)
+                popup.menu.removeItem(R.id.disconnect)
                 popup.setOnMenuItemClickListener(
                     (requireParentFragment() as TrafficFragment).ItemMenuListener(
                         stats

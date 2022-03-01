@@ -373,6 +373,10 @@ class BaseService {
             Libcore.updateSystemRoots(useSystem)
         }
 
+        override fun closeConnections(uid: Int) {
+            (data?.proxy?.service as? VpnService)?.tun?.closeConnections(uid)
+        }
+
         override fun close() {
             callbacks.kill()
             cancel()

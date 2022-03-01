@@ -512,5 +512,6 @@
     <string name="release_wake_lock">Release WakeLock</string>
     <string name="acquire_wake_lock_summary">Keep the CPU on</string>
     <string name="action_switch">Switch</string>
+    <string name="disconnect">Disconnect</string>
 
 </resources>
