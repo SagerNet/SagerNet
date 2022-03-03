@@ -373,9 +373,6 @@ class VpnService : BaseVpnService(),
             dumpUID = data.proxy!!.config.dumpUid
             trafficStats = DataStore.appTrafficStatistics
             pCap = DataStore.enablePcap
-            errorHandler = ErrorHandler {
-                stopRunner(false, it)
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 bindUpstream = Protector {
                     protect(it)
@@ -390,6 +387,7 @@ class VpnService : BaseVpnService(),
                 }
             }
 
+            errorHandler = this@VpnService
             protector = this@VpnService
         }
 

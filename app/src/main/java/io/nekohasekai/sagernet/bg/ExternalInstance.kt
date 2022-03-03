@@ -23,10 +23,12 @@ import io.nekohasekai.sagernet.bg.proto.V2RayInstance
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.buildCustomConfig
 import io.nekohasekai.sagernet.ktx.Logs
+import libcore.ErrorHandler
 
 class ExternalInstance(
-    profile: ProxyEntity, val port: Int
-) : V2RayInstance(profile) {
+    profile: ProxyEntity, val port: Int, val errorHandler: ErrorHandler
+) : V2RayInstance(profile),
+    ErrorHandler by errorHandler {
 
     override fun init() {
         super.init()

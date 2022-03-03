@@ -21,10 +21,8 @@ package io.nekohasekai.sagernet.bg.proto
 
 import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.app.observatory.OutboundStatus
-import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
-import io.nekohasekai.sagernet.bg.test.DebugInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -33,7 +31,9 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
+import libcore.ErrorHandler
 import libcore.Libcore
+import libcore.ObservatoryStatusUpdateListener
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -41,7 +41,9 @@ import kotlin.concurrent.timerTask
 
 class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : V2RayInstance(
     profile
-) {
+),
+    ObservatoryStatusUpdateListener,
+    ErrorHandler by service {
 
     lateinit var observatoryJob: Job
 
@@ -59,7 +61,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         super.launch()
 
         if (config.observerTag.isNotBlank()) {
-            v2rayPoint.setStatusUpdateListener(config.observerTag, ::sendObservatoryResult)
+            v2rayPoint.setStatusUpdateListener(config.observerTag, this)
             observatoryJob = runOnDefaultDispatcher {
                 sendInitStatuses()
             }
@@ -110,7 +112,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     val updateTimer = lazy { Timer("Observatory Timer") }
     val updateTasks by lazy { ConcurrentHashMap<Long, TimerTask>() }
 
-    fun sendObservatoryResult(statusPb: ByteArray?) {
+    @Throws(Exception::class)
+    override fun onUpdateObservatoryStatus(statusPb: ByteArray?) {
         if (statusPb == null || statusPb.isEmpty()) {
             return
         }

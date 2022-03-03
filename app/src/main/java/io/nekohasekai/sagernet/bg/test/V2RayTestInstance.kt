@@ -28,14 +28,17 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.tryResume
 import io.nekohasekai.sagernet.ktx.tryResumeWithException
 import libcore.Libcore
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
 class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int) : V2RayInstance(
     profile
 ) {
 
+    lateinit var continuation: Continuation<Int>
     suspend fun doTest(): Int {
         return suspendCoroutine { c ->
+            continuation = c
             processes = GuardedProcessPool {
                 Logs.w(it)
                 c.tryResumeWithException(it)
@@ -56,8 +59,7 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
         config = buildV2RayConfig(profile, true)
     }
 
-    override fun loadConfig() {
-        v2rayPoint.loadConfig(config.config)
+    override fun handleError(err: String) {
+        continuation.tryResumeWithException(Exception(err))
     }
-
 }

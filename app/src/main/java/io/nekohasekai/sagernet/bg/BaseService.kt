@@ -46,6 +46,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import libcore.AppStats
+import libcore.ErrorHandler
 import libcore.Libcore
 import libcore.TrafficListener
 import java.net.UnknownHostException
@@ -256,7 +257,7 @@ class BaseService {
 
         override fun stopListeningForBandwidth(cb: ISagerNetServiceCallback) {
             launch {
-                if (bandwidthListeners.remove(cb.asBinder()) != null && bandwidthListeners.isEmpty()) {
+                if (bandwidthListeners.remove(cb.asBinder()) != null && bandwidthListeners.isEmpty() && looper != null) {
                     looper!!.cancel()
                     looper = null
                 }
@@ -329,7 +330,7 @@ class BaseService {
 
         override fun stopListeningForStats(cb: ISagerNetServiceCallback) {
             launch {
-                if (statsListeners.remove(cb.asBinder()) != null && statsListeners.isEmpty()) {
+                if (statsListeners.remove(cb.asBinder()) != null && statsListeners.isEmpty() && statsLooper != null) {
                     statsLooper!!.cancel()
                     statsLooper = null
                 }
@@ -384,7 +385,7 @@ class BaseService {
         }
     }
 
-    interface Interface {
+    interface Interface : ErrorHandler {
         val data: Data
         val tag: String
         fun createNotification(profileName: String): ServiceNotification
@@ -459,6 +460,10 @@ class BaseService {
                     stopSelf()
                 }
             }
+        }
+
+        override fun handleError(err: String) {
+            stopRunner(false, err)
         }
 
         fun persistStats() {

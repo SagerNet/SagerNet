@@ -57,13 +57,15 @@ import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.*
+import libcore.ErrorHandler
 import libcore.V2RayInstance
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class V2RayInstance(
     val profile: ProxyEntity
-) : AbstractInstance {
+) : AbstractInstance,
+    ErrorHandler {
 
     lateinit var config: V2rayBuildResult
     lateinit var v2rayPoint: V2RayInstance
@@ -150,7 +152,7 @@ abstract class V2RayInstance(
                             }
                             else -> {
                                 externalInstances[port] = ExternalInstance(
-                                    profile, port
+                                    profile, port, this
                                 ).apply {
                                     init()
                                 }
@@ -340,7 +342,7 @@ abstract class V2RayInstance(
             }
         }
 
-        v2rayPoint.start()
+        v2rayPoint.start(this)
 
         if (config.requireWs) {
             val url = "http://$LOCALHOST:" + (config.wsPort) + "/"
