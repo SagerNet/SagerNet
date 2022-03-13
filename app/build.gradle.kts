@@ -64,7 +64,7 @@ dependencies {
     implementation("com.mikepenz:aboutlibraries:8.9.4")
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.3.0")
-    implementation("com.google.guava:guava:31.0.1-android")
+    implementation("com.google.guava:guava:31.1-android")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("org.ini4j:ini4j:0.5.4")
     implementation("io.noties.markwon:core:4.6.2")
