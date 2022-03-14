@@ -513,5 +513,15 @@
     <string name="acquire_wake_lock_summary">Keep the CPU on</string>
     <string name="action_switch">Switch</string>
     <string name="disconnect">Disconnect</string>
+    <string name="sai">Split APKs Installer</string>
+    <string name="sai_succeed">Installation succeeded</string>
+    <string name="sai_error_generic">Installation failed</string>
+    <string name="sai_error_aborted">Installation was cancelled by user</string>
+    <string name="sai_error_blocked">Installation was blocked by %s</string>
+    <string name="sai_error_blocked_device">device</string>
+    <string name="sai_error_conflict">Unable to install the app because it conflicts with an already installed app with same package name</string>
+    <string name="sai_error_incompatible">Application is incompatible with this device</string>
+    <string name="sai_error_invalid">Invalid APKs</string>
+    <string name="sai_error_storage">Not enough storage space to install the app</string>
 
 </resources>

@@ -29,7 +29,7 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 class SwitchActivity : ThemedActivity(R.layout.layout_empty),
     ConfigurationFragment.SelectCallback {
 
-    override val isDialog = true
+    override val type = Type.Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
