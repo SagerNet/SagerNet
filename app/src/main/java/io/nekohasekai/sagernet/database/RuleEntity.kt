@@ -50,7 +50,7 @@ data class RuleEntity(
 ) : Parcelable {
 
     fun isBypassRule(): Boolean {
-        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && port.isBlank() && sourcePort.isBlank() && network.isBlank() && source.isBlank() && protocol.isBlank() && attrs.isBlank() && !reverse && redirect.isBlank() && outbound == -1L && packages.isEmpty() && ssid.isBlank() && networkType.isBlank()
+        return (domains.isNotBlank() && ip.isBlank() || ip.isNotBlank() && domains.isBlank()) && !reverse && redirect.isBlank() && outbound == -1L
     }
 
     fun displayName(): String {
