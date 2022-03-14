@@ -34,5 +34,6 @@
 
     <issue id="InvalidPackage" severity="ignore" />
     <issue id="TrustAllX509TrustManager" severity="ignore" />
+    <issue id="IntentFilterUniqueDataAttributes" severity="ignore" />
     <issue id="ObsoleteLintCustomCheck" severity="informational" />
 </lint>
