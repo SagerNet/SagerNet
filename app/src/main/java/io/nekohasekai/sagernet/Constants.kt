@@ -88,6 +88,7 @@ object Key {
 
     const val PROVIDER_TROJAN = "providerTrojan"
     const val PROVIDER_ROOT_CA = "providerRootCA"
+    const val PROVIDER_INSTALLER = "providerInstaller"
 
     const val TUN_IMPLEMENTATION = "tunImplementation"
     const val ENABLE_PCAP = "enablePcap"
@@ -218,6 +219,12 @@ object TrojanProvider {
 object RootCAProvider {
     const val MOZILLA = 0
     const val SYSTEM = 1
+}
+
+
+object InstallerProvider {
+    const val SYSTEM = 0
+    const val SHIZUKU = 1
 }
 
 object IPv6Mode {

@@ -523,5 +523,7 @@
     <string name="sai_error_incompatible">Application is incompatible with this device</string>
     <string name="sai_error_invalid">Invalid APKs</string>
     <string name="sai_error_storage">Not enough storage space to install the app</string>
+    <string name="installer_provider">Installer Provider</string>
+    <string name="shizuku_unavailable">Shizuku unavailable</string>
 
 </resources>

@@ -23,7 +23,9 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.IBinder
 import android.widget.Toast
+import io.nekohasekai.sagernet.InstallerProvider
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.Logs
 
 class SplitAPKsInstallerService : Service() {
@@ -70,8 +72,10 @@ class SplitAPKsInstallerService : Service() {
                 val sessionId = intent.getIntExtra(PackageInstaller.EXTRA_SESSION_ID, -1)
                 if (sessionId != -1) {
                     try {
-                        packageManager.packageInstaller.abandonSession(sessionId)
-                    } catch (ignored: SecurityException) {
+                        val useShizuku = DataStore.providerInstaller == InstallerProvider.SHIZUKU
+                        val packageInstaller = if (useShizuku) ShizukuPackageManager.createPackageInstaller() else packageManager.packageInstaller
+                        packageInstaller.abandonSession(sessionId)
+                    } catch (ignored: Exception) {
                     }
                 }
             }

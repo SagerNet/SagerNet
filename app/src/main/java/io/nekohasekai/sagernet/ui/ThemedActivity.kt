@@ -45,17 +45,18 @@ abstract class ThemedActivity : AppCompatActivity {
     var uiMode = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (type != Type.Translucent) {
-            when (type) {
-                Type.Default -> {
-                    Theme.apply(this)
-                }
-                Type.Dialog -> {
-                    Theme.applyDialog(this)
-                }
+        when (type) {
+            Type.Default -> {
+                Theme.apply(this)
             }
-            Theme.applyNightTheme()
+            Type.Dialog -> {
+                Theme.applyDialog(this)
+            }
+            Type.Translucent -> {
+                Theme.applyTranslucent(this)
+            }
         }
+        Theme.applyNightTheme()
 
         super.onCreate(savedInstanceState)
         uiMode = resources.configuration.uiMode

@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -38,6 +39,7 @@ import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
 import kotlinx.coroutines.delay
 import libcore.Libcore
+import rikka.shizuku.Shizuku
 import java.io.File
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
@@ -233,6 +235,15 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val acquireWakeLock = findPreference<SwitchPreference>(Key.ACQUIRE_WAKE_LOCK)!!
 
+        val installerProvider = findPreference<SimpleMenuPreference>(Key.PROVIDER_INSTALLER)!!
+        installerProvider.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue == "${InstallerProvider.SHIZUKU}") {
+                checkShizuku()
+            } else {
+                true
+            }
+        }
+
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener
         portHttp.onPreferenceChangeListener = reloadListener
@@ -289,6 +300,19 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+    }
+
+    fun checkShizuku(): Boolean {
+        val permission = try {
+            Shizuku.checkSelfPermission()
+        } catch (e: Exception) {
+            Logs.w(e)
+            return false
+        }
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            Shizuku.requestPermission(0)
+        }
+        return true
     }
 
     override fun onResume() {

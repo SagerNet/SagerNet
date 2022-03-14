@@ -29,10 +29,14 @@ import android.os.Build
 import android.os.Bundle
 import androidx.documentfile.provider.DocumentFile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.nekohasekai.sagernet.InstallerProvider
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.launchCustomTab
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ui.ThemedActivity
+import rikka.shizuku.Shizuku
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipEntry
@@ -42,6 +46,9 @@ class SplitAPKsInstallerActivity : ThemedActivity() {
 
     override val type = Type.Translucent
 
+    lateinit var pendingUri: Uri
+    val useShizuku by lazy { DataStore.providerInstaller == InstallerProvider.SHIZUKU }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,11 +57,66 @@ class SplitAPKsInstallerActivity : ThemedActivity() {
             finish()
             return
         }
-        handleUri(uri)
+        pendingUri = uri
+
+        if (useShizuku) {
+            Shizuku.addRequestPermissionResultListener(this::onRequestPermissionResult)
+
+            val permission = try {
+                Shizuku.checkSelfPermission()
+            } catch (e: Exception) {
+                Logs.w(e)
+                shizukuError()
+                return
+            }
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                Shizuku.requestPermission(0)
+            } else {
+                if (!Shizuku.pingBinder()) {
+                    shizukuError()
+                    return
+                }
+                handleUri()
+            }
+        } else {
+            handleUri()
+        }
     }
 
-    fun handleUri(contentUri: Uri) {
-        val document = getDocument(contentUri)
+    private fun shizukuError() {
+        MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
+            .setMessage(R.string.shizuku_unavailable)
+            .setPositiveButton(R.string.action_learn_more) { _, _ ->
+                launchCustomTab("https://shizuku.rikka.app/")
+                finish()
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                finish()
+            }
+            .setOnCancelListener {
+                finish()
+            }
+            .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (useShizuku) {
+            Shizuku.removeRequestPermissionResultListener(this::onRequestPermissionResult)
+        }
+    }
+
+    private fun onRequestPermissionResult(requestCode: Int, grantResult: Int) {
+        if (grantResult == PackageManager.PERMISSION_GRANTED) {
+            handleUri()
+        } else {
+            finish()
+        }
+    }
+
+    fun handleUri() {
+        val document = getDocument(pendingUri)
         if (document == null) {
             returnError("Failed to get document")
             return
@@ -72,15 +134,9 @@ class SplitAPKsInstallerActivity : ThemedActivity() {
             return
         }
         runCatching {
-            contentResolver.openInputStream(contentUri)!!.use {
+            contentResolver.openInputStream(pendingUri)!!.use {
                 handleInputStream(it)
             }
-            /* }.recoverCatching { ex ->
-                 if (ex.message == "only DEFLATED entries can have EXT descriptor") {
-                     contentResolver.openInputStream(contentUri)!!.use {
-                         copyAndHandleInputStream(it)
-                     }
-                 } else throw ex*/
         }.onFailure {
             Logs.w(it)
             returnError(it.readableMessage)
@@ -91,14 +147,24 @@ class SplitAPKsInstallerActivity : ThemedActivity() {
         MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok) { _, _ -> finish() }
+            .setOnCancelListener { finish() }
             .show()
     }
 
     fun handleInputStream(inputStream: InputStream) {
-        val packageInstaller = packageManager.packageInstaller
+        val packageInstaller = if (useShizuku) ShizukuPackageManager.createPackageInstaller() else packageManager.packageInstaller
         val sessionParams = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             sessionParams.setInstallReason(PackageManager.INSTALL_REASON_USER)
+        }
+        if (useShizuku) {
+            try {
+                var installFlags = ShizukuPackageManager.getInstallFlags(sessionParams)
+                installFlags = installFlags or (0x00000004 /*PackageManager.INSTALL_ALLOW_TEST*/ or 0x00000002) /*PackageManager.INSTALL_REPLACE_EXISTING*/
+                ShizukuPackageManager.setInstallFlags(sessionParams, installFlags)
+            } catch (e: Exception) {
+                Logs.w("Failed to set install flags", e)
+            }
         }
         val sessionId = try {
             packageInstaller.createSession(sessionParams)
@@ -109,7 +175,11 @@ class SplitAPKsInstallerActivity : ThemedActivity() {
             packageInstaller.createSession(sessionParams)
         }
         Logs.d("Create install session $sessionId")
-        val session = packageInstaller.openSession(sessionId)
+        val session = if (!useShizuku) {
+            packageInstaller.openSession(sessionId)
+        } else {
+            ShizukuPackageManager.openSession(sessionId)
+        }
         ZipInputStream(inputStream).use { zip ->
             var currentZipEntry: ZipEntry
             while (true) {

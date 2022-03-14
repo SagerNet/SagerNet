@@ -4,7 +4,7 @@
     package="io.nekohasekai.sagernet"
     android:installLocation="internalOnly">
 
-    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android|rikka.shizuku.api|rikka.shizuku.provider|rikka.shizuku.shared|rikka.shizuku.aidl" />
 
     <permission
         android:name="${applicationId}.SERVICE"
@@ -372,9 +372,11 @@
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.sai.SplitAPKsInstallerActivity"
+            android:configChanges="uiMode"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/sai"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.SagerNet.Translucent">
 
             <intent-filter>
@@ -500,6 +502,14 @@
         <service
             android:name=".ui.sai.SplitAPKsInstallerService"
             android:exported="false" />
+
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
     </application>
 

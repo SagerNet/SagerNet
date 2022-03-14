@@ -643,4 +643,9 @@
         <item>XUDP</item>
     </string-array>
 
+    <string-array name="installer_provider_entry">
+        <item>@string/root_ca_system</item>
+        <item>Shizuku</item>
+    </string-array>
+
 </resources>
