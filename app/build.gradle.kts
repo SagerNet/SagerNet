@@ -3,7 +3,6 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
-    id("com.mikepenz.aboutlibraries.plugin")
     id("com.google.protobuf")
 }
 
@@ -61,7 +60,6 @@ dependencies {
 
     implementation("org.yaml:snakeyaml:1.30")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
-    implementation("com.mikepenz:aboutlibraries:8.9.4")
     implementation("com.jakewharton:process-phoenix:2.1.2")
     implementation("com.esotericsoftware:kryo:5.3.0")
     implementation("com.google.guava:guava:31.1-android")

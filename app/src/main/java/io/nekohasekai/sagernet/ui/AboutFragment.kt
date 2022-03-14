@@ -198,13 +198,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             )
                         }
                         .build())
-                    .addItem(MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_action_copyright)
-                        .text(R.string.oss_licenses)
-                        .setOnClickAction {
-                            startActivity(Intent(context, LicenseActivity::class.java))
-                        }
-                        .build())
                     .build())
                 .build()
 
