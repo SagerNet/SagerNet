@@ -334,6 +334,18 @@ class AppManagerActivity : ThemedActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private val skipList = listOf(
+        "android",
+        "com.android.providers.downloads.ui",
+        "com.android.browser",
+        "org.zwanoo.android.speedtest"
+    )
+
+    private val bypassList = listOf(
+        "com.android.captiveportallogin",
+        "com.google.android.captiveportallogin"
+    )
+
     @SuppressLint("SetTextI18n")
     private fun scanChinaApps() {
 
@@ -466,6 +478,22 @@ class AppManagerActivity : ThemedActivity() {
                     continue
                 }
 
+            }
+
+            skipList.mapNotNull { PackageCache.packageMap[it] }.forEach {
+                if (bypass) {
+                    proxiedUids.delete(it)
+                } else {
+                    proxiedUids[it] = true
+                }
+            }
+
+            bypassList.mapNotNull { PackageCache.packageMap[it] }.forEach {
+                if (bypass) {
+                    proxiedUids[it] = true
+                } else {
+                    proxiedUids.delete(it)
+                }
             }
 
             DataStore.individual = apps.filter { isProxiedApp(it) }
