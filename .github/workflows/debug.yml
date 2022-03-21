@@ -43,7 +43,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           stable: false
-          go-version: 1.18.0-rc1
+          go-version: 1.18.0
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
