@@ -165,6 +165,9 @@
         <item>AES-256-GCM</item>
         <item>CHACHA20-IETF-POLY1305</item>
         <item>XCHACHA20-IETF-POLY1305</item>
+        <item>2022-BLAKE3-AES-128-GCM</item>
+        <item>2022-BLAKE3-AES-256-GCM</item>
+        <item>2022-BLAKE3-CHACHA20-IETF-POLY1305</item>
         <item>RC4</item>
         <item>RC4-MD5</item>
         <item>AES-128-CTR</item>
@@ -204,6 +207,9 @@
         <item>aes-256-gcm</item>
         <item>chacha20-ietf-poly1305</item>
         <item>xchacha20-ietf-poly1305</item>
+        <item>2022-blake3-aes-128-gcm</item>
+        <item>2022-blake3-aes-256-gcm</item>
+        <item>2022-blake3-chacha20-ietf-poly1305</item>
         <item>rc4</item>
         <item>rc4-md5</item>
         <item>aes-128-ctr</item>
