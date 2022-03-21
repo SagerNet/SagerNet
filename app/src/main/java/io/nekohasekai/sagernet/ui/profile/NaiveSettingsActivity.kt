@@ -41,6 +41,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         DataStore.serverProtocol = proto
         DataStore.serverHeaders = extraHeaders
         DataStore.serverInsecureConcurrency = insecureConcurrency
+        DataStore.serverUoT = uot
     }
 
     override fun NaiveBean.serialize() {
@@ -52,6 +53,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         proto = DataStore.serverProtocol
         extraHeaders = DataStore.serverHeaders.replace("\r\n", "\n")
         insecureConcurrency = DataStore.serverInsecureConcurrency
+        uot = DataStore.serverUoT
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

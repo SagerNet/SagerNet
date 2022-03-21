@@ -69,7 +69,8 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
         DataStore.serverMethod = method
         DataStore.serverPassword = password
         DataStore.serverPlugin = plugin
-        DataStore.serverReducedIvHeadEntropy = experimentReducedIvHeadEntropy;
+        DataStore.serverUoT = uot
+        DataStore.serverReducedIvHeadEntropy = experimentReducedIvHeadEntropy
     }
 
     override fun ShadowsocksBean.serialize() {
@@ -79,6 +80,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>(),
         method = DataStore.serverMethod
         password = DataStore.serverPassword
         plugin = DataStore.serverPlugin
+        uot = DataStore.serverUoT
         experimentReducedIvHeadEntropy = DataStore.serverReducedIvHeadEntropy
     }
 

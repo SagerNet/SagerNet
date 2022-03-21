@@ -271,6 +271,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverInsecureConcurrency by profileCacheStore.stringToInt(Key.SERVER_INSECURE_CONCURRENCY)
     var serverMTU by profileCacheStore.stringToInt(Key.SERVER_MTU)
     var serverReducedIvHeadEntropy by profileCacheStore.boolean(Key.SERVER_REDUCED_IV_HEAD_ENTROPY)
+    var serverUoT by profileCacheStore.boolean(Key.SERVER_UDP_OVER_TCP)
 
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)

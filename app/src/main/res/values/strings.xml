@@ -524,5 +524,7 @@
     <string name="sai_error_storage">Not enough storage space to install the app</string>
     <string name="installer_provider">Installer Provider</string>
     <string name="shizuku_unavailable">Shizuku unavailable</string>
+    <string name="udp_over_tcp">UDP Over TCP</string>
+    <string name="udp_over_tcp_summary">Enable the SUoT protocol, requires server support.</string>
 
 </resources>

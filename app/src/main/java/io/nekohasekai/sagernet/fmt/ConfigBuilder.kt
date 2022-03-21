@@ -413,6 +413,9 @@ fun buildV2RayConfig(
                                         .apply {
                                             address = LOCALHOST
                                             port = localPort
+                                            if (proxy.needUoT()) {
+                                                uot = true
+                                            }
                                         })
                                 })
                         }
@@ -706,6 +709,9 @@ fun buildV2RayConfig(
                                                     is ShadowsocksBean -> {
                                                         method = bean.method
                                                         password = bean.password
+                                                        if (bean.uot) {
+                                                            uot = true
+                                                        }
                                                         if (bean.experimentReducedIvHeadEntropy) {
                                                             experimentReducedIvHeadEntropy = true
                                                         }
@@ -1247,7 +1253,7 @@ fun buildV2RayConfig(
                 outboundTag = TAG_DNS_OUT
             })
         }
-        
+
         if (allowAccess) {
             // temp: fix crash
             routing.rules.add(RoutingObject.RuleObject().apply {

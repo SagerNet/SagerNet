@@ -49,10 +49,19 @@
     <PreferenceCategory
         app:icon="@drawable/ic_baseline_grid_3x3_24"
         app:title="@string/experimental_settings">
-        <com.takisoft.preferencex.SwitchPreferenceCompat
+        <SwitchPreference
+            app:icon="@drawable/baseline_wrap_text_24"
+            app:key="serverUoT"
+            app:summary="@string/udp_over_tcp_summary"
+            app:title="@string/udp_over_tcp"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
             app:key="serverReducedIvHeadEntropy"
             app:summary="@string/experimental_reduced_iv_head_entropy"
-            app:title="ReducedIvHeadEntropy" />
+            app:title="ReducedIvHeadEntropy"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
