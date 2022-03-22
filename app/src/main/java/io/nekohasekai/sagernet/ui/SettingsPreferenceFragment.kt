@@ -19,6 +19,8 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -302,10 +304,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     }
 
-    fun checkShizuku(): Boolean {
+    private fun checkShizuku(): Boolean {
         val permission = try {
             Shizuku.checkSelfPermission()
         } catch (e: Exception) {
+            context?.shizukuError()
             Logs.w(e)
             return false
         }
@@ -314,6 +317,17 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
         return true
     }
+
+    private fun Context.shizukuError() {
+        MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
+            .setMessage(R.string.shizuku_unavailable)
+            .setPositiveButton(R.string.action_learn_more) { _, _ ->
+                launchCustomTab("https://shizuku.rikka.app/")
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
 
     override fun onResume() {
         super.onResume()
