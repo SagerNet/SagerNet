@@ -21,6 +21,8 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceCategory
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
@@ -41,6 +43,9 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
         DataStore.serverProtocol = protocol
         DataStore.serverPassword = password
         DataStore.serverPath = wsPath
+        DataStore.serverAllowInsecure = insecure
+        DataStore.serverWithoutBrookProtocol = withoutBrookProtocol
+        DataStore.serverUoT = uot
     }
 
     override fun BrookBean.serialize() {
@@ -50,17 +55,23 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
         password = DataStore.serverPassword
         protocol = DataStore.serverProtocol
         wsPath = DataStore.serverPath
+        insecure = DataStore.serverAllowInsecure
+        withoutBrookProtocol = DataStore.serverWithoutBrookProtocol
+        uot = DataStore.serverUoT
     }
 
     lateinit var protocol: SimpleMenuPreference
     val protocolValue = app.resources.getStringArray(R.array.brook_protocol_value)
-    lateinit var path: EditTextPreference
+    lateinit var uot: SwitchPreference
+    lateinit var wsCategory: PreferenceCategory
+    lateinit var insecure: SwitchPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
         addPreferencesFromResource(R.xml.brook_preferences)
+
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
@@ -68,8 +79,10 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
             summaryProvider = PasswordSummaryProvider
         }
 
+        uot = findPreference(Key.SERVER_UDP_OVER_TCP)!!
+        wsCategory = findPreference(Key.SERVER_WS_CATEGORY)!!
         protocol = findPreference(Key.SERVER_PROTOCOL)!!
-        path = findPreference(Key.SERVER_PATH)!!
+        insecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
 
         if (protocol.value !in protocolValue) {
             protocol.value = protocolValue[0]
@@ -82,7 +95,9 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
     }
 
     fun updateProtocol(value: String) {
-        path.isVisible = value.startsWith("ws")
+        uot.isVisible = value.isBlank()
+        wsCategory.isVisible = value.startsWith("ws")
+        insecure.isVisible = value == "wss"
     }
 
 }

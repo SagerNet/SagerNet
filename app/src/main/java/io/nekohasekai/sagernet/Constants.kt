@@ -162,6 +162,7 @@ object Key {
     const val SERVER_MTU = "serverMTU"
     const val SERVER_REDUCED_IV_HEAD_ENTROPY = "serverReducedIvHeadEntropy"
     const val SERVER_UDP_OVER_TCP = "serverUoT"
+    const val SERVER_WITHOUT_BROOK_PROTOCOL = "serverWithoutBrookProtocol"
 
     const val BALANCER_TYPE = "balancerType"
     const val BALANCER_GROUP = "balancerGroup"

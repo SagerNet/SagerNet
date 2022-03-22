@@ -526,5 +526,6 @@
     <string name="shizuku_unavailable">Shizuku unavailable</string>
     <string name="udp_over_tcp">UDP Over TCP</string>
     <string name="udp_over_tcp_summary">Enable the SUoT protocol, requires server support.</string>
+    <string name="without_brook_protocol">Without Brook Protocol</string>
 
 </resources>

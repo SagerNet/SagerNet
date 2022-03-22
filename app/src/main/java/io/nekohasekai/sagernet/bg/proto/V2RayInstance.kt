@@ -302,6 +302,16 @@ abstract class V2RayInstance(
                             commands.add(bean.wrapUri())
                         }
 
+                        if (bean.withoutBrookProtocol) {
+                            commands.add("--withoutBrookProtocol")
+                        }
+                        if (bean.insecure) {
+                            commands.add("--insecure")
+                        }
+                        if (bean.uot) {
+                            commands.add("--udpovertcp")
+                        }
+
                         if (bean.password.isNotBlank()) {
                             commands.add("--password")
                             commands.add(bean.password)

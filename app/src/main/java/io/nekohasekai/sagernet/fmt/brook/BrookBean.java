@@ -32,6 +32,14 @@ public class BrookBean extends AbstractBean {
     public String protocol;
     public String password;
     public String wsPath;
+    public Boolean insecure;
+    public Boolean withoutBrookProtocol;
+    public Boolean uot;
+
+    @Override
+    public boolean allowInsecure() {
+        return insecure && withoutBrookProtocol;
+    }
 
     @Override
     public void initializeDefaultValues() {
@@ -39,20 +47,30 @@ public class BrookBean extends AbstractBean {
         if (protocol == null) protocol = "";
         if (password == null) password = "";
         if (wsPath == null) wsPath = "";
+        if (insecure == null) insecure = false;
+        if (withoutBrookProtocol == null) withoutBrookProtocol = false;
+        if (uot == null) uot = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(protocol);
         output.writeString(password);
         switch (protocol) {
             case "ws":
+                output.writeString(wsPath);
+                output.writeBoolean(withoutBrookProtocol);
             case "wss": {
                 output.writeString(wsPath);
+                output.writeBoolean(insecure);
+                output.writeBoolean(withoutBrookProtocol);
                 break;
             }
+            default:
+                output.writeBoolean(uot);
+                break;
         }
     }
 
@@ -62,12 +80,25 @@ public class BrookBean extends AbstractBean {
         super.deserialize(input);
         protocol = input.readString();
         password = input.readString();
-        if (version > 0) switch (protocol) {
+        if (version >= 1) switch (protocol) {
             case "ws":
+                wsPath = input.readString();
+                if (version >= 2) {
+                    withoutBrookProtocol = input.readBoolean();
+                }
             case "wss": {
                 wsPath = input.readString();
+                if (version >= 2) {
+                    insecure = input.readBoolean();
+                    withoutBrookProtocol = input.readBoolean();
+                }
                 break;
             }
+            default:
+                if (version >= 2) {
+                    uot = input.readBoolean();
+                }
+                break;
         }
     }
 

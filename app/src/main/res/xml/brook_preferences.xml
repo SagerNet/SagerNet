@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
         app:icon="@drawable/ic_social_emoji_symbols"
@@ -30,10 +31,30 @@
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_wrap_text_24"
+            app:key="serverUoT"
+            app:title="@string/udp_over_tcp"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="serverWsCategory"
+        app:title="@string/cag_ws">
         <EditTextPreference
             app:icon="@drawable/ic_baseline_format_align_left_24"
             app:key="serverPath"
             app:title="@string/ws_path"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_public_24"
+            app:key="serverWithoutBrookProtocol"
+            app:title="@string/without_brook_protocol"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_warning_24"
+            app:key="serverAllowInsecure"
+            app:title="@string/allow_insecure"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
