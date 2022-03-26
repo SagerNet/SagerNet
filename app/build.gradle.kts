@@ -71,7 +71,7 @@ dependencies {
     val shizuku_version = "12.1.0"
     implementation("dev.rikka.shizuku:api:$shizuku_version")
     implementation("dev.rikka.shizuku:provider:$shizuku_version")
-    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:2.0")
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
 
     implementation("com.simplecityapps:recyclerview-fastscroll:2.0.1") {
         exclude(group = "androidx.recyclerview")

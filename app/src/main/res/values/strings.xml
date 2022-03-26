@@ -103,6 +103,7 @@
     <string name="uuid">User ID</string>
     <string name="security">Transport layer encryption</string>
     <string name="network">Network</string>
+    <string name="flow">Flow control algorithm</string>
     <string name="header_type">Header Type</string>
     <string name="ws_host">WebSocket Host</string>
     <string name="ws_path">WebSocket Path</string>
@@ -527,5 +528,6 @@
     <string name="udp_over_tcp">UDP Over TCP</string>
     <string name="udp_over_tcp_summary">Enable the SUoT protocol, requires server support.</string>
     <string name="without_brook_protocol">Without Brook Protocol</string>
+    <string name="grpc_mode">gRPC Mode</string>
 
 </resources>

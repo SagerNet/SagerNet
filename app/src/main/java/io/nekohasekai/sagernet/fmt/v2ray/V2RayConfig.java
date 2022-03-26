@@ -625,6 +625,7 @@ public class V2RayConfig {
                 public String id;
                 public String encryption;
                 public Integer level;
+                public String flow;
 
             }
 
@@ -643,6 +644,7 @@ public class V2RayConfig {
             public String password;
             public String email;
             public Integer level;
+            public String flow;
 
         }
 
@@ -700,6 +702,7 @@ public class V2RayConfig {
         public String network;
         public String security;
         public TLSObject tlsSettings;
+        public TLSObject xtlsSettings;
         public TcpObject tcpSettings;
         public KcpObject kcpSettings;
         public WebSocketObject wsSettings;
@@ -846,6 +849,7 @@ public class V2RayConfig {
     public static class GrpcObject {
 
         public String serviceName;
+        public String mode;
 
     }
 

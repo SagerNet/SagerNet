@@ -71,6 +71,13 @@
             app:title="@string/http_path"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/grpc_mode_entry"
+            app:entryValues="@array/grpc_mode_value"
+            app:icon="@drawable/baseline_developer_board_24"
+            app:key="serverGrpcMode"
+            app:title="@string/grpc_mode"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/transport_layer_encryption_entry"
             app:entryValues="@array/transport_layer_encryption_value"
             app:icon="@drawable/ic_baseline_layers_24"
@@ -107,6 +114,13 @@
             app:key="serverAllowInsecure"
             app:summary="@string/allow_insecure_sum"
             app:title="@string/allow_insecure" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:entries="@array/xtls_flow_entry"
+            app:entryValues="@array/xtls_flow_value"
+            app:icon="@drawable/ic_baseline_stream_24"
+            app:key="serverFlow"
+            app:title="@string/flow"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory

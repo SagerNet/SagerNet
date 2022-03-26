@@ -78,6 +78,10 @@ fun TrojanBean.toUri(): String {
     when (security) {
         "tls" -> {
         }
+        "xtls" -> {
+            builder.addQueryParameter("security", security)
+            builder.addQueryParameter("flow", flow)
+        }
     }
 
     if (name.isNotBlank()) {

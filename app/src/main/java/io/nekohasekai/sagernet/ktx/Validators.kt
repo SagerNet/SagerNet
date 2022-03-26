@@ -80,6 +80,13 @@ fun AbstractBean.isInsecure(): ValidateResult {
         if (type == "kcp" && mKcpSeed.isBlank()) {
             return ResultInsecure(R.raw.mkcp_no_seed)
         }
+        if (security == "xtls") {
+            return ResultDeprecated(R.raw.xtls)
+        }
+    } else if (this is TrojanBean) {
+        if (security == "xtls") {
+            return ResultDeprecated(R.raw.xtls)
+        }
     } else if (this is ConfigBean) {
         try {
             val profiles = RawUpdater.parseJSON(JSONObject(content))

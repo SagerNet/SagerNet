@@ -29,6 +29,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.ktx.app
 
 class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
 
@@ -43,6 +44,7 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn
         DataStore.serverAllowInsecure = allowInsecure
+        DataStore.serverFlow = flow
     }
 
     override fun TrojanBean.serialize() {
@@ -54,12 +56,14 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         sni = DataStore.serverSNI
         alpn = DataStore.serverALPN
         allowInsecure = DataStore.serverAllowInsecure
+        flow = DataStore.serverFlow
     }
 
     lateinit var security: SimpleMenuPreference
     lateinit var tlsSni: EditTextPreference
     lateinit var tlsAlpn: EditTextPreference
     lateinit var allowInsecure: SwitchPreference
+    lateinit var xtlsFlow: SimpleMenuPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -77,6 +81,34 @@ class TrojanSettingsActivity : ProfileSettingsActivity<TrojanBean>() {
         tlsSni = findPreference(Key.SERVER_SNI)!!
         tlsAlpn = findPreference(Key.SERVER_ALPN)!!
         allowInsecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
+        xtlsFlow = findPreference(Key.SERVER_FLOW)!!
+
+        updateTle(security.value)
+        security.setOnPreferenceChangeListener { _, newValue ->
+            updateTle(newValue as String)
+            true
+        }
+    }
+
+    val xtlsFlowValue = app.resources.getStringArray(R.array.xtls_flow_value)
+
+    fun updateTle(tle: String) {
+        when (tle) {
+            "tls" -> {
+                allowInsecure.isVisible = true
+                xtlsFlow.isVisible = false
+            }
+            "xtls" -> {
+                allowInsecure.isVisible = false
+                xtlsFlow.isVisible = true
+
+                if (DataStore.serverFlow !in xtlsFlowValue) {
+                    xtlsFlow.value = xtlsFlowValue[0]
+                } else {
+                    xtlsFlow.value = DataStore.serverFlow
+                }
+            }
+        }
     }
 
 }

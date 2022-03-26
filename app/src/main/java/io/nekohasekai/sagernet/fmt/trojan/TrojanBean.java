@@ -37,6 +37,7 @@ public class TrojanBean extends AbstractBean {
     public String security;
     public String sni;
     public String alpn;
+    public String flow;
 
     // --------------------------------------- //
 
@@ -56,6 +57,7 @@ public class TrojanBean extends AbstractBean {
         if (sni == null) sni = "";
         if (alpn == null) alpn = "";
         if (allowInsecure == null) allowInsecure = false;
+        if (flow == null) flow = "";
 
     }
 
@@ -67,7 +69,12 @@ public class TrojanBean extends AbstractBean {
         output.writeString(security);
         output.writeString(sni);
         output.writeString(alpn);
-        output.writeBoolean(allowInsecure);
+
+        if (!"xtls".equals(security)) {
+            output.writeBoolean(allowInsecure);
+        } else {
+            output.writeString(flow);
+        }
     }
 
     @Override
@@ -79,7 +86,11 @@ public class TrojanBean extends AbstractBean {
         sni = input.readString();
         alpn = input.readString();
         if (version >= 1) {
-            allowInsecure = input.readBoolean();
+            if (!"xtls".equals(security)) {
+                allowInsecure = input.readBoolean();
+            } else {
+                flow = input.readString();
+            }
         }
     }
 

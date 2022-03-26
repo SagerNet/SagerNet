@@ -283,6 +283,7 @@ class BaseService {
                     data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 3000
                 )
             } catch (e: Exception) {
+                Logs.w(e)
                 var msg = e.readableMessage
                 val msgL = msg.lowercase()
                 when {

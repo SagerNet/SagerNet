@@ -149,6 +149,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
     // --------------------------------------- //
 
     public String grpcServiceName;
+    public String grpcMode;
     public Integer wsMaxEarlyData;
     public String earlyDataHeaderName;
 
@@ -160,6 +161,15 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Boolean wsUseBrowserForwarder;
     public Boolean allowInsecure;
     public Integer packetEncoding;
+
+    // --------------------------------------- //
+
+    /**
+     * XTLS 的流控方式。可选值为 xtls-rprx-direct、xtls-rprx-splice 等。
+     * <p>
+     * 若使用 XTLS，此项不可省略，否则无此项。此项不可为空字符串。
+     */
+    public String flow;
 
     @Override
     public boolean allowInsecure() {
@@ -187,6 +197,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (StrUtil.isBlank(alpn)) alpn = "";
 
         if (StrUtil.isBlank(grpcServiceName)) grpcServiceName = "";
+        if (StrUtil.isBlank(grpcMode)) grpcMode = "";
         if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
         if (wsUseBrowserForwarder == null) wsUseBrowserForwarder = false;
         if (certificates == null) certificates = "";
@@ -194,12 +205,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (earlyDataHeaderName == null) earlyDataHeaderName = "";
         if (allowInsecure == null) allowInsecure = false;
         if (packetEncoding == null) packetEncoding = PacketAddrType.None_VALUE;
+        if (StrUtil.isBlank(flow)) flow = "";
 
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(7);
+        output.writeInt(8);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -238,6 +250,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
             }
             case "grpc": {
                 output.writeString(grpcServiceName);
+                output.writeString(grpcMode);
             }
         }
 
@@ -250,6 +263,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(certificates);
                 output.writeString(pinnedPeerCertificateChainSha256);
                 output.writeBoolean(allowInsecure);
+                break;
+            }
+            case "xtls": {
+                output.writeString(sni);
+                output.writeString(alpn);
+                output.writeString(flow);
                 break;
             }
         }
@@ -304,6 +323,16 @@ public abstract class StandardV2RayBean extends AbstractBean {
             }
             case "grpc": {
                 grpcServiceName = input.readString();
+                if (version >= 8) {
+                    grpcMode = input.readString();
+                    switch (grpcMode) {
+                        case "multi":
+                        case "raw":
+                            break;
+                        default:
+                            grpcMode = "";
+                    }
+                }
             }
         }
 
@@ -320,6 +349,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     allowInsecure = input.readBoolean();
                 }
                 break;
+            }
+            case "xtls": {
+                sni = input.readString();
+                alpn = input.readString();
+                flow = input.readString();
             }
         }
         if (this instanceof VMessBean && version != 4 && version < 6) {

@@ -541,6 +541,11 @@ fun buildV2RayConfig(
                                                         .apply {
                                                             id = bean.uuidOrGenerate()
                                                             encryption = bean.encryption
+                                                            if (bean.flow.isNotBlank()) {
+                                                                flow = bean.flow
+                                                            } else if (bean.security == "xtls") {
+                                                                flow = "xtls-rprx-direct"
+                                                            }
                                                         })
                                                 })
                                             when (bean.packetEncoding) {
@@ -560,35 +565,47 @@ fun buildV2RayConfig(
                                     if (bean.security.isNotBlank()) {
                                         security = bean.security
                                     }
-                                    if (security == "tls") {
-                                        tlsSettings = TLSObject().apply {
-                                            if (bean.sni.isNotBlank()) {
-                                                serverName = bean.sni
+                                    when (security) {
+                                        "xtls" -> {
+                                            xtlsSettings = TLSObject().apply {
+                                                if (bean.sni.isNotBlank()) {
+                                                    serverName = bean.sni
+                                                }
+                                                if (bean.alpn.isNotBlank()) {
+                                                    alpn = bean.alpn.split("\n")
+                                                }
                                             }
+                                        }
+                                        "tls" -> {
+                                            tlsSettings = TLSObject().apply {
+                                                if (bean.sni.isNotBlank()) {
+                                                    serverName = bean.sni
+                                                }
 
-                                            if (bean.alpn.isNotBlank()) {
-                                                alpn = bean.alpn.split("\n")
-                                            }
+                                                if (bean.alpn.isNotBlank()) {
+                                                    alpn = bean.alpn.split("\n")
+                                                }
 
-                                            if (bean.certificates.isNotBlank()) {
-                                                disableSystemRoot = true
-                                                certificates = listOf(TLSObject.CertificateObject()
-                                                    .apply {
-                                                        usage = "verify"
-                                                        certificate = bean.certificates.split(
-                                                            "\n"
-                                                        ).filter { it.isNotBlank() }
-                                                    })
-                                            }
+                                                if (bean.certificates.isNotBlank()) {
+                                                    disableSystemRoot = true
+                                                    certificates = listOf(TLSObject.CertificateObject()
+                                                        .apply {
+                                                            usage = "verify"
+                                                            certificate = bean.certificates.split(
+                                                                "\n"
+                                                            ).filter { it.isNotBlank() }
+                                                        })
+                                                }
 
-                                            if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
-                                                pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.split(
-                                                    "\n"
-                                                ).filter { it.isNotBlank() }
-                                            }
+                                                if (bean.pinnedPeerCertificateChainSha256.isNotBlank()) {
+                                                    pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.split(
+                                                        "\n"
+                                                    ).filter { it.isNotBlank() }
+                                                }
 
-                                            if (bean.allowInsecure) {
-                                                allowInsecure = true
+                                                if (bean.allowInsecure) {
+                                                    allowInsecure = true
+                                                }
                                             }
                                         }
                                     }
@@ -686,6 +703,9 @@ fun buildV2RayConfig(
                                         "grpc" -> {
                                             grpcSettings = GrpcObject().apply {
                                                 serviceName = bean.grpcServiceName
+                                                if (bean.grpcMode.isNotBlank()) {
+                                                    mode = bean.grpcMode
+                                                }
                                             }
                                         }
                                     }
@@ -769,27 +789,47 @@ fun buildV2RayConfig(
                                                 address = bean.serverAddress
                                                 port = bean.serverPort
                                                 password = bean.password
+                                                if (bean.flow.isNotBlank()) {
+                                                    flow = bean.flow
+                                                } else if (bean.security == "xtls") {
+                                                    flow = "xtls-rprx-direct"
+                                                }
                                             })
                                     })
                                 streamSettings = StreamSettingsObject().apply {
                                     network = "tcp"
-                                    security = "tls"
-                                    tlsSettings = TLSObject().apply {
-                                        if (bean.sni.isNotBlank()) {
-                                            serverName = bean.sni
+                                    when (bean.security) {
+                                        "xtls" -> {
+                                            security = bean.security
+                                            xtlsSettings = TLSObject().apply {
+                                                if (bean.sni.isNotBlank()) {
+                                                    serverName = bean.sni
+                                                }
+                                                if (bean.alpn.isNotBlank()) {
+                                                    alpn = bean.alpn.split("\n")
+                                                }
+                                            }
                                         }
-                                        if (bean.alpn.isNotBlank()) {
-                                            alpn = bean.alpn.split("\n")
+                                        else -> {
+                                            security = "tls"
+                                            tlsSettings = TLSObject().apply {
+                                                if (bean.sni.isNotBlank()) {
+                                                    serverName = bean.sni
+                                                }
+                                                if (bean.alpn.isNotBlank()) {
+                                                    alpn = bean.alpn.split("\n")
+                                                }
+                                            }
+                                            if (bean.allowInsecure) {
+                                                tlsSettings = tlsSettings ?: TLSObject()
+                                                tlsSettings.allowInsecure = true
+                                            }
                                         }
                                     }
                                     if (needKeepAliveInterval) {
                                         sockopt = StreamSettingsObject.SockoptObject().apply {
                                             tcpKeepAliveInterval = keepAliveInterval
                                         }
-                                    }
-                                    if (bean.allowInsecure) {
-                                        tlsSettings = tlsSettings ?: TLSObject()
-                                        tlsSettings.allowInsecure = true
                                     }
                                 }
                             } else if (bean is WireGuardBean) {

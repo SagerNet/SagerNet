@@ -132,6 +132,7 @@ object Key {
     const val SERVER_ALPN = "serverALPN"
     const val SERVER_CERTIFICATES = "serverCertificates"
     const val SERVER_PINNED_CERTIFICATE_CHAIN = "serverPinnedCertificateChain"
+    const val SERVER_FLOW = "serverFlow"
     const val SERVER_QUIC_SECURITY = "serverQuicSecurity"
     const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
     const val SERVER_WS_BROWSER_FORWARDING = "serverWsBrowserForwarding"
@@ -163,6 +164,7 @@ object Key {
     const val SERVER_REDUCED_IV_HEAD_ENTROPY = "serverReducedIvHeadEntropy"
     const val SERVER_UDP_OVER_TCP = "serverUoT"
     const val SERVER_WITHOUT_BROOK_PROTOCOL = "serverWithoutBrookProtocol"
+    const val SERVER_GRPC_MODE = "serverGrpcMode"
 
     const val BALANCER_TYPE = "balancerType"
     const val BALANCER_GROUP = "balancerGroup"

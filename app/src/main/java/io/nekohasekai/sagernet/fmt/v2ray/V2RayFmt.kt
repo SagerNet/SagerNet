@@ -130,6 +130,18 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     bean.pinnedPeerCertificateChainSha256 = it
                 }
             }
+            "xtls" -> {
+                bean.security = "xtls"
+                url.queryParameter("sni")?.let {
+                    bean.sni = it
+                }
+                url.queryParameter("alpn")?.let {
+                    bean.alpn = it
+                }
+                url.queryParameter("flow")?.let {
+                    bean.flow = it
+                }
+            }
         }
         when (protocol) {
             "tcp" -> {
@@ -433,15 +445,17 @@ fun StandardV2RayBean.toUri(): String {
                     builder.addQueryParameter("chain", pinnedPeerCertificateChainSha256)
                 }
             }
-        }
-    }
-
-    when (packetEncoding) {
-        PacketAddrType.Packet_VALUE -> {
-            builder.addQueryParameter("packetEncoding", "packet")
-        }
-        PacketAddrType.XUDP_VALUE -> {
-            builder.addQueryParameter("packetEncoding", "xudp")
+            "xtls" -> {
+                if (sni.isNotBlank()) {
+                    builder.addQueryParameter("sni", sni)
+                }
+                if (alpn.isNotBlank()) {
+                    builder.addQueryParameter("alpn", alpn)
+                }
+                if (flow.isNotBlank()) {
+                    builder.addQueryParameter("flow", flow)
+                }
+            }
         }
     }
 
