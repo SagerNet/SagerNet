@@ -129,7 +129,7 @@
     <string name="traffic_sniffing">Aktifkan Traffic Sniffing</string>
     <string name="off">Mati</string>
     <string name="on">Nyala</string>
-    <string name="route_opt_block_ads">Blokir ADs</string>
+    <string name="route_opt_block_ads">Blokir Iklan</string>
     <string name="route_asset_updated">Diperbarui</string>
     <string name="route_asset_no_update">Tidak ada pembaruan</string>
     <string name="route_asset_status">Versi lokal: %s</string>
@@ -205,4 +205,16 @@
     <string name="ws_host">Host Soket Web</string>
     <string name="header_type">Jenis Tajuk</string>
     <string name="security">Enkripsi lapisan transportasi</string>
+    <string name="donate_info">Saya Suka UANG</string>
+    <string name="route_warn">Pastikan Anda telah membaca dokumentasi sebelum menambahkan aturan tambahan, jika tidak, Anda mungkin tidak dapat terhubung ke Internet.</string>
+    <string name="probe_url">URL Tes Khusus</string>
+    <string name="open_settings">Buka Pengaturan</string>
+    <string name="no_proxies_found_in_clipboard">Proxy tidak ada di clipboard</string>
+    <string name="donate">Donasi</string>
+    <string name="ignore_battery_optimizations">Abaikan Pengotimalan Baterai</string>
+    <string name="ignore_battery_optimizations_sum">Hapus beberapa larangan</string>
+    <string name="plugin_disabled">Dimatikan</string>
+    <string name="plugin_untrusted">Peringatan : Plugin ini sepertinya tidak berasal dari sumber tepercaya.</string>
+    <string name="plugin_configure">Atur…</string>
+    <string name="plugin_unknown">plugin tidak ada %s</string>
 </resources>
