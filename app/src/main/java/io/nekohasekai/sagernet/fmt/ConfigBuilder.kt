@@ -194,7 +194,7 @@ fun buildV2RayConfig(
             servers.addAll(remoteDns.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
-                        address = it
+                        address = if (it.contains("://")) it else "udp://$it"
                         concurrency = true
                     }
                 }

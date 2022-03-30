@@ -40,6 +40,11 @@
             app:key="serverALPN"
             app:title="@string/alpn"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_notification_enhanced_encryption"
+            app:key="serverAllowInsecure"
+            app:summary="@string/allow_insecure_sum"
+            app:title="@string/allow_insecure" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/xtls_flow_entry"
             app:entryValues="@array/xtls_flow_value"

@@ -66,6 +66,8 @@ class MainActivity : ThemedActivity(),
     lateinit var binding: LayoutMainBinding
     lateinit var navigation: NavigationView
 
+    val userInterface by lazy { GroupInterfaceAdapter(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -99,7 +101,6 @@ class MainActivity : ThemedActivity(),
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
-        GroupManager.userInterface = GroupInterfaceAdapter(this)
 
         if (intent?.action == Intent.ACTION_VIEW) {
             onNewIntent(intent)
@@ -501,16 +502,17 @@ class MainActivity : ThemedActivity(),
     override fun onStart() {
         super.onStart()
         connection.bandwidthTimeout = 1000
+        GroupManager.userInterface = userInterface
     }
 
     override fun onStop() {
         connection.bandwidthTimeout = 0
+        GroupManager.userInterface = null
         super.onStop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        GroupManager.userInterface = null
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)
     }
