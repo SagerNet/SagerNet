@@ -419,6 +419,9 @@ fun buildV2RayConfig(
                                         })
                                 })
                         }
+                        if (currentDomainStrategy == "AsIs") {
+                            currentDomainStrategy = "UseIP"
+                        }
                     } else {
                         currentOutbound.apply {
                             val keepAliveInterval = DataStore.tcpKeepAliveInterval
