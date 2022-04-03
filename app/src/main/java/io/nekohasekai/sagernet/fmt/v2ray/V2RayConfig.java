@@ -121,6 +121,7 @@ public class V2RayConfig {
 
             public List<Integer> uidList;
             public List<String> ssidList;
+            public String networkType;
 
         }
 

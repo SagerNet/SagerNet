@@ -419,6 +419,9 @@ fun buildV2RayConfig(
                                         })
                                 })
                         }
+                        if (currentDomainStrategy == "AsIs") {
+                            currentDomainStrategy = "UseIP"
+                        }
                     } else {
                         currentOutbound.apply {
                             val keepAliveInterval = DataStore.tcpKeepAliveInterval
@@ -1132,6 +1135,9 @@ fun buildV2RayConfig(
                 }
                 if (rule.ssid.isNotBlank()) {
                     ssidList = rule.ssid.split("\n")
+                }
+                if (rule.networkType.isNotBlank()) {
+                    networkType = rule.networkType
                 }
                 when {
                     rule.reverse -> inboundTag = listOf("reverse-${rule.id}")

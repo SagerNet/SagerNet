@@ -459,6 +459,15 @@ fun StandardV2RayBean.toUri(): String {
         }
     }
 
+    when (packetEncoding) {
+        PacketAddrType.Packet_VALUE -> {
+            builder.addQueryParameter("packetEncoding", "packet")
+        }
+        PacketAddrType.XUDP_VALUE -> {
+            builder.addQueryParameter("packetEncoding", "xudp")
+        }
+    }
+
     if (name.isNotBlank()) {
         builder.setRawFragment(name.urlSafe())
     }
