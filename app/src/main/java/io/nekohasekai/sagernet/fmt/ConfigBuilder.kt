@@ -754,13 +754,16 @@ fun buildV2RayConfig(
                                             }
                                         }
                                         if (bean is ShadowsocksRBean) {
-                                            plugin = "shadowsocksr"
-                                            pluginArgs = listOf(
-                                                "--obfs=${bean.obfs}",
-                                                "--obfs-param=${bean.obfsParam}",
-                                                "--protocol=${bean.protocol}",
-                                                "--protocol-param=${bean.protocolParam}"
-                                            )
+                                            // plain & origin SSR does not require ShadowsocksR plugin
+                                            if (bean.obfs != "plain" && bean.protocol != "origin") {
+                                                plugin = "shadowsocksr"
+                                                pluginArgs = listOf(
+                                                    "--obfs=${bean.obfs}",
+                                                    "--obfs-param=${bean.obfsParam}",
+                                                    "--protocol=${bean.protocol}",
+                                                    "--protocol-param=${bean.protocolParam}"
+                                                )
+                                            }
                                         } else if (bean is ShadowsocksBean && bean.plugin.isNotBlank()) {
                                             val pluginConfiguration = PluginConfiguration(bean.plugin)
                                             try {
