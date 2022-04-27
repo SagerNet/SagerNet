@@ -476,6 +476,8 @@ public class V2RayConfig {
                     return VLESSOutboundConfigurationObject.class;
                 case "shadowsocks":
                     return ShadowsocksOutboundConfigurationObject.class;
+                case "shadowsocks_sing":
+                    return ShadowsocksSingOutboundConfigurationObject.class;
                 case "trojan":
                     return TrojanOutboundConfigurationObject.class;
                 case "loopback":
@@ -607,6 +609,17 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+
+    }
+
+    public static class ShadowsocksSingOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String method;
+        public String password;
+        public String key;
+        public Boolean reducedIvHeadEntropy;
 
     }
 

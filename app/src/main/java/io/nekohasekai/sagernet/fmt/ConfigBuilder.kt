@@ -43,6 +43,7 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.methodsSing
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -720,6 +721,22 @@ fun buildV2RayConfig(
                                     }
 
                                 }
+                            } else if (bean is ShadowsocksBean && bean.method in methodsSing && bean.plugin.isBlank() && !bean.uot) {
+                                protocol = "shadowsocks_sing"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    ShadowsocksSingOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        method = bean.method
+                                        if (bean.method.startsWith("2022")) {
+                                            key = bean.password
+                                        } else {
+                                            password = bean.password
+                                        }
+                                        if (bean.experimentReducedIvHeadEntropy) {
+                                            reducedIvHeadEntropy = true
+                                        }
+                                    })
                             } else if (bean is ShadowsocksBean || bean is ShadowsocksRBean) {
                                 protocol = "shadowsocks"
                                 settings = LazyOutboundConfigurationObject(this,
