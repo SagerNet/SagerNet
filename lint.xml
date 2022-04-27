@@ -36,4 +36,5 @@
     <issue id="TrustAllX509TrustManager" severity="ignore" />
     <issue id="IntentFilterUniqueDataAttributes" severity="ignore" />
     <issue id="ObsoleteLintCustomCheck" severity="informational" />
+    <issue id="Registered" severity="informational" />
 </lint>
