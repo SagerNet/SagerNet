@@ -237,14 +237,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val acquireWakeLock = findPreference<SwitchPreference>(Key.ACQUIRE_WAKE_LOCK)!!
 
-        val installerProvider = findPreference<SimpleMenuPreference>(Key.PROVIDER_INSTALLER)!!
+/*        val installerProvider = findPreference<SimpleMenuPreference>(Key.PROVIDER_INSTALLER)!!
         installerProvider.setOnPreferenceChangeListener { _, newValue ->
             if (newValue == "${InstallerProvider.SHIZUKU}") {
                 checkShizuku()
             } else {
                 true
             }
-        }
+        }*/
 
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener

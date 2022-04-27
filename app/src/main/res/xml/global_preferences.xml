@@ -181,14 +181,14 @@
             app:key="providerRootCA"
             app:title="@string/root_ca_provider"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
+<!--        <com.takisoft.preferencex.SimpleMenuPreference
             android:icon="@drawable/baseline_construction_24"
             app:defaultValue="0"
             app:entries="@array/installer_provider_entry"
             app:entryValues="@array/int_array_2"
             app:key="providerInstaller"
             app:title="@string/installer_provider"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true" />-->
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">

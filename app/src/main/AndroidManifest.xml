@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+<!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
 
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
@@ -360,6 +360,7 @@
             </intent-filter>
         </activity>
 
+<!--
         <activity
             android:name="io.nekohasekai.sagernet.ui.sai.SplitAPKsInstallerActivity"
             android:configChanges="uiMode"
@@ -500,6 +501,7 @@
             android:exported="true"
             android:multiprocess="false"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+-->
 
     </application>
 
