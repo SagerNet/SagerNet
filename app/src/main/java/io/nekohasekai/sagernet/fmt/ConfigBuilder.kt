@@ -59,6 +59,7 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
+import libcore.Libcore
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -1311,7 +1312,23 @@ fun buildV2RayConfig(
             dns.servers.addAll(directDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
-                        address = if (!it.contains("://") && it != "localhost") "udp+local://$it" else it
+                        var url = it
+                        if (it != "localhost") {
+                            val lnk = Libcore.parseURL(it)
+                            if (lnk.scheme.isBlank()) {
+                                lnk.scheme = "udp+local"
+                            } else {
+                                lnk.scheme = when (lnk.scheme) {
+                                    "tls" -> "tls+local"
+                                    "https" -> "https+local"
+                                    "quic" -> "quic+local"
+                                    "udp" -> "udp+local"
+                                    else -> lnk.scheme
+                                }
+                            }
+                            url = lnk.string
+                        }
+                        address = url
                         domains = bypassDomain.toList()
                         skipFallback = true
                         concurrency = true
