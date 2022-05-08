@@ -52,11 +52,11 @@ dependencies {
     implementation(project(":external:preferencex:preferencex-simplemenu"))
     implementation(project(":external:preferencex:preferencex-colorpicker"))
 
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.material:material:1.6.0")
     implementation("cn.hutool:hutool-core:$hutoolVersion")
     implementation("cn.hutool:hutool-json:$hutoolVersion")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.google.zxing:core:3.5.0")
 
     implementation("org.yaml:snakeyaml:1.30")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
