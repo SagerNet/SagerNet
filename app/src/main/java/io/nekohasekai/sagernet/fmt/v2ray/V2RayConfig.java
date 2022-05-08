@@ -480,6 +480,8 @@ public class V2RayConfig {
                     return ShadowsocksSingOutboundConfigurationObject.class;
                 case "trojan":
                     return TrojanOutboundConfigurationObject.class;
+                case "trojan_sing":
+                    return TrojanSingOutboundConfigurationObject.class;
                 case "loopback":
                     return LoopbackOutboundConfigurationObject.class;
                 case "wireguard":
@@ -620,6 +622,17 @@ public class V2RayConfig {
         public String password;
         public String key;
         public Boolean reducedIvHeadEntropy;
+
+    }
+
+    public static class TrojanSingOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String password;
+        public String serverName;
+        public List<String> nextProtos;
+        public Boolean insecure;
 
     }
 

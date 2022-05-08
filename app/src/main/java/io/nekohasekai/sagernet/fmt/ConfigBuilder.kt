@@ -800,6 +800,23 @@ fun buildV2RayConfig(
                                             }
                                         }
                                     })
+                            } else if (bean is TrojanBean && bean.security != "xtls") {
+                                protocol = "trojan_sing"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    TrojanSingOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        password = bean.password
+                                        if (bean.sni.isNotBlank()) {
+                                            serverName = bean.sni
+                                        }
+                                        if (bean.alpn.isNotBlank()) {
+                                            nextProtos = bean.alpn.split("\n")
+                                        }
+                                        if (bean.allowInsecure) {
+                                            insecure = true
+                                        }
+                                    })
                             } else if (bean is TrojanBean) {
                                 protocol = "trojan"
                                 settings = LazyOutboundConfigurationObject(this,
