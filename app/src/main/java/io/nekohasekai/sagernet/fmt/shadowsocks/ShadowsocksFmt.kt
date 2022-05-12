@@ -161,7 +161,12 @@ fun ShadowsocksBean.toUri(): String {
     val builder = Libcore.newURL("ss")
     builder.host = serverAddress
     builder.port = serverPort
-    builder.username = Base64.encodeUrlSafe("$method:$password")
+    if (method.startsWith("2022")) {
+        builder.username = method
+        builder.password = password
+    } else {
+        builder.username = Base64.encodeUrlSafe("$method:$password")
+    }
 
     if (plugin.isNotBlank()) {
         builder.addQueryParameter("plugin", plugin)
