@@ -722,7 +722,13 @@ fun buildV2RayConfig(
                                     }
 
                                 }
-                            } else if (bean is ShadowsocksBean && bean.method in methodsSing && bean.plugin.isBlank() && !bean.uot) {
+                            } else if (bean is ShadowsocksBean && bean.method in methodsSing) {
+                                if (bean.plugin.isNotBlank()) {
+                                    error("plugin unsupported in shadowsocks 2022")
+                                }
+                                if (bean.uot) {
+                                    error("uot unsupported in shadowsocks 2022")
+                                }
                                 protocol = "shadowsocks_sing"
                                 settings = LazyOutboundConfigurationObject(this,
                                     ShadowsocksSingOutboundConfigurationObject().apply {
