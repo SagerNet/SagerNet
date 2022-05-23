@@ -358,7 +358,7 @@ object RawUpdater : GroupUpdater() {
                                     "port" -> bean.serverPort = opt.value.toString().toInt()
                                     "password" -> bean.password = opt.value?.toString()
                                     "sni" -> bean.sni = opt.value?.toString()
-                                    "skip-cert-verify" -> if (isExpert) bean.allowInsecure = opt.value == "true"
+                                    "skip-cert-verify" -> bean.allowInsecure = opt.value == "true"
                                 }
                             }
                             proxies.add(bean)

@@ -97,7 +97,8 @@ fun AbstractBean.isInsecure(): ValidateResult {
             }
         } catch (ignored: Exception) {
         }
-    } else if (allowInsecure()) {
+    }
+    if (allowInsecure()) {
         return ResultInsecure(R.raw.insecure)
     }
     return ResultSecure
