@@ -40,7 +40,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.4.1")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.2")
     implementation("androidx.navigation:navigation-ui-ktx:2.4.2")
     implementation("androidx.preference:preference-ktx:1.2.0")
