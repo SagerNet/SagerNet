@@ -202,7 +202,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
-    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
+    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.SYSTEM }
 
     var useUpstreamInterfaceMTU by configurationStore.boolean(Key.USE_UPSTREAM_INTERFACE_MTU) { true }
     var mtu by configurationStore.stringToInt(Key.MTU) { VpnService.DEFAULT_MTU }
