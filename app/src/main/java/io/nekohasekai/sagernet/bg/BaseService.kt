@@ -454,6 +454,7 @@ class BaseService {
                 DataStore.startedProfile = 0L
                 if (!keepState) DataStore.currentProfile = 0L
                 onDefaultDispatcher {
+                    Libcore.resetConnections()
                     Libcore.disableConnectionPool()
                 }
                 // stop the service if nothing has bound to it
