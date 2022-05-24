@@ -318,7 +318,7 @@ object RawUpdater : GroupUpdater() {
                                                 }
                                             }
                                             "path" -> {
-                                                bean.path = opt.value?.toString()
+                                                bean.path = wsOpt.value.toString()
                                             }
                                             "max-early-data" -> {
                                                 bean.wsMaxEarlyData = wsOpt.value.toString().toInt()
