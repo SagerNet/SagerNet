@@ -722,28 +722,6 @@ fun buildV2RayConfig(
                                     }
 
                                 }
-                            } else if (bean is ShadowsocksBean && bean.method in methodsSing) {
-                                if (bean.plugin.isNotBlank()) {
-                                    error("plugin unsupported in shadowsocks 2022")
-                                }
-                                if (bean.uot) {
-                                    error("uot unsupported in shadowsocks 2022")
-                                }
-                                protocol = "shadowsocks_sing"
-                                settings = LazyOutboundConfigurationObject(this,
-                                    ShadowsocksSingOutboundConfigurationObject().apply {
-                                        address = bean.serverAddress
-                                        port = bean.serverPort
-                                        method = bean.method
-                                        if (bean.method.startsWith("2022")) {
-                                            key = bean.password
-                                        } else {
-                                            password = bean.password
-                                        }
-                                        if (bean.experimentReducedIvHeadEntropy) {
-                                            reducedIvHeadEntropy = true
-                                        }
-                                    })
                             } else if (bean is ShadowsocksBean || bean is ShadowsocksRBean) {
                                 protocol = "shadowsocks"
                                 settings = LazyOutboundConfigurationObject(this,
