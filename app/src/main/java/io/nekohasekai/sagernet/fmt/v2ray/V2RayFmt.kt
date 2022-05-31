@@ -248,6 +248,7 @@ fun parseV2RayN(link: String): VMessBean {
         }
         "grpc" -> {
             bean.grpcServiceName = bean.path
+            bean.grpcMode = bean.headerType
         }
     }
 
@@ -352,6 +353,7 @@ fun VMessBean.toV2rayN(): String {
             }
             "grpc" -> {
                 it["path"] = grpcServiceName
+                it["type"] = grpcMode
             }
         }
 
