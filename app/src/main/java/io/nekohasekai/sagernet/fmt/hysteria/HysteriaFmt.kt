@@ -45,7 +45,7 @@ fun parseHysteria(url: String): HysteriaBean {
             authPayloadType = HysteriaBean.TYPE_STRING
             authPayload = it
         }
-        if (isExpert) link.queryParameter("insecure")?.also {
+        link.queryParameter("insecure")?.also {
             allowInsecure = it == "1"
         }
         link.queryParameter("upmbps")?.also {

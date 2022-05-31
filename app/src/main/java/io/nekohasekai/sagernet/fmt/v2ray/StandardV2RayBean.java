@@ -372,8 +372,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof StandardV2RayBean)) return;
         StandardV2RayBean bean = ((StandardV2RayBean) other);
-        bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
-        bean.allowInsecure = allowInsecure;
+        if (wsUseBrowserForwarder) {
+            bean.wsUseBrowserForwarder = true;
+        }
+        if (allowInsecure) {
+            bean.allowInsecure = true;
+        }
     }
 
     public String uuidOrGenerate() {

@@ -98,7 +98,9 @@ public class TrojanBean extends AbstractBean {
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof TrojanBean)) return;
         TrojanBean bean = ((TrojanBean) other);
-        bean.allowInsecure = allowInsecure;
+        if (allowInsecure) {
+            bean.allowInsecure = true;
+        }
     }
 
     @NotNull

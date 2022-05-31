@@ -45,8 +45,12 @@ public class VMessBean extends StandardV2RayBean {
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof VMessBean)) return;
         VMessBean bean = ((VMessBean) other);
-        bean.experimentalAuthenticatedLength = experimentalAuthenticatedLength;
-        bean.experimentalNoTerminationSignal = experimentalNoTerminationSignal;
+        if (experimentalAuthenticatedLength) {
+            bean.experimentalAuthenticatedLength = true;
+        }
+        if (experimentalNoTerminationSignal) {
+            bean.experimentalNoTerminationSignal = true;
+        }
     }
 
     @NotNull

@@ -49,10 +49,6 @@ fun parseTrojan(server: String): TrojanBean {
         sni = link.queryParameter("sni") ?: link.queryParameter("peer")
         alpn = link.queryParameter("alpn")
         name = link.fragment
-        if (isExpert) {
-            allowInsecure = !link.queryParameter("allowInsecure").isNullOrBlank()
-        }
-
     }
 
 }
