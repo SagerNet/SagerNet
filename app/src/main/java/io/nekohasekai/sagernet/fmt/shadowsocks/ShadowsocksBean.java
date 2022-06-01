@@ -81,6 +81,9 @@ public class ShadowsocksBean extends AbstractBean {
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof ShadowsocksBean)) return;
         ShadowsocksBean bean = ((ShadowsocksBean) other);
+        if (uot) {
+            bean.uot = true;
+        }
         bean.experimentReducedIvHeadEntropy = experimentReducedIvHeadEntropy;
     }
 
