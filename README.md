@@ -6,6 +6,12 @@
 
 The universal proxy toolchain for Android, written in Kotlin.
 
+---
+
+⚠️ **[The SagerNet app is looking for a new maintainer](https://github.com/SagerNet/SagerNet/issues/478)**
+
+---
+
 ## Documents
 
 https://sagernet.org
