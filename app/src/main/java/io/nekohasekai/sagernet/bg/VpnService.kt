@@ -342,7 +342,7 @@ class VpnService : BaseVpnService(),
                     Logs.w(ex)
                 }
             }
-        } else {
+        } else if (!needIncludeSelf) {
             builder.addDisallowedApplication(packageName)
         }
 
