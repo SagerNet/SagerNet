@@ -144,6 +144,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int, mux: Boolean): String {
 
         conf["ssl"] = JSONObject().also {
             if (sni.isNotBlank()) it["sni"] = sni
+            if (allowInsecure) it["verify"] = false
         }
 
         when {
@@ -190,6 +191,7 @@ fun JSONObject.parseTrojanGo(): TrojanGoBean {
         }
         getJSONObject("ssl")?.apply {
             sni = getStr("sni", sni)
+            allowInsecure = getBool("verify", true)
         }
         getJSONObject("websocket")?.apply {
             if (getBool("enabled", false)) {

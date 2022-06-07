@@ -103,6 +103,10 @@ public class TrojanGoBean extends AbstractBean {
      */
     public String plugin;
 
+    // ---
+
+    public Boolean allowInsecure;
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
@@ -118,7 +122,7 @@ public class TrojanGoBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(password);
         output.writeString(sni);
@@ -133,6 +137,7 @@ public class TrojanGoBean extends AbstractBean {
         }
         output.writeString(encryption);
         output.writeString(plugin);
+        output.writeBoolean(allowInsecure);
     }
 
     @Override
@@ -153,6 +158,18 @@ public class TrojanGoBean extends AbstractBean {
         }
         encryption = input.readString();
         plugin = input.readString();
+        if (version >= 1) {
+            allowInsecure = input.readBoolean();
+        }
+    }
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof TrojanGoBean)) return;
+        TrojanGoBean bean = ((TrojanGoBean) other);
+        if (allowInsecure) {
+            bean.allowInsecure = true;
+        }
     }
 
     @NotNull

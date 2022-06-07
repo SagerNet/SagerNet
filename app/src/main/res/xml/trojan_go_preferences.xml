@@ -28,6 +28,11 @@
             app:key="serverSNI"
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_notification_enhanced_encryption"
+            app:key="serverAllowInsecure"
+            app:summary="@string/allow_insecure_sum"
+            app:title="@string/allow_insecure" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="none"
             app:entries="@array/trojan_go_networks_entry"

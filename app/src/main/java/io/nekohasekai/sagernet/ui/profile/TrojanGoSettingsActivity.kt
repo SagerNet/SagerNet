@@ -67,6 +67,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         DataStore.serverPort = serverPort
         DataStore.serverPassword = password
         DataStore.serverSNI = sni
+        DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverNetwork = type
         DataStore.serverHost = host
         DataStore.serverPath = path
@@ -86,6 +87,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
         sni = DataStore.serverSNI
+        allowInsecure = DataStore.serverAllowInsecure
         type = DataStore.serverNetwork
         host = DataStore.serverHost
         path = DataStore.serverPath
