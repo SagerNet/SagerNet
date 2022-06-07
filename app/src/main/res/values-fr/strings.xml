@@ -69,7 +69,6 @@
     <string name="logcat">Exporter les informations de débogage</string>
     <string name="version_x">Version (%s)</string>
     <string name="app_version">Version</string>
-    <string name="oss_licenses">Licences à code source ouvert</string>
     <string name="telegram">Canal de mise à jour Telegram</string>
     <string name="github">Code source</string>
     <string name="project">Projet</string>

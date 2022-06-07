@@ -75,7 +75,6 @@
     <string name="logcat">Експорт інформації про налагодження</string>
     <string name="version_x">Версія (%s)</string>
     <string name="app_version">Версія</string>
-    <string name="oss_licenses">Ліцензії з відкритим кодом</string>
     <string name="telegram">Канал оновлення Telegram</string>
     <string name="github">Вихідний код</string>
     <string name="project">Проєкт</string>

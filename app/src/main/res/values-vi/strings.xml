@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="github">Mã nguồn</string>
+    <string name="app_version">Phiên bản</string>
+    <string name="logcat">Xuất thông tin gỡ lỗi</string>
+    <string name="logcat_summary">Rất hữu ích</string>
+    <string name="menu_configuration">Cấu hình</string>
+    <string name="menu_group">Nhóm</string>
+    <string name="project">Dự án</string>
+    <string name="version_x">Phiên bản (%s)</string>
+    <string name="app_desc">Công cụ proxy phổ biến dành cho Android, được viết bằng Kotlin</string>
+    <string name="telegram">Cập nhật nhóm Telegram</string>
+    <string name="theme">Chủ đề</string>
+    <string name="group_default">Chưa được nhóm</string>
+    <string name="quick_toggle">Bật/Tắt</string>
+    <string name="tile_title">Chuyển đổi</string>
+    <string name="menu_traffic">Lưu lượng truy cập</string>
+    <string name="group_update">Cập nhật</string>
+    <string name="group_name_required">Tên nhóm bắt buộc</string>
+    <string name="group_create">Tạo nhóm</string>
+    <string name="group_create_subscription">Tạo subscription</string>
+    <string name="group_edit">Chỉnh sửa nhóm</string>
+    <string name="group_edit_subscription">Chỉnh sửa subscription</string>
+    <string name="group_status_empty">Nhóm trống</string>
+    <string name="group_status_empty_subscription">Chưa cập nhật</string>
+    <string name="group_no_difference">%s: Ko khác biệt</string>
+    <string name="group_updated">%s: Cập nhật %d proxies</string>
+    <string name="group_show_diff">Khác</string>
+    <string name="group_added">Thêm:
+\n%s</string>
+    <string name="group_changed">Đã cập nhật:
+\n%s</string>
+    <string name="action_switch">Chuyển đổi</string>
+    <string name="menu_about">Giới thiệu</string>
+    <string name="document">Tài liệu</string>
+    <string name="group_status_proxies">%d Proxies</string>
+    <string name="group_diff">Khác (%s)</string>
+    <string name="group_status_proxies_subscription">%d Proxies | Cập nhật vào %s</string>
+    <string name="group_subscription_link">Link đăng ký</string>
+    <string name="group_name">Tên nhóm</string>
+    <string name="group_delete_confirm_prompt">Bạn có chắc chắn muốn xoá nhóm này không\?</string>
+    <string name="service_mode_vpn">VPN</string>
+    <string name="port_proxy">Cổng SOCKS5 Proxy</string>
+    <string name="allow_access_sum">Liên kết máy chủ gửi đến 0.0.0.0</string>
+    <string name="cag_route">Cài đặt Route</string>
+    <string name="allow_access">Cho phép kết nối từ mạng LAN</string>
+    <string name="connection_test_error">Failed: %s</string>
+    <string name="connection_test_error_status_code">Error code: #%d</string>
+    <string name="group_deleted">Đã xoá:
+\n%s</string>
+    <string name="group_duplicate">Nhân bản:
+\n%s</string>
+    <string name="service_mode">Chế độ dịch vụ</string>
+    <string name="service_mode_proxy">Chỉ Proxy</string>
+    <string name="port_http">Cổng HTTP Proxy</string>
+    <string name="port_transproxy">Cổng Transproxy</string>
+    <string name="general_settings">Cài đặt ứng dụng</string>
+    <string name="connection_test_testing">Đang kiểm tra…</string>
+    <string name="connection_test_available">Đã kết nối: HTTPS handshake took %dms</string>
+    <string name="allow_insecure_sum">"Tắt kiểm tra chứng chỉ.  Khi được bật, cấu hình này an toàn như văn bản rõ ràng"</string>
+    <string name="security_settings">Cài đặt bảo mật</string>
+    <string name="show_direct_speed_sum">Hiển thị cả tốc độ lưu lượng không có proxy trong thông báo</string>
+    <string name="connection_test_available_http">Đã kết nối: HTTP handshake took %dms</string>
+    <string name="connection_test_fail">Mạng Internet không khả dụng</string>
+    <string name="cag_dns">Cài đặt DNS</string>
+    <string name="enc_method">Phương yhul mã hoá</string>
+    <string name="inbound_settings">Cài đặt đến</string>
+    <string name="cag_ws">Cài đặt WebSocket</string>
+</resources>

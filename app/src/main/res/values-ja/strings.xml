@@ -45,7 +45,6 @@
     <string name="logcat">デバッグ情報のエクスポート</string>
     <string name="version_x">バージョン (%s)</string>
     <string name="app_version">バージョン</string>
-    <string name="oss_licenses">オープンソースライセンス</string>
     <string name="telegram">Telegram 更新チャンネル</string>
     <string name="github">ソースコード</string>
     <string name="project">プロジェクト</string>

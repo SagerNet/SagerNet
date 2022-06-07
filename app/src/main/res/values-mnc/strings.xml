@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="project">Weilen</string>
+    <string name="github">Sekiyen code</string>
+    <string name="app_version">Sarkiyangga bithe</string>
+    <string name="logcat">Debug arun furun tucibumbi</string>
+    <string name="logcat_summary">Asuru baitangga ambula gar gir</string>
+    <string name="menu_group">Mukvn</string>
+    <string name="theme">Theme</string>
+    <string name="telegram">Telegram -i icemlere channel</string>
+    <string name="menu_about">Dalji</string>
+    <string name="quick_toggle">Yaksire neire</string>
+    <string name="group_name">Mukvn -i gebu</string>
+    <string name="group_update">Icemlembi</string>
+    <string name="group_subscription_link">Toktobure Link</string>
+    <string name="group_name_required">Mukvn -i gebu baibumbi</string>
+    <string name="group_create">Mukvn ilibumbi</string>
+    <string name="group_edit">Mukvn banjibumbi</string>
+    <string name="group_status_empty">Untuhun mukvn</string>
+    <string name="group_added">Nemehe:
+\n%s</string>
+    <string name="group_changed">Icemlehe:
+\n%s</string>
+    <string name="group_deleted">Meitehe:
+\n%s</string>
+    <string name="sai_error_invalid">Ehe APK</string>
+    <string name="grpc_mode">gRPC durun</string>
+    <string name="document">dangse</string>
+    <string name="version_x">Sarkiyangga bithe (%s)</string>
+    <string name="menu_configuration">Banjibuhangge</string>
+    <string name="tile_title">Yaksire neire</string>
+</resources>

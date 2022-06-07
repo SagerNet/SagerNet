@@ -10,14 +10,14 @@
     <string name="password_opt">Пароль (необязательно)</string>
     <string name="username">Имя пользователя</string>
     <string name="traffic">%1$s↑ %2$s↓</string>
-    <string name="transproxy_mode">Транспрокси-режим</string>
+    <string name="transproxy_mode">Режим транспрокси</string>
     <string name="require_transproxy">Включить входящий прокси-сервер</string>
     <string name="port_local_dns">Локальный порт DNS</string>
     <string name="dns_hosts">Перезапись домена</string>
-    <string name="dns_routing_message">Разрешение доменов в обходных маршрутах с помощью Direct DNS. Помните о потенциальных утечках DNS</string>
+    <string name="dns_routing_message">Разрешение доменов в обходных маршрутах с помощью Direct DNS. Помните о потенциальных утечках DNS.</string>
     <string name="enable_dns_routing">Включить маршрутизацию DNS</string>
     <string name="direct_dns">Прямой DNS</string>
-    <string name="remote_dns">Удаленный DNS</string>
+    <string name="remote_dns">Удалённый DNS</string>
     <string name="cag_dns">Настройки DNS</string>
     <string name="connection_test_error_status_code">Код ошибки: #%d</string>
     <string name="connection_test_fail">Интернет недоступен</string>
@@ -25,14 +25,14 @@
     <string name="connection_test_available_http">Успех: рукопожатие HTTP заняло %d мс</string>
     <string name="connection_test_available">Успех: рукопожатие HTTPS заняло %d мс</string>
     <string name="connection_test_testing">Тестирование…</string>
-    <string name="speed_detail">Прокси ：%1$s↑ %2$s↓
-\nПрямой ：%3$s↑%4$s↓</string>
-    <string name="allow_insecure_sum">Отключить проверку сертификата. При включении эта функция настолько же безопасна как передача пароля в открытом виде</string>
+    <string name="speed_detail">Прокси ： %1$s↑ %2$s↓
+\nПрямой ： %3$s↑%4$s↓</string>
+    <string name="allow_insecure_sum">Отключить проверку сертификата. При включении эта функция настолько же безопасна как передача пароля в открытом виде.</string>
     <string name="allow_insecure">Разрешить небезопасное подключение</string>
     <string name="security_settings">Настройки безопасности</string>
     <string name="show_direct_speed_sum">Также в уведомлении показывать скорость трафика без прокси</string>
     <string name="show_direct_speed">Показать прямую скорость</string>
-    <string name="show_stop_sum">Если вы не хотите использовать Quick Tile в качестве переключателя</string>
+    <string name="show_stop_sum">Если не хотите использовать быструю плитку в качестве переключателя</string>
     <string name="show_stop">Показать кнопку остановки</string>
     <string name="cag_misc">Прочие настройки</string>
     <string name="speed_interval">Интервал обновления уведомлений о скорости</string>
@@ -61,9 +61,9 @@
     <string name="group_show_diff">Сравнить группы</string>
     <string name="group_updated">%s: Обновлено %d прокси</string>
     <string name="group_no_difference">%s: Не отличаются</string>
-    <string name="group_status_proxies_subscription">%d Прокси | Обновлено %s</string>
+    <string name="group_status_proxies_subscription">%d прокси | Обновлено %s</string>
     <string name="group_status_proxies">%d прокси</string>
-    <string name="group_status_empty_subscription">Еще не обновлено</string>
+    <string name="group_status_empty_subscription">Ещё не обновлено</string>
     <string name="group_status_empty">Пустая группа</string>
     <string name="group_edit_subscription">Редактировать подписку</string>
     <string name="group_edit">Редактировать группу</string>
@@ -76,7 +76,7 @@
     <string name="tile_title">Переключатель</string>
     <string name="quick_toggle">Переключить</string>
     <string name="group_default">Разгруппировано</string>
-    <string name="document">Документ</string>
+    <string name="document">Документация</string>
     <string name="theme">Тема</string>
     <string name="menu_about">О приложении</string>
     <string name="menu_group">Группы</string>
@@ -84,15 +84,14 @@
     <string name="logcat_summary">Такой полезный очень вау</string>
     <string name="logcat">Экспорт отладочной информации</string>
     <string name="version_x">Версия (%s)</string>
-    <string name="server_port">Удаленный порт</string>
+    <string name="server_port">Удалённый порт</string>
     <string name="server_address">Сервер</string>
     <string name="profile_name">Имя профиля</string>
     <string name="connection_test_url">URL-адрес проверки подключения</string>
-    <string name="port_transproxy">Транспрокси-порт</string>
+    <string name="port_transproxy">Порт транспрокси</string>
     <string name="port_proxy">Порт прокси SOCKS5</string>
     <string name="service_mode_vpn">VPN</string>
     <string name="app_version">Версия</string>
-    <string name="oss_licenses">Лицензии с открытым исходным кодом</string>
     <string name="telegram">Канал обновлений в Telegram</string>
     <string name="github">Исходный код</string>
     <string name="project">Проект</string>
@@ -109,29 +108,29 @@
         <item quantity="many">%d элементов удалено</item>
         <item quantity="other">%d элементов удалено</item>
     </plurals>
-    <string name="mux_sum">Mux разработан для уменьшения задержки рукопожатия TCP, а не для увеличения пропускной способности соединения. Использование Mux для просмотра видео, загрузки или проверки скорости как правило контрпродуктивно</string>
+    <string name="mux_sum">Mux разработан для уменьшения задержки рукопожатия TCP, а не для увеличения пропускной способности соединения. Использование Mux для просмотра видео, загрузки или проверки скорости как правило контрпродуктивно.</string>
     <string name="apps_message">%d приложений</string>
     <string name="select_apps">Выберите приложения</string>
     <string name="apps">Приложения</string>
     <string name="clear_profiles_message">Вы уверены, что хотите очистить эту группу\?</string>
     <string name="profile_import_message">Подтвердите, что хотите импортировать профиль %s\?</string>
     <string name="profile_import">Импортировать профиль</string>
-    <string name="subscription_import_message">Подтвердите, что хотите импортировать подписку %s\? Если вы импортируете из ненадежного источника, это может привести к утечке вашего IP-адреса и такого поведения.</string>
+    <string name="subscription_import_message">Подтвердите, что хотите импортировать подписку %s\? Если вы импортируете из ненадёжного источника, это может привести к утечке вашего IP-адреса и такого поведения.</string>
     <string name="subscription_import">Импортировать подписку</string>
-    <string name="subscription_traffic">%s Использовано / %s Осталось</string>
-    <string name="subscription_used">%s Использовано</string>
+    <string name="subscription_traffic">%s использовано / %s осталось</string>
+    <string name="subscription_used">%s использовано</string>
     <string name="group_filter_tags_nf">В этой подписке нет тегов</string>
     <string name="group_filter_groups_nf">В этой подписке нет групп</string>
     <string name="group_filter_ns">Для использования функции фильтрации требуется подписка OOCv1</string>
     <string name="group_filter_tags">Теги</string>
     <string name="group_filter_groups">Группы</string>
     <string name="group_filter">Фильтр</string>
-    <string name="subscription_update_message">Обновление %s …</string>
+    <string name="subscription_update_message">Обновление %s…</string>
     <string name="subscription_update">Обновление подписки</string>
     <string name="service_subscription">Служба обновления подписки</string>
-    <string name="ooc_missing_protocol">Подписка требует поддержки протокола %s, но ее нельзя найти. Неподдерживаемые профили игнорируются.</string>
+    <string name="ooc_missing_protocol">Подписка требует поддержки протокола %s, но её нельзя найти. Неподдерживаемые профили игнорируются.</string>
     <string name="ooc_warning">Предупреждение</string>
-    <string name="update_subscription_warning">Прокси-сервер не подключен, вы уверены, что хотите продолжить обновление\?</string>
+    <string name="update_subscription_warning">Прокси-сервер не подключён, вы уверены, что хотите продолжить обновление\?</string>
     <string name="ooc_subscription_token_invalid">Недействительный токен OOCv1</string>
     <string name="download">Скачать</string>
     <string name="install_from_fdroid">Установить с F-Droid</string>
@@ -165,7 +164,7 @@
     <string name="append_http_proxy_sum">HTTP-прокси будет использоваться напрямую из (браузера / некоторых поддерживаемых приложений), без использования виртуального сетевого интерфейса (Android 10+)</string>
     <string name="append_http_proxy">Добавить HTTP-прокси к VPN</string>
     <string name="connection_test_timeout">Тайм-аут</string>
-    <string name="connection_test_unreachable">Недоступен</string>
+    <string name="connection_test_unreachable">Недоступно</string>
     <string name="connection_test_refused">В соединении отказано</string>
     <string name="connection_test_domain_not_found">Домен не найден</string>
     <string name="connection_test_icmp_ping_unavailable">ICMPing недоступен</string>
@@ -175,7 +174,7 @@
     <string name="clear_traffic_statistics">Очистить статистику трафика</string>
     <string name="always_show_address_sum">Всегда отображать адрес сервера на карте конфигурации</string>
     <string name="always_show_address">Всегда показывать адрес</string>
-    <string name="unavailable">Недоступен</string>
+    <string name="unavailable">Недоступно</string>
     <string name="standard">Стандарт</string>
     <string name="probe_interval">Интервал наблюдения балансировщика</string>
     <string name="api_port">Порт API</string>
@@ -189,13 +188,13 @@
     <string name="follow_system">Использовать системную тему</string>
     <string name="night_mode">Ночной режим</string>
     <string name="lines">%d строк</string>
-    <string name="route_warn">Перед добавлением собственных правил убедитесь, что вы прочитали документацию, иначе подключение к Интернету может не удасться.</string>
+    <string name="route_warn">Перед добавлением собственных правил убедитесь, что вы прочитали документацию, иначе подключение к Интернету может не удаться.</string>
     <string name="license">Лицензия</string>
     <string name="restart">Перезагрузите прокси-сервис, чтобы применить изменения</string>
     <string name="apply">Применить</string>
     <string name="no">Нет</string>
     <string name="yes">Да</string>
-    <string name="unsaved_changes_prompt">Есть несохраненные изменения. Сохранить\?</string>
+    <string name="unsaved_changes_prompt">Есть несохранённые изменения. Сохранить\?</string>
     <string name="ss_cat">Настройки Shadowsocks</string>
     <string name="proxy_cat">Настройки сервера</string>
     <string name="plugin_auto_connect_unlock_only">Этот плагин может не работать с автоподключением</string>
@@ -216,11 +215,11 @@
     <string name="error_title">Ошибка</string>
     <string name="cleartext_http_warning">Передача HTTP-трафика в виде открытого текста небезопасна</string>
     <string name="subscriptions">Подписки</string>
-    <string name="not_connected">Не подключен</string>
-    <string name="vpn_connected">Подключено, нажмите, чтобы проверить подключение</string>
+    <string name="not_connected">Не подключено</string>
+    <string name="vpn_connected">Подключено, нажмите для проверки</string>
     <string name="connecting">Подключение…</string>
     <string name="deprecated">Устарело</string>
-    <string name="insecure">Ненадежный</string>
+    <string name="insecure">Ненадёжный</string>
     <string name="insecure_warn_sum">Предоставлено сообществом разработчиков Qv2ray</string>
     <string name="insecure_warn">Советы по безопасности</string>
     <string name="undo">Отменить</string>
@@ -230,7 +229,7 @@
     <string name="delete_confirm_prompt">Вы уверены, что хотите удалить этот профиль\?</string>
     <string name="delete">Удалить</string>
     <string name="profile_config">Конфигурация профиля</string>
-    <string name="file_manager_missing">На вашем устройстве отсутствует стандартный селектор файлов Android, установите его, например Material Files.</string>
+    <string name="file_manager_missing">На вашем устройстве отсутствует стандартный выбор файлов Android, установите его, например, Material Files.</string>
     <string name="action_import_err">Не удалось импортировать.</string>
     <string name="action_import_msg">Успешно импортировано!</string>
     <string name="action_export_err">Не удалось экспортировать.</string>
@@ -282,7 +281,7 @@
     <string name="invert_selections">Инвертировать выбор</string>
     <string name="scanning">Сканирование…</string>
     <string name="search_apps">Поиск…</string>
-    <string name="off">Выключенный</string>
+    <string name="off">Выключено</string>
     <string name="on">Включено</string>
     <string name="proxied_apps_summary">Настроить режим VPN для выбранных приложений</string>
     <string name="proxied_apps">Режим VPN для приложений</string>
@@ -328,7 +327,7 @@
     <string name="extra_headers">Дополнительные заголовки</string>
     <string name="encryption">Шифрование</string>
     <string name="early_data_header_name">Имя заголовка ранних данных</string>
-    <string name="pinned_peer_certificate_chain_sha256">Цепочка закрепленных сертификатов</string>
+    <string name="pinned_peer_certificate_chain_sha256">Цепочка закреплённых сертификатов</string>
     <string name="certificates">Сертификаты</string>
     <string name="alpn">Согласование протокола уровня приложений</string>
     <string name="sni">Server Name Indication (SNI)</string>
@@ -347,15 +346,15 @@
     <string name="protocol_param">Параметры протокола</string>
     <string name="username_opt">Имя пользователя (необязательно)</string>
     <string name="speed">%s/с</string>
-    <string name="hysteria_download_mbps">Максимальная скорость загрузки (в Мбит / с)</string>
-    <string name="hysteria_upload_mbps">Максимальная скорость загрузки (в Мбит / с)</string>
+    <string name="hysteria_download_mbps">Максимальная скорость загрузки (в Мбит/с)</string>
+    <string name="hysteria_upload_mbps">Максимальная скорость загрузки (в Мбит/с)</string>
     <string name="hysteria_auth_payload">Полезные данные аутентификации</string>
     <string name="hysteria_auth_type">Тип аутентификации</string>
     <string name="hysteria_obfs">Обфускация пароля</string>
     <string name="experimental_no_termination_signal">Не отправлять одинарный дуплексный сигнал завершения соединения для TCP-соединения при передаче через VMess. Это нарушит работу некоторых приложений.</string>
     <string name="experimental_authenticated_length">Сделать длину каждого сегмента полезной нагрузки постоянной. Этот эксперимент требует, чтобы сервер и клиент использовали одну и ту же версию v2ray-core. Ожидаются новые важные обновления по этому эксперименту.</string>
-    <string name="experimental_settings">Экспериментальный</string>
-    <string name="route_need_vpn">Правило маршрутизации `%s` зависит от VPN, поэтому игнорируется.</string>
+    <string name="experimental_settings">Экспериментально</string>
+    <string name="route_need_vpn">Правило маршрутизации \"%s\" зависит от VPN, поэтому игнорируется.</string>
     <string name="route_for">Правило для %s</string>
     <string name="app_no_launcher">У приложения нет интерфейса.</string>
     <string name="copy_failed">Не удалось скопировать.</string>
@@ -379,12 +378,12 @@
     <string name="group_order_origin">По происхождению</string>
     <string name="group_order">Сортировка</string>
     <string name="hysteria_connection_receive_window">Окно получения соединения QUIC</string>
-    <string name="hysteria_stream_receive_window">Окно приема потока QUIC</string>
+    <string name="hysteria_stream_receive_window">Окно приёма потока QUIC</string>
     <string name="menu_traffic">Трафик</string>
     <string name="no_statistics">Статистики пока нет</string>
     <string name="traffic_statistics_summary">Может увеличить потребление энергии</string>
     <string name="clear_logcat">Очистить Logcat</string>
-    <string name="menu_log">Логи</string>
+    <string name="menu_log">Журналы</string>
     <string name="menu_tools">Инструменты</string>
     <string name="translate_platform">Платформа локализации</string>
     <string name="ssh_private_key_passphrase">Парольная фраза закрытого ключа</string>
@@ -406,7 +405,7 @@
     <string name="destination_override">Переопределять адрес назначения</string>
     <string name="resolve_destination_summary">Если адрес назначения является доменом, то он передается в соответствии со стратегией IPv6.</string>
     <string name="destination_override_summary">Использовать перехваченный домен для переопределения адреса назначения, а не только для маршрутизации</string>
-    <string name="pcap_notice">Pcap файлы будут сохранены в %s</string>
+    <string name="pcap_notice">Pcap-файлы будут сохранены в %s</string>
     <string name="route_play_store">Правило Play Store для %s</string>
     <string name="probe_url">Пользовательский URL-адрес проверки подключения</string>
     <string name="route_opt_block_analysis">Блокировать аналитику</string>
@@ -431,21 +430,21 @@
     <string name="disable_dns_expire_summary">Игнорировать TTL кэша DNS до перезапуска.</string>
     <string name="stun_test_summary">Определить поведение сопоставления адресов NAT и поведение фильтрации NAT в соответствии с RFC 5780 при помощи STUN.</string>
     <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) - это бесплатный провайдер WireGuard VPN. Используя его, вы соглашаетесь с [условиями использования](https://www.cloudflare.com/application/terms/).</string>
-    <string name="nat_filtering_endpoint_independent">`Endpoint-Independent Mapping`
+    <string name="nat_filtering_endpoint_independent">\"Endpoint-Independent Mapping\"
 \n
-\nЭто самое разрешающее поведение NAT из трех вариантов. Как только вы отправили UDP-пакет куда-либо по другую сторону NAT, все хосты по ту сторону NAT могут отправлять UDP-пакеты обратно вам на этот порт. Эта политика фильтрации вызывает ночные кошмары у сисадминов, но RFC 4787 рекомендует использовать ее, когда передача данных в реальном времени (или другие вещи, требующие прозрачности приложений, например, игры) является приоритетной. Обратите внимание, что данное поведение не очень хорошо компенсирует неверную настройку NAT. Правильная настройка поведения сопоставления адресов играет более важную роль.</string>
-    <string name="nat_filtering_address_dependent">`Address-Dependent Mapping`
+\nЭто самое разрешающее поведение NAT из трёх вариантов. Как только вы отправили UDP-пакет куда-либо по другую сторону NAT, все хосты по ту сторону NAT могут отправлять UDP-пакеты обратно вам на этот порт. Эта политика фильтрации вызывает ночные кошмары у системных администраторов, но RFC 4787 рекомендует использовать её, когда передача данных в реальном времени (или другие вещи, требующие прозрачности приложений, например, игры) является приоритетной. Обратите внимание, что данное поведение не очень хорошо компенсирует неверную настройку NAT. Правильная настройка поведения сопоставления адресов играет более важную роль.</string>
+    <string name="nat_filtering_address_dependent">\"Address-Dependent Mapping\"
 \n
-\nЭто золотая середина, которую системным администраторам легче обосновать, но, из моего опыта, это поведение сложнее настроить. Как только вы отправили UDP пакет на узел по другую сторону NAT, после этого NAT разрешит обратный UDP трафик с этого узла, независимо от порта, с которого он отправляет, но не разрешит входящий UDP трафик с других адресов. Если поведение сопоставления адресов настроено должным образом, то оно должно работать так же хорошо, как и `Endpoint-Independent Mapping`.</string>
-    <string name="nat_mapping_endpoint_independent">`%s`
+\nЭто золотая середина, которую системным администраторам легче обосновать, но, из моего опыта, это поведение сложнее настроить. Как только вы отправили UDP пакет на узел по другую сторону NAT, после этого NAT разрешит обратный UDP трафик с этого узла, независимо от порта, с которого он отправляет, но не разрешит входящий UDP трафик с других адресов. Если поведение сопоставления адресов настроено должным образом, то оно должно работать так же хорошо, как и \"Endpoint-Independent Mapping\".</string>
+    <string name="nat_mapping_endpoint_independent">\"%s\"
 \n
 \nЕсли вы отправите два UDP-пакета с одного и того же порта в разные места по другую сторону NAT, тогда NAT будет использовать один и тот же порт для отправки этих пакетов. Это единственное поведение сопоставления адресов, совместимое с RTC, и RFC 4787 требует этого в качестве наилучшей практики (REQ-1) на всех NAT. Если оба NAT используют это, ICE сможет подключаться напрямую, при всех описанных ниже способах фильтрации. Это самый важный параметр, который необходимо правильно настроить. Этот тип сопоставления адресов соответствует коническому NAT в классическом STUN, определенном в [RFC 3489 глава 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
-    <string name="nat_filtering_address_and_port_dependent">`Address and Port-Dependent Mapping`
+    <string name="nat_filtering_address_and_port_dependent">\"Address and Port-Dependent Mapping\"
 \n
-\nЭто самый ограничивающий из трех вариантов. Ваш NAT будет разрешать обратный трафик только с того места, куда вы отправили UDP пакет. Использовать его ***не рекомендуется***, даже если вы правильно настроите поведение сопоставления, потому что он будет плохо работать, если другой NAT неправильно настроен (довольно частое явление).</string>
-    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
+\nЭто самый ограничивающий из трёх вариантов. Ваш NAT будет разрешать обратный трафик только с того места, куда вы отправили UDP пакет. Использовать его ***не рекомендуется***, даже если вы правильно настроите поведение сопоставления, потому что он будет плохо работать, если другой NAT неправильно настроен (довольно частое явление).</string>
+    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">\"%s\"
 \n
-\nЕсли вы отправите два UDP-пакета с одного и того же порта в разные места по другую сторону NAT, тогда NAT будет использовать один и тот же порт для отправки этих пакетов, если адрес назначения один и тот же; порт назначения не имеет значения. При отправке на два разных хоста будут использоваться разные порты. Это потребует использования сервера TURN, если обе стороны используют данный метод, за исключением случаев, когда ни одна из сторон не выполняет фильтрацию по конкретным портам, и по крайней мере одна сторона выполняет `Endpoint-Independent Filtering`. Если вам нужен webrtc или что-то еще, использующее P2P UDP сети, ***не настраивайте ваш NAT таким образом***. Этот тип сопоставления адресов (в общих чертах) соответствует симметричным NAT в классическом STUN, определенном в [RFC 3489 глава 5] (https://tools.ietf.org/html/rfc3489#section-5).</string>
+\nЕсли вы отправите два UDP-пакета с одного и того же порта в разные места по другую сторону NAT, тогда NAT будет использовать один и тот же порт для отправки этих пакетов, если адрес назначения один и тот же; порт назначения не имеет значения. При отправке на два разных хоста будут использоваться разные порты. Это потребует использования сервера TURN, если обе стороны используют данный метод, за исключением случаев, когда ни одна из сторон не выполняет фильтрацию по конкретным портам, и по крайней мере одна сторона выполняет \"Endpoint-Independent Filtering\". Если вам нужен webrtc или что-то ещё, использующее P2P UDP сети, ***не настраивайте ваш NAT таким образом***. Этот тип сопоставления адресов (в общих чертах) соответствует симметричным NAT в классическом STUN, определённом в [RFC 3489 глава 5] (https://tools.ietf.org/html/rfc3489#section-5).</string>
     <string name="route_ssid">Wi-Fi SSID</string>
     <string name="missing_permission">Отсутствует разрешение</string>
     <string name="location_disabled">Местоположение отключено</string>
@@ -454,9 +453,9 @@
     <string name="network_wifi">Wi-Fi</string>
     <string name="network_bt">Bluetooth</string>
     <string name="network_eth">Ethernet</string>
-    <string name="route_need_ssid">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого необходимо **разрешение на определение местоположения в фоне** и **включенное определение местоположения** на Android 8.0 или выше</string>
+    <string name="route_need_ssid">Правило маршрутизации \"%s\" требует доступа к вашему **Wi-Fi SSID**, но для этого необходимо **разрешение на определение местоположения в фоне** и **включенное определение местоположения** на Android 8.0 или выше</string>
     <string name="tools_network">Сеть</string>
-    <string name="backup">Бэкап</string>
+    <string name="backup">Резервирование</string>
     <string name="backup_rules">Правила маршрутизации</string>
     <string name="backup_settings">Настройки</string>
     <string name="backup_not_file">Не файл резервной копии: ожидался .json, а не %s</string>
@@ -472,7 +471,7 @@
     <string name="auto_mtu_summary">Использовать MTU восходящего сетевого интерфейса</string>
     <string name="experimental_reduced_iv_head_entropy">Это предложение GFWReport по контрмерам блокировке потоковых протоколов случайных данных, наблюдаемой на GFW.
 \n
-\nЭта опция заменяет первые 6 байт вектора инициализации на буквенные символы, что позволяет кому угодно в сети провайдера идентифицировать протокол когда опция включена.</string>
+\nЭта функция заменяет первые 6 байт вектора инициализации на буквенные символы, что позволяет кому угодно в сети провайдера идентифицировать протокол когда функция включена.</string>
     <string name="tasker_action_start_service">Запустить сервис</string>
     <string name="tasker_start_current_profile">Текущий профиль</string>
     <string name="tasker_blurb_start_profile">Запустить профиль %s</string>
@@ -481,10 +480,29 @@
     <string name="mtu">MTU</string>
     <string name="root_ca_system">Система</string>
     <string name="packet_encoding">Кодирование пакетов</string>
-    <string name="tasker_settings">Настройки Заданий</string>
+    <string name="tasker_settings">Настройки заданий</string>
     <string name="tasker_action">Действие</string>
     <string name="action_switch">Переключить</string>
     <string name="acquire_wake_lock">Получить WakeLock</string>
     <string name="release_wake_lock">Освободить WakeLock</string>
     <string name="acquire_wake_lock_summary">Сохранять CPU включённым</string>
+    <string name="hysteria_disable_mtu_discovery">Отключить обнаружение пути MTU</string>
+    <string name="disconnect">Отключиться</string>
+    <string name="sai_succeed">Успешно установлено</string>
+    <string name="sai_error_generic">Установка не удалась</string>
+    <string name="sai">Установщик раздельных APK</string>
+    <string name="flow">Алгоритм управления потоком</string>
+    <string name="sai_error_blocked">Установка была заблокирована %s</string>
+    <string name="sai_error_blocked_device">устройство</string>
+    <string name="sai_error_conflict">Невозможно установить приложение, потому что оно конфликтует с уже установленным приложением, имеющим то же имя пакета</string>
+    <string name="sai_error_incompatible">Приложение несовместимо с этим устройством</string>
+    <string name="sai_error_invalid">Недопустимые APK</string>
+    <string name="sai_error_storage">Недостаточно свободного места для установки приложения</string>
+    <string name="shizuku_unavailable">Shizuku недоступен</string>
+    <string name="udp_over_tcp">UDP поверх TCP</string>
+    <string name="udp_over_tcp_summary">Включение протокола SUoT требует поддержки со стороны сервера.</string>
+    <string name="without_brook_protocol">Без протокола Brook</string>
+    <string name="grpc_mode">Режим gRPC</string>
+    <string name="sai_error_aborted">Установка была отменена пользователем</string>
+    <string name="installer_provider">Провайдер установщика</string>
 </resources>

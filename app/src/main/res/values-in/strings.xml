@@ -92,7 +92,6 @@
     <string name="logcat">Ekspor informasi debug</string>
     <string name="version_x">Versi (%s)</string>
     <string name="app_version">Versi</string>
-    <string name="oss_licenses">Lisensi sumber terbuka</string>
     <string name="telegram">Channel Telegram</string>
     <string name="github">Kode sumber</string>
     <string name="project">Proyek</string>

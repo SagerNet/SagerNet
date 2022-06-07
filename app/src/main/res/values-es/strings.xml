@@ -89,7 +89,6 @@
     <string name="group_create">Crear grupo</string>
     <string name="group_edit_subscription">Editar subscripción</string>
     <string name="group_edit">Editar grupo</string>
-    <string name="oss_licenses">Licencias de código abierto</string>
     <string name="telegram">Canal de actualizaciones</string>
     <string name="ooc_missing_protocol">La suscripción requiere soporte para el protocolo %s, pero no se puede encontrar. Se ignorarán los perfiles no admitidos.</string>
     <string name="raw">Crudo</string>

@@ -4,7 +4,6 @@
     <string name="project">專案</string>
     <string name="github">原始碼</string>
     <string name="telegram">Telegram 更新頻道</string>
-    <string name="oss_licenses">開放原始碼授權協定</string>
     <string name="app_version">版本</string>
     <string name="logcat">匯出 debug 所需資訊</string>
     <string name="logcat_summary">這種非常有用啊(^O^)／</string>

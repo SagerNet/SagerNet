@@ -3,7 +3,6 @@
     <string name="logcat">Foutopsporing Informatie exporteren</string>
     <string name="version_x">Versie (%s)</string>
     <string name="app_version">Versie</string>
-    <string name="oss_licenses">Open source-licenties</string>
     <string name="telegram">Telegram-update kanaal</string>
     <string name="github">Broncode</string>
     <string name="project">Project</string>

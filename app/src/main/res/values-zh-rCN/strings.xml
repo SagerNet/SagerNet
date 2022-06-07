@@ -4,7 +4,6 @@
     <string name="project">项目</string>
     <string name="github">源代码</string>
     <string name="telegram">Telegram 更新频道</string>
-    <string name="oss_licenses">开放源代码协议</string>
     <string name="app_version">版本</string>
     <string name="logcat">导出调试信息</string>
     <string name="logcat_summary">这种非常有用哇</string>

@@ -11,7 +11,6 @@
     <string name="theme">主題</string>
     <string name="document">文件</string>
     <string name="project">項目</string>
-    <string name="oss_licenses">開放源碼授權條款</string>
     <string name="menu_group">分組</string>
     <string name="group_name">分組名稱</string>
     <string name="group_status_empty_subscription">尚未更新</string>

@@ -4,7 +4,6 @@
     <string name="logcat">디버그 정보 내보내기</string>
     <string name="version_x">버전(%s)</string>
     <string name="app_version">버전</string>
-    <string name="oss_licenses">오픈 소스 라이선스</string>
     <string name="telegram">텔레그램 업데이트 채널</string>
     <string name="github">소스 코드</string>
     <string name="project">프로젝트</string>
@@ -17,4 +16,43 @@
     <string name="menu_group">그룹</string>
     <string name="menu_configuration">구성</string>
     <string name="service_mode_vpn">VPN</string>
+    <string name="allow_access_sum">인바운드 서버를 0.0.0.0에 바인드</string>
+    <string name="group_changed">업데이트됨: 
+\n%s</string>
+    <string name="group_name_required">그룹 이름이 필요합니다</string>
+    <string name="group_diff">차이 (%s)</string>
+    <string name="cag_route">라우트 설정</string>
+    <string name="general_settings">앱 설정</string>
+    <string name="group_edit_subscription">구독 편집</string>
+    <string name="group_status_proxies">프록시 %d개</string>
+    <string name="group_duplicate">복제함: 
+\n%s</string>
+    <string name="group_status_empty">빈 그룹</string>
+    <string name="port_proxy">SOCKS5 프록시 포트</string>
+    <string name="service_mode">서비스 모드</string>
+    <string name="group_name">그룹 이름</string>
+    <string name="group_show_diff">차이</string>
+    <string name="ws_browser_forwarding">브라우저 포워딩</string>
+    <string name="port_transproxy">Transproxy 포트</string>
+    <string name="require_http">HTTP 인바운드 활성화</string>
+    <string name="group_subscription_link">구독 링크</string>
+    <string name="menu_traffic">트래픽</string>
+    <string name="group_update">업데이트</string>
+    <string name="group_updated">%s: 프록시 %d개 업데이트</string>
+    <string name="group_no_difference">%s: 차이 없음</string>
+    <string name="group_create">그룹 생성</string>
+    <string name="group_create_subscription">구독 생성</string>
+    <string name="group_edit">그룹 편집</string>
+    <string name="group_status_empty_subscription">아직 업데이트되지 않음</string>
+    <string name="group_status_proxies_subscription">프록시 %d개 | %s 업데이트</string>
+    <string name="group_delete_confirm_prompt">이 그룹을 정말로 제거하시겠습니까\?</string>
+    <string name="group_added">추가됨: 
+\n%s</string>
+    <string name="group_deleted">삭제됨: 
+\n%s</string>
+    <string name="service_mode_proxy">프록시 전용</string>
+    <string name="port_http">HTTP 프록시 포트</string>
+    <string name="allow_access">LAN에서의 연결을 허용</string>
+    <string name="inbound_settings">인바운드 설정</string>
+    <string name="cag_ws">웹 소켓 설정</string>
 </resources>

@@ -11,7 +11,6 @@
     <string name="logcat">Exportar informações de depuração</string>
     <string name="version_x">Versão (%s)</string>
     <string name="app_version">Versão</string>
-    <string name="oss_licenses">Licenças de código aberto</string>
     <string name="telegram">Canal de atualização do telegram</string>
     <string name="github">Código fonte</string>
     <string name="project">Projeto</string>
