@@ -196,7 +196,15 @@ fun buildV2RayConfig(
             servers.addAll(remoteDns.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
-                        address = if (it.contains("://")) it else "udp://$it"
+                        var url = it
+                        if (it != "localhost") {
+                            val lnk = Libcore.parseURL(it)
+                            if (lnk.scheme.isBlank()) {
+                                lnk.scheme = "udp"
+                            }
+                            url = lnk.string
+                        }
+                        address = url
                         concurrency = true
                     }
                 }
