@@ -172,7 +172,7 @@ data class ProxyEntity(
         output.writeString(error)
 
         val data = KryoConverters.serialize(requireBean())
-        output.writeVarInt(data.size,true)
+        output.writeVarInt(data.size, true)
         output.writeBytes(data)
 
         output.writeBoolean(dirty)
@@ -275,7 +275,6 @@ data class ProxyEntity(
     fun haveLink(): Boolean {
         return when (type) {
             TYPE_CHAIN -> false
-            TYPE_CONFIG -> false
             TYPE_BALANCER -> false
             else -> true
         }
@@ -284,6 +283,7 @@ data class ProxyEntity(
     fun haveStandardLink(): Boolean {
         return haveLink() && when (type) {
             TYPE_RELAY_BATON, TYPE_BROOK, TYPE_SSH, TYPE_WG, TYPE_HYSTERIA -> false
+            TYPE_CONFIG -> false
             else -> true
         }
     }
@@ -367,7 +367,7 @@ data class ProxyEntity(
     }
 
     fun needUoT(): Boolean {
-        return when(type) {
+        return when (type) {
             TYPE_NAIVE -> naiveBean!!.uot
             else -> false
         }
