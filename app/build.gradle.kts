@@ -34,8 +34,8 @@ dependencies {
     compileOnly(project(":library:stub"))
     implementation(project(":library:include"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2")
+    implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.fragment:fragment-ktx:1.4.1")
     implementation("androidx.browser:browser:1.4.0")
@@ -44,7 +44,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.2")
     implementation("androidx.navigation:navigation-ui-ktx:2.4.2")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.work:work-multiprocess:2.7.1")
 
