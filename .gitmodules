@@ -31,3 +31,6 @@
 [submodule "external/termux-view"]
 	path = external/termux-view
 	url = https://github.com/SagerNet/termux-view
+[submodule "plugin/dnstt/src/main/go/dnstt"]
+	path = plugin/dnstt/src/main/go/dnstt
+	url = https://repo.or.cz/dnstt.git

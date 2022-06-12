@@ -136,6 +136,31 @@ jobs:
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin pingtunnel
+  dnstt:
+    name: Native Build (DNSTT)
+    runs-on: ubuntu-latest
+    needs:
+      - setup
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'plugin/dnstt/*' > pt_status
+      - name: dnstt Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            plugin/dnstt/src/main/jniLibs
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/dnstt/*', 'pt_status') }}
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run plugin dnstt
   relaybaton:
     name: Native Build (RelayBaton)
     runs-on: ubuntu-latest
