@@ -36,7 +36,7 @@ public class ShadowsocksBean extends AbstractBean {
     public String password;
     public String plugin;
     public Boolean uot;
-
+    public Boolean encryptedProtocolExtension;
     public Boolean experimentReducedIvHeadEntropy;
 
     @Override
@@ -48,18 +48,20 @@ public class ShadowsocksBean extends AbstractBean {
         if (password == null) password = "";
         if (plugin == null) plugin = "";
         if (uot == null) uot = false;
+        if (encryptedProtocolExtension == null) encryptedProtocolExtension = false;
         if (experimentReducedIvHeadEntropy == null) experimentReducedIvHeadEntropy = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeString(method);
         output.writeString(password);
         output.writeString(plugin);
         output.writeBoolean(experimentReducedIvHeadEntropy);
         output.writeBoolean(uot);
+        output.writeBoolean(encryptedProtocolExtension);
     }
 
     @Override
@@ -74,6 +76,9 @@ public class ShadowsocksBean extends AbstractBean {
         }
         if (version >= 2) {
             uot = input.readBoolean();
+        }
+        if (version >= 3) {
+            encryptedProtocolExtension = input.readBoolean();
         }
     }
 

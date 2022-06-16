@@ -61,7 +61,11 @@
             app:summary="@string/experimental_reduced_iv_head_entropy"
             app:title="ReducedIvHeadEntropy"
             app:useSimpleSummaryProvider="true" />
-
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="serverEncryptedProtocolExtension"
+            app:title="EncryptedProtocolExtension"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>

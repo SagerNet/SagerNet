@@ -605,6 +605,7 @@ public class V2RayConfig {
             public String email;
             public Boolean uot;
             public Boolean experimentReducedIvHeadEntropy;
+            public Boolean encryptedProtocolExtension;
 
         }
 

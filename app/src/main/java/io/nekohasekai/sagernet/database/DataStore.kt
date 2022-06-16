@@ -275,6 +275,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverUoT by profileCacheStore.boolean(Key.SERVER_UDP_OVER_TCP)
     var serverWithoutBrookProtocol by profileCacheStore.boolean(Key.SERVER_WITHOUT_BROOK_PROTOCOL)
     var serverGrpcMode by profileCacheStore.string(Key.SERVER_GRPC_MODE)
+    var serverEncryptedProtocolExtension by profileCacheStore.boolean(Key.SERVER_ENCRYPTED_PROTOCOL_EXTENSION)
 
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)

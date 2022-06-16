@@ -748,6 +748,9 @@ fun buildV2RayConfig(
                                                         if (bean.experimentReducedIvHeadEntropy) {
                                                             experimentReducedIvHeadEntropy = true
                                                         }
+                                                        if (bean.encryptedProtocolExtension) {
+                                                            encryptedProtocolExtension = true
+                                                        }
                                                     }
                                                     is ShadowsocksRBean -> {
                                                         method = bean.method
