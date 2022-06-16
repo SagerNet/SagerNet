@@ -278,12 +278,11 @@ class AssetsActivity : ThemedActivity() {
         var fileName = file.name
         if (DataStore.rulesProvider == 0) {
             if (file.name == internalFiles[0]) {
-                repo = "SagerNet/geoip"
+                repo = "v2fly/geoip"
             } else {
                 repo = "v2fly/domain-list-community"
-                fileName = "dlc.dat"
+                fileName = "dlc.dat.xz"
             }
-            fileName = "$fileName.xz"
         } else {
             repo = "Loyalsoldier/v2ray-rules-dat"
         }

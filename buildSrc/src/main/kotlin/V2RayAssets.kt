@@ -14,20 +14,18 @@ fun Project.downloadAssets() {
     val downloader = OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build()
 
     val github = GitHubBuilder().build()
-    val geoip = github.getRepository("SagerNet/geoip").latestRelease
+    val geoip = github.getRepository("v2fly/geoip").latestRelease
     val geoipFile = File(assets, "v2ray/geoip.dat.xz")
     val geoipVersion = File(assets, "v2ray/geoip.version.txt")
     if (!geoipVersion.isFile || geoipVersion.readText() != geoip.tagName) {
         geoipVersion.deleteRecursively()
         geoipFile.parentFile.mkdirs()
 
-        val geoipDat = (geoip.listAssets().toSet().find { it.name == geoipFile.name }
-            ?: error("${geoipFile.name} not found in ${geoip.assetsUrl}")).browserDownloadUrl
+        val geoipDat = (geoip.listAssets().toSet().find { it.name == "geoip.dat" }
+            ?: error("geoip.dat not found in ${geoip.assetsUrl}")).browserDownloadUrl
 
-        val sha256sum = (geoip.listAssets()
-            .toSet()
-            .find { it.name == "${geoipFile.name}.sha256sum" }
-            ?: error("${geoipFile.name}.sha256sum not found in ${geoip.assetsUrl}")).browserDownloadUrl
+        val sha256sum = (geoip.listAssets().toSet().find { it.name == "geoip.dat.sha256sum" }
+            ?: error("geoip.dat.sha256sum not found in ${geoip.assetsUrl}")).browserDownloadUrl
 
         println("Downloading $sha256sum ...")
 
@@ -71,8 +69,14 @@ fun Project.downloadAssets() {
                 continue
             }
 
-            geoipVersion.writeText(geoip.tagName)
+            val geoipBytes = geoipFile.readBytes()
+            geoipFile.outputStream().use { out ->
+                XZOutputStream(out, LZMA2Options(9)).use {
+                    it.write(geoipBytes)
+                }
+            }
 
+            geoipVersion.writeText(geoip.tagName)
             break
         }
     }
