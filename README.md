@@ -8,7 +8,19 @@ The universal proxy toolchain for Android, written in Kotlin.
 
 ---
 
-⚠️ **[The SagerNet app is looking for a new maintainer](https://github.com/SagerNet/SagerNet/issues/478)**
+⚠️ **The SagerNet app is looking for a new maintainer**
+
+Due to my physical condition, I may not be able to update SN / plugins in time.
+
+I am looking for a new maintainer for the project. The new maintainer should have a track record of successfully maintaining an open-source project.
+
+Potential maintainers can gain the required experience by contributing to this project. If you are interested, jump in and start contributing.
+
+If you rely on the quality and ongoing maintenance of this package, please get involved by helping to maintain this package or finding people to help maintain the project.
+
+---
+
+Note for spammers: We never stop maintaining.
 
 ---
 
