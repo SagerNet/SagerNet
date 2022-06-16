@@ -118,6 +118,7 @@ public class TrojanGoBean extends AbstractBean {
         if (path == null) path = "";
         if (StrUtil.isBlank(encryption)) encryption = "none";
         if (plugin == null) plugin = "";
+        if (allowInsecure == null) allowInsecure = false;
     }
 
     @Override
