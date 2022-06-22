@@ -75,11 +75,9 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
         val requestIgnoreBatteryOptimizations = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { (resultCode, _) ->
-            if (resultCode == Activity.RESULT_OK) {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.about_fragment_holder, AboutContent())
-                    .commitAllowingStateLoss()
-            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.about_fragment_holder, AboutContent())
+                .commitAllowingStateLoss()
         }
 
         override fun getMaterialAboutList(activityContext: Context): MaterialAboutList {
