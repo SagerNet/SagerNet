@@ -469,7 +469,6 @@ class BaseService {
         }
 
         fun persistStats() {
-            Logs.w(Exception())
             data.proxy?.persistStats()
             (this as? VpnService)?.persistAppStats()
         }

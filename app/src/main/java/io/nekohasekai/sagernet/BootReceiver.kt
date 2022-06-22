@@ -29,6 +29,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 
@@ -44,8 +45,10 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        runOnDefaultDispatcher {
-            SubscriptionUpdater.reconfigureUpdater()
+        if (intent.action != Intent.ACTION_LOCKED_BOOT_COMPLETED) runOnDefaultDispatcher {
+            runCatching {
+                SubscriptionUpdater.reconfigureUpdater()
+            }
         }
 
         if (!DataStore.persistAcrossReboot) {   // sanity check
