@@ -117,7 +117,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "libbrook:D",
                 "libhysteria:D",
                 "librelaybaton:D",
-                "*:E",
+                "*:S",
             )
         }
 
