@@ -39,12 +39,12 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     val profileCacheStore = RoomPreferenceDataStore(InMemoryDatabase.kvPairDao)
 
     fun init() {
-        if (Build.VERSION.SDK_INT >= 24) {
+        /*if (Build.VERSION.SDK_INT >= 24) {
             SagerNet.deviceStorage.moveDatabaseFrom(SagerNet.application, Key.DB_PUBLIC)
         }
         if (Build.VERSION.SDK_INT >= 24 && directBootAware && SagerNet.user.isUserUnlocked) {
             DirectBoot.flushTrafficStats()
-        }
+        }*/
     }
 
     var selectedProxy by configurationStore.long(Key.PROFILE_ID)
@@ -192,7 +192,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED)
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
-    val canToggleLocked: Boolean get() = configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
+    val canToggleLocked: Boolean get() = false//configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
     val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
 
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP) { false }
