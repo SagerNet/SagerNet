@@ -277,6 +277,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverGrpcMode by profileCacheStore.string(Key.SERVER_GRPC_MODE)
     var serverEncryptedProtocolExtension by profileCacheStore.boolean(Key.SERVER_ENCRYPTED_PROTOCOL_EXTENSION)
 
+    var serverUDPRelayMode by profileCacheStore.string(Key.SERVER_UDP_RELAY_MODE)
+    var serverCongestionController by profileCacheStore.string(Key.SERVER_CONGESTION_CONTROLLER)
+    var serverDisableSNI by profileCacheStore.boolean(Key.SERVER_DISABLE_SNI)
+    var serverReduceRTT by profileCacheStore.boolean(Key.SERVER_REDUCE_RTT)
+
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
     var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)

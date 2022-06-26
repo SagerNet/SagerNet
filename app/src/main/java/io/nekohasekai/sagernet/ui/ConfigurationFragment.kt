@@ -337,6 +337,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_mieru -> {
                 startActivity(Intent(requireActivity(), MieruSettingsActivity::class.java))
             }
+            R.id.action_new_tuic -> {
+                startActivity(Intent(requireActivity(), TuicSettingsActivity::class.java))
+            }
             R.id.action_new_ssh -> {
                 startActivity(Intent(requireActivity(), SSHSettingsActivity::class.java))
             }

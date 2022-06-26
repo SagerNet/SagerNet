@@ -20,6 +20,7 @@
       <w>libnaive</w>
       <w>libtrojan</w>
       <w>loyalsoldier</w>
+      <w>mieru</w>
       <w>naiveproxy</w>
       <w>nativeproxy</w>
       <w>naïve</w>
@@ -38,6 +39,7 @@
       <w>thiz</w>
       <w>tproxy</w>
       <w>transproxy</w>
+      <w>tuic</w>
       <w>uplink</w>
       <w>utls</w>
       <w>vless</w>

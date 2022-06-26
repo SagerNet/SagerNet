@@ -47,6 +47,7 @@ import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean;
+import io.nekohasekai.sagernet.fmt.tuic.TuicBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean;
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean;
@@ -175,6 +176,12 @@ public class KryoConverters {
     public static MieruBean mieruDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new MieruBean(), bytes);
+    }
+
+    @TypeConverter
+    public static TuicBean tuicDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new TuicBean(), bytes);
     }
 
     @TypeConverter

@@ -35,6 +35,8 @@ enum class PluginEntry(
     RelayBaton("relaybaton-plugin", R.string.action_relay_baton, "io.nekohasekai.sagernet.plugin.relaybaton"),
     Brook("brook-plugin", R.string.action_brook, "io.nekohasekai.sagernet.plugin.brook"),
     Hysteria("hysteria-plugin", R.string.action_hysteria, "io.nekohasekai.sagernet.plugin.hysteria", DownloadSource(fdroid = false)),
+    Mieru("mieru-plugin", R.string.action_mieru, "io.nekohasekai.sagernet.plugin.mieru", DownloadSource(fdroid = false)),
+    TUIC("tuic-plugin", R.string.action_tuic, "io.nekohasekai.sagernet.plugin.tuic", DownloadSource(fdroid = false)),
 
     // shadowsocks plugins
 

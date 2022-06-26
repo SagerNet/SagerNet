@@ -215,6 +215,7 @@
     <string name="action_ssh" translatable="false">SSH</string>
     <string name="action_wireguard" translatable="false">WireGuard</string>
     <string name="action_mieru" translatable="false">Mieru</string>
+    <string name="action_tuic" translatable="false">TUIC</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -530,5 +531,10 @@
     <string name="udp_over_tcp_summary">Enable the SUoT protocol, requires server support.</string>
     <string name="without_brook_protocol">Without Brook Protocol</string>
     <string name="grpc_mode">gRPC Mode</string>
+    <string name="tuic_token">Token</string>
+    <string name="tuic_udp_relay_mode">UDP Relay Mode</string>
+    <string name="tuic_congestion_controller">Congestion Controller</string>
+    <string name="tuic_disable_sni">Disable SNI</string>
+    <string name="tuic_reduce_rtt">Reduce RTT</string>
 
 </resources>

@@ -19,5 +19,6 @@
     <mapping directory="$PROJECT_DIR$/plugin/pingtunnel/src/main/go/pingtunnel" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/relaybaton/src/main/go/relaybaton" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/plugin/trojan-go/src/main/go/trojan-go" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/plugin/tuic/src/main/rust/tuic" vcs="Git" />
   </component>
 </project>

@@ -56,6 +56,8 @@ import io.nekohasekai.sagernet.fmt.trojan.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildCustomTrojanConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
+import io.nekohasekai.sagernet.fmt.tuic.TuicBean
+import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.*
@@ -147,6 +149,18 @@ abstract class V2RayInstance(
                     is MieruBean -> {
                         initPlugin("mieru-plugin")
                         pluginConfigs[port] = profile.type to bean.buildMieruConfig(port)
+                    }
+                    is TuicBean -> {
+                        initPlugin("tuic-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildTuicConfig(port) {
+                            File(
+                                app.noBackupFilesDir,
+                                "tuic_" + SystemClock.elapsedRealtime() + ".ca"
+                            ).apply {
+                                parentFile?.mkdirs()
+                                cacheFiles.add(this)
+                            }
+                        }
                     }
                     is ConfigBean -> {
                         when (bean.type) {
@@ -368,6 +382,24 @@ abstract class V2RayInstance(
 
                         val commands = mutableListOf(
                             initPlugin("mieru-plugin").path, "run_plugin"
+                        )
+
+                        processes.start(commands, env)
+                    }
+                    bean is TuicBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "tuic_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val commands = mutableListOf(
+                            initPlugin("tuic-plugin").path,
+                            "-c",
+                            configFile.absolutePath,
                         )
 
                         processes.start(commands, env)

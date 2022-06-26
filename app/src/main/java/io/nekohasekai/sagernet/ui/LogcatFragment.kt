@@ -117,6 +117,8 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 "libbrook:D",
                 "libhysteria:D",
                 "librelaybaton:D",
+                "libmieru:D",
+                "libtuic:D",
                 "*:S",
             )
         }
@@ -155,8 +157,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 val context = requireContext()
 
                 runOnDefaultDispatcher {
-                    val logFile = File.createTempFile(
-                        "SagerNet ",
+                    val logFile = File.createTempFile("SagerNet ",
                         ".log",
                         File(app.cacheDir, "log").also { it.mkdirs() })
 
