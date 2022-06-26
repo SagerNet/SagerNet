@@ -14,6 +14,7 @@ when {
         include(":plugin:brook")
         include(":plugin:trojan-go")
         include(":plugin:hysteria")
+        include(":plugin:mieru")
     }
     buildPlugin == "none" -> {
     }

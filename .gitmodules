@@ -31,3 +31,6 @@
 [submodule "external/termux-view"]
 	path = external/termux-view
 	url = https://github.com/SagerNet/termux-view
+[submodule "plugin/mieru/src/main/go/mieru"]
+	path = plugin/mieru/src/main/go/mieru
+	url = https://github.com/SagerNet/mieru

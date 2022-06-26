@@ -37,6 +37,7 @@ import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean;
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean;
 import io.nekohasekai.sagernet.fmt.internal.ChainBean;
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean;
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean;
 import io.nekohasekai.sagernet.fmt.relaybaton.RelayBatonBean;
@@ -168,6 +169,12 @@ public class KryoConverters {
     public static WireGuardBean wireguardDeserialize(byte[] bytes) {
         if (ArrayUtil.isEmpty(bytes)) return null;
         return deserialize(new WireGuardBean(), bytes);
+    }
+
+    @TypeConverter
+    public static MieruBean mieruDeserialize(byte[] bytes) {
+        if (ArrayUtil.isEmpty(bytes)) return null;
+        return deserialize(new MieruBean(), bytes);
     }
 
     @TypeConverter

@@ -43,6 +43,8 @@ import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.pingtunnel.PingTunnelBean
@@ -141,6 +143,10 @@ abstract class V2RayInstance(
                                 cacheFiles.add(this)
                             }
                         }
+                    }
+                    is MieruBean -> {
+                        initPlugin("mieru-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildMieruConfig(port)
                     }
                     is ConfigBean -> {
                         when (bean.type) {
@@ -345,6 +351,24 @@ abstract class V2RayInstance(
                         if (bean.protocol == HysteriaBean.PROTOCOL_FAKETCP) {
                             commands.addAll(0, listOf("su", "-c"))
                         }
+
+                        processes.start(commands, env)
+                    }
+                    bean is MieruBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "mieru_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        env["MIERU_CONFIG_FILE"] = configFile.absolutePath
+
+                        val commands = mutableListOf(
+                            initPlugin("mieru-plugin").path, "run_plugin"
+                        )
 
                         processes.start(commands, env)
                     }

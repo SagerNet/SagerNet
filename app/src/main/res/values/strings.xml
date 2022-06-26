@@ -214,6 +214,7 @@
     <string name="action_hysteria" translatable="false">Hysteria</string>
     <string name="action_ssh" translatable="false">SSH</string>
     <string name="action_wireguard" translatable="false">WireGuard</string>
+    <string name="action_mieru" translatable="false">Mieru</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>

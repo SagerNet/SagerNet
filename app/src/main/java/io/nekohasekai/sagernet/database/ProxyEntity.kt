@@ -42,6 +42,8 @@ import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
@@ -67,6 +69,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ui.profile.*
@@ -98,6 +101,7 @@ data class ProxyEntity(
     var rbBean: RelayBatonBean? = null,
     var brookBean: BrookBean? = null,
     var hysteriaBean: HysteriaBean? = null,
+    var mieruBean: MieruBean? = null,
     var sshBean: SSHBean? = null,
     var wgBean: WireGuardBean? = null,
     var configBean: ConfigBean? = null,
@@ -122,6 +126,7 @@ data class ProxyEntity(
         const val TYPE_SNELL = 16
         const val TYPE_SSH = 17
         const val TYPE_WG = 18
+        const val TYPE_MIERU = 19
 
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14
@@ -214,6 +219,7 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
+            TYPE_MIERU -> mieruBean = KryoConverters.mieruDeserialize(byteArray)
 
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
@@ -238,6 +244,8 @@ data class ProxyEntity(
         TYPE_SNELL -> "Snell"
         TYPE_SSH -> "SSH"
         TYPE_WG -> "WireGuard"
+        TYPE_MIERU -> "Mieru"
+
         TYPE_CHAIN -> chainName
         TYPE_CONFIG -> configName
         TYPE_BALANCER -> balancerName
@@ -264,6 +272,7 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> hysteriaBean
             TYPE_SSH -> sshBean
             TYPE_WG -> wgBean
+            TYPE_MIERU -> mieruBean
 
             TYPE_CONFIG -> configBean
             TYPE_CHAIN -> chainBean
@@ -282,7 +291,7 @@ data class ProxyEntity(
 
     fun haveStandardLink(): Boolean {
         return haveLink() && when (type) {
-            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_SSH, TYPE_WG, TYPE_HYSTERIA -> false
+            TYPE_RELAY_BATON, TYPE_BROOK, TYPE_SSH, TYPE_WG, TYPE_HYSTERIA, TYPE_MIERU -> false
             TYPE_CONFIG -> false
             else -> true
         }
@@ -307,6 +316,7 @@ data class ProxyEntity(
             is SSHBean -> toUniversalLink()
             is WireGuardBean -> toUniversalLink()
             is HysteriaBean -> toUniversalLink()
+            is MieruBean -> toUniversalLink()
             else -> null
         }
     }
@@ -331,19 +341,33 @@ data class ProxyEntity(
                         when (val bean = profile.requireBean()) {
                             is TrojanGoBean -> {
                                 append("\n\n")
-                                append(bean.buildTrojanGoConfig(port, needMux))
+                                append(bean.buildTrojanGoConfig(port, needMux).also {
+                                    Logs.d(it)
+                                })
                             }
                             is NaiveBean -> {
                                 append("\n\n")
-                                append(bean.buildNaiveConfig(port))
+                                append(bean.buildNaiveConfig(port).also {
+                                    Logs.d(it)
+                                })
                             }
                             is RelayBatonBean -> {
                                 append("\n\n")
-                                append(bean.buildRelayBatonConfig(port))
+                                append(bean.buildRelayBatonConfig(port).also {
+                                    Logs.d(it)
+                                })
                             }
                             is HysteriaBean -> {
                                 append("\n\n")
-                                append(bean.buildHysteriaConfig(port, null))
+                                append(bean.buildHysteriaConfig(port, null).also {
+                                    Logs.d(it)
+                                })
+                            }
+                            is MieruBean -> {
+                                append("\n\n")
+                                append(bean.buildMieruConfig(port).also {
+                                    Logs.d(it)
+                                })
                             }
                         }
                     }
@@ -361,6 +385,8 @@ data class ProxyEntity(
             TYPE_HYSTERIA -> true
             TYPE_RELAY_BATON -> true
             TYPE_BROOK -> true
+            TYPE_MIERU -> true
+
             TYPE_CONFIG -> true
             else -> false
         }
@@ -406,6 +432,7 @@ data class ProxyEntity(
         hysteriaBean = null
         sshBean = null
         wgBean = null
+        mieruBean = null
 
         configBean = null
         chainBean = null
@@ -472,6 +499,11 @@ data class ProxyEntity(
                 type = TYPE_WG
                 wgBean = bean
             }
+            is MieruBean -> {
+                type = TYPE_MIERU
+                mieruBean = bean
+            }
+
             is ConfigBean -> {
                 type = TYPE_CONFIG
                 configBean = bean
@@ -507,6 +539,7 @@ data class ProxyEntity(
                 TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
                 TYPE_SSH -> SSHSettingsActivity::class.java
                 TYPE_WG -> WireGuardSettingsActivity::class.java
+                TYPE_MIERU -> MieruSettingsActivity::class.java
 
                 TYPE_CONFIG -> ConfigSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java

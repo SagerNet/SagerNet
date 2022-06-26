@@ -688,4 +688,9 @@
         <item>raw</item>
     </string-array>
 
+    <string-array name="mieru_protocol">
+        <item>TCP</item>
+        <item>UDP</item>
+    </string-array>
+
 </resources>
