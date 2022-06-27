@@ -43,7 +43,9 @@ fun TuicBean.buildTuicConfig(port: Int, cacheFile: (() -> File)?): String {
             if (caText.isNotBlank() && cacheFile != null) {
                 val caFile = cacheFile()
                 caFile.writeText(caText)
-                it["certificate"] = caFile.absolutePath
+                it["certificates"] = JSONArray().apply {
+                    put(caFile.absolutePath)
+                }
             }
 
             it["udp_relay_mode"] = udpRelayMode
