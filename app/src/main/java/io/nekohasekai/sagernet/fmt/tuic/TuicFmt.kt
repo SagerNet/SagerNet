@@ -28,11 +28,11 @@ import java.io.File
 fun TuicBean.buildTuicConfig(port: Int, cacheFile: (() -> File)?): String {
     return JSONObject().also {
         it["relay"] = JSONObject().also {
-            if (serverAddress.isIpAddress()) {
-                it["server"] = finalAddress
-            } else if (sni.isNotBlank()) {
+            if (sni.isNotBlank()) {
                 it["server"] = sni
                 it["ip"] = finalAddress
+            } else if (serverAddress.isIpAddress()) {
+                it["server"] = finalAddress
             } else {
                 it["server"] = serverAddress
                 it["ip"] = finalAddress
@@ -43,7 +43,9 @@ fun TuicBean.buildTuicConfig(port: Int, cacheFile: (() -> File)?): String {
             if (caText.isNotBlank() && cacheFile != null) {
                 val caFile = cacheFile()
                 caFile.writeText(caText)
-                it["certificate"] = caFile.absolutePath
+                it["certificates"] = JSONArray().apply {
+                    put(caFile.absolutePath)
+                }
             }
 
             it["udp_relay_mode"] = udpRelayMode
