@@ -378,6 +378,8 @@ abstract class V2RayInstance(
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
+                        val plugin = initPlugin("mieru-plugin")
+
                         env["MIERU_CONFIG_JSON_FILE"] = configFile.absolutePath
 
                         val commands = mutableListOf(
