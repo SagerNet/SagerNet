@@ -27,7 +27,6 @@ import io.nekohasekai.sagernet.ktx.mkPort
 fun MieruBean.buildMieruConfig(port: Int): String {
     return JSONObject().also {
         it["activeProfile"] = "default"
-        it["rpcPort"] = 8964
         it["socks5Port"] = port
         it["loggingLevel"] = if (DataStore.enableLog) "DEBUG" else "WARN"
         it["profiles"] = JSONArray().apply {
