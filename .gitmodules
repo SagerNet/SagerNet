@@ -33,7 +33,7 @@
 	url = https://github.com/SagerNet/termux-view
 [submodule "plugin/mieru/src/main/go/mieru"]
 	path = plugin/mieru/src/main/go/mieru
-	url = https://github.com/SagerNet/mieru
+	url = https://github.com/enfein/mieru
 [submodule "plugin/tuic/src/main/rust/tuic"]
 	path = plugin/tuic/src/main/rust/tuic
 	url = https://github.com/EAimTY/tuic
