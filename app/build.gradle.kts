@@ -94,6 +94,6 @@ dependencies {
     implementation(project(":library:proto-stub"))
 //    implementation("io.grpc:grpc-okhttp:1.40.1")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
 

@@ -37,4 +37,5 @@
     <issue id="IntentFilterUniqueDataAttributes" severity="ignore" />
     <issue id="ObsoleteLintCustomCheck" severity="informational" />
     <issue id="Registered" severity="informational" />
+    <issue id="GradleDependency" severity="informational" />
 </lint>
