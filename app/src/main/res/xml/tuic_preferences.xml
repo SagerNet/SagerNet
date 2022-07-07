@@ -58,11 +58,10 @@
             app:key="serverSNI"
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <SwitchPreference
             app:icon="@drawable/baseline_flight_takeoff_24"
             app:key="serverReduceRTT"
-            app:title="@string/tuic_reduce_rtt"
-            app:useSimpleSummaryProvider="true" />
+            app:title="@string/tuic_reduce_rtt" />
         <EditTextPreference
             app:icon="@drawable/baseline_public_24"
             app:key="serverMTU"
