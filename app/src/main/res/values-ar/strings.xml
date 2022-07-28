@@ -360,7 +360,7 @@
     <string name="experimental_no_termination_signal">لا ترسل إشارة إنهاء اتصال فردية مزدوجة لاتصال TCP عند نقلها عبر VMess. سيؤدي هذا إلى كسر بعض التطبيقات.</string>
     <string name="experimental_authenticated_length">لم يعد طول كل شحنة مرنًا. يتطلب هذا الاختبار خادمًا ويستخدم العميل نفس إصدار v2ray-core. من المتوقع المزيد من التحديثات الفورية في هذا الاختبار.</string>
     <string name="experimental_settings">تجريبي</string>
-    <string name="route_need_vpn">تعتمد قاعدة التوجيه %s على أن تكون VPN سارية المفعول، لذلك يتم تجاهلها.</string>
+    <string name="route_need_vpn">تعتمد قاعدة التوجيه `%s` على أن تكون VPN سارية المفعول، لذلك يتم تجاهلها.</string>
     <string name="route_for">حكم ل %s</string>
     <string name="app_no_launcher">التطبيق ليس له واجهة.</string>
     <string name="copy_failed">فشل النسخ.</string>
@@ -378,7 +378,7 @@
     <string name="traffic_active">نشط</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (مكون أندرويد الإضافي Shadowsocks)</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (مكون أندرويد الإضافي Shadowsocks)</string>
-    <string name="plugin_exists_but_on_shit_system">يتطلب الملف التعریف %s المكوّن الإضافي %s، لكن بائع المعدات المملوكة لك (عادةً عمالقة المراقبة وصانع البرامج الضارة) تلاعب بجهاز أندرويد، مما يجعل المكون الإضافي غير قابل للاستخدام.</string>
+    <string name="plugin_exists_but_on_shit_system">يتطلب الملف الشخصي %s المكوّن الإضافي %s ، لكن بائع المعدات المملوكة لك (عادةً عمالقة المراقبة وصانع البرامج الضارة) تلاعب بجهاز أندرويد، مما يجعل المكوّن الإضافي غير قابل للاستخدام.</string>
     <string name="group_order_by_delay">عن طريق التأخير</string>
     <string name="group_order_by_name">بالاسم</string>
     <string name="group_order_origin">أصل</string>
@@ -397,4 +397,20 @@
     <string name="ssh_private_key">مفتاح خاص</string>
     <string name="ssh_public_key">المفتاح العمومي</string>
     <string name="ssh_auth_type_none">لا شيء</string>
+    <string name="probe_url">اختبار URL مخصص</string>
+    <string name="generating">توليد…</string>
+    <string name="route_play_store">قاعدة متجر Play لـ %s</string>
+    <string name="route_opt_block_analysis">تحليل الكتلة</string>
+    <string name="group_filter_owners">أصحاب</string>
+    <string name="app_statistics_disabled">تم تعطيل إحصاءات حركة مرور التطبيق</string>
+    <string name="profile_traffic_statistics">إحصائيات حركة المرور الشخصية</string>
+    <string name="profile_traffic_statistics_summary">عند تعطيله، لن يتم احتساب حركة المرور المستخدمة</string>
+    <string name="warp_license">[CloudFlare Warp] (https://blog.cloudflare.com/1111-warp-better-vpn/) هو مزود مجاني لـ WireGuard VPN. باستخدامه، فإنك توافق على [TOS] (https://www.cloudflare.com/application/terms/).</string>
+    <string name="flow">خوارزمية التحكم في التدفق</string>
+    <string name="app_traffic_statistics">إحصائيات حركة مرور التطبيق</string>
+    <string name="wireguard_local_address">العنوان المحلي</string>
+    <string name="wireguard_public_key">المفتاح العام للأقران</string>
+    <string name="wireguard_psk">مفتاح الأقران المشترك مسبقا</string>
+    <string name="warp_generate">توليد التكوين</string>
+    <string name="group_filter_owners_nf">لا يوجد مالكون في هذا الاشتراك</string>
 </resources>
