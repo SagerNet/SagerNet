@@ -34,15 +34,15 @@ dependencies {
     compileOnly(project(":library:stub"))
     implementation(project(":library:include"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.activity:activity-ktx:1.5.0")
-    implementation("androidx.fragment:fragment-ktx:1.5.0")
+    implementation("androidx.activity:activity-ktx:1.5.1")
+    implementation("androidx.fragment:fragment-ktx:1.5.1")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.5.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
@@ -81,9 +81,9 @@ dependencies {
         exclude(group = "com.google.guava", module = "guava")
     }
 
-    implementation("androidx.room:room-runtime:2.4.2")
-    kapt("androidx.room:room-compiler:2.4.2")
-    implementation("androidx.room:room-ktx:2.4.2")
+    implementation("androidx.room:room-runtime:2.4.3")
+    kapt("androidx.room:room-compiler:2.4.3")
+    implementation("androidx.room:room-ktx:2.4.3")
 
     implementation("editorkit:editorkit:2.0.0")
     implementation("editorkit:feature-editor:2.0.0")
