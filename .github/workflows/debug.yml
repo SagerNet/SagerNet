@@ -292,6 +292,6 @@ jobs:
           BUILD_PLUGIN: none
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/23.1.7779620" >> local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
           ./run init action library
           ./run lint

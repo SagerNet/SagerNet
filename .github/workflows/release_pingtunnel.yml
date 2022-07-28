@@ -76,7 +76,7 @@ jobs:
           BUILD_PLUGIN: pingtunnel
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/23.1.7779620" >> local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           ./run init action library
           ./gradlew :plugin:pingtunnel:assembleOssRelease
@@ -184,7 +184,7 @@ jobs:
           BUILD_PLUGIN: pingtunnel
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/23.1.7779620" >> local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           cat > service_account_credentials.json << EOF
           ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"

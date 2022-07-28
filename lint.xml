@@ -38,4 +38,6 @@
     <issue id="ObsoleteLintCustomCheck" severity="informational" />
     <issue id="Registered" severity="informational" />
     <issue id="GradleDependency" severity="informational" />
+    <issue id="NewApi" severity="informational" />
+    <issue id="StringFormatMatches" severity="informational" />
 </lint>
