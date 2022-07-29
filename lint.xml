@@ -16,6 +16,8 @@
     <issue id="DuplicateStrings" severity="ignore" />
     <issue id="ImpliedQuantity" severity="ignore" />
     <issue id="MissingQuantity" severity="ignore" />
+    <issue id="StringFormatMatches" severity="ignore" />
+    <issue id="ShowToast" severity="ignore" />
 
     <issue id="SelectableText" severity="ignore" />
     <issue id="InsecureBaseConfiguration" severity="ignore" />
@@ -39,5 +41,4 @@
     <issue id="Registered" severity="informational" />
     <issue id="GradleDependency" severity="informational" />
     <issue id="NewApi" severity="informational" />
-    <issue id="StringFormatMatches" severity="informational" />
 </lint>
