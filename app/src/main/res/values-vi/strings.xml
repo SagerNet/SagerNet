@@ -188,10 +188,12 @@
     <string name="root_ca_provider">Nhà cung cấp chứng chỉ Root CA</string>
     <string name="root_ca_system">Hệ thống</string>
     <string name="route_asset_updated">Đã cập nhật</string>
+    <string name="route_block">Chặn</string>
     <string name="route_bypass">Bỏ qua</string>
     <string name="route_manage_assets">Quản lý quy tắc</string>
     <string name="route_name">Tên quy tắc</string>
     <string name="route_opt_bypass_lan">Bỏ qua mạng LAN</string>
+    <string name="route_profile">Chọn cấu hình…</string>
     <string name="route_reset">Đặt lại</string>
     <string name="route_rules_official">Chính thức</string>
     <string name="route_rules_provider">Nhà cung cấp nội dung quy tắc</string>
@@ -199,6 +201,7 @@
     <string name="search_apps">Tìm kiếm…</string>
     <string name="security">Mã hóa lớp truyền tải</string>
     <string name="select_apps">Chọn ứng dụng</string>
+    <string name="select_profile">Chọn cấu hình</string>
     <string name="server_address">Máy chủ</string>
     <string name="server_port">Cổng</string>
     <string name="service_subscription">Dịch vụ cập nhật kênh đăng ký</string>
