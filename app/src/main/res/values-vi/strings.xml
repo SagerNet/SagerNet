@@ -25,6 +25,7 @@
     <string name="action_import_err">Không nhập được.</string>
     <string name="action_import_file">Nhập từ tệp</string>
     <string name="action_import_msg">Nhập thành công!</string>
+    <string name="action_open">Mở</string>
     <string name="action_settings">Cài đặt</string>
     <string name="action_tools">Công cụ</string>
     <string name="add_profile">Thêm cấu hình</string>
@@ -36,8 +37,8 @@
     <string name="always_show_address_sum">Luôn hiển thị địa chỉ máy chủ trên thẻ cấu hình</string>
     <string name="app_statistics_disabled">Thống kê lưu lượng truy cập ứng dụng bị vô hiệu hóa</string>
     <string name="app_traffic_statistics">Thống kê lưu lượng truy cập ứng dụng</string>
-    <string name="append_http_proxy">Nối HTTP Proxy vào VPN</string>
-    <string name="append_http_proxy_sum">Proxy HTTP sẽ được sử dụng trực tiếp từ (trình duyệt/một số ứng dụng được hỗ trợ) mà không cần thông qua thiết bị NIC ảo (Android 10+)</string>
+    <string name="append_http_proxy">Sử dụng Host của ứng dụng</string>
+    <string name="append_http_proxy_sum">Nếu tắt ứng dụng sẽ sử dụng Host mặc định của hệ thống</string>
     <string name="apply">Áp dụng</string>
     <string name="apps">Các ứng dụng</string>
     <string name="apps_message">%d Ứng dụng</string>
@@ -77,6 +78,11 @@
     <string name="connection_test_unreachable">Không thể truy cập</string>
     <string name="connection_test_url">Kiểm tra kết nối URL</string>
     <string name="connection_test_url_test">Kiểm tra URL</string>
+    <string name="copy_failed">Sao chép không thành công.</string>
+    <string name="copy_label">Sao chép tên</string>
+    <string name="copy_package_name">Sao chép tên gói</string>
+    <string name="copy_success">Sao chép thành công!</string>
+    <string name="create_rule">Tạo quy tắc</string>
     <string name="deduplication">Xoá trùng lặp</string>
     <string name="deduplication_sum">Loại bỏ các cấu hình trùng lặp khi cập nhật</string>
     <string name="destination_override">Ghi đè Đích</string>
@@ -85,6 +91,7 @@
     <string name="disable">Tắt</string>
     <string name="disable_dns_expire">Tắt DNS hết hạn</string>
     <string name="disable_dns_expire_summary">Bỏ qua DNS TTL cho đến khi khởi động lại.</string>
+    <string name="disconnect">Ngắt kết nối</string>
     <string name="dns_hosts">Viết lại tên miền</string>
     <string name="dns_routing_message">Giải quyết các miền trong các tuyến đường vòng bằng DNS trực tiếp. Lưu ý về khả năng rò rỉ DNS</string>
     <string name="domain_strategy">Chiến lược phân giải miền</string>
@@ -150,6 +157,9 @@
     <string name="no_proxies_found_in_file">Không tìm thấy máy chủ trong tệp</string>
     <string name="no_proxies_found_in_subscription">Không tìm thấy máy chủ trong kênh đăng ký</string>
     <string name="no_statistics">Chưa có thống kê</string>
+    <string name="open_app">Khởi chạy</string>
+    <string name="open_market">Mở Cửa hàng</string>
+    <string name="open_settings">Mở Cài đặt</string>
     <string name="packet_encoding">Mã hóa gói</string>
     <string name="password">Mật khẩu</string>
     <string name="password_opt">Mật khẩu (Tùy chọn)</string>
@@ -223,6 +233,7 @@
     <string name="tcp_keep_alive_interval">TCP giữ khoảng thời gian phân phối gói hoạt động</string>
     <string name="tools_network">Mạng</string>
     <string name="traffic_active">Hoạt động</string>
+    <string name="traffic_holder">Mở VPN để ghi lại thống kê lưu lượng</string>
     <string name="traffic_sniffing">Bật Sniffing</string>
     <string name="traffic_statistics_summary">Có thể làm tăng mức tiêu thụ điện năng</string>
     <string name="traffic_stats">Số liệu thống kê</string>
@@ -230,6 +241,7 @@
     <string name="transproxy_mode">Chế độ Transproxy</string>
     <string name="trojan_provider">Nhà cung cấp Trojan</string>
     <string name="tun_implementation">Thực hiện TUN</string>
+    <string name="udp_connections">%d Kết nối UDP</string>
     <string name="unsaved_changes_prompt">Các thay đổi chưa được lưu. Bạn có muốn lưu không?</string>
     <string name="update_settings">Cài đặt cập nhật</string>
     <string name="update_when_connected_only">Chỉ cập nhật khi được kết nối</string>
