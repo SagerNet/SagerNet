@@ -1,0 +1,97 @@
+name: Debug Build APK
+on:
+  - workflow_dispatch
+
+jobs:
+  libcore:
+    name: Native Build (LibCore)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status library/core > libcore_status
+      - name: LibCore Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/libcore.aar
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/core/*', 'libcore_status') }}
+      - name: Get latest go version
+        id: version
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo ::set-output name=go_version::$(curl -s https://raw.githubusercontent.com/actions/go-versions/main/versions-manifest.json | grep -oE '"version": "[0-9]{1}.[0-9]{1,}(.[0-9]{1,})?"' | head -1 | cut -d':' -f2 | sed 's/ //g; s/"//g')
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: ${{ steps.version.outputs.go_version }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.gradle
+          key: native-${{ hashFiles('**/*.gradle.kts') }}
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
+          ./run lib core
+  build:
+    name: Gradle Build
+    runs-on: ubuntu-latest
+    needs:
+      - libcore
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: |
+          git submodule status library/core > libcore_status
+      - name: LibCore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            app/libs/libcore.aar
+          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/core/*', 'libcore_status') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
+      - name: Debug Build
+        env:
+          BUILD_PLUGIN: none
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
+          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          ./run init action library
+          ./gradlew app:assembleOssRelease
+          APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk')
+          APK=$(dirname $APK)
+          echo "APK=$APK" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v2
+        with:
+          name: APKs
+          path: ${{ env.APK }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-ARM ${{ env.SHA256_ARM }}"
+          path: ${{ env.SUM_ARM }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-ARM64 ${{ env.SHA256_ARM64 }}"
+          path: ${{ env.SUM_ARM64 }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-X64 ${{ env.SHA256_X64 }}"
+          path: ${{ env.SUM_X64 }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "SHA256-X86 ${{ env.SHA256_X86 }}"
+          path: ${{ env.SUM_X86 }}
+
