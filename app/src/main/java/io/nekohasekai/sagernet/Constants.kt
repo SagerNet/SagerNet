@@ -19,7 +19,7 @@
 
 package io.nekohasekai.sagernet
 
-const val CONNECTION_TEST_URL = "https://api.v2fly.org/checkConnection.svgz"
+const val CONNECTION_TEST_URL = "https://www.google.com/generate_204"
 
 object Key {
 

@@ -269,7 +269,7 @@
 
     <PreferenceCategory app:title="@string/cag_misc">
         <io.nekohasekai.sagernet.widget.LinkPreference
-            app:defaultValue="https://api.v2fly.org/checkConnection.svgz"
+            app:defaultValue="https://www.google.com/generate_204"
             app:icon="@drawable/ic_baseline_cast_connected_24"
             app:key="connectionTestURL"
             app:title="@string/connection_test_url"
