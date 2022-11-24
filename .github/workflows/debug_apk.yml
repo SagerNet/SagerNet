@@ -43,6 +43,7 @@ jobs:
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs:
       - libcore
     steps:
@@ -63,6 +64,7 @@ jobs:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Debug Build
+        timeout-minutes: 10
         env:
           BUILD_PLUGIN: none
         run: |
