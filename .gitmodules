@@ -1,6 +1,6 @@
 [submodule "plugin/trojan-go/src/main/go/trojan-go"]
 	path = plugin/trojan-go/src/main/go/trojan-go
-	url = https://github.com/p4gefau1t/trojan-go
+	url = https://github.com/gfw-report/trojan-go
 [submodule "plugin/naive/src/main/jni/naiveproxy"]
 	path = plugin/naive/src/main/jni/naiveproxy
 	url = https://github.com/klzgrad/naiveproxy
