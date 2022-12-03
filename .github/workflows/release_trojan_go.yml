@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-go@v2
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.17.1
+          go-version: 1.19.2
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin trojan_go
