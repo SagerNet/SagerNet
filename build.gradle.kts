@@ -24,12 +24,16 @@ allprojects {
                 }
             }
         }
+		sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
         // optional parameters
         checkForGradleUpdate = false
         outputFormatter = "json"
         outputDir = "build/dependencyUpdates"
         reportfileName = "report"
     }
+	
+	
 }
 
 tasks.register<Delete>("clean") {
