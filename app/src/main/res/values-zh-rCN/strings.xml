@@ -486,4 +486,9 @@
     <string name="mtu">MTU</string>
     <string name="root_ca_provider">根证书提供商</string>
     <string name="root_ca_system">系统</string>
+    <string name="tuic_token">Token</string>
+    <string name="tuic_udp_relay_mode">UDP处理模式</string>
+    <string name="tuic_congestion_controller">拥塞控制</string>
+    <string name="tuic_disable_sni">不发送SNI</string>
+    <string name="tuic_reduce_rtt">0-RTT QUIC握手</string>
 </resources>
