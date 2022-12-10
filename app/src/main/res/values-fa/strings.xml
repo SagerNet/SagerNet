@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="show_stop">نمایش دکمۀ توقف</string>
+    <string name="show_stop">نمایش دکمه توقف</string>
     <string name="cag_misc">تنظیمات متفرقه</string>
-    <string name="speed_interval">فاصله بروزرسانی اعلان سرعت</string>
+    <string name="speed_interval">فاصله به‌روزرسانی آگاه‌سازی سرعت</string>
     <string name="ws_browser_forwarding_sum">هدایت وب‌سوکت مربوطه از طریق مرورگر.</string>
     <string name="ws_browser_forwarding">بازارسال مرورگر</string>
     <string name="cag_ws">تنظیمات وب‌سوکت</string>
@@ -32,7 +32,7 @@
     <string name="group_updated">%s: %d پروکسی به روز شد</string>
     <string name="group_no_difference">%s: تفاوتی ندارد</string>
     <string name="group_status_proxies_subscription">%d پروکسی | به روز شده در %s</string>
-    <string name="group_status_proxies">%d پروکسی ها</string>
+    <string name="group_status_proxies">%d پروکسی‌ها</string>
     <string name="group_status_empty_subscription">هنوز به روز نشده است</string>
     <string name="group_status_empty">گروه خالی</string>
     <string name="group_edit_subscription">ویرایش اشتراک</string>
@@ -41,7 +41,7 @@
     <string name="group_create">ایجاد گروه</string>
     <string name="group_name_required">نام گروه لازم است</string>
     <string name="group_subscription_link">لینک اشتراک</string>
-    <string name="group_update">بروزرسانی</string>
+    <string name="group_update">به‌روزرسانی</string>
     <string name="group_name">نام گروه</string>
     <string name="tile_title">تعویض کننده</string>
     <string name="quick_toggle">تغییر وضعیت</string>
@@ -53,7 +53,7 @@
     <string name="logcat">گرفتن گزارش اشکال‌زدایی</string>
     <string name="version_x">نسخه (%s)</string>
     <string name="app_version">نسخه</string>
-    <string name="telegram">کانال بروزرسانی ها در تلگرام</string>
+    <string name="telegram">کانال به‌روزرسانی‌ها در تلگرام</string>
     <string name="github">کد منبع</string>
     <string name="project">پروژه</string>
     <string name="app_desc">ابزار جهانی پروکسی برای اندروید، نوشته شده در کاتلین.</string>
@@ -81,9 +81,9 @@
     <string name="allow_insecure_sum">غیرفعال سازی بررسی گواهینامه امنیتی. در صورت فعال شدن این گزینه، تنظیمات فعلی امن نبوده و قابل شنود خواهند بود</string>
     <string name="allow_insecure">اجازه شکل گرفتن اتصال های غیرامن</string>
     <string name="security_settings">تنظیمات امنیتی</string>
-    <string name="show_direct_speed_sum">نمایش سرعت مستقیم (داده هایی که طبق مسیریابی خارج از پراکسی مسیریابی می شوند) در اعلانات</string>
+    <string name="show_direct_speed_sum">نمایش سرعت مستقیم (داده‌هایی که طبق مسیریابی خارج از پروکسی مسیریابی می‌شوند) در آگاه‌سازی</string>
     <string name="show_direct_speed">نمایش سرعت اتصال مستقیم</string>
-    <string name="show_stop_sum">در صورت عدم تمایل برای استفاده از دکمه نوار اعلان به عنوان سوییچ اتصال</string>
+    <string name="show_stop_sum">در صورت عدم تمایل برای استفاده از دکمه نوار آگاه‌سازی به عنوان سوییچ اتصال</string>
     <string name="server_port">پورت سرور</string>
     <string name="server_address">سرور</string>
     <string name="profile_name">نام پروفایل</string>
@@ -167,7 +167,7 @@
     <string name="route_warn">قبل از افزودن قوانین سفارشی فایروال، مطمئن شوید که مستندات را مطالعه کرده اید، در غیر این صورت ممکن است نتوانید به اینترنت متصل شوید.</string>
     <string name="license">مجوز</string>
     <string name="restart">سرویس پروکسی را دوباره راه اندازی کنید تا تغییرات اعمال شوند</string>
-    <string name="apply">اجرا کردن</string>
+    <string name="apply">اعمال کردن</string>
     <string name="no">نه</string>
     <string name="yes">بله</string>
     <string name="unsaved_changes_prompt">تغییرات ذخیره نشد. آیا می خواهید ذخیره کنید؟</string>
@@ -280,7 +280,7 @@
     <string name="route_opt_bypass_lan">بای‌پس LAN</string>
     <string name="route_not_asset">پرونده دارایی نیست: به استثنای .dat ، اما %s</string>
     <string name="route_asset_updated">به روز شده</string>
-    <string name="route_asset_no_update">بدون بروزرسانی</string>
+    <string name="route_asset_no_update">بدون به‌روزرسانی</string>
     <string name="route_asset_status">نسخه محلی: %s</string>
     <string name="route_rules_official">رسمی</string>
     <string name="route_rules_provider">قانون ارائه دهنده دارایی</string>

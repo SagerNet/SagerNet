@@ -359,4 +359,149 @@
     <string name="hysteria_auth_payload">Otentikasi Payload</string>
     <string name="experimental_settings">Eksperimental</string>
     <string name="flow">Algoritme kontrol aliran</string>
+    <string name="nat_filtering_behaviour">Perilaku penyaringan NAT</string>
+    <string name="auto_mtu">MTU Otomatis</string>
+    <string name="traffic_active">Aktif</string>
+    <string name="traffic_stats">Statistik</string>
+    <string name="tcp_connections">%d Koneksi TCP</string>
+    <string name="udp_connections">%d Koneksi UDP</string>
+    <string name="traffic_holder">Nyalakan VPN untuk merekam statistik lalu lintas</string>
+    <string name="copy_package_name">Salin Package Name(Nama Paket)</string>
+    <string name="open_app">Buka Aplikasi</string>
+    <string name="copy_success">Berhasil disalin!</string>
+    <string name="copy_failed">Gagal menyalin.</string>
+    <string name="ssh_private_key_passphrase">Passphrase(Frasa) Kunci Pribadi</string>
+    <string name="clear_logcat">Hapus Logcat</string>
+    <string name="wireguard_local_address">Alamat Lokal</string>
+    <string name="wireguard_public_key">Kunci Publik Peer</string>
+    <string name="wireguard_psk">Kunci Peer Pre-Shared</string>
+    <string name="warp_license">[CloudFlare Warp](https://blog.cloudflare.com/1111-warp-better-vpn/) adalah penyedia VPN WireGuard gratis. Dengan menggunakannya, Anda menyetujui [S&amp;K](https://www.cloudflare.com/application/terms/).</string>
+    <string name="warp_generate">Hasilkan Konfigurasi</string>
+    <string name="destination_override">Ganti Tujuan</string>
+    <string name="destination_override_summary">Gunakan domain yang dicuri untuk menimpa alamat tujuan, bukan hanya untuk perutean</string>
+    <string name="stun_test">Penemuan perilaku NAT</string>
+    <string name="stun_test_summary">Tentukan perilaku pemetaan NAT klien dan perilaku pemfilteran NAT yang ditentukan dalam RFC 5780 menggunakan STUN.</string>
+    <string name="start">Mulai</string>
+    <string name="recheck">Periksa ulang</string>
+    <string name="stun_attest_loading">Ini mungkin memakan waktu beberapa menit…</string>
+    <string name="nat_mapping_behaviour">Perilaku pemetaan NAT</string>
+    <string name="endpoint_independent_no_nat">Titik akhir(endpoint) independen (tanpa NAT)</string>
+    <string name="endpoint_independent">Titik akhir(endpoint) independen</string>
+    <string name="address_dependent">Bergantung pada alamat</string>
+    <string name="address_and_port_dependent">Bergantung pada alamat dan port</string>
+    <string name="nat_mapping_address_dependent_and_address_and_port_dependent">`%s`
+\n
+\nJika Anda mengirim dua paket UDP dari port yang sama ke tempat berbeda di sisi lain NAT, NAT akan menggunakan port yang sama untuk mengirim paket tersebut jika alamat tujuannya sama; port tujuan tidak masalah. Mengirim ke dua host yang berbeda akan menggunakan port yang berbeda. Ini akan membutuhkan penggunaan server TURN jika kedua belah pihak menggunakannya, kecuali tidak ada pihak yang melakukan pemfilteran khusus port, dan setidaknya satu pihak melakukan `penyaringan independen titik akhir`. Jika Anda menginginkan webrtc atau apa pun yang menggunakan jaringan P2P UDP, ***jangan konfigurasikan NAT Anda seperti ini***. Jenis pemetaan ini (biasanya) sesuai dengan NAT simetris dalam STUN klasik yang ditentukan dalam [RFC 3489 bagian 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
+    <string name="nat_filtering_address_dependent">`Bergantung pada Alamat`
+\n
+\nIni adalah jalan tengah yang lebih mudah dibenarkan oleh sysadmin, tetapi kesan saya adalah lebih sulit untuk dikonfigurasi. Setelah Anda mengirim paket UDP ke host di sisi lain NAT, NAT akan mengizinkan lalu lintas UDP kembali dari host tersebut, terlepas dari port asal pengiriman host, tetapi tidak akan mengizinkan lalu lintas UDP masuk dari alamat lain. Jika perilaku pemetaan Anda dikonfigurasi dengan tepat, ini akan berfungsi juga sebagai `pemfilteran independen titik akhir`.</string>
+    <string name="nat_filtering_address_and_port_dependent">\'Bergantung pada Alamat dan port\'
+\n
+\nIni yang paling ketat dari ketiganya. NAT Anda hanya akan mengizinkan lalu lintas kembali dari tempat Anda mengirim paket UDP Anda. Menggunakan ini adalah ***tidak disarankan***, bahkan jika Anda mengkonfigurasi perilaku pemetaan dengan benar, karena itu akan bekerja buruk ketika NAT lain salah dikonfigurasi (cukup umum).</string>
+    <string name="route_ssid">SSID Wifi</string>
+    <string name="missing_permission">Izin Tidak Ada</string>
+    <string name="location_disabled">Lokasi Dinonaktifkan</string>
+    <string name="route_need_ssid">Aturan perutean `%s` memerlukan akses ke **SSID Wi-Fi** Anda, tetapi ini memerlukan **izin lokasi latar belakang** dan **lokasi diaktifkan** pada Android 8.0 atau lebih tinggi</string>
+    <string name="network_type">Tipe Jaringan</string>
+    <string name="network_data">Data Seluler</string>
+    <string name="network_wifi">Wifi</string>
+    <string name="network_bt">Bluetooth</string>
+    <string name="network_eth">Ethernet</string>
+    <string name="backup">Cadangan</string>
+    <string name="backup_groups_and_configurations">Grup dan konfigurasi</string>
+    <string name="backup_rules">Aturan perutean</string>
+    <string name="backup_settings">Pengaturan</string>
+    <string name="backup_summary">Jika setelan perutean tidak dicadangkan dengan konfigurasi, maka keluar(outbound) kustom akan hilang.</string>
+    <string name="backup_not_file">Bukan file cadangan: kecuali .json, tetapi %s</string>
+    <string name="invalid_backup_file">File cadangan tidak valid</string>
+    <string name="backup_import">Impor</string>
+    <string name="backup_import_summary">Mengimpor akan menimpa data yang sudah ada.</string>
+    <string name="backup_importing">Mengimpor…</string>
+    <string name="use_local_dns_as_direct_dns">Gunakan DNS Lokal sebagai DNS Langsung</string>
+    <string name="root_ca_mozilla">Mozilla</string>
+    <string name="root_ca_system">Sistem</string>
+    <string name="packet_encoding">Pengkodean(encoding) Paket</string>
+    <string name="experimental_reduced_iv_head_entropy">Ini adalah proposal GFWReport untuk penanggulangan aliran acak seperti perilaku pemblokiran protokol yang diamati di GFW.
+\n
+\nOpsi ini memetakan ulang 6 byte pertama IV menjadi karakter yang dapat dicetak, sehingga memungkinkan bagi siapa pun di jalur jaringan istimewa untuk mengidentifikasi protokol saat diaktifkan.</string>
+    <string name="auto_mtu_summary">Gunakan MTU dari antarmuka jaringan hulu(upstream)</string>
+    <string name="acquire_wake_lock">Mengakuisisi WakeLock</string>
+    <string name="release_wake_lock">Lepaskan WakeLock</string>
+    <string name="disconnect">Putuskan</string>
+    <string name="sai">Split APKs Installer</string>
+    <string name="sai_succeed">Pemasangan berhasil</string>
+    <string name="sai_error_generic">Pemasangan gagal</string>
+    <string name="sai_error_aborted">Pemasangan dibatalkan oleh pengguna</string>
+    <string name="sai_error_blocked">Pemasangan diblokir oleh %s</string>
+    <string name="sai_error_blocked_device">perangkat</string>
+    <string name="sai_error_conflict">Tidak dapat memasang aplikasi karena bentrok dengan aplikasi yang sudah dipasang dengan nama paket yang sama</string>
+    <string name="sai_error_incompatible">Aplikasi tidak kompatibel dengan perangkat ini</string>
+    <string name="sai_error_invalid">APK tidak valid</string>
+    <string name="installer_provider">Penyedia Pemasang</string>
+    <string name="shizuku_unavailable">Shizuku tidak tersedia</string>
+    <string name="udp_over_tcp">UDP Melalui TCP</string>
+    <string name="udp_over_tcp_summary">Mengaktifkan protokol SUoT, memerlukan dukungan server.</string>
+    <string name="without_brook_protocol">Tanpa Protokol Brook</string>
+    <string name="grpc_mode">Mode gRPC</string>
+    <string name="tuic_udp_relay_mode">Mode Relai UDP</string>
+    <string name="tuic_token">Token</string>
+    <string name="tuic_disable_sni">Nonaktifkan SNI</string>
+    <string name="tuic_reduce_rtt">Mengurangi RTT</string>
+    <string name="tuic_congestion_controller">Congestion Controller</string>
+    <string name="route_for">Aturan untuk %s</string>
+    <string name="translate_platform">Platform Penerjemahan</string>
+    <string name="tasker_settings">Pengaturan Tugas</string>
+    <string name="tasker_action">Tindakan</string>
+    <string name="tasker_action_start_service">Mulai layanan</string>
+    <string name="tasker_action_stop_service">Hentikan layanan</string>
+    <string name="tasker_start_current_profile">Profil sekarang</string>
+    <string name="tasker_blurb_start_profile">Mulai profil %s</string>
+    <string name="root_ca_provider">Penyedia Sertifikat Root CA</string>
+    <string name="mtu">MTU</string>
+    <string name="hysteria_stream_receive_window">Jendela Penerimaan Aliran QUIC</string>
+    <string name="experimental_no_termination_signal">Jangan kirim sinyal terminasi dupleks koneksi tunggal untuk koneksi TCP saat ditransfer melalui VMess. Ini akan merusak beberapa aplikasi.</string>
+    <string name="hysteria_connection_receive_window">Jendela Penerimaan Koneksi QUIC</string>
+    <string name="group_order_origin">Asal</string>
+    <string name="group_order_by_delay">Berdasarkan Delay</string>
+    <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Plugin Android Shadowsocks)</string>
+    <string name="copy_label">Salin Nama</string>
+    <string name="open_market">Buka Toko Aplikasi</string>
+    <string name="create_rule">Buat Aturan</string>
+    <string name="menu_log">Log</string>
+    <string name="profile_traffic_statistics_summary">Saat dinonaktifkan, lalu lintas yang digunakan tidak akan dihitung</string>
+    <string name="generating">Menghasilkan…</string>
+    <string name="tun_implementation">Implementasi TUN</string>
+    <string name="experimental_authenticated_length">Membuat panjang setiap segmen payload tidak lagi dapat diubah-ubah. Eksperimen ini mengharuskan server dan klien menggunakan versi yang sama dari v2ray-core. Diperkirakan ada lebih banyak perusakan terbaru pada percobaan ini.</string>
+    <string name="group_order">Urutan</string>
+    <string name="plugin_exists_but_on_shit_system">Profil %s memerlukan plugin %s, tetapi vendor peralatan milik Anda (biasanya badan pengawas dan pembuat malware) mengutak-atik Android Anda, membuat plugin tidak dapat digunakan.</string>
+    <string name="shadowsocks_plugin_v2ray">V2Ray (Plugin Android Shadowsocks)</string>
+    <string name="app_no_launcher">Aplikasi ini tidak memiliki antarmuka.</string>
+    <string name="app_traffic_statistics">Statistik Lalu Lintas Aplikasi</string>
+    <string name="profile_traffic_statistics">Statistik Lalu Lintas Profil</string>
+    <string name="traffic_statistics_summary">Dapat meningkatkan konsumsi daya</string>
+    <string name="app_statistics_disabled">Statistik Lalu Lintas Aplikasi dinonaktifkan</string>
+    <string name="resolve_destination">Memecahkan(Resolve) Tujuan</string>
+    <string name="enable_pcap">Aktifkan Pcap</string>
+    <string name="disable_dns_expire">Nonaktifkan DNS Kedaluwarsa</string>
+    <string name="disable_dns_expire_summary">Abaikan TTL DNS hingga memulai ulang.</string>
+    <string name="resolve_destination_summary">Jika alamat tujuan adalah domain, maka alamat tersebut akan diteruskan berdasarkan strategi IPv6.</string>
+    <string name="naive_insecure_concurrency">Konkurensi Tidak Aman</string>
+    <string name="pcap_summary">Simpan lalu lintas ke file .pcap</string>
+    <string name="pcap_notice">File Pcap akan disimpan ke %s</string>
+    <string name="tools_network">Jaringan</string>
+    <string name="action_switch">Beralih</string>
+    <string name="hysteria_disable_mtu_discovery">Nonaktifkan Path MTU Discovery(Jalur Penemuan MTU)</string>
+    <string name="group_order_by_name">Berdasarkan Nama</string>
+    <string name="route_need_vpn">Aturan perutean `%s` bergantung pada VPN yang berlaku, sehingga diabaikan.</string>
+    <string name="naive_insecure_concurrency_summary">Gunakan koneksi terowongan konkuren N agar lebih kuat dalam kondisi jaringan yang buruk. Lebih banyak koneksi membuat tunneling lebih mudah dideteksi dan kurang aman. Proyek ini mengupayakan keamanan terkuat terhadap analisis lalu lintas. Menggunakannya dengan cara yang tidak aman mengalahkan tujuannya.
+\n
+\nJika Anda harus menggunakan ini, coba N = 2 terlebih dahulu untuk melihat apakah itu menyelesaikan masalah Anda. Sangat menyarankan untuk tidak menggunakan lebih dari 4 koneksi di sini.</string>
+    <string name="nat_mapping_endpoint_independent">`%s` 
+\n 
+\nJika Anda mengirim dua paket UDP dari port yang sama ke tempat berbeda di sisi lain NAT, NAT akan menggunakan port yang sama untuk mengirim paket tersebut. Ini adalah satu-satunya perilaku pemetaan ramah RTC, dan RFC 4787 membutuhkannya sebagai praktik terbaik (REQ-1) di semua NAT. Jika kedua NAT melakukan ini, ICE akan dapat terhubung secara langsung, untuk semua perilaku pemfilteran yang dijelaskan di bawah. Ini adalah pengaturan yang paling penting untuk dilakukan dengan benar. Jenis pemetaan ini sesuai dengan NAT kerucut di STUN klasik yang ditentukan di [RFC 3489 bagian 5](https://tools.ietf.org/html/rfc3489#section-5).</string>
+    <string name="nat_filtering_endpoint_independent">`Titik akhir independen`
+\n
+\nIni yang paling permisif dari ketiganya. Setelah Anda mengirim paket UDP ke mana saja di sisi lain NAT, apa pun di sisi lain NAT dapat mengirim paket UDP kembali kepada Anda di port itu. Kebijakan pemfilteran ini membuat sysadmin berkeringat dingin, tetapi RFC 4787 merekomendasikan penggunaannya saat komunikasi real-time (atau hal lain yang memerlukan transparansi aplikasi; misalnya game) adalah prioritas. Perhatikan bahwa ini tidak akan memberikan kompensasi yang baik jika perilaku pemetaan NAT Anda salah konfigurasi. Lebih penting untuk mendapatkan perilaku pemetaan dengan benar.</string>
+    <string name="acquire_wake_lock_summary">Tetap aktifkan CPU</string>
+    <string name="sai_error_storage">Ruang penyimpanan tidak cukup untuk memasang aplikasi</string>
 </resources>
