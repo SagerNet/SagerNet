@@ -486,4 +486,36 @@
     <string name="mtu">MTU</string>
     <string name="root_ca_provider">根证书提供商</string>
     <string name="root_ca_system">系统</string>
+    <string name="acquire_wake_lock_summary">使 CPU 保持唤醒状态</string>
+    <string name="shizuku_unavailable">Shizuku 不可用</string>
+    <string name="packet_encoding">数据包编码</string>
+    <string name="acquire_wake_lock">获取唤醒锁定</string>
+    <string name="tasker_action">动作</string>
+    <string name="experimental_reduced_iv_head_entropy">这是GFWReport针对GFW对随机流协议的阻塞行为提出的对策。
+\n
+\n这个选项将IV的前6个字节重新映射为可打印的字符，启用本选项后，私密网络路径上的任何人都有可能识别该协议。</string>
+    <string name="sai">分离APK安装程序</string>
+    <string name="release_wake_lock">释放唤醒锁</string>
+    <string name="action_switch">切换</string>
+    <string name="sai_succeed">成功安装</string>
+    <string name="disconnect">断开</string>
+    <string name="sai_error_generic">安装失败</string>
+    <string name="sai_error_aborted">用户已取消安装</string>
+    <string name="sai_error_blocked">安装被 %s 阻止</string>
+    <string name="sai_error_storage">不够存储空间安装本app</string>
+    <string name="sai_error_blocked_device">设备</string>
+    <string name="without_brook_protocol">不含Brook协议</string>
+    <string name="sai_error_conflict">因为与已安装的同名app冲突而未能安装本app</string>
+    <string name="sai_error_incompatible">本应用不兼容本设备</string>
+    <string name="sai_error_invalid">无效的APK</string>
+    <string name="installer_provider">安装程序提供者</string>
+    <string name="udp_over_tcp">基于TCP的UDP</string>
+    <string name="udp_over_tcp_summary">SUoT 协议需要服务器端支持。</string>
+    <string name="grpc_mode">gRPC模式</string>
+    <string name="flow">流控算法</string>
+    <string name="tuic_disable_sni">禁用 SNI</string>
+    <string name="tuic_reduce_rtt">降低 RTT</string>
+    <string name="tuic_congestion_controller">拥塞控制</string>
+    <string name="tuic_udp_relay_mode">UDP 转发模式</string>
+    <string name="tuic_token">令牌</string>
 </resources>
