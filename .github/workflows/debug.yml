@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel previous
-        uses: styfle/cancel-workflow-action@0.7.0
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
   libcore:
@@ -28,12 +28,12 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status library/core > libcore_status
       - name: LibCore Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             app/libs/libcore.aar
@@ -44,7 +44,7 @@ jobs:
         run: |
           echo ::set-output name=go_version::$(curl -s https://raw.githubusercontent.com/actions/go-versions/main/versions-manifest.json | grep -oE '"version": "[0-9]{1}.[0-9]{1,}(.[0-9]{1,})?"' | head -1 | cut -d':' -f2 | sed 's/ //g; s/"//g')
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: ${{ steps.version.outputs.go_version }}
@@ -58,18 +58,18 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.17.1
@@ -87,12 +87,12 @@ jobs:
         arch: [ armeabi-v7a, arm64-v8a, x86, x86_64 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/naive/*' > naive_status
       - name: Naive Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/naive/src/main/jniLibs/${{ matrix.arch }}
@@ -107,7 +107,7 @@ jobs:
         run: |
           openssl sha256 plugin/naive/src/main/jniLibs/${{ matrix.arch }}/libnaive.so > sha256sum.txt
           echo "SHA256SUM=$(cut -d' ' -f2 sha256sum.txt)" >>$GITHUB_ENV
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "NAIVE-SHA256-${{ matrix.arch }} ${{ env.SHA256SUM }}"
           path: sha256sum.txt
@@ -118,18 +118,18 @@ jobs:
   #      - setup
   #    steps:
   #      - name: Checkout
-  #        uses: actions/checkout@v2
+  #        uses: actions/checkout@v3
   #      - name: Fetch Status
   #        run: git submodule status 'plugin/pingtunnel/*' > pt_status
   #      - name: PingTunnel Cache
   #        id: cache
-  #        uses: actions/cache@v2
+  #        uses: actions/cache@v3
   #        with:
   #          path: |
   #            plugin/pingtunnel/src/main/jniLibs
   #          key: ${{ hashFiles('.github/workflows/*', 'bin/lib/pingtunnel/*', 'pt_status') }}
   #      - name: Install Golang
-  #        uses: actions/setup-go@v2
+  #        uses: actions/setup-go@v3
   #        if: steps.cache.outputs.cache-hit != 'true'
   #        with:
   #          go-version: 1.16
@@ -143,18 +143,18 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/relaybaton/*' > rb_status
       - name: RelayBaton Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/relaybaton/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/relaybaton/*', 'rb_status') }}
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.16
@@ -168,18 +168,18 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/brook/*' > brook_status
       - name: Brook Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/brook/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/brook/*', 'brook_status') }}
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.18.0
@@ -193,18 +193,18 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/hysteria/*' > hysteria_status
       - name: Hysteria Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/hysteria/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/hysteria/*', 'hysteria_status') }}
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.18.6
@@ -218,18 +218,18 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/mieru/*' > mieru_status
       - name: Mieru Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/mieru/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/mieru/*', 'mieru_status') }}
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.19.1
@@ -243,12 +243,12 @@ jobs:
       - setup
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/tuic/*' > tuic_status
       - name: Tuic Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/tuic/src/main/jniLibs
@@ -272,18 +272,18 @@ jobs:
       - libcore
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: |
           git submodule status library/core > libcore_status
       - name: LibCore Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             app/libs/libcore.aar
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/core/*', 'libcore_status') }}
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
