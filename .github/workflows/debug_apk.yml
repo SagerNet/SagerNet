@@ -8,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status library/core > libcore_status
       - name: LibCore Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             app/libs/libcore.aar
@@ -24,12 +24,12 @@ jobs:
         run: |
           echo ::set-output name=go_version::$(curl -s https://raw.githubusercontent.com/actions/go-versions/main/versions-manifest.json | grep -oE '"version": "[0-9]{1}.[0-9]{1,}(.[0-9]{1,})?"' | head -1 | cut -d':' -f2 | sed 's/ //g; s/"//g')
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: ${{ steps.version.outputs.go_version }}
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           path: ~/.gradle
@@ -47,18 +47,18 @@ jobs:
       - libcore
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: |
           git submodule status library/core > libcore_status
       - name: LibCore Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             app/libs/libcore.aar
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/core/*', 'libcore_status') }}
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
@@ -74,23 +74,23 @@ jobs:
           APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: APKs
           path: ${{ env.APK }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-ARM ${{ env.SHA256_ARM }}"
           path: ${{ env.SUM_ARM }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-ARM64 ${{ env.SHA256_ARM64 }}"
           path: ${{ env.SUM_ARM64 }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-X64 ${{ env.SHA256_X64 }}"
           path: ${{ env.SUM_X64 }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-X86 ${{ env.SHA256_X86 }}"
           path: ${{ env.SUM_X86 }}

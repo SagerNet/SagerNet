@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check access"
-        uses: "lannonbr/repo-permission-check-action@2.0.0"
+        uses: "lannonbr/repo-permission-check-action@2.0.2"
         with:
           permission: "write"
         env:
@@ -30,18 +30,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           go-version: 1.17.1
@@ -56,17 +56,17 @@ jobs:
       - check
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
@@ -83,23 +83,23 @@ jobs:
           APK=$(find plugin/trojan-go/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           echo "APK=$APK" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: APKs
           path: ${{ env.APK }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-ARM ${{ env.SHA256_ARM }}"
           path: ${{ env.SUM_ARM }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-ARM64 ${{ env.SHA256_ARM64 }}"
           path: ${{ env.SUM_ARM64 }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-X64 ${{ env.SHA256_X64 }}"
           path: ${{ env.SUM_X64 }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: "SHA256-X86 ${{ env.SHA256_X86 }}"
           path: ${{ env.SUM_X86 }}
@@ -110,9 +110,9 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Donwload Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: APKs
           path: artifacts
@@ -132,7 +132,7 @@ jobs:
     needs: build
     steps:
       - name: Donwload Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: APKs
           path: artifacts
@@ -164,17 +164,17 @@ jobs:
       - check
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Fetch Status
         run: git submodule status 'plugin/trojan-go/*' > trojan_go_status
       - name: Trojan-Go Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             plugin/trojan-go/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/trojan_go/*', 'trojan_go_status') }}
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
