@@ -254,10 +254,9 @@ jobs:
             plugin/tuic/src/main/jniLibs
           key: ${{ hashFiles('.github/workflows/*', 'bin/lib/tuic/*', 'tuic_status') }}
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+        run: |
+          rustup toolchain install stable
+          rustup override set stable
         if: steps.cache.outputs.cache-hit != 'true'
       - name: Install rust android target
         run: ./run init action rust
