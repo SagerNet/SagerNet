@@ -366,7 +366,7 @@
     <string name="group_order_origin">原始</string>
     <string name="group_order_by_name">以名称</string>
     <string name="group_order_by_delay">以延时</string>
-    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但你的专有设备供应商（通常也是监视资本主义巨头和恶意软件制造商）篡改了你的安卓系统，使该插件无法使用。</string>
+    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但由于定制安卓系统关联启动权限的限制，使该插件无法启动，请打开相关权限。</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray （Shadowsocks Android 插件）</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs （Shadowsocks Android 插件）</string>
     <string name="experimental_no_termination_signal">通过 VMess 传输时，不要为TCP连接发送连接单双工终止信号。这将破坏与一些应用程序的兼容性。</string>
@@ -486,4 +486,10 @@
     <string name="mtu">MTU</string>
     <string name="root_ca_provider">根证书提供商</string>
     <string name="root_ca_system">系统</string>
+    <string name="tuic_token">密码</string>
+    <string name="tuic_udp_relay_mode">UDP处理模式</string>
+    <string name="tuic_congestion_controller">拥塞控制算法</string>
+    <string name="tuic_disable_sni">不发送 SNI</string>
+    <string name="tuic_reduce_rtt">QUIC 0-RTT握手</string>
+
 </resources>
