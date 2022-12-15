@@ -369,7 +369,7 @@
     <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但由于定制安卓系统关联启动权限的限制，使该插件无法启动，请打开相关权限。</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray （Shadowsocks Android 插件）</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs （Shadowsocks Android 插件）</string>
-    <string name="experimental_no_termination_signal">通过 VMess 传输时，不要为TCP连接发送连接单双工终止信号。这将破坏与一些应用程序的兼容性。</string>
+    <string name="experimental_no_termination_signal">通过 VMess 传输时，不为TCP连接发送连接单双工终止消息。这将影响与一些应用程序的兼容性。</string>
     <string name="experimental_authenticated_length">让每个有效载荷段的长度不再具有可塑性。这个实验要求服务器和客户端使用相同版本的 v2ray-core。预计会有更多关于这个实验的破坏性更新。</string>
     <string name="menu_traffic">流量</string>
     <string name="route_for">%s 路由</string>
@@ -478,14 +478,21 @@
     <string name="tasker_settings">Tasker 设置</string>
     <string name="auto_mtu_summary">使用上游网络接口的 MTU</string>
     <string name="auto_mtu">自动 MTU</string>
+    <string name="acquire_wake_lock">打开唤醒状态</string>
+    <string name="release_wake_lock">取消唤醒锁定</string>
+    <string name="acquire_wake_lock_summary">保持CPU唤醒</string>
     <string name="tasker_action_start_service">启动服务</string>
     <string name="tasker_action_stop_service">停止服务</string>
     <string name="tasker_start_current_profile">当前配置</string>
     <string name="tasker_blurb_start_profile">启动配置 %s</string>
     <string name="root_ca_mozilla">Mozilla</string>
     <string name="mtu">MTU</string>
+    <string name="experimental_reduced_iv_head_entropy">这是 GFWReport 针对在 GFW 上观察到的类似协议阻塞行为的随机流的对策建议。
+\n\n此选项将 IV 的前 6 个字节重新映射为可打印字符，启用后网络传输途径上的任何人都可以识别协议。</string>
     <string name="root_ca_provider">根证书提供商</string>
     <string name="root_ca_system">系统</string>
+    <string name="udp_over_tcp_summary">启用SUoT协议（需要服务器支持）</string>
+    <string name="grpc_mode">gRPC 模式</string>
     <string name="tuic_token">密码</string>
     <string name="tuic_udp_relay_mode">UDP处理模式</string>
     <string name="tuic_congestion_controller">拥塞控制算法</string>
