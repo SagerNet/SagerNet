@@ -46,10 +46,9 @@ jobs:
           path: ~/.gradle
           key: gradle-${{ hashFiles('**/*.gradle.kts') }}
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+        run: |
+          rustup toolchain install stable
+          rustup override set stable
         if: steps.cache.outputs.cache-hit != 'true'
       - name: Install rust android target
         run: ./run init action rust
