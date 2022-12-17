@@ -161,7 +161,7 @@
     <string name="plugin_configure">设置…</string>
     <string name="plugin_disabled">已停用</string>
     <string name="plugin_unknown">未知插件: %s</string>
-    <string name="plugin_untrusted">请注意: 此插件的不来自可靠的来源.</string>
+    <string name="plugin_untrusted">请注意: 此插件的来源并不可靠</string>
     <string name="plugin_auto_connect_unlock_only">此插件可能不支持自动连接</string>
     <string name="proxy_cat">服务器设置</string>
     <string name="unsaved_changes_prompt">是否要保存修改？</string>
@@ -201,22 +201,22 @@
     <string name="insecure_warn">安全建议</string>
     <string name="insecure_warn_sum">由 Qv2ray 开发者社区提供</string>
     <string name="show_direct_speed">显示直连速度</string>
-    <string name="show_direct_speed_sum">在通知中也显示不经过代理的流量速度</string>
+    <string name="show_direct_speed_sum">在通知中显示不经过代理的流量速度</string>
     <string name="select_profile">选择配置</string>
     <string name="proxy_chain">链式代理</string>
     <string name="chain_settings">链设置</string>
     <string name="circular_reference">循环引用</string>
     <string name="circular_reference_sum">路由中不能包含自己.</string>
-    <string name="mux_sum">多路复用是为了减少 TCP 的握手延迟而设计, 而非提高连接的吞吐量. 用于看视频、下载或者测速通常都有反效果</string>
+    <string name="mux_sum">多路复用是为了减少 TCP 的握手延迟而设计的， 而非提高连接的吞吐量， 用于看视频、下载或者测速通常都有反效果。</string>
     <string name="mux_for_all">为所有可能支持的协议启用多路复用</string>
     <string name="mux_for_all_sum">如果服务器不支持, 则将无法连接.</string>
-    <string name="tcp_keep_alive_interval">TCP 保持活跃数据包发送间隔</string>
+    <string name="tcp_keep_alive_interval">TCP 保活数据包发送间隔</string>
     <string name="route_add">新建路由规则</string>
     <string name="delete_route_prompt">您确定要移除此路由吗\?</string>
     <string name="route_name">路由名称</string>
     <string name="route_profile">选择配置…</string>
     <string name="empty_route">空路由</string>
-    <string name="empty_route_notice">在保存前设置一些规则</string>
+    <string name="empty_route_notice">在保存前设置一些规则!</string>
     <string name="route_warn">在添加自定义规则之前，请确保您已经阅读了文档，否则您将可能无法连接到互联网。</string>
     <string name="route_bypass_domain">%s 域名规则</string>
     <string name="route_bypass_ip">%s IP 规则</string>
@@ -366,10 +366,10 @@
     <string name="group_order_origin">原始</string>
     <string name="group_order_by_name">以名称</string>
     <string name="group_order_by_delay">以延时</string>
-    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但你的专有设备供应商（通常也是监视资本主义巨头和恶意软件制造商）篡改了你的安卓系统，使该插件无法使用。</string>
+    <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但由于定制安卓系统关联启动权限的限制，使该插件无法启动，请打开相关权限。</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray （Shadowsocks Android 插件）</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs （Shadowsocks Android 插件）</string>
-    <string name="experimental_no_termination_signal">通过 VMess 传输时，不要为TCP连接发送连接单双工终止信号。这将破坏与一些应用程序的兼容性。</string>
+    <string name="experimental_no_termination_signal">通过 VMess 传输时，不为TCP连接发送连接单双工终止信号。这将破坏与一些应用程序的兼容性。</string>
     <string name="experimental_authenticated_length">让每个有效载荷段的长度不再具有可塑性。这个实验要求服务器和客户端使用相同版本的 v2ray-core。预计会有更多关于这个实验的破坏性更新。</string>
     <string name="menu_traffic">流量</string>
     <string name="route_for">%s 路由</string>
@@ -437,9 +437,9 @@
     <string name="route_play_store">%s Play 商店规则</string>
     <string name="route_opt_block_analysis">屏蔽跟踪器</string>
     <string name="naive_insecure_concurrency">不安全并发</string>
-    <string name="naive_insecure_concurrency_summary">使用N个并发的隧道连接，在恶劣的网络条件下更加强大。更多的连接使隧道更容易被发现，安全性更低。这个项目力求对流量分析有最强的安全性。以不安全的方式使用它就违背了它的目的。
+    <string name="naive_insecure_concurrency_summary">使用N个并发的隧道连接，在恶劣的网络条件下效果更好，但是并发连接使隧道更容易被发现，安全性降低。以不安全的方式使用它违背了这个项目力求对抗流量分析的目的
 \n
-\n如果你必须使用它，先试试N=2，看看是否能解决你的问题。强烈建议不要在这里使用超过4个连接。</string>
+\n如果你必须使用它，先试试N=2，看看是否能解决你的问题。强烈建议不要使用超过4个并发连接。</string>
     <string name="disable_dns_expire">禁用 DNS 过期</string>
     <string name="route_ssid">Wi-Fi SSID</string>
     <string name="missing_permission">缺少权限</string>
@@ -491,7 +491,7 @@
     <string name="packet_encoding">数据包编码</string>
     <string name="acquire_wake_lock">获取唤醒锁定</string>
     <string name="tasker_action">动作</string>
-    <string name="experimental_reduced_iv_head_entropy">这是GFWReport针对GFW对随机流协议的阻塞行为提出的对策。
+    <string name="experimental_reduced_iv_head_entropy">这是GFWReport针对GFW对随机流协议的阻塞行为而提出的对策。
 \n
 \n这个选项将IV的前6个字节重新映射为可打印的字符，启用本选项后，私密网络路径上的任何人都有可能识别该协议。</string>
     <string name="sai">分离APK安装程序</string>
