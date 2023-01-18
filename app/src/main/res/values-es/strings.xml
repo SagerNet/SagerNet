@@ -137,7 +137,7 @@
     <string name="quic_key">Llave QUIC</string>
     <string name="uuid">ID de usuario</string>
     <string name="obfs_param">Parámetros de obfs</string>
-    <string name="obfs">Obfs</string>
+    <string name="obfs">Obs.</string>
     <string name="protocol_param">Parámetros de protocolo</string>
     <string name="protocol">Protocolo</string>
     <string name="dns_routing_message">Resuelva dominios en rutas de bypass con Direct DNS. Tenga en cuenta las posibles fugas de DNS</string>
@@ -236,7 +236,7 @@
     <string name="menu_traffic">Tráfico</string>
     <string name="tile_title">Conmutador</string>
     <string name="group_default">Desagrupado</string>
-    <string name="plugin_exists_but_on_shit_system">El perfil %s requiere el complemento %s, pero su proveedor de equipo patentado (generalmente los gigantes del capital de vigilancia y el fabricante de malware) manipuló su Android, haciendo que el complemento sea inutilizable.</string>
+    <string name="plugin_exists_but_on_shit_system">El perfil %s requiere el complemento %s, pero el proveedor de su equipo patentado (por lo general, los gigantes del capital de vigilancia y el fabricante de malware) manipuló su Android e inutilizó el complemento.</string>
     <string name="force_resolve">Forzar resolución</string>
     <string name="delete_group_prompt">¿Estás seguro de que quieres eliminar este grupo\?</string>
     <string name="subscription_type">Tipo de suscripción</string>
@@ -254,7 +254,7 @@
     <string name="ooc_warning">Advertencia</string>
     <string name="subscription_update">Actualización de suscripción</string>
     <string name="subscription_update_message">Actualizando %s…</string>
-    <string name="experimental_settings">Experimental</string>
+    <string name="experimental_settings">Prueba</string>
     <string name="subscription_traffic">%s usado / %s restante</string>
     <string name="apps">Aplicaciones</string>
     <string name="hysteria_stream_receive_window">Ventana de recepción QUIC Stream</string>
@@ -387,7 +387,7 @@
 \n%s</string>
     <string name="group_deleted">Eliminado:
 \n%s</string>
-    <string name="group_status_proxies_subscription">%d Proxys | Actualizado en %s</string>
+    <string name="group_status_proxies_subscription">%d servidores proxy | Actualizado en %s</string>
     <string name="stun_test">Descubrimiento del comportamiento NAT</string>
     <string name="stun_test_summary">Determinar el comportamiento de asignación NAT del cliente y el comportamiento de filtrado NAT definido en RFC 5780 mediante STUN.</string>
     <string name="nat_mapping_behaviour">Comportamiento de mapeo NAT</string>
@@ -481,4 +481,28 @@
     <string name="release_wake_lock">Liberar WakeLock</string>
     <string name="acquire_wake_lock_summary">Mantener la CPU encendida</string>
     <string name="action_switch">Cambiar</string>
+    <string name="disconnect">Desconectar</string>
+    <string name="sai_error_conflict">La aplicación no se pudo instalar porque entra en conflicto con una aplicación ya instalada del mismo nombre</string>
+    <string name="sai_error_generic">Instalación fallida</string>
+    <string name="hysteria_disable_mtu_discovery">Inhabilitar el descubrimiento de la ruta MTU</string>
+    <string name="sai">Instalador de APK separado</string>
+    <string name="sai_succeed">Instalado exitosamente</string>
+    <string name="sai_error_aborted">La instalación fue cancelada por el usuario</string>
+    <string name="sai_error_blocked">Instalación bloqueada por %s</string>
+    <string name="sai_error_blocked_device">Dispositivo</string>
+    <string name="sai_error_incompatible">Esta aplicación no es compatible con este dispositivo</string>
+    <string name="sai_error_invalid">APKs no válidas</string>
+    <string name="sai_error_storage">No hay suficiente espacio libre para instalar la aplicación</string>
+    <string name="installer_provider">Proveedor del instalador</string>
+    <string name="shizuku_unavailable">Shizuku no disponible</string>
+    <string name="udp_over_tcp">UDP sobre TCP</string>
+    <string name="udp_over_tcp_summary">El protocolo SUoT requiere soporte del lado del servidor.</string>
+    <string name="without_brook_protocol">Sin Protocolo Brook</string>
+    <string name="grpc_mode">Modo gRPC</string>
+    <string name="tuic_token">Token</string>
+    <string name="tuic_udp_relay_mode">Modo de retransmisión UDP</string>
+    <string name="tuic_congestion_controller">Controlador de sobrecarga</string>
+    <string name="tuic_disable_sni">Deshabilitar SNI</string>
+    <string name="tuic_reduce_rtt">Reducir RTT</string>
+    <string name="flow">algoritmo de control de flujo</string>
 </resources>
