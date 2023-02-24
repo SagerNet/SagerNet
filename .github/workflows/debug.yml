@@ -47,7 +47,9 @@ jobs:
         uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: ${{ steps.version.outputs.go_version }}
+          # Bug: https://github.com/golang/go/issues/58426
+          # go-version: ${{ steps.version.outputs.go_version }}
+          go-version: 1.19.5
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
@@ -157,7 +159,7 @@ jobs:
         uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.16
+          go-version: 1.18.10
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin relaybaton

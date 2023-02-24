@@ -2,12 +2,12 @@
 <resources>
     <string name="group_subscription_link">Abonnement-Link</string>
     <string name="group_update">Aktualisieren</string>
-    <string name="group_name">Gruppen name</string>
+    <string name="group_name">Gruppenname</string>
     <string name="tile_title">Umschalter</string>
     <string name="quick_toggle">Umschalten</string>
     <string name="group_default">Ungruppiert</string>
     <string name="document">Dokument</string>
-    <string name="theme">Style</string>
+    <string name="theme">Thema</string>
     <string name="menu_about">Über</string>
     <string name="menu_group">Gruppe</string>
     <string name="menu_configuration">Konfiguration</string>
@@ -20,8 +20,8 @@
     <string name="project">Projekt</string>
     <string name="app_desc">Die universelle Proxy-Toolchain für Android, geschrieben in Kotlin.</string>
     <string name="service_mode_vpn">VPN</string>
-    <string name="group_create">Erstellen Gruppe</string>
-    <string name="group_name_required">Gruppen Name benötigt</string>
+    <string name="group_create">Gruppe erstellen</string>
+    <string name="group_name_required">Gruppenname erforderlich</string>
     <string name="group_delete_confirm_prompt">Bist du dir sicher das du diese Gruppe entfernen möchtest\?</string>
     <string name="license">Lizenz</string>
     <string name="lines">%d Linien</string>
@@ -35,4 +35,19 @@
     <string name="list">Liste</string>
     <string name="random">Zufällig</string>
     <string name="enable_log_sum">Für Debugging-Zwecken</string>
+    <string name="service_mode_proxy">Nur Proxy</string>
+    <string name="group_create_subscription">Abonnement erstellen</string>
+    <string name="group_status_empty_subscription">Noch nicht aktualisiert</string>
+    <string name="group_status_proxies_subscription">%d Proxies | Aktualisiert um %s</string>
+    <string name="group_added">Hinzugefügt:
+\n%s</string>
+    <string name="group_deleted">Gelöscht:
+\n%s</string>
+    <string name="group_edit_subscription">Abonnement bearbeiten</string>
+    <string name="group_changed">Aktualisiert:
+\n%s</string>
+    <string name="group_edit">Gruppe bearbeiten</string>
+    <string name="menu_traffic">Verkehr</string>
+    <string name="group_status_proxies">%d Proxies</string>
+    <string name="group_no_difference">%s: Kein Unterschied</string>
 </resources>
