@@ -275,6 +275,10 @@ class SagerNet : Application(),
                         ssid = transportInfo.ssid
                     }
                 }
+                if (WifiManager.UNKNOWN_SSID == ssid) {
+                    // try again from old api
+                    ssid = wifi.connectionInfo?.ssid
+                }
             } else {
                 val wifiInfo = wifi.connectionInfo
                 ssid = wifiInfo?.ssid
