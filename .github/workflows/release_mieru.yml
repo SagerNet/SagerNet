@@ -49,7 +49,7 @@ jobs:
         uses: actions/setup-go@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
-          go-version: 1.19.1
+          go-version: 1.20.2
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run plugin mieru
