@@ -11,7 +11,7 @@ fun Project.downloadRootCAList() {
     if (pem.isFile && !requireFlavor().endsWith("Release")) {
         return
     }
-    val csv = HttpUtil.get("https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReportPEMCSV")
+    val csv = HttpUtil.get("https://ccadb.my.salesforce-sites.com/mozilla/IncludedCACertificateReportPEMCSV")
     val data = CsvUtil.getReader(CsvReadConfig().setContainsHeader(true)).readFromStr(csv)
     val list = mutableListOf<String>()
     for (row in data) {
