@@ -29,7 +29,7 @@ jobs:
         with:
           # Bug: https://github.com/golang/go/issues/58426
           # go-version: ${{ steps.version.outputs.go_version }}
-          go-version: 1.19.5
+          go-version: 1.19.8
       - name: Gradle cache
         uses: actions/cache@v3
         if: steps.cache.outputs.cache-hit != 'true'
