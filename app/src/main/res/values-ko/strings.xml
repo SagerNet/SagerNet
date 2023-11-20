@@ -7,12 +7,12 @@
     <string name="telegram">텔레그램 업데이트 채널</string>
     <string name="github">소스 코드</string>
     <string name="project">프로젝트</string>
-    <string name="app_desc">코틀린에 기록 된 안드로이드에 대한 보편적 인 프록시 도구 체인.</string>
-    <string name="quick_toggle">비녀장</string>
-    <string name="group_default">그룹 해제</string>
+    <string name="app_desc">Kotlin으로 작성된 안드로이드용 유니버설 프록시 툴체인.</string>
+    <string name="quick_toggle">토글</string>
+    <string name="group_default">그룹 해제됨</string>
     <string name="document">문서</string>
     <string name="theme">테마</string>
-    <string name="menu_about">대하여</string>
+    <string name="menu_about">SagerNet에 대하여</string>
     <string name="menu_group">그룹</string>
     <string name="menu_configuration">구성</string>
     <string name="service_mode_vpn">VPN</string>
@@ -20,7 +20,7 @@
     <string name="group_changed">업데이트됨: 
 \n%s</string>
     <string name="group_name_required">그룹 이름이 필요합니다</string>
-    <string name="group_diff">차이 (%s)</string>
+    <string name="group_diff">차이점 (%s)</string>
     <string name="cag_route">라우트 설정</string>
     <string name="general_settings">앱 설정</string>
     <string name="group_edit_subscription">구독 편집</string>
@@ -31,28 +31,50 @@
     <string name="port_proxy">SOCKS5 프록시 포트</string>
     <string name="service_mode">서비스 모드</string>
     <string name="group_name">그룹 이름</string>
-    <string name="group_show_diff">차이</string>
+    <string name="group_show_diff">차이점</string>
     <string name="ws_browser_forwarding">브라우저 포워딩</string>
     <string name="port_transproxy">Transproxy 포트</string>
     <string name="require_http">HTTP 인바운드 활성화</string>
     <string name="group_subscription_link">구독 링크</string>
     <string name="menu_traffic">트래픽</string>
     <string name="group_update">업데이트</string>
-    <string name="group_updated">%s: 프록시 %d개 업데이트</string>
+    <string name="group_updated">%s: 프록시 %d개 업데이트됨</string>
     <string name="group_no_difference">%s: 차이 없음</string>
     <string name="group_create">그룹 생성</string>
     <string name="group_create_subscription">구독 생성</string>
     <string name="group_edit">그룹 편집</string>
     <string name="group_status_empty_subscription">아직 업데이트되지 않음</string>
-    <string name="group_status_proxies_subscription">프록시 %d개 | %s 업데이트</string>
+    <string name="group_status_proxies_subscription">프록시 %d개 | %s 업데이트됨</string>
     <string name="group_delete_confirm_prompt">이 그룹을 정말로 제거하시겠습니까\?</string>
     <string name="group_added">추가됨: 
 \n%s</string>
     <string name="group_deleted">삭제됨: 
 \n%s</string>
-    <string name="service_mode_proxy">프록시 전용</string>
+    <string name="service_mode_proxy">프록시만</string>
     <string name="port_http">HTTP 프록시 포트</string>
-    <string name="allow_access">LAN에서의 연결을 허용</string>
+    <string name="allow_access">LAN으로부터의 연결을 허용</string>
     <string name="inbound_settings">인바운드 설정</string>
     <string name="cag_ws">웹 소켓 설정</string>
+    <string name="cag_dns">DNS 설정</string>
+    <string name="show_stop_sum">Quick Tile를 스위치처럼 사용하시기 원치 않으시면</string>
+    <string name="show_direct_speed">라이렉트 속도 표시</string>
+    <string name="allow_insecure">안전하지 않은 연결을 허용</string>
+    <string name="ws_browser_forwarding_sum">브라우저를 통해 웹 소켓을 전달합니다.</string>
+    <string name="speed_interval">알림 업데이트 주기 속도</string>
+    <string name="cag_misc">기타 설정</string>
+    <string name="show_stop">중지 버튼 보이기</string>
+    <string name="show_direct_speed_sum">프록시 제외한 트래픽 속도를 알림에서 잘 표시</string>
+    <string name="security_settings">보안 설정</string>
+    <string name="speed_detail">프록시: %1$s↑ %2$s↓
+\n라이렉트: %3$s↑ %4$s↓</string>
+    <string name="connection_test_testing">테스트 중…</string>
+    <string name="connection_test_available">성공: HTTPS 헨드세이크가 %d ms만큼 소요되었습니다</string>
+    <string name="connection_test_available_http">성공: HTTP 헨드세이크가 %d ms만큼 소요되었습니다</string>
+    <string name="connection_test_error">실패: %s</string>
+    <string name="connection_test_fail">인터넷을 사용할 수 없음</string>
+    <string name="connection_test_error_status_code">오류 코드: %d</string>
+    <string name="enable_dns_routing">DNS 라우팅 활성화</string>
+    <string name="allow_insecure_sum">인증서 확인을 비활성화합니다. 활성화되면, 이 설정은 평문과 같은 수준으로 안전해지지 않습니다</string>
+    <string name="remote_dns">원격 DNS</string>
+    <string name="direct_dns">라이렉트 DNS</string>
 </resources>

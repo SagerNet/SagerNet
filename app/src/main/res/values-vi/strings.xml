@@ -304,4 +304,11 @@
     <string name="acquire_wake_lock">Bật WakeLock</string>
     <string name="release_wake_lock">Tắt WakeLock</string>
     <string name="acquire_wake_lock_summary">Giữ cho CPU luôn hoạt động</string>
+    <string name="speed_detail">Proxy： %1$s↑ %2$s↓
+\nDirect： %3$s↑ %4$s↓</string>
+    <string name="show_stop_sum">Nếu bạn không muốn sử dụng Quick Tile làm công tắc</string>
+    <string name="probe_url">URL thử nghiệm tự chọn</string>
+    <string name="username">Tên người dùng</string>
+    <string name="username_opt">Tên người dùng (Không bắt buộc)</string>
+    <string name="key_opt">Khóa (Không bắt buộc)</string>
 </resources>

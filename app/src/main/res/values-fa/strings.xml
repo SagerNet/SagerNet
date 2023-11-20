@@ -56,7 +56,7 @@
     <string name="telegram">کانال به‌روزرسانی‌ها در تلگرام</string>
     <string name="github">کد منبع</string>
     <string name="project">پروژه</string>
-    <string name="app_desc">ابزار جهانی پروکسی برای اندروید، نوشته شده در کاتلین.</string>
+    <string name="app_desc">مجموعه ابزار جامع پروکسی برای اندروید، نوشته شده در کاتلین.</string>
     <string name="menu_configuration">پیکربندی</string>
     <string name="logcat_summary">بسیار مفید وای واقعا عالی</string>
     <string name="transproxy_mode">حالت پراکسی شفاف</string>

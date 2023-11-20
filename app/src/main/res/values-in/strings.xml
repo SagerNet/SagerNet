@@ -366,7 +366,7 @@
     <string name="tcp_connections">%d Koneksi TCP</string>
     <string name="udp_connections">%d Koneksi UDP</string>
     <string name="traffic_holder">Nyalakan VPN untuk merekam statistik lalu lintas</string>
-    <string name="copy_package_name">Salin Package Name(Nama Paket)</string>
+    <string name="copy_package_name">Salin Nama Paket</string>
     <string name="open_app">Buka Aplikasi</string>
     <string name="copy_success">Berhasil disalin!</string>
     <string name="copy_failed">Gagal menyalin.</string>
@@ -465,7 +465,7 @@
     <string name="group_order_by_delay">Berdasarkan Delay</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Plugin Android Shadowsocks)</string>
     <string name="copy_label">Salin Nama</string>
-    <string name="open_market">Buka Toko Aplikasi</string>
+    <string name="open_market">Buka Market</string>
     <string name="create_rule">Buat Aturan</string>
     <string name="menu_log">Log</string>
     <string name="profile_traffic_statistics_summary">Saat dinonaktifkan, lalu lintas yang digunakan tidak akan dihitung</string>

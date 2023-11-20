@@ -101,4 +101,18 @@
     <string name="route_asset_no_update">沒有更新</string>
     <string name="insecure">不安全</string>
     <string name="connection_test_icmp_ping_unavailable">ICMPing 不可用</string>
+    <string name="group_name_required">需要群組名稱</string>
+    <string name="tile_title">開關</string>
+    <string name="group_status_empty">空組</string>
+    <string name="port_http">HTTP 代理連接埠</string>
+    <string name="group_subscription_link">訂閱鏈接</string>
+    <string name="menu_traffic">流量</string>
+    <string name="group_default">未分組</string>
+    <string name="menu_configuration">設定檔</string>
+    <string name="group_edit_subscription">編輯訂閱</string>
+    <string name="port_proxy">SOCKS5 代理連接埠</string>
+    <string name="port_transproxy">透明代理連接埠</string>
+    <string name="cag_route">路由設定</string>
+    <string name="allow_access">允許來自區域網絡的連線</string>
+    <string name="allow_access_sum">綁定入站伺服器至0.0.0.0</string>
 </resources>
